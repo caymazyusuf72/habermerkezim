@@ -9,6 +9,7 @@ class HiveService {
   static const String _readArticlesBoxName = 'read_articles';
   static const String _settingsBoxName = 'settings';
   static const String _categoryOrderBoxName = 'category_order';
+  static const String _readingListBoxName = 'reading_list';
 
   static bool _initialized = false;
 
@@ -61,6 +62,7 @@ class HiveService {
       Hive.openBox<String>(_readArticlesBoxName),
       Hive.openBox<dynamic>(_settingsBoxName),
       Hive.openBox<dynamic>(_categoryOrderBoxName),
+      Hive.openBox<String>(_readingListBoxName),
     ]);
   }
 
@@ -92,6 +94,12 @@ class HiveService {
   static Box<dynamic> get categoryOrderBox {
     _ensureInitialized();
     return Hive.box<dynamic>(_categoryOrderBoxName);
+  }
+
+  /// Reading list box'ını döner
+  static Box<String> get readingListBox {
+    _ensureInitialized();
+    return Hive.box<String>(_readingListBoxName);
   }
 
   /// Box açmak için metod (static method)
