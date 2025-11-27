@@ -132,184 +132,86 @@ class _CategoryTabsState extends ConsumerState<CategoryTabs> {
 
   /// Sıralama modu görünümü
   Widget _buildReorderableTabs(ThemeData theme) {
+    final orderedCategories = ref.watch(orderedCategoriesProvider);
+    
     return Row(
       children: [
         Expanded(
-          child: SingleChildScrollView(
+          child: ReorderableListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              children: widget.categories.asMap().entries.map((entry) {
-                final index = entry.key;
-                final category = entry.value;
-                final color = AppTheme.getCategoryColor(category.id);
-                final isSelected = widget.tabController.index == index;
-                
-                return LongPressDraggable<int>(
-                  key: ValueKey(category.id),
-                  data: index,
-                  feedback: Material(
-                    color: Colors.transparent,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: color.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: color, width: 2),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.drag_handle,
-                            size: 16,
-                            color: theme.colorScheme.onSurface,
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            category.displayName,
-                            style: TextStyle(
-                              color: theme.colorScheme.onSurface,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  childWhenDragging: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Opacity(
-                      opacity: 0.3,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.drag_handle,
-                            size: 16,
-                            color: theme.colorScheme.onSurface.withOpacity(0.5),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            category.displayName,
-                            style: TextStyle(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  onDragEnd: (details) {
-                    // Drag işlemi tamamlandı, sıralama modunu kapat
-                    setState(() {
-                      _isReordering = false;
-                    });
+            itemCount: orderedCategories.length,
+            onReorder: (oldIndex, newIndex) {
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+              widget.onReorder?.call(oldIndex, newIndex);
+              ref.read(categoryOrderProvider.notifier).reorderCategories(oldIndex, newIndex);
+            },
+            itemBuilder: (context, index) {
+              final category = orderedCategories[index];
+              final color = AppTheme.getCategoryColor(category.id);
+              final isSelected = widget.tabController.index == index;
+              
+              return ReorderableDragStartListener(
+                key: ValueKey(category.id),
+                index: index,
+                child: GestureDetector(
+                  onTap: () {
+                    widget.tabController.animateTo(index);
                   },
-                  child: DragTarget<int>(
-                    onAccept: (draggedIndex) {
-                      if (draggedIndex != index) {
-                        final oldIndex = draggedIndex;
-                        final newIndex = index;
-                        if (widget.onReorder != null) {
-                          widget.onReorder!(oldIndex, newIndex);
-                        }
-                        ref.read(categoryOrderProvider.notifier).reorderCategories(oldIndex, newIndex);
-                      }
-                    },
-                    builder: (context, candidateData, rejectedData) {
-                      final isDragTarget = candidateData.isNotEmpty;
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              widget.tabController.animateTo(index);
-                            },
-                            borderRadius: BorderRadius.circular(20),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? color.withOpacity(0.1)
-                                    : isDragTarget
-                                        ? color.withOpacity(0.05)
-                                        : Colors.transparent,
-                                borderRadius: BorderRadius.circular(20),
-                                border: isSelected
-                                    ? Border.all(color: color, width: 1.5)
-                                    : isDragTarget
-                                        ? Border.all(color: color, width: 1, style: BorderStyle.solid)
-                                        : null,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // Drag handle
-                                  Icon(
-                                    Icons.drag_handle,
-                                    size: 16,
-                                    color: theme.colorScheme.onSurface.withOpacity(0.5),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  
-                                  // Kategori ikonu
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: BoxDecoration(
-                                      color: color,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  
-                                  // Kategori adı
-                                  Text(
-                                    category.displayName,
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? theme.colorScheme.primary
-                                          : theme.colorScheme.onSurface.withOpacity(0.6),
-                                      fontSize: 14,
-                                      fontWeight: isSelected
-                                          ? FontWeight.w600
-                                          : FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? color.withOpacity(0.1)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                      border: isSelected
+                          ? Border.all(color: color, width: 1.5)
+                          : null,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Drag handle
+                        Icon(
+                          Icons.drag_handle,
+                          size: 18,
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                        const SizedBox(width: 8),
+                        
+                        // Kategori ikonu
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
                           ),
                         ),
-                      );
-                    },
+                        const SizedBox(width: 8),
+                        
+                        // Kategori adı
+                        Text(
+                          category.displayName,
+                          style: TextStyle(
+                            color: isSelected
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.onSurface.withOpacity(0.6),
+                            fontSize: 14,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              }).toList(),
-            ),
+                ),
+              );
+            },
           ),
         ),
         
