@@ -50,93 +50,81 @@ class _CategoryTabsState extends ConsumerState<CategoryTabs> {
     );
   }
 
-  /// Normal tab görünümü - Sürükle-bırak ile sıralama
+  /// Normal tab görünümü
   Widget _buildNormalTabs(ThemeData theme) {
     final orderedCategories = ref.watch(orderedCategoriesProvider);
     
     return Row(
       children: [
         Expanded(
-          child: ReorderableListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: orderedCategories.length,
-            onReorder: (oldIndex, newIndex) {
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              widget.onReorder?.call(oldIndex, newIndex);
-              ref.read(categoryOrderProvider.notifier).reorderCategories(oldIndex, newIndex);
-            },
-            itemBuilder: (context, index) {
-              final category = orderedCategories[index];
+          child: TabBar(
+            controller: widget.tabController,
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
+            
+            // Tab stilleri
+            labelStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.2,
+            ),
+            
+            // Renkler
+            labelColor: theme.colorScheme.primary,
+            unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
+            
+            // Indicator
+            indicatorColor: theme.colorScheme.primary,
+            indicatorWeight: 2.5,
+            indicatorSize: TabBarIndicatorSize.label,
+            
+            // Padding
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+            
+            // Tabs
+            tabs: orderedCategories.asMap().entries.map((entry) {
+              final category = entry.value;
               final color = AppTheme.getCategoryColor(category.id);
-              final isSelected = widget.tabController.index == index;
               
-              return ReorderableDragStartListener(
-                key: ValueKey(category.id),
-                index: index,
-                child: GestureDetector(
-                  onTap: () {
-                    // Kategoriye tıklandığında tab'ı değiştir
-                    final currentIndex = orderedCategories.indexWhere((c) => c.id == category.id);
-                    if (currentIndex != -1) {
-                      widget.tabController.animateTo(currentIndex);
-                    }
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? color.withOpacity(0.1)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                      border: isSelected
-                          ? Border.all(color: color, width: 1.5)
-                          : null,
+              return Tab(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Kategori ikonu
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Drag handle (görünür ama sadece sürüklerken aktif)
-                        Icon(
-                          Icons.drag_handle,
-                          size: 16,
-                          color: theme.colorScheme.onSurface.withOpacity(0.4),
-                        ),
-                        const SizedBox(width: 8),
-                        
-                        // Kategori ikonu
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: color,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        
-                        // Kategori adı
-                        Text(
-                          category.displayName,
-                          style: TextStyle(
-                            color: isSelected
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.6),
-                            fontSize: 14,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                    const SizedBox(width: 8),
+                    
+                    // Kategori adı
+                    Text(category.displayName),
+                  ],
                 ),
               );
-            },
+            }).toList(),
           ),
+        ),
+        
+        // Sıralama butonu
+        IconButton(
+          icon: const Icon(Icons.drag_handle),
+          onPressed: () {
+            setState(() {
+              _isReordering = true;
+            });
+          },
+          tooltip: 'Kategorileri sırala',
         ),
       ],
     );
