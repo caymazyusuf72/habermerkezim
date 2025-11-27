@@ -1,0 +1,9 @@
+targets:
+  $default:
+    builders:
+      hive_generator:hive_builder:
+        generate_for:
+          - lib/data/models/*.dart
+        options:
+          class_names:
+            - ArticleModel

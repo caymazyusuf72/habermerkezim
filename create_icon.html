@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create App Icon</title>
+</head>
+<body>
+    <canvas id="canvas" width="1024" height="1024"></canvas>
+    <br>
+    <button onclick="downloadIcon()">Download PNG</button>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Create gradient background
+        const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
+        gradient.addColorStop(0, '#2196F3');
+        gradient.addColorStop(1, '#1976D2');
+        
+        // Fill background with gradient
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 1024, 1024);
+        
+        // Draw newspaper shape
+        ctx.fillStyle = 'white';
+        ctx.fillRect(150, 200, 724, 600);
+        
+        // Draw newspaper header
+        ctx.fillStyle = '#333333';
+        ctx.fillRect(200, 250, 624, 80);
+        
+        // Draw newspaper text lines
+        ctx.fillStyle = '#666666';
+        for(let i = 0; i < 8; i++) {
+            ctx.fillRect(200, 380 + i * 35, 300, 20);
+            ctx.fillRect(520, 380 + i * 35, 304, 20);
+        }
+        
+        // Draw RSS icon
+        ctx.fillStyle = '#FF9800';
+        ctx.beginPath();
+        ctx.arc(800, 150, 60, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Draw RSS waves
+        ctx.strokeStyle = '#FF9800';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.arc(800, 150, 25, 0, Math.PI * 0.5);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(800, 150, 40, 0, Math.PI * 0.5);
+        ctx.stroke();
+        
+        // Draw RSS dot
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(785, 135, 8, 0, Math.PI * 2);
+        ctx.fill();
+        
+        function downloadIcon() {
+            const link = document.createElement('a');
+            link.download = 'app_icon.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>

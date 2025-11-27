@@ -1,0 +1,956 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../providers/providers.dart';
+import '../../themes/app_theme.dart';
+import '../../widgets/dialogs/modern_alert_dialog.dart';
+import '../rss_sources/rss_sources_page.dart';
+import '../analytics/analytics_page.dart';
+import '../notifications/notification_settings_page.dart';
+
+/// Ayarlar sayfası - uygulama ayarları
+class SettingsPage extends ConsumerWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final isDarkMode = ref.watch(isDarkModeProvider);
+    final debugMode = ref.watch(debugModeProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Ayarlar'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Görünüm Ayarları
+          _buildSectionHeader(context, 'Görünüm', Icons.palette_rounded),
+          _buildThemeSection(context, ref, isDarkMode),
+          const SizedBox(height: 24),
+
+          // Haber Kaynakları
+          _buildSectionHeader(context, 'Haber Kaynakları', Icons.rss_feed_rounded),
+          _buildRssSourcesSection(context, ref),
+          const SizedBox(height: 24),
+
+          // Veri Yönetimi
+          _buildSectionHeader(context, 'Veri Yönetimi', Icons.storage_rounded),
+          _buildDataManagementSection(context, ref),
+          const SizedBox(height: 24),
+
+          // İstatistikler
+          _buildSectionHeader(context, 'İstatistikler', Icons.analytics_rounded),
+          _buildAnalyticsSection(context, ref),
+          const SizedBox(height: 24),
+
+          // Bildirimler
+          _buildSectionHeader(context, 'Bildirimler', Icons.notifications_rounded),
+          _buildNotificationSection(context, ref),
+          const SizedBox(height: 24),
+
+          // Hakkında
+          _buildSectionHeader(context, 'Hakkında', Icons.info_rounded),
+          _buildAboutSection(context, ref),
+
+          // Debug bölümü (sadece debug modda)
+          if (debugMode) ...[
+            const SizedBox(height: 24),
+            _buildSectionHeader(context, 'Geliştirici', Icons.bug_report),
+            _buildDebugSection(context, ref),
+          ],
+
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  /// Bölüm başlığı
+  Widget _buildSectionHeader(BuildContext context, String title, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: AppTheme.primaryBlue,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: AppTheme.primaryBlue,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Tema bölümü
+  Widget _buildThemeSection(BuildContext context, WidgetRef ref, bool isDarkMode) {
+    final fontScale = ref.watch(fontScaleProvider);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+        ),
+      ),
+      child: Column(
+        children: [
+          SwitchListTile(
+            secondary: Icon(
+              isDarkMode ? Icons.dark_mode : Icons.light_mode,
+            ),
+            title: const Text('Karanlık Tema'),
+            subtitle: Text(
+              isDarkMode ? 'Karanlık tema aktif' : 'Açık tema aktif',
+            ),
+            value: isDarkMode,
+            onChanged: (value) {
+              ref.read(themeProvider.notifier).toggleTheme();
+            },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.auto_awesome),
+            title: const Text('Sistem Teması'),
+            subtitle: const Text('Cihaz ayarlarını takip et'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              ref.read(themeProvider.notifier).setSystemMode();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Sistem teması ayarlandı'),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
+          ),
+          const Divider(height: 1),
+          // Font boyutu ayarları
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.text_fields, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Font Boyutu',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      _getFontSizeLabel(fontScale),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppTheme.primaryBlue,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Font boyutu slider
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    activeTrackColor: AppTheme.primaryBlue,
+                    thumbColor: AppTheme.primaryBlue,
+                    overlayColor: AppTheme.primaryBlue.withOpacity(0.2),
+                    valueIndicatorColor: AppTheme.primaryBlue,
+                    valueIndicatorTextStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                  child: Slider(
+                    value: fontScale,
+                    min: 0.8,
+                    max: 1.6,
+                    divisions: 4,
+                    label: _getFontSizeLabel(fontScale),
+                    onChanged: (value) {
+                      ref.read(themeProvider.notifier).setFontScale(value);
+                    },
+                  ),
+                ),
+                // Font boyutu hızlı seçenekleri
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildFontSizeOption(
+                      context,
+                      ref,
+                      'Küçük',
+                      0.8,
+                      fontScale == 0.8,
+                    ),
+                    _buildFontSizeOption(
+                      context,
+                      ref,
+                      'Normal',
+                      1.0,
+                      fontScale == 1.0,
+                    ),
+                    _buildFontSizeOption(
+                      context,
+                      ref,
+                      'Büyük',
+                      1.2,
+                      fontScale == 1.2,
+                    ),
+                    _buildFontSizeOption(
+                      context,
+                      ref,
+                      'Çok Büyük',
+                      1.4,
+                      fontScale == 1.4,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Font boyutu hızlı seçim butonu
+  Widget _buildFontSizeOption(
+    BuildContext context,
+    WidgetRef ref,
+    String label,
+    double scale,
+    bool isSelected,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        ref.read(themeProvider.notifier).setFontScale(scale);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+            ? AppTheme.primaryBlue
+            : Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+              ? AppTheme.primaryBlue
+              : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          ),
+        ),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: isSelected
+              ? Colors.white
+              : Theme.of(context).colorScheme.onSurfaceVariant,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            fontSize: 11 * scale, // Font boyutunu önizleme için
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Font boyutu label'ı
+  String _getFontSizeLabel(double scale) {
+    if (scale <= 0.8) return 'Küçük';
+    if (scale <= 1.0) return 'Normal';
+    if (scale <= 1.2) return 'Büyük';
+    if (scale <= 1.4) return 'Çok Büyük';
+    return 'Maksimum';
+  }
+
+  /// Veri yönetimi bölümü
+  Widget _buildDataManagementSection(BuildContext context, WidgetRef ref) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+        ),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.cleaning_services),
+            title: const Text('Önbelleği Temizle'),
+            subtitle: const Text('Tüm kaydedilmiş haberleri sil'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => _showClearCacheDialog(context, ref),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.favorite_border),
+            title: const Text('Favorileri Temizle'),
+            subtitle: const Text('Tüm favori haberleri sil'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => _showClearFavoritesDialog(context, ref),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.history),
+            title: const Text('Arama Geçmişini Sil'),
+            subtitle: const Text('Tüm arama geçmişini temizle'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => _showClearSearchHistoryDialog(context, ref),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Analytics bölümü
+  Widget _buildAnalyticsSection(BuildContext context, WidgetRef ref) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+        ),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.purple.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.analytics_rounded,
+                color: Colors.purple,
+                size: 20,
+              ),
+            ),
+            title: const Text('Okuma İstatistikleri'),
+            subtitle: const Text('Okuma alışkanlıklarınızı ve grafiklerini görüntüleyin'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AnalyticsPage(),
+                ),
+              );
+            },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.insights_rounded,
+                color: Colors.blue,
+                size: 20,
+              ),
+            ),
+            title: const Text('Okuma Hedefleri'),
+            subtitle: const Text('Günlük ve haftalık okuma hedeflerinizi takip edin'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AnalyticsPage(),
+                ),
+              );
+            },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.show_chart_rounded,
+                color: Colors.green,
+                size: 20,
+              ),
+            ),
+            title: const Text('Okuma Trendleri'),
+            subtitle: const Text('Kategori dağılımı ve okuma trendlerinizi analiz edin'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AnalyticsPage(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// RSS kaynakları bölümü
+  Widget _buildRssSourcesSection(BuildContext context, WidgetRef ref) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+        ),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryBlue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.rss_feed_rounded,
+                color: AppTheme.primaryBlue,
+                size: 20,
+              ),
+            ),
+            title: const Text('Haber Kaynaklarını Yönet'),
+            subtitle: const Text('RSS kaynaklarını ekle, düzenle ve yönet'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const RssSourcesPage(),
+                ),
+              );
+            },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.add_rounded,
+                color: Colors.green,
+                size: 20,
+              ),
+            ),
+            title: const Text('Yeni Kaynak Ekle'),
+            subtitle: const Text('Özel RSS kaynağı ekle'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const RssSourcesPage(),
+                ),
+              ).then((_) {
+                // RSS Sources sayfası açıldıktan sonra FAB'a basılmasını simüle et
+                // Bu otomatik açılmayacak, kullanıcı manuel olarak + butonuna basacak
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Bildirimler bölümü
+  Widget _buildNotificationSection(BuildContext context, WidgetRef ref) {
+    final notificationState = ref.watch(notificationProvider);
+    final settings = notificationState.settings;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+        ),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: notificationState.permissionsGranted
+                    ? Colors.blue.withOpacity(0.1)
+                    : Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                notificationState.permissionsGranted
+                    ? Icons.notifications_active
+                    : Icons.notifications_off,
+                color: notificationState.permissionsGranted
+                    ? Colors.blue
+                    : Colors.orange,
+                size: 20,
+              ),
+            ),
+            title: const Text('Bildirim Ayarları'),
+            subtitle: Text(
+              notificationState.permissionsGranted
+                  ? 'Bildirimler aktif'
+                  : 'Bildirim izni gerekli',
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const NotificationSettingsPage(),
+                ),
+              );
+            },
+          ),
+          const Divider(height: 1),
+          SwitchListTile(
+            secondary: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: settings.dailyNewsEnabled
+                    ? AppTheme.primaryBlue.withOpacity(0.1)
+                    : Colors.grey.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.schedule_rounded,
+                color: settings.dailyNewsEnabled
+                    ? AppTheme.primaryBlue
+                    : Colors.grey,
+                size: 20,
+              ),
+            ),
+            title: const Text('Günlük Haber Hatırlatması'),
+            subtitle: Text(
+              settings.dailyNewsEnabled
+                  ? '${settings.dailyNewsHour.toString().padLeft(2, '0')}:${settings.dailyNewsMinute.toString().padLeft(2, '0')}'
+                  : 'Kapalı',
+            ),
+            value: settings.dailyNewsEnabled && notificationState.permissionsGranted,
+            onChanged: notificationState.permissionsGranted
+                ? (value) {
+                    ref.read(notificationProvider.notifier)
+                        .updateDailyNewsSettings(enabled: value);
+                  }
+                : null,
+          ),
+          const Divider(height: 1),
+          SwitchListTile(
+            secondary: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: settings.readingGoalEnabled
+                    ? Colors.green.withOpacity(0.1)
+                    : Colors.grey.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.track_changes_rounded,
+                color: settings.readingGoalEnabled
+                    ? Colors.green
+                    : Colors.grey,
+                size: 20,
+              ),
+            ),
+            title: const Text('Okuma Hedefi Hatırlatması'),
+            subtitle: Text(
+              settings.readingGoalEnabled
+                  ? '${settings.dailyReadingGoal} haber/gün - ${settings.readingGoalHour.toString().padLeft(2, '0')}:${settings.readingGoalMinute.toString().padLeft(2, '0')}'
+                  : 'Kapalı',
+            ),
+            value: settings.readingGoalEnabled && notificationState.permissionsGranted,
+            onChanged: notificationState.permissionsGranted
+                ? (value) {
+                    ref.read(notificationProvider.notifier)
+                        .updateReadingGoalSettings(enabled: value);
+                  }
+                : null,
+          ),
+          const Divider(height: 1),
+          SwitchListTile(
+            secondary: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: settings.breakingNewsEnabled
+                    ? Colors.red.withOpacity(0.1)
+                    : Colors.grey.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.flash_on_rounded,
+                color: settings.breakingNewsEnabled
+                    ? Colors.red
+                    : Colors.grey,
+                size: 20,
+              ),
+            ),
+            title: const Text('Son Dakika Haberleri'),
+            subtitle: Text(
+              settings.breakingNewsEnabled
+                  ? 'Önemli haberler için anında bildirim'
+                  : 'Kapalı',
+            ),
+            value: settings.breakingNewsEnabled && notificationState.permissionsGranted,
+            onChanged: notificationState.permissionsGranted
+                ? (value) {
+                    ref.read(notificationProvider.notifier)
+                        .updateBreakingNewsEnabled(value);
+                  }
+                : null,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Hakkında bölümü
+  Widget _buildAboutSection(BuildContext context, WidgetRef ref) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+        ),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: const Text('Uygulama Hakkında'),
+            subtitle: const Text('Versiyon ve geliştirici bilgileri'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => _showAboutDialog(context),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.privacy_tip),
+            title: const Text('Gizlilik Politikası'),
+            subtitle: const Text('Veri kullanım politikaları'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => _showPrivacyPolicyDialog(context),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.article),
+            title: const Text('Kullanım Şartları'),
+            subtitle: const Text('Hizmet kullanım koşulları'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => _showTermsDialog(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Debug bölümü
+  Widget _buildDebugSection(BuildContext context, WidgetRef ref) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.orange.withOpacity(0.3),
+        ),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.storage, color: Colors.orange),
+            title: const Text('Cache İstatistikleri'),
+            subtitle: const Text('Veritabanı durumu görüntüle'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => _showCacheStats(context, ref),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.refresh, color: Colors.orange),
+            title: const Text('Tüm Haberleri Yeniden Yükle'),
+            subtitle: const Text('Cache bypass ile fresh data'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => _forceRefreshData(context, ref),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Cache temizle dialog
+  void _showClearCacheDialog(BuildContext context, WidgetRef ref) async {
+    final result = await ModernDialogs.showConfirmDialog(
+      context: context,
+      title: 'Önbelleği Temizle',
+      content: 'Tüm kaydedilmiş haberler silinecek. Favoriler korunacak. Devam etmek istiyor musunuz?',
+      icon: Icons.cleaning_services_rounded,
+      iconColor: Colors.orange,
+      confirmText: 'Temizle',
+      cancelText: 'İptal',
+    );
+    
+    if (result == true && context.mounted) {
+      try {
+        final repository = ref.read(newsRepositoryProvider);
+        await repository.clearCache();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+                  SizedBox(width: 8),
+                  Text('Önbellek temizlendi'),
+                ],
+              ),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ModernDialogs.showErrorDialog(
+            context: context,
+            title: 'Hata Oluştu',
+            content: 'Önbellek temizlenirken hata oluştu: ${e.toString()}',
+          );
+        }
+      }
+    }
+  }
+
+  /// Favorileri temizle dialog
+  void _showClearFavoritesDialog(BuildContext context, WidgetRef ref) async {
+    final result = await ModernDialogs.showDangerDialog(
+      context: context,
+      title: 'Favorileri Temizle',
+      content: 'Tüm favori haberler silinecek. Bu işlem geri alınamaz. Devam etmek istiyor musunuz?',
+      icon: Icons.favorite_border_rounded,
+      confirmText: 'Sil',
+      cancelText: 'İptal',
+    );
+    
+    if (result == true && context.mounted) {
+      ref.read(favoritesProvider.notifier).clearAllFavorites();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+              SizedBox(width: 8),
+              Text('Tüm favoriler silindi'),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    }
+  }
+
+  /// Arama geçmişini temizle dialog
+  void _showClearSearchHistoryDialog(BuildContext context, WidgetRef ref) async {
+    final result = await ModernDialogs.showConfirmDialog(
+      context: context,
+      title: 'Arama Geçmişini Sil',
+      content: 'Tüm arama geçmişi silinecek. Devam etmek istiyor musunuz?',
+      icon: Icons.history_rounded,
+      iconColor: Colors.orange,
+      confirmText: 'Sil',
+      cancelText: 'İptal',
+    );
+    
+    if (result == true && context.mounted) {
+      ref.read(searchProvider.notifier).clearSearchHistory();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+              SizedBox(width: 8),
+              Text('Arama geçmişi silindi'),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    }
+  }
+
+  /// Hakkında dialog
+  void _showAboutDialog(BuildContext context) {
+    showAboutDialog(
+      context: context,
+      applicationName: 'Haber Merkezim',
+      applicationVersion: '1.0.0',
+      applicationIcon: Container(
+        width: 64,
+        height: 64,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppTheme.primaryBlue, AppTheme.secondaryBlue],
+          ),
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(
+          Icons.article_rounded,
+          size: 32,
+          color: Colors.white,
+        ),
+      ),
+      children: const [
+        Text(
+          'Haber Merkezim, Türkiye\'nin önde gelen haber kaynaklarından güncel haberleri takip etmenizi sağlayan modern bir haber uygulamasıdır.',
+        ),
+        SizedBox(height: 16),
+        Text(
+          '• RSS tabanlı güncel haber akışı\n'
+          '• Offline okuma desteği\n'
+          '• Favoriler ve arama\n'
+          '• Karanlık tema desteği\n'
+          '• Modern ve kullanıcı dostu arayüz',
+        ),
+      ],
+    );
+  }
+
+  /// Gizlilik politikası dialog
+  void _showPrivacyPolicyDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Gizlilik Politikası'),
+        content: const SingleChildScrollView(
+          child: Text(
+            'Haber Merkezi uygulaması kişisel gizliliğinize önem verir.\n\n'
+            '• Uygulama herhangi bir kişisel veri toplamaz\n'
+            '• Haberler RSS kaynaklarından alınır\n'
+            '• Favoriler ve ayarlar cihazınızda saklanır\n'
+            '• İnternet bağlantısı sadece haber almak için kullanılır\n'
+            '• Üçüncü parti analitik servisleri kullanılmaz',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Tamam'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Kullanım şartları dialog
+  void _showTermsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Kullanım Şartları'),
+        content: const SingleChildScrollView(
+          child: Text(
+            'Haber Merkezi uygulamasını kullanarak aşağıdaki şartları kabul etmiş sayılırsınız:\n\n'
+            '• Uygulama ücretsiz olarak sunulmaktadır\n'
+            '• Haberler RSS kaynaklarından alınmaktadır\n'
+            '• Haber içerikleri kaynak sitelere aittir\n'
+            '• Uygulama "olduğu gibi" sunulmaktadır\n'
+            '• Geliştirici haber içeriklerinden sorumlu değildir',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Tamam'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Cache istatistikleri göster
+  void _showCacheStats(BuildContext context, WidgetRef ref) async {
+    try {
+      // Cache istatistikleri basit gösterim
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Cache İstatistikleri'),
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Cache bilgileri geliştirme aşamasında...'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Tamam'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('İstatistikler alınamadı: ${e.toString()}'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Tüm verileri yeniden yükle
+  void _forceRefreshData(BuildContext context, WidgetRef ref) {
+    ref.read(newsProvider.notifier).refreshArticles();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Haberler yeniden yükleniyor...'),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+}
