@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/article.dart';
 import '../../domain/repositories/news_repository.dart';
 import '../../core/services/widget_service.dart';
+import '../../core/services/breaking_news_service.dart';
+import '../../core/services/notification_service.dart';
+import '../../core/services/hive_service.dart';
 import 'providers.dart';
 
 /// News State - haber listesinin durumunu tutar
@@ -73,6 +76,9 @@ class NewsNotifier extends StateNotifier<NewsState> {
       
       // Widget'ı güncelle
       WidgetService.updateWidget(articles);
+      
+      // Breaking news kontrolü ve bildirim gönderimi
+      _checkAndNotifyBreakingNews(articles);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -170,6 +176,95 @@ class NewsNotifier extends StateNotifier<NewsState> {
       state = const NewsState();
     } catch (e) {
       print('Failed to clear cache: $e');
+    }
+  }
+
+  /// Breaking news kontrolü ve bildirim gönderimi
+  Future<void> _checkAndNotifyBreakingNews(List<Article> articles) async {
+    try {
+      final breakingNewsService = BreakingNewsService();
+      final notificationService = NotificationService();
+      
+      // Son 10 dakika içindeki haberleri kontrol et
+      final now = DateTime.now();
+      final recentArticles = articles.where((article) {
+        final diff = now.difference(article.publishedDate);
+        return diff.inMinutes <= 10;
+      }).toList();
+      
+      // Breaking news'leri filtrele
+      final breakingNews = breakingNewsService.filterBreakingNews(recentArticles);
+      
+      if (breakingNews.isNotEmpty) {
+        // En yüksek öncelikli breaking news'i al
+        breakingNews.sort((a, b) {
+          final priorityA = breakingNewsService.calculatePriority(a);
+          final priorityB = breakingNewsService.calculatePriority(b);
+          return priorityB.compareTo(priorityA);
+        });
+        
+        final topBreakingNews = breakingNews.first;
+        
+        // Bildirim sıklığı kontrolü
+        if (await _canSendNotification()) {
+          await notificationService.showBreakingNewsNotification(
+            title: topBreakingNews.title,
+            summary: topBreakingNews.description,
+            articleId: topBreakingNews.id,
+          );
+          
+          // Son bildirim zamanını kaydet
+          await _saveLastNotificationTime();
+        }
+      }
+    } catch (e) {
+      print('⚠️ Breaking news kontrolü hatası: $e');
+    }
+  }
+  
+  /// Bildirim gönderilebilir mi kontrol et (saatte max 3 bildirim)
+  Future<bool> _canSendNotification() async {
+    try {
+      final box = HiveService.notificationFrequencyBox;
+      final lastNotificationTimes = box.get('lastNotificationTimes', defaultValue: <int>[]) as List<dynamic>?;
+      
+      if (lastNotificationTimes == null || lastNotificationTimes.isEmpty) {
+        return true;
+      }
+      
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final oneHourAgo = now - (60 * 60 * 1000);
+      
+      // Son 1 saat içindeki bildirimleri filtrele
+      final recentNotifications = lastNotificationTimes
+          .where((time) => (time as int) > oneHourAgo)
+          .toList();
+      
+      // Saatte max 3 bildirim
+      return recentNotifications.length < 3;
+    } catch (e) {
+      print('⚠️ Bildirim sıklığı kontrolü hatası: $e');
+      return true; // Hata durumunda bildirim gönder
+    }
+  }
+  
+  /// Son bildirim zamanını kaydet
+  Future<void> _saveLastNotificationTime() async {
+    try {
+      final box = HiveService.notificationFrequencyBox;
+      final lastNotificationTimes = box.get('lastNotificationTimes', defaultValue: <int>[]) as List<dynamic>?;
+      
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final updatedTimes = List<int>.from(lastNotificationTimes ?? []);
+      updatedTimes.add(now);
+      
+      // Son 24 saat içindeki bildirimleri tut
+      final oneDayAgo = now - (24 * 60 * 60 * 1000);
+      final filteredTimes = updatedTimes.where((time) => time > oneDayAgo).toList();
+      
+      await box.put('lastNotificationTimes', filteredTimes);
+    } catch (e) {
+      print('⚠️ Bildirim zamanı kaydetme hatası: $e');
     }
   }
 

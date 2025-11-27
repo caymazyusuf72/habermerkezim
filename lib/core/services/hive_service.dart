@@ -63,6 +63,8 @@ class HiveService {
       Hive.openBox<dynamic>(_settingsBoxName),
       Hive.openBox<dynamic>(_categoryOrderBoxName),
       Hive.openBox<String>(_readingListBoxName),
+      Hive.openBox<dynamic>(_notificationFrequencyBoxName),
+      Hive.openBox<dynamic>(_categoryNotificationsBoxName),
     ]);
   }
 
@@ -100,6 +102,18 @@ class HiveService {
   static Box<String> get readingListBox {
     _ensureInitialized();
     return Hive.box<String>(_readingListBoxName);
+  }
+
+  /// Notification frequency box'ını döner
+  static Box<dynamic> get notificationFrequencyBox {
+    _ensureInitialized();
+    return Hive.box<dynamic>(_notificationFrequencyBoxName);
+  }
+
+  /// Category notifications box'ını döner
+  static Box<dynamic> get categoryNotificationsBox {
+    _ensureInitialized();
+    return Hive.box<dynamic>(_categoryNotificationsBoxName);
   }
 
   /// Box açmak için metod (static method)

@@ -13,6 +13,7 @@ class NotificationSettings {
   final int readingGoalMinute;
   final int dailyReadingGoal;
   final bool breakingNewsEnabled;
+  final Map<String, bool> categoryNotifications; // Kategori ID -> bildirim açık/kapalı
 
   const NotificationSettings({
     this.dailyNewsEnabled = true,
@@ -23,6 +24,7 @@ class NotificationSettings {
     this.readingGoalMinute = 0,
     this.dailyReadingGoal = 10,
     this.breakingNewsEnabled = false,
+    this.categoryNotifications = const {},
   });
 
   NotificationSettings copyWith({
@@ -34,6 +36,7 @@ class NotificationSettings {
     int? readingGoalMinute,
     int? dailyReadingGoal,
     bool? breakingNewsEnabled,
+    Map<String, bool>? categoryNotifications,
   }) {
     return NotificationSettings(
       dailyNewsEnabled: dailyNewsEnabled ?? this.dailyNewsEnabled,
@@ -44,6 +47,7 @@ class NotificationSettings {
       readingGoalMinute: readingGoalMinute ?? this.readingGoalMinute,
       dailyReadingGoal: dailyReadingGoal ?? this.dailyReadingGoal,
       breakingNewsEnabled: breakingNewsEnabled ?? this.breakingNewsEnabled,
+      categoryNotifications: categoryNotifications ?? this.categoryNotifications,
     );
   }
 
@@ -57,6 +61,7 @@ class NotificationSettings {
       'readingGoalMinute': readingGoalMinute,
       'dailyReadingGoal': dailyReadingGoal,
       'breakingNewsEnabled': breakingNewsEnabled,
+      'categoryNotifications': categoryNotifications,
     };
   }
 
@@ -70,6 +75,9 @@ class NotificationSettings {
       readingGoalMinute: map['readingGoalMinute'] ?? 0,
       dailyReadingGoal: map['dailyReadingGoal'] ?? 10,
       breakingNewsEnabled: map['breakingNewsEnabled'] ?? false,
+      categoryNotifications: map['categoryNotifications'] != null
+          ? Map<String, bool>.from(map['categoryNotifications'])
+          : const {},
     );
   }
 
