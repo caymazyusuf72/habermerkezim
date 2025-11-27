@@ -11,13 +11,11 @@ import '../../../providers/category_order_provider.dart';
 class CategoryTabs extends ConsumerStatefulWidget implements PreferredSizeWidget {
   final TabController tabController;
   final List<Category> categories;
-  final Function(int, int)? onReorder;
 
   const CategoryTabs({
     super.key,
     required this.tabController,
     required this.categories,
-    this.onReorder,
   });
 
   @override
@@ -46,147 +44,66 @@ class _CategoryTabsState extends ConsumerState<CategoryTabs> {
     );
   }
 
-  /// Normal tab görünümü - Sürükle-bırak ile sıralama
+  /// Normal tab görünümü
   Widget _buildNormalTabs(ThemeData theme) {
     final orderedCategories = ref.watch(orderedCategoriesProvider);
     
-    if (orderedCategories.isEmpty) {
-      return const SizedBox.shrink();
-    }
-    
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    return TabBar(
+      controller: widget.tabController,
+      isScrollable: true,
+      tabAlignment: TabAlignment.start,
+      
+      // Tab stilleri
+      labelStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.2,
+      ),
+      unselectedLabelStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.2,
+      ),
+      
+      // Renkler
+      labelColor: theme.colorScheme.primary,
+      unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
+      
+      // Indicator
+      indicatorColor: theme.colorScheme.primary,
+      indicatorWeight: 2.5,
+      indicatorSize: TabBarIndicatorSize.label,
+      
+      // Padding
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        children: orderedCategories.asMap().entries.map((entry) {
-          final index = entry.key;
-          final category = entry.value;
-          final color = AppTheme.getCategoryColor(category.id);
-          final isSelected = widget.tabController.index == index;
-          
-          return LongPressDraggable<int>(
-            key: ValueKey(category.id),
-            data: index,
-            feedback: Material(
-              color: Colors.transparent,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+      
+      // Tabs
+      tabs: orderedCategories.asMap().entries.map((entry) {
+        final category = entry.value;
+        final color = AppTheme.getCategoryColor(category.id);
+        
+        return Tab(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Kategori ikonu
+              Container(
+                width: 8,
+                height: 8,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: color, width: 2),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      category.displayName,
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+                  color: color,
+                  shape: BoxShape.circle,
                 ),
               ),
-            ),
-            childWhenDragging: Opacity(
-              opacity: 0.3,
-              child: _buildCategoryChip(theme, category, color, false),
-            ),
-            child: DragTarget<int>(
-              onAccept: (draggedIndex) {
-                if (draggedIndex != index) {
-                  final oldIndex = draggedIndex;
-                  final newIndex = index;
-                  widget.onReorder?.call(oldIndex, newIndex);
-                  ref.read(categoryOrderProvider.notifier).reorderCategories(oldIndex, newIndex);
-                }
-              },
-              builder: (context, candidateData, rejectedData) {
-                final isDragTarget = candidateData.isNotEmpty;
-                return GestureDetector(
-                  onTap: () {
-                    widget.tabController.animateTo(index);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    child: _buildCategoryChip(
-                      theme,
-                      category,
-                      color,
-                      isSelected,
-                      isDragTarget: isDragTarget,
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-  
-  /// Kategori chip widget'ı
-  Widget _buildCategoryChip(
-    ThemeData theme,
-    Category category,
-    Color color,
-    bool isSelected, {
-    bool isDragTarget = false,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? color.withOpacity(0.1)
-            : isDragTarget
-                ? color.withOpacity(0.05)
-                : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        border: isSelected
-            ? Border.all(color: color, width: 1.5)
-            : isDragTarget
-                ? Border.all(color: color, width: 1)
-                : null,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+              const SizedBox(width: 8),
+              
+              // Kategori adı
+              Text(category.displayName),
+            ],
           ),
-          const SizedBox(width: 8),
-          Text(
-            category.displayName,
-            style: TextStyle(
-              color: isSelected
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface.withOpacity(0.6),
-              fontSize: 14,
-              fontWeight: isSelected
-                  ? FontWeight.w600
-                  : FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
+        );
+      }).toList(),
     );
   }
 

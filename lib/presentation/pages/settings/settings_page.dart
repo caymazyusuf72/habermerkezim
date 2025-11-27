@@ -819,38 +819,85 @@ class SettingsPage extends ConsumerWidget {
 
   /// Hakkında dialog
   void _showAboutDialog(BuildContext context) {
-    showAboutDialog(
+    final theme = Theme.of(context);
+    
+    showDialog(
       context: context,
-      applicationName: 'Haber Merkezim',
-      applicationVersion: '1.0.0',
-      applicationIcon: Container(
-        width: 64,
-        height: 64,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppTheme.primaryBlue, AppTheme.secondaryBlue],
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Uygulama ikonu ve adı
+            Row(
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppTheme.primaryBlue, AppTheme.secondaryBlue],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.article_rounded,
+                    size: 32,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Haber Merkezim',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Versiyon 1.0.0',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            
+            // Açıklama
+            Text(
+              'Haber Merkezim, Türkiye\'nin önde gelen haber kaynaklarından güncel haberleri takip etmenizi sağlayan modern bir haber uygulamasıdır.',
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            
+            // Özellikler
+            Text(
+              '• RSS tabanlı güncel haber akışı\n'
+              '• Offline okuma desteği\n'
+              '• Favoriler ve arama\n'
+              '• Karanlık tema desteği\n'
+              '• Modern ve kullanıcı dostu arayüz',
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Kapat'),
           ),
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          Icons.article_rounded,
-          size: 32,
-          color: Colors.white,
-        ),
+        ],
       ),
-      children: const [
-        Text(
-          'Haber Merkezim, Türkiye\'nin önde gelen haber kaynaklarından güncel haberleri takip etmenizi sağlayan modern bir haber uygulamasıdır.',
-        ),
-        SizedBox(height: 16),
-        Text(
-          '• RSS tabanlı güncel haber akışı\n'
-          '• Offline okuma desteği\n'
-          '• Favoriler ve arama\n'
-          '• Karanlık tema desteği\n'
-          '• Modern ve kullanıcı dostu arayüz',
-        ),
-      ],
     );
   }
 

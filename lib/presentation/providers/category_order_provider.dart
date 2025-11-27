@@ -24,9 +24,16 @@ class CategoryOrderState {
     );
   }
 
-  static CategoryOrderState get initial => CategoryOrderState(
-    categoryIds: Category.defaultCategories.map((c) => c.id).toList(),
-  );
+  static CategoryOrderState get initial {
+    // Son Dakika'yı (genel) ilk sıraya al
+    final allCategories = Category.defaultCategories;
+    final sonDakika = allCategories.firstWhere((c) => c.id == 'genel');
+    final digerKategoriler = allCategories.where((c) => c.id != 'genel').toList();
+    
+    return CategoryOrderState(
+      categoryIds: [sonDakika.id, ...digerKategoriler.map((c) => c.id)],
+    );
+  }
 }
 
 /// Kategori sıralaması notifier
@@ -42,18 +49,26 @@ class CategoryOrderNotifier extends StateNotifier<CategoryOrderState> {
       final savedOrder = box.get('categoryOrder', defaultValue: <String>[]);
       
       if (savedOrder != null && savedOrder.isNotEmpty) {
-        // Kaydedilmiş sıralama var, kullan
+        // Kaydedilmiş sıralama var, ama Son Dakika'yı (genel) ilk sıraya al
         final defaultIds = Category.defaultCategories.map((c) => c.id).toList();
         final savedOrderList = (savedOrder as List).map((e) => e.toString()).toList();
         final validIds = savedOrderList.where((id) => defaultIds.contains(id)).toList();
         
-        // Eksik kategorileri ekle
-        final missingIds = defaultIds.where((id) => !validIds.contains(id)).toList();
-        final orderedIds = <String>[...validIds, ...missingIds];
+        // Son Dakika'yı (genel) ilk sıraya al
+        final orderedIds = <String>[];
+        if (validIds.contains('genel')) {
+          orderedIds.add('genel');
+          validIds.remove('genel');
+        }
+        orderedIds.addAll(validIds);
+        
+        // Eksik kategorileri ekle (genel hariç)
+        final missingIds = defaultIds.where((id) => id != 'genel' && !orderedIds.contains(id)).toList();
+        orderedIds.addAll(missingIds);
         
         state = state.copyWith(categoryIds: orderedIds);
       } else {
-        // Varsayılan sıralamayı kullan
+        // Varsayılan sıralamayı kullan (Son Dakika ilk sırada)
         state = CategoryOrderState.initial;
       }
     } catch (e) {

@@ -97,18 +97,6 @@ class _HomePageState extends ConsumerState<HomePage>
     }
   }
 
-  /// Kategori sıralaması değiştiğinde çağrılır
-  void _onCategoryReorder(int oldIndex, int newIndex) {
-    // TabController'ı yeniden oluştur
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        setState(() {
-          final categories = ref.read(orderedCategoriesProvider);
-          _initializeTabController(categories);
-        });
-      }
-    });
-  }
 
   /// Pull-to-refresh callback
   Future<void> _onRefresh() async {
@@ -221,7 +209,6 @@ class _HomePageState extends ConsumerState<HomePage>
                 child: CategoryTabs(
                   tabController: _tabController!,
                   categories: categories,
-                  onReorder: _onCategoryReorder,
                 ),
               )
             : null,
