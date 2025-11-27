@@ -9,6 +9,7 @@ import '../../../domain/entities/category.dart';
 import 'widgets/news_list.dart';
 import 'widgets/category_tabs.dart';
 import 'widgets/app_drawer.dart';
+import 'widgets/article_filter_dialog.dart';
 import '../search/search_page.dart';
 
 /// CategoryTabs için PreferredSizeWidget wrapper

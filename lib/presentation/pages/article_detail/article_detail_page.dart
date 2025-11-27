@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../domain/entities/article.dart';
 import '../../providers/providers.dart';
 import '../../providers/analytics_provider.dart';
+import '../../providers/reading_list_provider.dart';
 import '../../themes/app_theme.dart';
 
 /// Haber detay sayfası - tek bir haberin ayrıntılı görünümü
@@ -91,6 +92,21 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         ],
       ),
       actions: [
+        // Okuma listesi butonu
+        Consumer(
+          builder: (context, ref, child) {
+            final isInReadingList = ref.watch(isInReadingListProvider(widget.article.id));
+            return IconButton(
+              onPressed: () {
+                ref.read(readingListProvider.notifier).toggleReadingList(widget.article);
+              },
+              icon: Icon(
+                isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+              ),
+              tooltip: isInReadingList ? 'Okuma listesinden çıkar' : 'Okuma listesine ekle',
+            );
+          },
+        ),
         // Paylaş butonu
         IconButton(
           onPressed: () => _shareArticle(),
@@ -390,6 +406,32 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
       ),
       child: Row(
         children: [
+          // Okuma listesi butonu
+          Consumer(
+            builder: (context, ref, child) {
+              final isInReadingList = ref.watch(isInReadingListProvider(widget.article.id));
+              return Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    ref.read(readingListProvider.notifier).toggleReadingList(widget.article);
+                  },
+                  icon: Icon(
+                    isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                  ),
+                  label: Text(isInReadingList ? 'Listeden Çıkar' : 'Listeye Ekle'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          
+          const SizedBox(width: 12),
+          
           // Paylaş butonu
           Expanded(
             child: OutlinedButton.icon(

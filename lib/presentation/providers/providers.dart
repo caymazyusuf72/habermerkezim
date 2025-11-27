@@ -15,6 +15,7 @@ export 'favorites_provider.dart';
 export 'notification_provider.dart';
 export 'category_order_provider.dart';
 export 'reading_list_provider.dart';
+export 'article_filter_provider.dart';
 
 /// Dependency Injection - Tüm provider'ları burada tanımlıyoruz
 /// Clean Architecture'da dependency direction'ını sağlıyoruz

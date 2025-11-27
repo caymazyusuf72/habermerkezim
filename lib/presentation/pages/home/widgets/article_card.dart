@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../domain/entities/article.dart';
 import '../../../themes/app_theme.dart';
 import '../../../providers/favorites_provider.dart';
+import '../../../providers/reading_list_provider.dart';
 
 /// Haber kartı widget'ı - her bir haberi gösteren kart
 /// Görsel, başlık, özet, tarih ve kategori bilgilerini içerir
@@ -162,6 +163,8 @@ class ArticleCard extends ConsumerWidget {
                 children: [
                   _buildShareButton(context),
                   const SizedBox(height: 4),
+                  _buildReadingListButton(context, ref),
+                  const SizedBox(height: 4),
                   _buildFavoriteButton(context, ref),
                 ],
               ),
@@ -289,6 +292,31 @@ class ArticleCard extends ConsumerWidget {
           fontWeight: FontWeight.w500,
           fontSize: 10,
         ),
+      ),
+    );
+  }
+
+  /// Okuma listesi butonu
+  Widget _buildReadingListButton(BuildContext context, WidgetRef ref) {
+    // Okuma listesi durumunu provider'dan al
+    final isInReadingList = ref.watch(isInReadingListProvider(article.id));
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        onPressed: () {
+          ref.read(readingListProvider.notifier).toggleReadingList(article);
+        },
+        icon: Icon(
+          isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+          color: isInReadingList ? AppTheme.primaryBlue : Theme.of(context).colorScheme.onSurface,
+          size: 20,
+        ),
+        constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+        padding: EdgeInsets.zero,
+        tooltip: isInReadingList ? 'Okuma listesinden çıkar' : 'Okuma listesine ekle',
       ),
     );
   }
