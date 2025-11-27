@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../providers/providers.dart';
 import '../../../providers/connectivity_provider.dart';
+import '../../../providers/article_filter_provider.dart';
 import '../../../../domain/entities/article.dart';
 import '../../../widgets/loading/shimmer_loading.dart';
 import '../../article_detail/article_detail_page.dart';
@@ -99,10 +100,45 @@ class NewsListState extends ConsumerState<NewsList>
     final connectivityState = ref.watch(connectivityProvider);
     final isConnected = connectivityState.isConnected;
     
+    // Filtre durumunu al
+    final filter = ref.watch(articleFilterProvider);
+    
     // Kategoriye göre makaleleri filtrele
-    final categoryArticles = newsState.articles
+    var categoryArticles = newsState.articles
         .where((article) => widget.category == 'genel' || article.category == widget.category)
         .toList();
+    
+    // Filtreleri uygula
+    if (filter.isActive) {
+      categoryArticles = categoryArticles.where((article) {
+        // Tarih filtresi
+        if (filter.startDate != null && article.publishedDate.isBefore(filter.startDate!)) {
+          return false;
+        }
+        if (filter.endDate != null && article.publishedDate.isAfter(filter.endDate!)) {
+          return false;
+        }
+        
+        // Kaynak filtresi
+        if (filter.selectedSources.isNotEmpty &&
+            !filter.selectedSources.contains(article.sourceName)) {
+          return false;
+        }
+        
+        // Kategori filtresi
+        if (filter.selectedCategories.isNotEmpty &&
+            !filter.selectedCategories.contains(article.category)) {
+          return false;
+        }
+        
+        // Okunmuş/okunmamış filtresi
+        if (filter.isRead != null && article.isRead != filter.isRead) {
+          return false;
+        }
+        
+        return true;
+      }).toList();
+    }
 
     return SmartRefresher(
       controller: _refreshController,

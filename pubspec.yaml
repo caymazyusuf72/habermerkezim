@@ -64,6 +64,9 @@ dependencies:
   # Local Notifications
   flutter_local_notifications: ^17.2.2
   timezone: ^0.9.4
+  
+  # Android Widget Support
+  home_widget: ^0.5.0
 
 dev_dependencies:
   flutter_test:

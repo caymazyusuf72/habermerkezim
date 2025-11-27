@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/article.dart';
 import '../../domain/repositories/news_repository.dart';
+import '../../core/services/widget_service.dart';
 import 'providers.dart';
 
 /// News State - haber listesinin durumunu tutar
@@ -69,6 +70,9 @@ class NewsNotifier extends StateNotifier<NewsState> {
         isLoading: false,
         errorMessage: null,
       );
+      
+      // Widget'ı güncelle
+      WidgetService.updateWidget(articles);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,

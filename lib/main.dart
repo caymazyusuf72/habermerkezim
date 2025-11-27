@@ -6,6 +6,7 @@ import 'core/services/hive_service.dart';
 import 'core/services/rss_sources_service.dart';
 import 'core/services/analytics_service.dart';
 import 'core/services/notification_service.dart';
+import 'core/services/widget_service.dart';
 import 'presentation/app.dart';
 
 /// Haber Merkezi uygulamasının giriş noktası
@@ -42,6 +43,11 @@ Future<void> main() async {
     print('🔄 Notification service initialize ediliyor...');
     await NotificationService().initialize();
     print('✅ Notification service başarıyla initialize edildi');
+    
+    // Widget servisini initialize et
+    print('🔄 Widget service initialize ediliyor...');
+    await WidgetService.initialize();
+    print('✅ Widget service başarıyla initialize edildi');
     
     // Uygulamayı başlat
     runApp(
