@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/article.dart';
 import '../../domain/repositories/news_repository.dart';
-import 'providers.dart' show newsRepositoryProvider;
+import 'providers.dart' show newsRepositoryProvider, newsProvider;
 
 /// Bildirim banner'ı için state
 class NotificationBannerState {
@@ -113,11 +113,50 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
   final Ref _ref;
 
   NotificationBannerNotifier(this._ref) : super(const NotificationBannerState()) {
+    // Verileri yükle - async olduğu için hemen başlat
     _initialize();
   }
 
   Future<void> _initialize() async {
+    // Önce news provider'dan zaten yüklenmiş haberleri kontrol et
+    try {
+      final newsState = _ref.read(newsProvider);
+      if (newsState.allArticles.isNotEmpty) {
+        // Zaten yüklenmiş haberler varsa onları kullan
+        _updateFromNewsState(newsState.allArticles);
+        return;
+      }
+    } catch (e) {
+      // News provider henüz hazır değilse, direkt yükle
+    }
+    
+    // News provider'dan haber yoksa, direkt repository'den yükle
     await loadLatestArticles();
+    _loadAppNotifications();
+  }
+
+  /// News provider'dan gelen haberleri kullan
+  void _updateFromNewsState(List<Article> articles) {
+    // En son 5-10 haberi al (resimli olanları tercih et)
+    final latest = articles
+        .where((article) => article.imageUrl != null && article.imageUrl!.isNotEmpty)
+        .take(10)
+        .toList();
+    
+    // Eğer resimli haber yoksa, resimsiz olanları da al
+    if (latest.isEmpty) {
+      final latestWithoutImage = articles.take(10).toList();
+      state = state.copyWith(
+        latestArticles: latestWithoutImage,
+        isLoading: false,
+      );
+    } else {
+      state = state.copyWith(
+        latestArticles: latest,
+        isLoading: false,
+      );
+    }
+    
     _loadAppNotifications();
   }
 
@@ -129,17 +168,27 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
       final repository = _ref.read(newsRepositoryProvider);
       final articles = await repository.getAllArticles();
 
-      // En son 5-10 haberi al
+      // En son 5-10 haberi al (resimli olanları tercih et)
       final latest = articles
           .where((article) => article.imageUrl != null && article.imageUrl!.isNotEmpty)
           .take(10)
           .toList();
 
-      state = state.copyWith(
-        latestArticles: latest,
-        isLoading: false,
-        error: null,
-      );
+      // Eğer resimli haber yoksa, resimsiz olanları da al
+      if (latest.isEmpty) {
+        final latestWithoutImage = articles.take(10).toList();
+        state = state.copyWith(
+          latestArticles: latestWithoutImage,
+          isLoading: false,
+          error: null,
+        );
+      } else {
+        state = state.copyWith(
+          latestArticles: latest,
+          isLoading: false,
+          error: null,
+        );
+      }
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -176,8 +225,26 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
 
   /// Bildirimleri yenile
   Future<void> refresh() async {
+    // Önce news provider'dan kontrol et
+    try {
+      final newsState = _ref.read(newsProvider);
+      if (newsState.allArticles.isNotEmpty) {
+        _updateFromNewsState(newsState.allArticles);
+        return;
+      }
+    } catch (e) {
+      // News provider hazır değilse devam et
+    }
+    
     await loadLatestArticles();
     _loadAppNotifications();
+  }
+  
+  /// News provider'dan haberler yüklendiğinde otomatik güncelle
+  void updateFromNewsProvider(List<Article> articles) {
+    if (articles.isNotEmpty && (state.latestArticles.isEmpty || state.isLoading)) {
+      _updateFromNewsState(articles);
+    }
   }
 }
 

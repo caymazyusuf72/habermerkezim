@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/notification_banner_provider.dart';
+import '../../../providers/news_provider.dart';
 import '../../../themes/app_theme.dart';
 import '../../article_detail/article_detail_page.dart';
 
@@ -31,6 +32,14 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
     
     // Otomatik kaydırma
     _scrollController.addListener(_autoScroll);
+    
+    // News provider'dan haberler yüklendiğinde banner'ı güncelle
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final newsState = ref.read(newsProvider);
+      if (newsState.allArticles.isNotEmpty) {
+        ref.read(notificationBannerProvider.notifier).updateFromNewsProvider(newsState.allArticles);
+      }
+    });
   }
 
   void _autoScroll() {
@@ -54,6 +63,61 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
   Widget build(BuildContext context) {
     final bannerState = ref.watch(notificationBannerProvider);
     final items = bannerState.allItems;
+    
+    // News provider'dan haberleri de dinle
+    final newsState = ref.watch(newsProvider);
+    
+    // News provider'dan haberler yüklendiyse, banner provider'ı güncelle
+    if (newsState.allArticles.isNotEmpty && bannerState.latestArticles.isEmpty && !bannerState.isLoading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(notificationBannerProvider.notifier).updateFromNewsProvider(newsState.allArticles);
+      });
+    }
+
+    // Loading durumunda veya boşsa banner'ı göster ama loading indicator ile
+    if (bannerState.isLoading && items.isEmpty) {
+      return Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark 
+              ? AppTheme.matBlackSurfaceVariant 
+              : AppTheme.sageGreen.withOpacity(0.1),
+          border: Border(
+            bottom: BorderSide(
+              color: AppTheme.sageGreen.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.sageGreen),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Text(
+                  'Haberler yükleniyor...',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppTheme.sageGreen.withOpacity(0.7),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     if (items.isEmpty) {
       return const SizedBox.shrink();
