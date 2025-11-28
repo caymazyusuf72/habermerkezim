@@ -10,6 +10,8 @@ class HiveService {
   static const String _settingsBoxName = 'settings';
   static const String _categoryOrderBoxName = 'category_order';
   static const String _readingListBoxName = 'reading_list';
+  static const String _notificationFrequencyBoxName = 'notification_frequency';
+  static const String _categoryNotificationsBoxName = 'category_notifications';
 
   static bool _initialized = false;
 

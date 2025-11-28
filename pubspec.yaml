@@ -66,7 +66,7 @@ dependencies:
   timezone: ^0.9.4
   
   # Android Widget Support
-  home_widget: ^0.5.0
+  home_widget: ^0.8.1
 
 dev_dependencies:
   flutter_test:

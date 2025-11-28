@@ -242,6 +242,31 @@ class AppDrawer extends ConsumerWidget {
     );
   }
 
+  /// Okuma listesi sayısı göstergesi
+  Widget _buildReadingListCount(WidgetRef ref) {
+    final readingListCount = ref.watch(readingListCountProvider);
+    
+    if (readingListCount == 0) {
+      return const SizedBox.shrink();
+    }
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryBlue,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        '$readingListCount',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
   /// Favori sayısı göstergesi
   Widget _buildFavoriteCount(WidgetRef ref) {
     final favoritesCount = ref.watch(favoritesCountProvider);

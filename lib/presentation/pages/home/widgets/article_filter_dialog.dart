@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../domain/entities/category.dart';
+import '../../../../domain/entities/article_filter.dart';
 import '../../../providers/article_filter_provider.dart';
+import '../../../providers/providers.dart';
 import '../../../themes/app_theme.dart';
 
 /// Haber filtreleme dialog'u
