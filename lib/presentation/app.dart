@@ -23,6 +23,7 @@ class HaberMerkeziApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Haber Merkezim',
       debugShowCheckedModeBanner: false,
+      showPerformanceOverlay: false, // Performans overlay'i (gerekirse true yapılabilir)
       
       // Tema ayarları - font scale ile birlikte
       theme: AppTheme.getLightTheme(fontScale),
