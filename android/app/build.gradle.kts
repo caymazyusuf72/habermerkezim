@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.example.untitled"
-    compileSdk = 34  // Android 14 - En son API'ler için
+    compileSdk = 36  // Android 15 - Paket uyumluluğu için gerekli
     ndkVersion = "27.0.12077973"
 
     compileOptions {
