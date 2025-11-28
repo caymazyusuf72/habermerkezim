@@ -47,73 +47,109 @@ public class NewsWidgetProvider extends AppWidgetProvider {
             String title3 = getWidgetData(context, "title3");
             String link3 = getWidgetData(context, "link3");
             
+            // Mevcut index'i al
+            String currentIndexStr = getWidgetData(context, "currentIndex");
+            int currentIndex = 0;
+            try {
+                currentIndex = Integer.parseInt(currentIndexStr != null ? currentIndexStr : "0");
+            } catch (NumberFormatException e) {
+                currentIndex = 0;
+            }
+            
+            // Tüm haberleri al
+            String articlesJson = getWidgetData(context, "articles");
+            String[] articles = articlesJson != null && !articlesJson.isEmpty() 
+                ? articlesJson.split("\\|\\|\\|") 
+                : new String[0];
+            
+            // Mevcut haberi göster
+            if (articles.length > 0 && currentIndex < articles.length) {
+                String[] articleData = articles[currentIndex].split("\\|");
+                if (articleData.length >= 3) {
+                    title = articleData[0];
+                    description = articleData.length > 1 ? articleData[1] : "";
+                    link = articleData.length > 2 ? articleData[2] : "";
+                }
+            }
+            
             // Ana haber başlığını ayarla
             if (title != null && !title.isEmpty()) {
                 views.setTextViewText(R.id.widget_title, title);
             } else {
-                views.setTextViewText(R.id.widget_title, "Son Haberler");
+                views.setTextViewText(R.id.widget_title, "Haber başlığı");
             }
             
             // Açıklama
             if (description != null && !description.isEmpty()) {
-                // Açıklamayı kısalt (max 100 karakter)
-                String shortDesc = description.length() > 100 
-                    ? description.substring(0, 100) + "..." 
+                // Açıklamayı kısalt (max 120 karakter)
+                String shortDesc = description.length() > 120 
+                    ? description.substring(0, 120) + "..." 
                     : description;
                 views.setTextViewText(R.id.widget_description, shortDesc);
             } else {
                 views.setTextViewText(R.id.widget_description, "Haberler yükleniyor...");
             }
             
-            // Haber sayısı
-            if (count != null && !count.isEmpty()) {
-                views.setTextViewText(R.id.widget_count, count + " haber");
-            }
-            
-            // İkinci haber
-            if (title2 != null && !title2.isEmpty()) {
-                String shortTitle2 = title2.length() > 50 ? title2.substring(0, 50) + "..." : title2;
-                views.setTextViewText(R.id.widget_title2, shortTitle2);
-                views.setViewVisibility(R.id.widget_title2, android.view.View.VISIBLE);
+            // İndikatör (1/3 gibi)
+            if (articles.length > 0) {
+                String indicator = (currentIndex + 1) + "/" + articles.length;
+                views.setTextViewText(R.id.widget_indicator, indicator);
             } else {
-                views.setViewVisibility(R.id.widget_title2, android.view.View.GONE);
-            }
-            
-            // Üçüncü haber
-            if (title3 != null && !title3.isEmpty()) {
-                String shortTitle3 = title3.length() > 50 ? title3.substring(0, 50) + "..." : title3;
-                views.setTextViewText(R.id.widget_title3, shortTitle3);
-                views.setViewVisibility(R.id.widget_title3, android.view.View.VISIBLE);
-            } else {
-                views.setViewVisibility(R.id.widget_title3, android.view.View.GONE);
+                views.setTextViewText(R.id.widget_indicator, "");
             }
             
             // Widget'a tıklandığında uygulamayı aç
             Intent intent = new Intent(context, MainActivity.class);
+            if (link != null && !link.isEmpty()) {
+                intent.setData(Uri.parse(link));
+            }
             PendingIntent pendingIntent = PendingIntent.getActivity(
                 context, 0, intent, 
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
             views.setOnClickPendingIntent(R.id.widget_container, pendingIntent);
             
-            // İkinci habere tıklandığında
-            if (link2 != null && !link2.isEmpty()) {
-                Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(link2));
-                PendingIntent pendingIntent2 = PendingIntent.getActivity(
-                    context, 1, intent2,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                );
-                views.setOnClickPendingIntent(R.id.widget_title2, pendingIntent2);
-            }
+            // Sonraki haber butonu
+            Intent nextIntent = new Intent(context, NewsWidgetProvider.class);
+            nextIntent.setAction("com.example.untitled.ACTION_NEXT");
+            nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            PendingIntent nextPendingIntent = PendingIntent.getBroadcast(
+                context, 3, nextIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+            views.setOnClickPendingIntent(R.id.widget_next_btn, nextPendingIntent);
             
-            // Üçüncü habere tıklandığında
-            if (link3 != null && !link3.isEmpty()) {
-                Intent intent3 = new Intent(Intent.ACTION_VIEW, Uri.parse(link3));
-                PendingIntent pendingIntent3 = PendingIntent.getActivity(
-                    context, 2, intent3,
+            // Beğen butonu
+            Intent favoriteIntent = new Intent(context, MainActivity.class);
+            favoriteIntent.setAction("com.example.untitled.ACTION_FAVORITE");
+            favoriteIntent.putExtra("link", link);
+            PendingIntent favoritePendingIntent = PendingIntent.getActivity(
+                context, 4, favoriteIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+            views.setOnClickPendingIntent(R.id.widget_favorite_btn, favoritePendingIntent);
+            
+            // Kaydet butonu
+            Intent bookmarkIntent = new Intent(context, MainActivity.class);
+            bookmarkIntent.setAction("com.example.untitled.ACTION_BOOKMARK");
+            bookmarkIntent.putExtra("link", link);
+            PendingIntent bookmarkPendingIntent = PendingIntent.getActivity(
+                context, 5, bookmarkIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+            views.setOnClickPendingIntent(R.id.widget_bookmark_btn, bookmarkPendingIntent);
+            
+            // Paylaş butonu
+            if (link != null && !link.isEmpty()) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, title != null ? title : "Haber");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, link);
+                PendingIntent sharePendingIntent = PendingIntent.getActivity(
+                    context, 6, Intent.createChooser(shareIntent, "Paylaş"),
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
                 );
-                views.setOnClickPendingIntent(R.id.widget_title3, pendingIntent3);
+                views.setOnClickPendingIntent(R.id.widget_share_btn, sharePendingIntent);
             }
             
         } catch (Exception e) {
@@ -144,8 +180,44 @@ public class NewsWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         
+        if (intent.getAction() == null) return;
+        
+        // Sonraki haber butonuna tıklandığında
+        if (intent.getAction().equals("com.example.untitled.ACTION_NEXT")) {
+            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+            
+            // Mevcut index'i al
+            android.content.SharedPreferences prefs = context.getSharedPreferences(
+                "flutter.home_widget", 
+                Context.MODE_PRIVATE
+            );
+            String currentIndexStr = prefs.getString("currentIndex", "0");
+            int currentIndex = 0;
+            try {
+                currentIndex = Integer.parseInt(currentIndexStr);
+            } catch (NumberFormatException e) {
+                currentIndex = 0;
+            }
+            
+            // Toplam haber sayısını al
+            String articlesJson = prefs.getString("articles", "");
+            int totalArticles = articlesJson != null && !articlesJson.isEmpty() 
+                ? articlesJson.split("\\|\\|\\|").length 
+                : 0;
+            
+            // Sonraki habere geç (döngüsel)
+            currentIndex = (currentIndex + 1) % totalArticles;
+            if (totalArticles == 0) currentIndex = 0;
+            
+            // Yeni index'i kaydet
+            prefs.edit().putString("currentIndex", String.valueOf(currentIndex)).apply();
+            
+            // Widget'ı güncelle
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            updateAppWidget(context, appWidgetManager, appWidgetId);
+        }
         // Widget güncelleme isteği geldiğinde
-        if (intent.getAction() != null && intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+        else if (intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             ComponentName thisWidget = new ComponentName(context, NewsWidgetProvider.class);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);

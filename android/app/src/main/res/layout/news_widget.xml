@@ -14,25 +14,26 @@
         android:id="@+id/widget_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Son Haberler"
-        android:textSize="16sp"
+        android:text="Son Haber"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="#87A96B"
         android:paddingBottom="8dp" />
     
-    <!-- Ana Haber -->
+    <!-- Ana Haber Başlığı -->
     <TextView
         android:id="@+id/widget_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Haber başlığı"
-        android:textSize="14sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         android:textColor="#000000"
-        android:maxLines="2"
+        android:maxLines="3"
         android:ellipsize="end"
-        android:paddingBottom="4dp" />
+        android:paddingBottom="6dp" />
     
+    <!-- Haber Açıklaması -->
     <TextView
         android:id="@+id/widget_description"
         android:layout_width="match_parent"
@@ -40,54 +41,70 @@
         android:text="Haber açıklaması"
         android:textSize="12sp"
         android:textColor="#666666"
-        android:maxLines="2"
+        android:maxLines="3"
         android:ellipsize="end"
-        android:paddingBottom="8dp" />
+        android:paddingBottom="12dp" />
     
-    <!-- İkinci Haber -->
-    <TextView
-        android:id="@+id/widget_title2"
+    <!-- Butonlar -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="12sp"
-        android:textColor="#333333"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:drawableStart="@android:drawable/ic_menu_recent_history"
-        android:drawablePadding="8dp"
-        android:gravity="center_vertical"
-        android:visibility="gone" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingTop="4dp">
+        
+        <!-- Beğen Butonu -->
+        <ImageButton
+            android:id="@+id/widget_favorite_btn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@android:drawable/btn_star_big_off"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Beğen"
+            android:padding="6dp" />
+        
+        <!-- Kaydet Butonu -->
+        <ImageButton
+            android:id="@+id/widget_bookmark_btn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@android:drawable/ic_menu_save"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Kaydet"
+            android:padding="6dp" />
+        
+        <!-- Paylaş Butonu -->
+        <ImageButton
+            android:id="@+id/widget_share_btn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@android:drawable/ic_menu_share"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Paylaş"
+            android:padding="6dp" />
+        
+        <!-- Sağa Kaydır Butonu -->
+        <ImageButton
+            android:id="@+id/widget_next_btn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@android:drawable/ic_media_next"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Sonraki"
+            android:padding="6dp"
+            android:layout_marginStart="auto" />
+    </LinearLayout>
     
-    <!-- Üçüncü Haber -->
+    <!-- Haber İndikatörü (1/3 gibi) -->
     <TextView
-        android:id="@+id/widget_title3"
+        android:id="@+id/widget_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="12sp"
-        android:textColor="#333333"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:drawableStart="@android:drawable/ic_menu_recent_history"
-        android:drawablePadding="8dp"
-        android:gravity="center_vertical"
-        android:visibility="gone" />
-    
-    <!-- Haber Sayısı -->
-    <TextView
-        android:id="@+id/widget_count"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
+        android:text="1/3"
         android:textSize="10sp"
         android:textColor="#999999"
         android:paddingTop="8dp"
-        android:gravity="end" />
+        android:gravity="center" />
     
 </LinearLayout>
 

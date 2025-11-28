@@ -9,14 +9,10 @@ class WidgetService {
   static const String _linkKey = 'link';
   static const String _imageUrlKey = 'imageUrl';
   static const String _countKey = 'count';
+  static const String _currentIndexKey = 'currentIndex'; // Hangi haber gösteriliyor (0, 1, 2...)
   
-  // Birden fazla haber için key'ler (son 3 haber)
-  static const String _title2Key = 'title2';
-  static const String _title3Key = 'title3';
-  static const String _link2Key = 'link2';
-  static const String _link3Key = 'link3';
-  static const String _imageUrl2Key = 'imageUrl2';
-  static const String _imageUrl3Key = 'imageUrl3';
+  // Birden fazla haber için key'ler (kaydırma için son 10 haber)
+  static const String _articlesKey = 'articles'; // JSON array olarak tüm haberler
 
   /// Widget'ı initialize et
   static Future<void> initialize() async {
@@ -35,69 +31,40 @@ class WidgetService {
         return;
       }
 
-      // Son 3 haberi al
-      final topArticles = articles.take(3).toList();
+      // Son 10 haberi al (kaydırma için)
+      final topArticles = articles.take(10).toList();
 
-      // Widget verilerini hazırla
-      final widgetData = <String, String>{};
-      
-      // İlk haber (ana haber)
+      // İlk haber (varsayılan gösterilecek)
       if (topArticles.isNotEmpty) {
         final firstArticle = topArticles[0];
-        widgetData[_titleKey] = firstArticle.title;
-        widgetData[_descriptionKey] = firstArticle.description;
-        widgetData[_linkKey] = firstArticle.link;
+        await HomeWidget.saveWidgetData<String>(_titleKey, firstArticle.title);
+        await HomeWidget.saveWidgetData<String>(_descriptionKey, firstArticle.description);
+        await HomeWidget.saveWidgetData<String>(_linkKey, firstArticle.link);
         if (firstArticle.imageUrl != null) {
-          widgetData[_imageUrlKey] = firstArticle.imageUrl!;
-        }
-      }
-      
-      // İkinci haber
-      if (topArticles.length > 1) {
-        final secondArticle = topArticles[1];
-        widgetData[_title2Key] = secondArticle.title;
-        widgetData[_link2Key] = secondArticle.link;
-        if (secondArticle.imageUrl != null) {
-          widgetData[_imageUrl2Key] = secondArticle.imageUrl!;
-        }
-      }
-      
-      // Üçüncü haber
-      if (topArticles.length > 2) {
-        final thirdArticle = topArticles[2];
-        widgetData[_title3Key] = thirdArticle.title;
-        widgetData[_link3Key] = thirdArticle.link;
-        if (thirdArticle.imageUrl != null) {
-          widgetData[_imageUrl3Key] = thirdArticle.imageUrl!;
+          await HomeWidget.saveWidgetData<String>(_imageUrlKey, firstArticle.imageUrl!);
         }
       }
 
-      // Toplam haber sayısı
-      widgetData[_countKey] = articles.length.toString();
-
-      // Widget'ı güncelle - Tüm verileri kaydet
-      await HomeWidget.saveWidgetData<String>(_titleKey, widgetData[_titleKey] ?? '');
-      await HomeWidget.saveWidgetData<String>(_descriptionKey, widgetData[_descriptionKey] ?? '');
-      await HomeWidget.saveWidgetData<String>(_linkKey, widgetData[_linkKey] ?? '');
-      if (widgetData.containsKey(_imageUrlKey)) {
-        await HomeWidget.saveWidgetData<String>(_imageUrlKey, widgetData[_imageUrlKey]!);
-      }
+      // Toplam haber sayısı ve mevcut index
+      await HomeWidget.saveWidgetData<String>(_countKey, topArticles.length.toString());
+      await HomeWidget.saveWidgetData<String>(_currentIndexKey, '0'); // İlk haber gösteriliyor
       
-      // İkinci haber
-      await HomeWidget.saveWidgetData<String>(_title2Key, widgetData[_title2Key] ?? '');
-      await HomeWidget.saveWidgetData<String>(_link2Key, widgetData[_link2Key] ?? '');
-      if (widgetData.containsKey(_imageUrl2Key)) {
-        await HomeWidget.saveWidgetData<String>(_imageUrl2Key, widgetData[_imageUrl2Key]!);
-      }
+      // Tüm haberleri JSON olarak kaydet (kaydırma için)
+      final articlesJson = topArticles.map((article) => {
+        return {
+          'title': article.title,
+          'description': article.description,
+          'link': article.link,
+          'imageUrl': article.imageUrl ?? '',
+        };
+      }).toList();
       
-      // Üçüncü haber
-      await HomeWidget.saveWidgetData<String>(_title3Key, widgetData[_title3Key] ?? '');
-      await HomeWidget.saveWidgetData<String>(_link3Key, widgetData[_link3Key] ?? '');
-      if (widgetData.containsKey(_imageUrl3Key)) {
-        await HomeWidget.saveWidgetData<String>(_imageUrl3Key, widgetData[_imageUrl3Key]!);
-      }
+      // JSON'u string olarak kaydet
+      final articlesJsonString = articlesJson.map((a) => 
+        '${a['title']}|${a['description']}|${a['link']}|${a['imageUrl']}'
+      ).join('|||');
       
-      await HomeWidget.saveWidgetData<String>(_countKey, widgetData[_countKey] ?? '0');
+      await HomeWidget.saveWidgetData<String>(_articlesKey, articlesJsonString);
 
       // Widget'ı yeniden yükle
       await HomeWidget.updateWidget(
@@ -118,13 +85,9 @@ class WidgetService {
       await HomeWidget.saveWidgetData<String>(_descriptionKey, '');
       await HomeWidget.saveWidgetData<String>(_linkKey, '');
       await HomeWidget.saveWidgetData<String>(_imageUrlKey, '');
-      await HomeWidget.saveWidgetData<String>(_title2Key, '');
-      await HomeWidget.saveWidgetData<String>(_link2Key, '');
-      await HomeWidget.saveWidgetData<String>(_imageUrl2Key, '');
-      await HomeWidget.saveWidgetData<String>(_title3Key, '');
-      await HomeWidget.saveWidgetData<String>(_link3Key, '');
-      await HomeWidget.saveWidgetData<String>(_imageUrl3Key, '');
       await HomeWidget.saveWidgetData<String>(_countKey, '0');
+      await HomeWidget.saveWidgetData<String>(_currentIndexKey, '0');
+      await HomeWidget.saveWidgetData<String>(_articlesKey, '');
       
       await HomeWidget.updateWidget(
         name: _widgetName,
