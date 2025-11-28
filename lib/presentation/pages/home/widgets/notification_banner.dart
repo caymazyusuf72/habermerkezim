@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/notification_banner_provider.dart';
-import '../../../providers/news_provider.dart';
+import '../../../providers/news_provider.dart' show newsProvider, NewsState;
 import '../../../themes/app_theme.dart';
 import '../../article_detail/article_detail_page.dart';
 
@@ -32,6 +32,11 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
     
     // Otomatik kaydırma
     _scrollController.addListener(_autoScroll);
+  }
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     
     // News provider'dan haberler yüklendiğinde banner'ı güncelle
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -67,12 +72,16 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
     // News provider'dan haberleri de dinle
     final newsState = ref.watch(newsProvider);
     
-    // News provider'dan haberler yüklendiyse, banner provider'ı güncelle
-    if (newsState.allArticles.isNotEmpty && bannerState.latestArticles.isEmpty && !bannerState.isLoading) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(notificationBannerProvider.notifier).updateFromNewsProvider(newsState.allArticles);
-      });
-    }
+    // News provider'dan haberler yüklendiğinde banner'ı otomatik güncelle
+    // ref.listen ile değişiklikleri yakala
+    ref.listen<NewsState>(newsProvider, (previous, next) {
+      // Haberler yüklendiğinde veya güncellendiğinde banner'ı güncelle
+      if (next.allArticles.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(notificationBannerProvider.notifier).updateFromNewsProvider(next.allArticles);
+        });
+      }
+    });
 
     // Loading durumunda veya boşsa banner'ı göster ama loading indicator ile
     if (bannerState.isLoading && items.isEmpty) {

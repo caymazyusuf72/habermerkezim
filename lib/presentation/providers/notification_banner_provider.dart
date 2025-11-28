@@ -242,7 +242,8 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
   
   /// News provider'dan haberler yüklendiğinde otomatik güncelle
   void updateFromNewsProvider(List<Article> articles) {
-    if (articles.isNotEmpty && (state.latestArticles.isEmpty || state.isLoading)) {
+    if (articles.isNotEmpty) {
+      // Her zaman güncelle, çünkü haberler değişmiş olabilir
       _updateFromNewsState(articles);
     }
   }
