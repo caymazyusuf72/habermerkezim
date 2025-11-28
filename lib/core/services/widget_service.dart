@@ -63,12 +63,33 @@ class WidgetService {
       
       await HomeWidget.saveWidgetData<String>(_articlesKey, articlesJsonString);
       print('✅ Widget: Tüm haberler kaydedildi (${articlesJsonString.length} karakter)');
+      
+      // Debug: Kaydedilen verileri kontrol et
+      final savedTitle = await HomeWidget.getWidgetData<String>(_titleKey, defaultValue: '');
+      final savedArticles = await HomeWidget.getWidgetData<String>(_articlesKey, defaultValue: '');
+      print('🔍 Debug - Kaydedilen title: ${savedTitle?.substring(0, savedTitle.length > 30 ? 30 : savedTitle.length)}');
+      print('🔍 Debug - Kaydedilen articles length: ${savedArticles?.length ?? 0}');
 
-      // Widget'ı yeniden yükle
-      await HomeWidget.updateWidget(
-        name: _widgetName,
-        androidName: 'NewsWidgetProvider',
-      );
+      // Widget'ı yeniden yükle - hem updateWidget hem de registerCallback kullan
+      try {
+        await HomeWidget.updateWidget(
+          name: _widgetName,
+          androidName: 'NewsWidgetProvider',
+        );
+        
+        // Ek olarak, widget'ı manuel olarak güncellemek için callback kullan
+        await HomeWidget.registerCallback((callbackName, callbackData) async {
+          print('📱 Widget callback: $callbackName');
+          if (callbackName == 'updateWidget') {
+            await HomeWidget.updateWidget(
+              name: _widgetName,
+              androidName: 'NewsWidgetProvider',
+            );
+          }
+        });
+      } catch (e) {
+        print('⚠️ Widget updateWidget hatası: $e');
+      }
 
       print('✅ Widget güncellendi: ${topArticles.length} haber');
     } catch (e, stackTrace) {

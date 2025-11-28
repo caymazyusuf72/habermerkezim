@@ -73,6 +73,17 @@ public class NewsWidgetProvider extends AppWidgetProvider {
             }
             
             // Ana haber başlığını ayarla (marquee efekti için)
+            // Eğer title boşsa, articles'tan al
+            if ((title == null || title.isEmpty() || title.equals("Haber başlığı")) && articles.length > 0 && currentIndex < articles.length) {
+                String[] articleData = articles[currentIndex].split("\\|");
+                if (articleData.length >= 3) {
+                    title = articleData[0];
+                    description = articleData.length > 1 ? articleData[1] : "";
+                    link = articleData.length > 2 ? articleData[2] : "";
+                    android.util.Log.d("NewsWidget", "Using data from articles array, index: " + currentIndex);
+                }
+            }
+            
             if (title != null && !title.isEmpty() && !title.equals("Haber başlığı")) {
                 views.setTextViewText(R.id.widget_title, title);
                 // Marquee efekti için focusable yap
