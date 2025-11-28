@@ -219,7 +219,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                 Icon(
                   Icons.article_rounded,
                   size: 22,
-                  color: AppTheme.sageGreen,
+                  color: primaryColor,
                 ),
               ],
             ),
