@@ -328,15 +328,6 @@ class AppDrawer extends ConsumerWidget {
               
               const SizedBox(width: 8),
               
-              // System Mode
-              _buildThemeOption(
-                context,
-                ref,
-                icon: Icons.brightness_auto_rounded,
-                label: 'Sistem',
-                isSelected: ref.watch(currentThemeModeProvider) == ThemeMode.system,
-                onTap: () => ref.read(themeProvider.notifier).setSystemMode(),
-              ),
             ],
           ),
         ),

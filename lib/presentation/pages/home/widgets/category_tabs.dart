@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../domain/entities/category.dart';
 import '../../../themes/app_theme.dart';
 import '../../../providers/category_order_provider.dart';
+import '../../../providers/theme_provider.dart';
 
 /// Kategori sekmelerini gösteren widget
 /// Ana sayfada AppBar'ın altında yer alır

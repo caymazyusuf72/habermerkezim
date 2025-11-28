@@ -119,20 +119,61 @@ class SettingsPage extends ConsumerWidget {
             },
           ),
           const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.auto_awesome),
-            title: const Text('Sistem Teması'),
-            subtitle: const Text('Cihaz ayarlarını takip et'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () {
-              ref.read(themeProvider.notifier).setSystemMode();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Sistem teması ayarlandı'),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            },
+          // Uygulama Renk Temaları
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Text(
+              'Uygulama Temaları',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
+          ),
+          _buildColorThemeOption(
+            context,
+            ref,
+            AppTheme.ColorTheme.defaultTheme,
+            'Adaçayı Yeşili',
+            'Doğal adaçayı yeşili',
+            Icons.eco_rounded,
+            AppTheme.sageGreen,
+          ),
+          _buildColorThemeOption(
+            context,
+            ref,
+            AppTheme.ColorTheme.oceanBlue,
+            'Okyanus Mavisi',
+            'Sakin ve profesyonel mavi tonlar',
+            Icons.water_drop_rounded,
+            AppTheme.oceanBlue,
+          ),
+          _buildColorThemeOption(
+            context,
+            ref,
+            AppTheme.ColorTheme.springRed,
+            'Bahar Kırmızısı',
+            'Sıcak bahar yaprağı kırmızısı',
+            Icons.local_florist_rounded,
+            AppTheme.springRed,
+          ),
+          _buildColorThemeOption(
+            context,
+            ref,
+            AppTheme.ColorTheme.purple,
+            'Mor',
+            'Zarif ve modern mor tonlar',
+            Icons.colorize_rounded,
+            AppTheme.purple,
+          ),
+          _buildColorThemeOption(
+            context,
+            ref,
+            AppTheme.ColorTheme.amber,
+            'Turuncu',
+            'Enerjik turuncu tonlar',
+            Icons.wb_sunny_rounded,
+            AppTheme.amber,
           ),
           const Divider(height: 1),
           // Font boyutu ayarları
@@ -950,6 +991,59 @@ class SettingsPage extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// Renk teması seçeneği widget'ı
+  static Widget _buildColorThemeOption(
+    BuildContext context,
+    WidgetRef ref,
+    AppTheme.ColorTheme theme,
+    String title,
+    String subtitle,
+    IconData icon,
+    Color themeColor,
+  ) {
+    final currentTheme = ref.watch(themeProvider).colorTheme;
+    final isSelected = currentTheme == theme;
+    
+    return ListTile(
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: themeColor.withOpacity(0.2),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isSelected ? themeColor : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: Icon(
+          icon,
+          color: themeColor,
+          size: 20,
+        ),
+      ),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: isSelected
+          ? Icon(
+              Icons.check_circle,
+              color: themeColor,
+              size: 24,
+            )
+          : const Icon(Icons.circle_outlined, size: 24),
+      onTap: () {
+        ref.read(themeProvider.notifier).setColorTheme(theme);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$title teması seçildi'),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      },
     );
   }
 

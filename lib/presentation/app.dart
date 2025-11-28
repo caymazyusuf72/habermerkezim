@@ -14,8 +14,10 @@ class HaberMerkeziApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Theme durumunu izle
-    final themeMode = ref.watch(currentThemeModeProvider);
-    final fontScale = ref.watch(fontScaleProvider);
+    final themeState = ref.watch(themeProvider);
+    final themeMode = themeState.themeMode;
+    final fontScale = themeState.fontScale;
+    final colorTheme = themeState.colorTheme;
     
     // App initialization durumunu izle
     final appInitialization = ref.watch(appInitializationProvider);
@@ -25,9 +27,9 @@ class HaberMerkeziApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       showPerformanceOverlay: false, // Performans overlay'i (gerekirse true yapılabilir)
       
-      // Tema ayarları - font scale ile birlikte
-      theme: AppTheme.getLightTheme(fontScale),
-      darkTheme: AppTheme.getDarkTheme(fontScale),
+      // Tema ayarları - font scale ve color theme ile birlikte
+      theme: AppTheme.getLightTheme(fontScale, colorTheme),
+      darkTheme: AppTheme.getDarkTheme(fontScale, colorTheme),
       themeMode: themeMode,
       
       // Localization ayarları

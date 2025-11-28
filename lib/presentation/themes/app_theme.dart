@@ -44,19 +44,53 @@ class AppTheme {
   static const Color errorRed = Color(0xFFD32F2F);
   static const Color warningOrange = Color(0xFFFF9800);
   static const Color successGreen = Color(0xFF4CAF50);
+  
+  // Renk Temaları
+  // Tema 1: Mavi (Ocean Blue)
+  static const Color oceanBlue = Color(0xFF2196F3);
+  static const Color oceanBlueLight = Color(0xFF64B5F6);
+  static const Color oceanBlueDark = Color(0xFF1976D2);
+  static const Color oceanBlueAccent = Color(0xFF42A5F5);
+  
+  // Tema 2: Kırmızımsı Bahar (Spring Red/Maple)
+  static const Color springRed = Color(0xFFC85A5A); // Kırmızımsı yaprak rengi
+  static const Color springRedLight = Color(0xFFE88A8A);
+  static const Color springRedDark = Color(0xFFA04545);
+  static const Color springRedAccent = Color(0xFFD67A7A);
+  
+  // Tema 3: Mor (Purple)
+  static const Color purple = Color(0xFF9C27B0);
+  static const Color purpleLight = Color(0xFFBA68C8);
+  static const Color purpleDark = Color(0xFF7B1FA2);
+  static const Color purpleAccent = Color(0xFFAB47BC);
+  
+  // Tema 4: Turuncu (Amber/Orange)
+  static const Color amber = Color(0xFFFF9800);
+  static const Color amberLight = Color(0xFFFFB74D);
+  static const Color amberDark = Color(0xFFF57C00);
+  static const Color amberAccent = Color(0xFFFFA726);
+  
+  // Varsayılan tema (Adaçayı yeşili)
+  static const Color defaultPrimary = sageGreen;
+  static const Color defaultPrimaryLight = sageGreenLight;
+  static const Color defaultPrimaryDark = sageGreenDark;
+  static const Color defaultPrimaryAccent = sageGreenAccent;
 
   /// Light Theme - Açık tema
   static ThemeData get lightTheme => getLightTheme();
   
   /// Light Theme with font scale - Açık tema font ölçeği ile
-  static ThemeData getLightTheme([double fontScale = 1.0]) {
+  static ThemeData getLightTheme([double fontScale = 1.0, ColorTheme colorTheme = ColorTheme.defaultTheme]) {
+    final primaryColor = getPrimaryColor(colorTheme);
+    final primaryLight = getPrimaryLightColor(colorTheme);
+    
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: sageGreen,
+      seedColor: primaryColor,
       brightness: Brightness.light,
       surface: lightSurface,
       error: errorRed,
-      primary: sageGreen,
-      secondary: sageGreenLight,
+      primary: primaryColor,
+      secondary: primaryLight,
     );
 
     return ThemeData(
@@ -88,11 +122,11 @@ class AppTheme {
         color: colorScheme.surface,
       ),
 
-      // Bottom Navigation Bar Theme - Adaçayı yeşili
+      // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
         backgroundColor: colorScheme.surface,
-        selectedItemColor: sageGreen,
+        selectedItemColor: primaryColor,
         unselectedItemColor: colorScheme.onSurface.withOpacity(0.6),
         selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
         unselectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
@@ -165,14 +199,17 @@ class AppTheme {
   static ThemeData get darkTheme => getDarkTheme();
   
   /// Dark Theme with font scale - Karanlık tema font ölçeği ile
-  static ThemeData getDarkTheme([double fontScale = 1.0]) {
+  static ThemeData getDarkTheme([double fontScale = 1.0, ColorTheme colorTheme = ColorTheme.defaultTheme]) {
+    final primaryColor = getPrimaryColor(colorTheme);
+    final primaryLight = getPrimaryLightColor(colorTheme);
+    
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: sageGreen,
+      seedColor: primaryColor,
       brightness: Brightness.dark,
       surface: matBlackSurface,
       error: errorRed,
-      primary: sageGreen,
-      secondary: sageGreenLight,
+      primary: primaryColor,
+      secondary: primaryLight,
     );
 
     return ThemeData(
@@ -204,11 +241,11 @@ class AppTheme {
         color: matBlackSurfaceVariant,
       ),
 
-      // Bottom Navigation Bar Theme - Adaçayı yeşili, mat siyah arka plan
+      // Bottom Navigation Bar Theme - Mat siyah arka plan
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
         backgroundColor: matBlackSurface,
-        selectedItemColor: sageGreen,
+        selectedItemColor: primaryColor,
         unselectedItemColor: Colors.white.withOpacity(0.6),
         selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
         unselectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
@@ -379,6 +416,122 @@ class AppTheme {
     'sports': Color(0xFFFF9800),
     'culture': Color(0xFF795548),
   };
+
+  /// Renk temaları enum
+  enum ColorTheme {
+    defaultTheme, // Adaçayı yeşili
+    oceanBlue,    // Mavi
+    springRed,    // Kırmızımsı bahar
+    purple,       // Mor
+    amber,        // Turuncu
+  }
+  
+  /// Seçili temaya göre primary color'ı döndürür
+  static Color getPrimaryColor(ColorTheme theme) {
+    switch (theme) {
+      case ColorTheme.oceanBlue:
+        return oceanBlue;
+      case ColorTheme.springRed:
+        return springRed;
+      case ColorTheme.purple:
+        return purple;
+      case ColorTheme.amber:
+        return amber;
+      case ColorTheme.defaultTheme:
+      default:
+        return defaultPrimary;
+    }
+  }
+  
+  /// Seçili temaya göre light variant'ı döndürür
+  static Color getPrimaryLightColor(ColorTheme theme) {
+    switch (theme) {
+      case ColorTheme.oceanBlue:
+        return oceanBlueLight;
+      case ColorTheme.springRed:
+        return springRedLight;
+      case ColorTheme.purple:
+        return purpleLight;
+      case ColorTheme.amber:
+        return amberLight;
+      case ColorTheme.defaultTheme:
+      default:
+        return defaultPrimaryLight;
+    }
+  }
+  
+  /// Seçili temaya göre dark variant'ı döndürür
+  static Color getPrimaryDarkColor(ColorTheme theme) {
+    switch (theme) {
+      case ColorTheme.oceanBlue:
+        return oceanBlueDark;
+      case ColorTheme.springRed:
+        return springRedDark;
+      case ColorTheme.purple:
+        return purpleDark;
+      case ColorTheme.amber:
+        return amberDark;
+      case ColorTheme.defaultTheme:
+      default:
+        return defaultPrimaryDark;
+    }
+  }
+  
+  /// Seçili temaya göre accent color'ı döndürür
+  static Color getAccentColor(ColorTheme theme) {
+    switch (theme) {
+      case ColorTheme.oceanBlue:
+        return oceanBlueAccent;
+      case ColorTheme.springRed:
+        return springRedAccent;
+      case ColorTheme.purple:
+        return purpleAccent;
+      case ColorTheme.amber:
+        return amberAccent;
+      case ColorTheme.defaultTheme:
+      default:
+        return defaultPrimaryAccent;
+    }
+  }
+  
+  /// Tema adını döndürür
+  static String getThemeName(ColorTheme theme) {
+    switch (theme) {
+      case ColorTheme.oceanBlue:
+        return 'Okyanus Mavisi';
+      case ColorTheme.springRed:
+        return 'Bahar Kırmızısı';
+      case ColorTheme.purple:
+        return 'Mor';
+      case ColorTheme.amber:
+        return 'Turuncu';
+      case ColorTheme.defaultTheme:
+      default:
+        return 'Adaçayı Yeşili';
+    }
+  }
+  
+  /// Tema açıklamasını döndürür
+  static String getThemeDescription(ColorTheme theme) {
+    switch (theme) {
+      case ColorTheme.oceanBlue:
+        return 'Sakin ve profesyonel mavi tonlar';
+      case ColorTheme.springRed:
+        return 'Sıcak bahar yaprağı kırmızısı';
+      case ColorTheme.purple:
+        return 'Zarif ve modern mor tonlar';
+      case ColorTheme.amber:
+        return 'Enerjik turuncu tonlar';
+      case ColorTheme.defaultTheme:
+      default:
+        return 'Doğal adaçayı yeşili';
+    }
+  }
+  
+  /// Tema rengini döndürür (görsel gösterim için)
+  static Color getThemeColor(ColorTheme theme) {
+    return getPrimaryColor(theme);
+  }
 
   /// Get category color
   static Color getCategoryColor(String category) {

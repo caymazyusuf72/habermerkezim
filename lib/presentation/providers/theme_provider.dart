@@ -2,34 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/hive_service.dart';
+import '../themes/app_theme.dart';
 
-/// Theme state - dark/light mode ve font scale durumunu yönetir
+/// Theme state - dark/light mode, color theme ve font scale durumunu yönetir
 class ThemeState {
   final ThemeMode themeMode;
   final bool isDarkMode;
   final double fontScale;
+  final AppTheme.ColorTheme colorTheme;
   
   const ThemeState({
-    this.themeMode = ThemeMode.system,
+    this.themeMode = ThemeMode.light,
     this.isDarkMode = false,
     this.fontScale = 1.0,
+    this.colorTheme = AppTheme.ColorTheme.defaultTheme,
   });
 
   ThemeState copyWith({
     ThemeMode? themeMode,
     bool? isDarkMode,
     double? fontScale,
+    AppTheme.ColorTheme? colorTheme,
   }) {
     return ThemeState(
       themeMode: themeMode ?? this.themeMode,
       isDarkMode: isDarkMode ?? this.isDarkMode,
       fontScale: fontScale ?? this.fontScale,
+      colorTheme: colorTheme ?? this.colorTheme,
     );
   }
 
   @override
   String toString() {
-    return 'ThemeState{themeMode: $themeMode, isDarkMode: $isDarkMode, fontScale: $fontScale}';
+    return 'ThemeState{themeMode: $themeMode, isDarkMode: $isDarkMode, fontScale: $fontScale, colorTheme: $colorTheme}';
   }
 }
 
@@ -37,6 +42,7 @@ class ThemeState {
 class ThemeNotifier extends StateNotifier<ThemeState> {
   static const String _themeKey = 'theme_mode';
   static const String _fontScaleKey = 'font_scale';
+  static const String _colorThemeKey = 'color_theme';
   
   ThemeNotifier() : super(const ThemeState()) {
     _loadThemeFromStorage();
@@ -45,9 +51,12 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
   /// Local storage'dan tema ayarını yükler
   Future<void> _loadThemeFromStorage() async {
     try {
-      final savedTheme = HiveService.settingsBox.get(_themeKey, defaultValue: 'system') as String;
+      final savedTheme = HiveService.settingsBox.get(_themeKey, defaultValue: 'light') as String;
       final savedFontScale = HiveService.settingsBox.get(_fontScaleKey, defaultValue: 1.0) as double;
+      final savedColorTheme = HiveService.settingsBox.get(_colorThemeKey, defaultValue: 'default') as String;
+      
       final themeMode = _stringToThemeMode(savedTheme);
+      final colorTheme = _stringToColorTheme(savedColorTheme);
       
       // System mode için sistem temasını kontrol et
       bool isDarkMode = false;
@@ -61,9 +70,10 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
         themeMode: themeMode,
         isDarkMode: isDarkMode,
         fontScale: savedFontScale,
+        colorTheme: colorTheme,
       );
     } catch (e) {
-      // Storage error durumunda system default kullan
+      // Storage error durumunda default kullan
       print('Theme yükleme hatası: $e');
     }
   }
@@ -87,11 +97,48 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     await _updateTheme(ThemeMode.dark, true);
   }
 
-  /// System mode'a geçer (telefon ayarlarını takip eder)
-  Future<void> setSystemMode() async {
-    final systemBrightness = _getSystemBrightness();
-    final isDarkMode = systemBrightness == Brightness.dark;
-    await _updateTheme(ThemeMode.system, isDarkMode);
+  /// Renk temasını ayarlar
+  Future<void> setColorTheme(AppTheme.ColorTheme colorTheme) async {
+    state = state.copyWith(colorTheme: colorTheme);
+    
+    try {
+      await HiveService.settingsBox.put(_colorThemeKey, _colorThemeToString(colorTheme));
+    } catch (e) {
+      print('Color theme kaydetme hatası: $e');
+    }
+  }
+  
+  /// ColorTheme'u string'e çevirir
+  String _colorThemeToString(AppTheme.ColorTheme colorTheme) {
+    switch (colorTheme) {
+      case AppTheme.ColorTheme.defaultTheme:
+        return 'default';
+      case AppTheme.ColorTheme.oceanBlue:
+        return 'oceanBlue';
+      case AppTheme.ColorTheme.springRed:
+        return 'springRed';
+      case AppTheme.ColorTheme.purple:
+        return 'purple';
+      case AppTheme.ColorTheme.amber:
+        return 'amber';
+    }
+  }
+  
+  /// String'i ColorTheme'a çevirir
+  AppTheme.ColorTheme _stringToColorTheme(String themeString) {
+    switch (themeString) {
+      case 'oceanBlue':
+        return AppTheme.ColorTheme.oceanBlue;
+      case 'springRed':
+        return AppTheme.ColorTheme.springRed;
+      case 'purple':
+        return AppTheme.ColorTheme.purple;
+      case 'amber':
+        return AppTheme.ColorTheme.amber;
+      case 'default':
+      default:
+        return AppTheme.ColorTheme.defaultTheme;
+    }
   }
 
   /// Theme'i toggle eder (light <-> dark)
@@ -176,7 +223,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
       case 'system':
         return ThemeMode.system;
       default:
-        return ThemeMode.system;
+        return ThemeMode.light; // Default light mode
     }
   }
 }
@@ -213,4 +260,10 @@ final isDarkModeProvider = Provider<bool>((ref) {
 final fontScaleProvider = Provider<double>((ref) {
   final themeState = ref.watch(themeProvider);
   return themeState.fontScale;
+});
+
+/// Color theme provider
+final colorThemeProvider = Provider<AppTheme.ColorTheme>((ref) {
+  final themeState = ref.watch(themeProvider);
+  return themeState.colorTheme;
 });
