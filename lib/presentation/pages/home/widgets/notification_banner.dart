@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/notification_banner_provider.dart';
 import '../../../providers/news_provider.dart' show newsProvider, NewsState;
+import '../../../providers/theme_provider.dart';
 import '../../../themes/app_theme.dart';
 import '../../article_detail/article_detail_page.dart';
 
@@ -94,15 +95,18 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
 
     // Loading durumunda veya boşsa banner'ı göster ama loading indicator ile
     if (bannerState.isLoading && items.isEmpty) {
+      final colorTheme = ref.watch(colorThemeProvider);
+      final primaryColor = AppTheme.getPrimaryColor(colorTheme);
+      
       return Container(
         height: 48,
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.dark 
               ? AppTheme.matBlackSurfaceVariant 
-              : AppTheme.sageGreen.withOpacity(0.1),
+              : primaryColor.withOpacity(0.1),
           border: Border(
             bottom: BorderSide(
-              color: AppTheme.sageGreen.withOpacity(0.2),
+              color: primaryColor.withOpacity(0.2),
               width: 1,
             ),
           ),
@@ -118,7 +122,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                 height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.sageGreen),
+                  valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                 ),
               ),
             ),
@@ -127,7 +131,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                 child: Text(
                   'Haberler yükleniyor...',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.sageGreen.withOpacity(0.7),
+                    color: primaryColor.withOpacity(0.7),
                   ),
                 ),
               ),
@@ -143,6 +147,8 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
 
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final colorTheme = ref.watch(colorThemeProvider);
+    final primaryColor = AppTheme.getPrimaryColor(colorTheme);
 
     // Otomatik geçiş timer'ını başlat
     if (items.length > 1) {
@@ -160,26 +166,26 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                   AppTheme.matBlackSurface,
                 ]
               : [
-                  AppTheme.sageGreen.withOpacity(0.15),
-                  AppTheme.sageGreen.withOpacity(0.08),
-                  AppTheme.sageGreen.withOpacity(0.15),
+                  primaryColor.withOpacity(0.15),
+                  primaryColor.withOpacity(0.08),
+                  primaryColor.withOpacity(0.15),
                 ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         border: Border(
           top: BorderSide(
-            color: AppTheme.sageGreen.withOpacity(0.3),
+            color: primaryColor.withOpacity(0.3),
             width: 2,
           ),
           bottom: BorderSide(
-            color: AppTheme.sageGreen.withOpacity(0.2),
+            color: primaryColor.withOpacity(0.2),
             width: 1,
           ),
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.sageGreen.withOpacity(0.1),
+            color: primaryColor.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -204,7 +210,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                       height: 32 + (_marqueeController.value * 8),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: AppTheme.sageGreen.withOpacity(0.2 - (_marqueeController.value * 0.2)),
+                        color: primaryColor.withOpacity(0.2 - (_marqueeController.value * 0.2)),
                       ),
                     );
                   },
@@ -246,17 +252,17 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         margin: const EdgeInsets.only(right: 12),
                         decoration: BoxDecoration(
-                          color: AppTheme.sageGreen.withOpacity(0.2),
+                          color: primaryColor.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: AppTheme.sageGreen.withOpacity(0.4),
+                            color: primaryColor.withOpacity(0.4),
                             width: 1,
                           ),
                         ),
                         child: Text(
                           'SON DAKİKA',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: AppTheme.sageGreen,
+                            color: primaryColor,
                             fontWeight: FontWeight.w700,
                             fontSize: 9,
                             letterSpacing: 1.2,
@@ -288,7 +294,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                           key: ValueKey(_currentIndex),
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: isDark ? Colors.white : AppTheme.sageGreenDark,
+                            color: isDark ? Colors.white : AppTheme.getPrimaryDarkColor(colorTheme),
                             letterSpacing: 0.3,
                             height: 1.3,
                           ),
@@ -304,13 +310,13 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                         margin: const EdgeInsets.only(left: 12),
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: AppTheme.sageGreen.withOpacity(0.15),
+                          color: primaryColor.withOpacity(0.15),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.arrow_forward_ios_rounded,
                           size: 14,
-                          color: AppTheme.sageGreen,
+                          color: primaryColor,
                         ),
                       ),
                   ],
@@ -336,7 +342,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                   }
                 });
               },
-              color: AppTheme.sageGreen.withOpacity(0.8),
+              color: primaryColor.withOpacity(0.8),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               tooltip: _isPaused ? 'Devam Et' : 'Duraklat',

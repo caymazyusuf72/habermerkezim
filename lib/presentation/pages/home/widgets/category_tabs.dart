@@ -36,7 +36,7 @@ class _CategoryTabsState extends ConsumerState<CategoryTabs> {
         color: theme.colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: AppTheme.sageGreen.withOpacity(0.2),
+            color: AppTheme.getPrimaryColor(ref.watch(colorThemeProvider)).withOpacity(0.2),
             width: 1,
           ),
         ),
@@ -48,6 +48,8 @@ class _CategoryTabsState extends ConsumerState<CategoryTabs> {
   /// Normal tab görünümü
   Widget _buildNormalTabs(ThemeData theme) {
     final orderedCategories = ref.watch(orderedCategoriesProvider);
+    final colorTheme = ref.watch(colorThemeProvider);
+    final primaryColor = AppTheme.getPrimaryColor(colorTheme);
     
     return TabBar(
       controller: widget.tabController,
@@ -64,12 +66,12 @@ class _CategoryTabsState extends ConsumerState<CategoryTabs> {
         letterSpacing: 0.2,
       ),
       
-      // Renkler - Adaçayı yeşili
-      labelColor: AppTheme.sageGreen,
+      // Renkler - Seçili renk teması
+      labelColor: primaryColor,
       unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
       
-      // Indicator - Adaçayı yeşili
-      indicatorColor: AppTheme.sageGreen,
+      // Indicator - Seçili renk teması
+      indicatorColor: primaryColor,
       indicatorWeight: 2.5,
       indicatorSize: TabBarIndicatorSize.label,
       
@@ -220,7 +222,7 @@ class _AnimatedCategoryTabState extends State<AnimatedCategoryTab>
                     widget.category.displayName,
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: widget.isSelected
-                          ? AppTheme.sageGreen
+                          ? AppTheme.getPrimaryColor(AppTheme.ColorTheme.defaultTheme)
                           : theme.colorScheme.onSurface.withOpacity(0.7),
                       fontWeight: widget.isSelected
                           ? FontWeight.w600
