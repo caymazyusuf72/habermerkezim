@@ -289,13 +289,13 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       await _saveSettings(newSettings);
       
       if (state.permissionsGranted) {
-        // For reading goal, we need current progress from analytics
-        // For now, assume 0 progress - this will be updated when analytics are available
+        // Get current progress from analytics
+        final currentProgress = _getCurrentReadingProgress();
         await _notificationService.scheduleReadingGoalReminder(
           hour: newSettings.readingGoalHour,
           minute: newSettings.readingGoalMinute,
           dailyGoal: newSettings.dailyReadingGoal,
-          currentProgress: 0, // TODO: Get from analytics
+          currentProgress: currentProgress,
           enabled: newSettings.readingGoalEnabled,
         );
       }
@@ -338,13 +338,27 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
     );
 
     // Schedule reading goal reminder
+    final currentProgress = _getCurrentReadingProgress();
     await _notificationService.scheduleReadingGoalReminder(
       hour: settings.readingGoalHour,
       minute: settings.readingGoalMinute,
       dailyGoal: settings.dailyReadingGoal,
-      currentProgress: 0, // TODO: Get from analytics
+      currentProgress: currentProgress,
       enabled: settings.readingGoalEnabled,
     );
+  }
+
+  /// Analytics'ten mevcut okuma ilerlemesini alır
+  int _getCurrentReadingProgress() {
+    try {
+      final todayAnalytics = _ref.read(todayAnalyticsProvider);
+      return todayAnalytics.articlesRead;
+    } catch (e) {
+      if (kDebugMode) {
+        print('⚠️ Analytics progress alma hatası: $e');
+      }
+      return 0; // Default to 0 if analytics not available
+    }
   }
 
   /// Show reading goal achieved notification
@@ -392,7 +406,7 @@ final notificationProvider =
     StateNotifierProvider<NotificationNotifier, NotificationState>((ref) {
   final notificationService = NotificationService();
   final hiveService = HiveService();
-  return NotificationNotifier(notificationService, hiveService);
+  return NotificationNotifier(notificationService, hiveService, ref);
 });
 
 /// Notification service provider
