@@ -10,6 +10,7 @@ import 'widgets/news_list.dart';
 import 'widgets/category_tabs.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/article_filter_dialog.dart';
+import 'widgets/notification_banner.dart';
 import '../search/search_page.dart';
 
 /// CategoryTabs için PreferredSizeWidget wrapper
@@ -135,7 +136,7 @@ class _HomePageState extends ConsumerState<HomePage>
               height: 32,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppTheme.primaryBlue, AppTheme.secondaryBlue],
+                  colors: [AppTheme.sageGreen, AppTheme.sageGreenLight],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -166,7 +167,7 @@ class _HomePageState extends ConsumerState<HomePage>
                   children: [
                     Icon(
                       Icons.filter_list_rounded,
-                      color: filter.isActive ? AppTheme.primaryBlue : null,
+                      color: filter.isActive ? AppTheme.sageGreen : null,
                     ),
                     if (filter.isActive)
                       Positioned(
@@ -262,6 +263,9 @@ class _HomePageState extends ConsumerState<HomePage>
       // Ana içerik
       body: Column(
         children: [
+          // Bildirim banner'ı
+          const NotificationBanner(),
+          
           // Hata mesajı (varsa)
           if (newsState.hasError && !newsState.isLoading)
             Container(

@@ -13,46 +13,74 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
+    with TickerProviderStateMixin {
+  late AnimationController _mainAnimationController;
+  late AnimationController _rotationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _rotationAnimation;
+  late Animation<double> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
     
-    // Animasyon controller'ı başlat
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+    // Ana animasyon controller
+    _mainAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 2500),
       vsync: this,
     );
 
-    // Fade animasyonu
+    // Rotasyon animasyonu (logo için)
+    _rotationController = AnimationController(
+      duration: const Duration(milliseconds: 3000),
+      vsync: this,
+    )..repeat();
+
+    // Fade animasyonu (staggered)
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      parent: _mainAnimationController,
+      curve: const Interval(0.0, 0.7, curve: Curves.easeInOutCubic),
     ));
 
     // Scale animasyonu
     _scaleAnimation = Tween<double>(
-      begin: 0.8,
+      begin: 0.5,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOutBack),
+      parent: _mainAnimationController,
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
     ));
 
-    // Animasyonu başlat
-    _animationController.forward();
+    // Rotasyon animasyonu
+    _rotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 0.1, // Hafif rotasyon
+    ).animate(CurvedAnimation(
+      parent: _rotationController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Slide animasyonu (alt başlık için)
+    _slideAnimation = Tween<double>(
+      begin: 30.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _mainAnimationController,
+      curve: const Interval(0.3, 0.8, curve: Curves.easeOutCubic),
+    ));
+
+    // Animasyonları başlat
+    _mainAnimationController.forward();
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _mainAnimationController.dispose();
+    _rotationController.dispose();
     super.dispose();
   }
 
@@ -61,23 +89,25 @@ class _SplashPageState extends State<SplashPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : Colors.white,
+      backgroundColor: isDark ? AppTheme.matBlack : AppTheme.lightBackground,
       body: AnimatedBuilder(
-        animation: _animationController,
+        animation: Listenable.merge([_mainAnimationController, _rotationController]),
         builder: (context, child) {
           return Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
                 colors: isDark
                     ? [
-                        AppTheme.darkBackground,
-                        AppTheme.darkSurface,
+                        AppTheme.matBlack,
+                        AppTheme.matBlackSurface,
+                        AppTheme.matBlackSurfaceVariant,
                       ]
                     : [
-                        Colors.white,
                         AppTheme.lightBackground,
+                        AppTheme.lightSurface,
+                        AppTheme.lightSurfaceVariant,
                       ],
               ),
             ),
@@ -93,60 +123,97 @@ class _SplashPageState extends State<SplashPage>
                     opacity: _fadeAnimation,
                     child: ScaleTransition(
                       scale: _scaleAnimation,
-                      child: Column(
-                        children: [
-                          // App Icon/Logo
-                          Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppTheme.primaryBlue,
-                                  AppTheme.secondaryBlue,
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppTheme.primaryBlue.withOpacity(0.3),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
+                      child: Transform.rotate(
+                        angle: _rotationAnimation.value,
+                        child: Column(
+                          children: [
+                            // App Icon/Logo - Sofistike tasarım
+                            Container(
+                              width: 140,
+                              height: 140,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppTheme.sageGreen,
+                                    AppTheme.sageGreenLight,
+                                    AppTheme.sageGreenDark,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                 ),
-                              ],
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppTheme.sageGreen.withOpacity(0.4),
+                                    blurRadius: 30,
+                                    spreadRadius: 5,
+                                    offset: const Offset(0, 15),
+                                  ),
+                                  BoxShadow(
+                                    color: isDark 
+                                        ? AppTheme.matBlack.withOpacity(0.5)
+                                        : Colors.black.withOpacity(0.1),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 10),
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // İç gölge efekti
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.2),
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  // Icon
+                                  const Icon(
+                                    Icons.article_rounded,
+                                    size: 70,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.newspaper,
-                              size: 60,
-                              color: Colors.white,
+                            
+                            const SizedBox(height: 32),
+                            
+                            // App İsmi - Merriweather font
+                            Text(
+                              'Haber Merkezi',
+                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                color: isDark ? Colors.white : AppTheme.sageGreenDark,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: -0.5,
+                              ),
                             ),
-                          ),
-                          
-                          const SizedBox(height: 24),
-                          
-                          // App İsmi
-                          Text(
-                            'Haber Merkezi',
-                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: isDark ? Colors.white : AppTheme.primaryBlue,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.5,
+                            
+                            const SizedBox(height: 12),
+                            
+                            // Alt başlık - Slide animasyonu ile
+                            Transform.translate(
+                              offset: Offset(0, _slideAnimation.value),
+                              child: Opacity(
+                                opacity: _fadeAnimation.value,
+                                child: Text(
+                                  'Güncel haberlerin merkezi',
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: isDark 
+                                        ? Colors.white.withOpacity(0.8) 
+                                        : AppTheme.sageGreenDark.withOpacity(0.7),
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                          
-                          const SizedBox(height: 8),
-                          
-                          // Alt başlık
-                          Text(
-                            'Güncel haberlerin merkezi',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: isDark ? Colors.white70 : Colors.grey.shade600,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -154,22 +221,59 @@ class _SplashPageState extends State<SplashPage>
                   // Spacer
                   const Spacer(flex: 1),
                   
-                  // Loading Indicator
+                  // Loading Indicator - Modern ve akıcı
                   FadeTransition(
                     opacity: _fadeAnimation,
                     child: Column(
                       children: [
-                        SpinKitThreeBounce(
-                          color: isDark ? Colors.white : AppTheme.primaryBlue,
-                          size: 30.0,
+                        // Özel loading animasyonu
+                        Container(
+                          width: 60,
+                          height: 60,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Dış daire
+                              SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppTheme.sageGreen,
+                                  ),
+                                  backgroundColor: AppTheme.sageGreen.withOpacity(0.2),
+                                ),
+                              ),
+                              // İç nokta
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.sageGreen,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppTheme.sageGreen.withOpacity(0.6),
+                                      blurRadius: 8,
+                                      spreadRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
                         
                         Text(
                           'Haberler yükleniyor...',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: isDark ? Colors.white60 : Colors.grey.shade500,
+                            color: isDark 
+                                ? Colors.white.withOpacity(0.7) 
+                                : AppTheme.sageGreenDark.withOpacity(0.6),
+                            letterSpacing: 0.5,
                           ),
                         ),
                       ],

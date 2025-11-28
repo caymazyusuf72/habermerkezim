@@ -35,8 +35,8 @@ class _CategoryTabsState extends ConsumerState<CategoryTabs> {
         color: theme.colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: theme.dividerColor,
-            width: 0.5,
+            color: AppTheme.sageGreen.withOpacity(0.2),
+            width: 1,
           ),
         ),
       ),
@@ -53,24 +53,22 @@ class _CategoryTabsState extends ConsumerState<CategoryTabs> {
       isScrollable: true,
       tabAlignment: TabAlignment.start,
       
-      // Tab stilleri
-      labelStyle: const TextStyle(
-        fontSize: 14,
+      // Tab stilleri - Merriweather font
+      labelStyle: theme.textTheme.labelLarge?.copyWith(
         fontWeight: FontWeight.w600,
-        letterSpacing: 0.2,
+        letterSpacing: 0.3,
       ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 14,
+      unselectedLabelStyle: theme.textTheme.labelLarge?.copyWith(
         fontWeight: FontWeight.w400,
         letterSpacing: 0.2,
       ),
       
-      // Renkler
-      labelColor: theme.colorScheme.primary,
+      // Renkler - Adaçayı yeşili
+      labelColor: AppTheme.sageGreen,
       unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
       
-      // Indicator
-      indicatorColor: theme.colorScheme.primary,
+      // Indicator - Adaçayı yeşili
+      indicatorColor: AppTheme.sageGreen,
       indicatorWeight: 2.5,
       indicatorSize: TabBarIndicatorSize.label,
       
@@ -219,11 +217,10 @@ class _AnimatedCategoryTabState extends State<AnimatedCategoryTab>
                   // Kategori adı
                   Text(
                     widget.category.displayName,
-                    style: TextStyle(
+                    style: theme.textTheme.labelLarge?.copyWith(
                       color: widget.isSelected
-                          ? theme.colorScheme.primary
+                          ? AppTheme.sageGreen
                           : theme.colorScheme.onSurface.withOpacity(0.7),
-                      fontSize: 14,
                       fontWeight: widget.isSelected
                           ? FontWeight.w600
                           : FontWeight.w400,

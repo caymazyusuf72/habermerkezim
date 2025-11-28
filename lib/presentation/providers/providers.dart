@@ -13,6 +13,7 @@ export 'theme_provider.dart';
 export 'search_provider.dart';
 export 'favorites_provider.dart';
 export 'notification_provider.dart';
+export 'notification_banner_provider.dart';
 export 'category_order_provider.dart';
 export 'reading_list_provider.dart';
 export 'article_filter_provider.dart';

@@ -61,6 +61,9 @@ dependencies:
   fl_chart: ^0.68.0
   intl: ^0.19.0
   
+  # Typography
+  google_fonts: ^6.1.0
+  
   # Local Notifications
   flutter_local_notifications: ^17.2.2
   timezone: ^0.9.4

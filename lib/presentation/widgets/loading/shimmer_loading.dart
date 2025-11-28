@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../themes/app_theme.dart';
 
 /// Shimmer loading effect'leri
 /// Haber yüklenirken gösterilen placeholder animasyonları
@@ -29,10 +30,15 @@ class ArticleCardShimmer extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Shimmer.fromColors(
-        baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
-        highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+        baseColor: isDark 
+            ? AppTheme.matBlackSurfaceVariant 
+            : AppTheme.sageGreen.withOpacity(0.1),
+        highlightColor: isDark 
+            ? AppTheme.sageGreen.withOpacity(0.2)
+            : AppTheme.sageGreenLight.withOpacity(0.3),
+        period: const Duration(milliseconds: 1500),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -163,8 +169,13 @@ class CompactArticleCardShimmer extends StatelessWidget {
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Shimmer.fromColors(
-        baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
-        highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+        baseColor: isDark 
+            ? AppTheme.matBlackSurfaceVariant 
+            : AppTheme.sageGreen.withOpacity(0.1),
+        highlightColor: isDark 
+            ? AppTheme.sageGreen.withOpacity(0.2)
+            : AppTheme.sageGreenLight.withOpacity(0.3),
+        period: const Duration(milliseconds: 1500),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -258,8 +269,13 @@ class ShimmerContainer extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Shimmer.fromColors(
-      baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
-      highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+      baseColor: isDark 
+          ? AppTheme.matBlackSurfaceVariant 
+          : AppTheme.sageGreen.withOpacity(0.1),
+      highlightColor: isDark 
+          ? AppTheme.sageGreen.withOpacity(0.2)
+          : AppTheme.sageGreenLight.withOpacity(0.3),
+      period: const Duration(milliseconds: 1500),
       child: Container(
         width: width,
         height: height,
@@ -321,8 +337,13 @@ class CategoryTabsShimmer extends StatelessWidget implements PreferredSizeWidget
       height: 48,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Shimmer.fromColors(
-        baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
-        highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+        baseColor: isDark 
+            ? AppTheme.matBlackSurfaceVariant 
+            : AppTheme.sageGreen.withOpacity(0.1),
+        highlightColor: isDark 
+            ? AppTheme.sageGreen.withOpacity(0.2)
+            : AppTheme.sageGreenLight.withOpacity(0.3),
+        period: const Duration(milliseconds: 1500),
         child: Row(
           children: List.generate(5, (index) => 
             Padding(
@@ -367,11 +388,20 @@ class LoadingOverlay extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(),
+                SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.sageGreen),
+                  ),
+                ),
                 const SizedBox(height: 16),
                 Text(
                   message,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.sageGreenDark,
+                  ),
                 ),
               ],
             ),

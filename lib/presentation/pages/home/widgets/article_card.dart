@@ -39,12 +39,13 @@ class ArticleCard extends ConsumerWidget {
     final categoryColor = AppTheme.getCategoryColor(article.category);
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 4,
+      shadowColor: AppTheme.sageGreen.withOpacity(0.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), // Daha köşeli, gazete gibi
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -63,30 +64,32 @@ class ArticleCard extends ConsumerWidget {
                   
                   const SizedBox(height: 8),
                   
-                  // Başlık
+                  // Başlık - Merriweather font ile
                   Text(
                     article.truncatedTitle,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
+                    style: theme.textTheme.headlineLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
                       height: 1.3,
                       color: article.isRead
-                          ? theme.colorScheme.onSurface.withOpacity(0.7)
+                          ? theme.colorScheme.onSurface.withOpacity(0.6)
                           : theme.colorScheme.onSurface,
+                      letterSpacing: -0.2,
                     ),
-                    maxLines: 2,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                   
                   const SizedBox(height: 8),
                   
-                  // Özet
+                  // Özet - Gazete okuma deneyimi için
                   Text(
                     article.truncatedDescription,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
-                      height: 1.4,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.75),
+                      height: 1.6, // Daha geniş satır aralığı
+                      letterSpacing: 0.2,
                     ),
-                    maxLines: 3,
+                    maxLines: 4,
                     overflow: TextOverflow.ellipsis,
                   ),
                   
@@ -110,7 +113,8 @@ class ArticleCard extends ConsumerWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      elevation: 1,
+      elevation: 3,
+      shadowColor: AppTheme.sageGreen.withOpacity(0.15),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: InkWell(
         onTap: onTap,
@@ -182,8 +186,8 @@ class ArticleCard extends ConsumerWidget {
         // Ana görsel
         ClipRRect(
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(12),
-            topRight: Radius.circular(12),
+            topLeft: Radius.circular(8),
+            topRight: Radius.circular(8),
           ),
           child: AspectRatio(
             aspectRatio: 16 / 9,
@@ -237,19 +241,19 @@ class ArticleCard extends ConsumerWidget {
           ),
         ),
         
-        // Okundu göstergesi
+        // Okundu göstergesi - Adaçayı yeşili
         if (article.isRead)
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
-              height: 4,
+              height: 3,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
                     Colors.transparent,
-                    Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                    AppTheme.sageGreen.withOpacity(0.6),
                   ],
                 ),
               ),
@@ -291,8 +295,9 @@ class ArticleCard extends ConsumerWidget {
     );
   }
 
-  /// Kategori badge'i
+  /// Kategori badge'i - Adaçayı yeşili accent ile
   Widget _buildCategoryBadge(BuildContext context, Color categoryColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -326,7 +331,7 @@ class ArticleCard extends ConsumerWidget {
         },
         icon: Icon(
           isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-          color: isInReadingList ? AppTheme.primaryBlue : Theme.of(context).colorScheme.onSurface,
+          color: isInReadingList ? AppTheme.sageGreen : Theme.of(context).colorScheme.onSurface,
           size: 20,
         ),
         constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
