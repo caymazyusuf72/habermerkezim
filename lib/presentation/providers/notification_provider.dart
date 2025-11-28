@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/services/hive_service.dart';
+import 'analytics_provider.dart';
 
 /// Notification settings model
 class NotificationSettings {
@@ -133,10 +134,11 @@ class NotificationState {
 class NotificationNotifier extends StateNotifier<NotificationState> {
   final NotificationService _notificationService;
   final HiveService _hiveService;
+  final Ref _ref;
 
   static const String _settingsKey = 'notification_settings';
 
-  NotificationNotifier(this._notificationService, this._hiveService)
+  NotificationNotifier(this._notificationService, this._hiveService, this._ref)
       : super(const NotificationState()) {
     _initialize();
   }

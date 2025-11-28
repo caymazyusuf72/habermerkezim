@@ -11,14 +11,19 @@ import 'providers.dart';
 /// News State - haber listesinin durumunu tutar
 class NewsState {
   final List<Article> articles;
+  final List<Article> allArticles; // Tüm yüklenen haberler
   final bool isLoading;
+  final bool isLoadingMore;
   final String? errorMessage;
   final bool hasMore;
   final int currentPage;
+  static const int pageSize = 20;
 
   const NewsState({
     this.articles = const [],
+    this.allArticles = const [],
     this.isLoading = false,
+    this.isLoadingMore = false,
     this.errorMessage,
     this.hasMore = true,
     this.currentPage = 1,
@@ -26,14 +31,18 @@ class NewsState {
 
   NewsState copyWith({
     List<Article>? articles,
+    List<Article>? allArticles,
     bool? isLoading,
+    bool? isLoadingMore,
     String? errorMessage,
     bool? hasMore,
     int? currentPage,
   }) {
     return NewsState(
       articles: articles ?? this.articles,
+      allArticles: allArticles ?? this.allArticles,
       isLoading: isLoading ?? this.isLoading,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       errorMessage: errorMessage,
       hasMore: hasMore ?? this.hasMore,
       currentPage: currentPage ?? this.currentPage,
@@ -59,26 +68,31 @@ class NewsNotifier extends StateNotifier<NewsState> {
   /// Tüm haberleri yükler
   Future<void> loadAllArticles({bool refresh = false}) async {
     if (refresh) {
-      state = state.copyWith(isLoading: true, errorMessage: null);
+      state = state.copyWith(isLoading: true, errorMessage: null, currentPage: 1);
     } else if (!state.isEmpty) {
       return; // Already loaded
     } else {
-      state = state.copyWith(isLoading: true, errorMessage: null);
+      state = state.copyWith(isLoading: true, errorMessage: null, currentPage: 1);
     }
 
     try {
-      final articles = await _repository.getAllArticles();
+      final allArticles = await _repository.getAllArticles();
+      final paginatedArticles = _paginateArticles(allArticles, page: 1);
+      
       state = state.copyWith(
-        articles: articles,
+        allArticles: allArticles,
+        articles: paginatedArticles,
         isLoading: false,
         errorMessage: null,
+        hasMore: allArticles.length > NewsState.pageSize,
+        currentPage: 1,
       );
       
       // Widget'ı güncelle
-      WidgetService.updateWidget(articles);
+      WidgetService.updateWidget(allArticles);
       
       // Breaking news kontrolü ve bildirim gönderimi
-      _checkAndNotifyBreakingNews(articles);
+      _checkAndNotifyBreakingNews(allArticles);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -87,20 +101,58 @@ class NewsNotifier extends StateNotifier<NewsState> {
     }
   }
 
-  /// Kategori bazında haberleri yükler
-  Future<void> loadArticlesByCategory(String category, {bool refresh = false}) async {
-    if (refresh) {
-      state = state.copyWith(isLoading: true, errorMessage: null);
-    } else {
-      state = state.copyWith(isLoading: true, errorMessage: null);
+  /// Daha fazla haber yükler (pagination)
+  Future<void> loadMoreArticles() async {
+    if (state.isLoadingMore || !state.hasMore) {
+      return;
     }
 
     try {
-      final articles = await _repository.getArticlesByCategory(category);
+      state = state.copyWith(isLoadingMore: true);
+      
+      final nextPage = state.currentPage + 1;
+      final paginatedArticles = _paginateArticles(state.allArticles, page: nextPage);
+      
       state = state.copyWith(
-        articles: articles,
+        articles: paginatedArticles,
+        isLoadingMore: false,
+        hasMore: paginatedArticles.length < state.allArticles.length,
+        currentPage: nextPage,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoadingMore: false,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Haberleri sayfalara böler
+  List<Article> _paginateArticles(List<Article> allArticles, {required int page}) {
+    final startIndex = 0;
+    final endIndex = page * NewsState.pageSize;
+    return allArticles.sublist(0, endIndex > allArticles.length ? allArticles.length : endIndex);
+  }
+
+  /// Kategori bazında haberleri yükler
+  Future<void> loadArticlesByCategory(String category, {bool refresh = false}) async {
+    if (refresh) {
+      state = state.copyWith(isLoading: true, errorMessage: null, currentPage: 1);
+    } else {
+      state = state.copyWith(isLoading: true, errorMessage: null, currentPage: 1);
+    }
+
+    try {
+      final allArticles = await _repository.getArticlesByCategory(category);
+      final paginatedArticles = _paginateArticles(allArticles, page: 1);
+      
+      state = state.copyWith(
+        allArticles: allArticles,
+        articles: paginatedArticles,
         isLoading: false,
         errorMessage: null,
+        hasMore: allArticles.length > NewsState.pageSize,
+        currentPage: 1,
       );
     } catch (e) {
       state = state.copyWith(
@@ -271,6 +323,17 @@ class NewsNotifier extends StateNotifier<NewsState> {
   /// State'i sıfırla
   void reset() {
     state = const NewsState();
+  }
+
+  /// Filtreleme sonrası sayfalama durumunu güncelle
+  void updatePaginatedArticles(List<Article> filteredArticles) {
+    final paginatedArticles = _paginateArticles(filteredArticles, page: 1);
+    state = state.copyWith(
+      articles: paginatedArticles,
+      allArticles: filteredArticles,
+      hasMore: filteredArticles.length > NewsState.pageSize,
+      currentPage: 1,
+    );
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/hive_service.dart';
 
@@ -48,14 +49,31 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
       final savedFontScale = HiveService.settingsBox.get(_fontScaleKey, defaultValue: 1.0) as double;
       final themeMode = _stringToThemeMode(savedTheme);
       
+      // System mode için sistem temasını kontrol et
+      bool isDarkMode = false;
+      if (themeMode == ThemeMode.system) {
+        isDarkMode = _getSystemBrightness() == Brightness.dark;
+      } else {
+        isDarkMode = themeMode == ThemeMode.dark;
+      }
+      
       state = state.copyWith(
         themeMode: themeMode,
-        isDarkMode: themeMode == ThemeMode.dark,
+        isDarkMode: isDarkMode,
         fontScale: savedFontScale,
       );
     } catch (e) {
       // Storage error durumunda system default kullan
       print('Theme yükleme hatası: $e');
+    }
+  }
+
+  /// Sistem parlaklık modunu alır
+  Brightness _getSystemBrightness() {
+    try {
+      return WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    } catch (e) {
+      return Brightness.light; // Default
     }
   }
 
@@ -71,7 +89,9 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
 
   /// System mode'a geçer (telefon ayarlarını takip eder)
   Future<void> setSystemMode() async {
-    await _updateTheme(ThemeMode.system, false);
+    final systemBrightness = _getSystemBrightness();
+    final isDarkMode = systemBrightness == Brightness.dark;
+    await _updateTheme(ThemeMode.system, isDarkMode);
   }
 
   /// Theme'i toggle eder (light <-> dark)
@@ -172,9 +192,20 @@ final currentThemeModeProvider = Provider<ThemeMode>((ref) {
   return themeState.themeMode;
 });
 
-/// Is dark mode provider
+/// Is dark mode provider - sistem temasını da kontrol eder
 final isDarkModeProvider = Provider<bool>((ref) {
   final themeState = ref.watch(themeProvider);
+  
+  // System mode ise sistem temasını kontrol et
+  if (themeState.themeMode == ThemeMode.system) {
+    try {
+      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      return brightness == Brightness.dark;
+    } catch (e) {
+      return false; // Default to light
+    }
+  }
+  
   return themeState.isDarkMode;
 });
 

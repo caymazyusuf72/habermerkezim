@@ -334,7 +334,7 @@ class AppDrawer extends ConsumerWidget {
                 ref,
                 icon: Icons.brightness_auto_rounded,
                 label: 'Sistem',
-                isSelected: false, // TODO: Implement system mode detection
+                isSelected: ref.watch(currentThemeModeProvider) == ThemeMode.system,
                 onTap: () => ref.read(themeProvider.notifier).setSystemMode(),
               ),
             ],

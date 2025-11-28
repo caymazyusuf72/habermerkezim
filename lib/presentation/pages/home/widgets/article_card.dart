@@ -188,12 +188,19 @@ class ArticleCard extends ConsumerWidget {
           child: AspectRatio(
             aspectRatio: 16 / 9,
             child: CachedNetworkImage(
-              imageUrl: article.imageUrl!,
+              imageUrl: ArticleCardUtils.optimizeImageUrl(
+                article.imageUrl,
+                width: MediaQuery.of(context).size.width.toInt(),
+              ) ?? article.imageUrl!,
               fit: BoxFit.cover,
+              memCacheWidth: MediaQuery.of(context).size.width.toInt(),
+              memCacheHeight: (MediaQuery.of(context).size.width / ArticleCardUtils.imageAspectRatio).toInt(),
+              maxWidthDiskCache: 800,
+              maxHeightDiskCache: 450,
               placeholder: (context, url) => Container(
                 color: Theme.of(context).colorScheme.surfaceVariant,
                 child: const Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 ),
               ),
               errorWidget: (context, url, error) => Container(
@@ -261,8 +268,16 @@ class ArticleCard extends ConsumerWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: CachedNetworkImage(
-          imageUrl: article.imageUrl!,
+          imageUrl: ArticleCardUtils.optimizeImageUrl(
+            article.imageUrl,
+            width: 60,
+            height: 60,
+          ) ?? article.imageUrl!,
           fit: BoxFit.cover,
+          memCacheWidth: 60,
+          memCacheHeight: 60,
+          maxWidthDiskCache: 120,
+          maxHeightDiskCache: 120,
           placeholder: (context, url) => Container(
             color: Theme.of(context).colorScheme.surfaceVariant,
             child: const Icon(Icons.image_rounded, size: 20),
@@ -538,12 +553,78 @@ class ArticleCardUtils {
   }
   
   /// Görsel URL'ini optimize eder
-  static String? optimizeImageUrl(String? url, {int? width}) {
+  /// WebP formatına çevirir ve boyutlandırır (desteklenen servisler için)
+  static String? optimizeImageUrl(String? url, {int? width, int? height}) {
     if (url == null || url.isEmpty) return null;
     
-    // TODO: Image resizing/optimization logic
-    // Örnek: Cloudinary, ImageKit vs. entegrasyonu
+    // Bazı CDN'ler için otomatik optimizasyon
+    // Cloudinary, ImageKit, Imgix gibi servisler için parametre ekleme
     
-    return url;
+    try {
+      final uri = Uri.parse(url);
+      
+      // Cloudinary için optimizasyon
+      if (uri.host.contains('cloudinary.com')) {
+        final params = <String, String>{};
+        if (width != null) params['w'] = width.toString();
+        if (height != null) params['h'] = height.toString();
+        params['f'] = 'auto'; // Format auto
+        params['q'] = 'auto'; // Quality auto
+        
+        return uri.replace(queryParameters: {
+          ...uri.queryParameters,
+          ...params,
+        }).toString();
+      }
+      
+      // ImageKit için optimizasyon
+      if (uri.host.contains('ik.imagekit.io')) {
+        final params = <String, String>{};
+        if (width != null) params['w'] = width.toString();
+        if (height != null) params['h'] = height.toString();
+        params['f'] = 'auto';
+        params['q'] = '80';
+        
+        return uri.replace(queryParameters: {
+          ...uri.queryParameters,
+          ...params,
+        }).toString();
+      }
+      
+      // Imgix için optimizasyon
+      if (uri.host.contains('imgix.net')) {
+        final params = <String, String>{};
+        if (width != null) params['w'] = width.toString();
+        if (height != null) params['h'] = height.toString();
+        params['auto'] = 'format,compress';
+        params['q'] = '80';
+        
+        return uri.replace(queryParameters: {
+          ...uri.queryParameters,
+          ...params,
+        }).toString();
+      }
+      
+      // Diğer URL'ler için orijinal URL'i döndür
+      return url;
+    } catch (e) {
+      // Parse hatası durumunda orijinal URL'i döndür
+      return url;
+    }
+  }
+  
+  /// Görsel boyutunu hesaplar (ekran genişliğine göre)
+  static Size calculateImageSize(BuildContext context, {bool isCompact = false}) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    
+    if (isCompact) {
+      return const Size(60, 60);
+    }
+    
+    // Full card için 16:9 aspect ratio
+    final cardWidth = screenWidth - 32; // Padding
+    final cardHeight = cardWidth / imageAspectRatio;
+    
+    return Size(cardWidth, cardHeight);
   }
 }

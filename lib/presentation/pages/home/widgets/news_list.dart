@@ -55,8 +55,18 @@ class NewsListState extends ConsumerState<NewsList>
 
   /// Scroll olaylarını dinler
   void _onScroll() {
-    // TODO: Infinite scroll implementation
-    // Sayfa sonuna yaklaşıldığında daha fazla haber yükle
+    if (!_scrollController.hasClients) return;
+    
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    final threshold = maxScroll * 0.8; // %80'e ulaşıldığında yükle
+    
+    if (currentScroll >= threshold) {
+      final newsState = ref.read(newsProvider);
+      if (newsState.hasMore && !newsState.isLoadingMore) {
+        ref.read(newsProvider.notifier).loadMoreArticles();
+      }
+    }
   }
 
   /// Listeyi en üste kaydırır
@@ -86,9 +96,17 @@ class NewsListState extends ConsumerState<NewsList>
 
   /// Loading callback (sayfa sonunda daha fazla yükle)
   void _onLoading() async {
-    // TODO: Load more implementation
-    await Future.delayed(const Duration(milliseconds: 500));
-    _refreshController.loadComplete();
+    final newsState = ref.read(newsProvider);
+    if (newsState.hasMore && !newsState.isLoadingMore) {
+      try {
+        await ref.read(newsProvider.notifier).loadMoreArticles();
+        _refreshController.loadComplete();
+      } catch (e) {
+        _refreshController.loadFailed();
+      }
+    } else {
+      _refreshController.loadNoData();
+    }
   }
 
   @override
@@ -143,7 +161,7 @@ class NewsListState extends ConsumerState<NewsList>
     return SmartRefresher(
       controller: _refreshController,
       enablePullDown: true,
-      enablePullUp: false, // TODO: Enable for infinite scroll
+      enablePullUp: newsState.hasMore,
       onRefresh: _onRefresh,
       onLoading: _onLoading,
       
@@ -230,9 +248,9 @@ class NewsListState extends ConsumerState<NewsList>
         top: 8,
         bottom: 80, // FAB için alan bırak
       ),
-      itemCount: articles.length + (newsState.isLoading ? 1 : 0),
+      itemCount: articles.length + (newsState.isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
-        // Loading item (en sonda)
+        // Loading item (en sonda - infinite scroll için)
         if (index == articles.length) {
           return const Padding(
             padding: EdgeInsets.all(16.0),

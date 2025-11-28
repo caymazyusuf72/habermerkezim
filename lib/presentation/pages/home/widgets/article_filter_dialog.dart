@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -29,34 +27,10 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
   @override
   void initState() {
     super.initState();
-    // #region agent log
-    try {
-      final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
-      logFile.writeAsStringSync('${jsonEncode({"id":"log_initState_entry","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:27","message":"initState() called - will initialize after first frame","data":{"hasRef":false},"sessionId":"debug-session","runId":"post-fix","hypothesisId":"A"})}\n', mode: FileMode.append);
-    } catch (_) {}
-    // #endregion
     // Initialize state after first frame when ref is available
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // #region agent log
-      try {
-        final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
-        logFile.writeAsStringSync('${jsonEncode({"id":"log_postFrame_init","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:32","message":"PostFrameCallback - initializing state with ref","data":{"hasRef":true},"sessionId":"debug-session","runId":"post-fix","hypothesisId":"A"})}\n', mode: FileMode.append);
-      } catch (_) {}
-      // #endregion
       if (mounted) {
-        // #region agent log
-        try {
-          final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
-          logFile.writeAsStringSync('${jsonEncode({"id":"log_before_ref_read_postFrame","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:35","message":"Before ref.read() in postFrameCallback","data":{},"sessionId":"debug-session","runId":"post-fix","hypothesisId":"A"})}\n', mode: FileMode.append);
-        } catch (_) {}
-        // #endregion
         final filter = ref.read(articleFilterProvider);
-        // #region agent log
-        try {
-          final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
-          logFile.writeAsStringSync('${jsonEncode({"id":"log_after_ref_read_postFrame","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:37","message":"After ref.read() - SUCCESS in postFrameCallback","data":{"filterStartDate":filter.startDate?.toString(),"filterEndDate":filter.endDate?.toString(),"selectedSourcesCount":filter.selectedSources.length,"selectedCategoriesCount":filter.selectedCategories.length,"isRead":filter.isRead},"sessionId":"debug-session","runId":"post-fix","hypothesisId":"A"})}\n', mode: FileMode.append);
-        } catch (_) {}
-        // #endregion
         setState(() {
           _startDate = filter.startDate;
           _endDate = filter.endDate;
@@ -65,48 +39,18 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
           _isRead = filter.isRead;
           _initialized = true;
         });
-        // #region agent log
-        try {
-          final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
-          logFile.writeAsStringSync('${jsonEncode({"id":"log_state_init_complete_postFrame","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:45","message":"State variables initialized in postFrameCallback","data":{"_startDate":_startDate?.toString(),"_endDate":_endDate?.toString(),"_selectedSourcesCount":_selectedSources.length,"_selectedCategoriesCount":_selectedCategories.length,"_isRead":_isRead},"sessionId":"debug-session","runId":"post-fix","hypothesisId":"C"})}\n', mode: FileMode.append);
-        } catch (_) {}
-        // #endregion
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // #region agent log
-    try {
-      final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
-      logFile.writeAsStringSync('${jsonEncode({"id":"log_build_entry","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:70","message":"build() called","data":{"hasRef":true,"_initialized":_initialized},"sessionId":"debug-session","runId":"post-fix","hypothesisId":"D"})}\n', mode: FileMode.append);
-    } catch (_) {}
-    // #endregion
     final theme = Theme.of(context);
-    // #region agent log
-    try {
-      final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
-      logFile.writeAsStringSync('${jsonEncode({"id":"log_before_ref_watch","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:72","message":"Before ref.watch() calls","data":{},"sessionId":"debug-session","runId":"post-fix","hypothesisId":"D"})}\n', mode: FileMode.append);
-    } catch (_) {}
-    // #endregion
     final filter = ref.watch(articleFilterProvider);
     final newsState = ref.watch(newsProvider);
-    // #region agent log
-    try {
-      final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
-      logFile.writeAsStringSync('${jsonEncode({"id":"log_after_ref_watch","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:74","message":"After ref.watch() - SUCCESS","data":{"filterStartDate":filter.startDate?.toString(),"filterEndDate":filter.endDate?.toString(),"newsArticlesCount":newsState.articles.length},"sessionId":"debug-session","runId":"post-fix","hypothesisId":"D"})}\n', mode: FileMode.append);
-    } catch (_) {}
-    // #endregion
     
     // Initialize state from filter if not already initialized (fallback)
     if (!_initialized) {
-      // #region agent log
-      try {
-        final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
-        logFile.writeAsStringSync('${jsonEncode({"id":"log_lazy_init_in_build","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:82","message":"Lazy initialization in build() - fallback","data":{},"sessionId":"debug-session","runId":"post-fix","hypothesisId":"E"})}\n', mode: FileMode.append);
-      } catch (_) {}
-      // #endregion
       _startDate = filter.startDate;
       _endDate = filter.endDate;
       _selectedSources = List<String>.from(filter.selectedSources);
