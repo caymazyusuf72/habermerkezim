@@ -47,7 +47,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       
       // Kategoriye ait tüm RSS feed'lerini bul (örn: teknoloji, teknoloji_webtekno, teknoloji_shiftdelete)
       final categoryFeeds = ApiEndpoints.rssFeedUrls.entries
-          .where((entry) => entry.key == category || entry.key.startsWith('$category_'))
+          .where((entry) => entry.key == category || entry.key.startsWith('${category}_'))
           .toList();
       
       if (categoryFeeds.isEmpty) {
@@ -86,9 +86,20 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         throw RssParseException('$category kategorisinden hiç haber alınamadı');
       }
       
-      // Tarihe göre sırala ve duplicate'leri kaldır
-      allArticles.sort((a, b) => b.publishedDate.compareTo(a.publishedDate));
+      // Duplicate'leri kaldır
       final uniqueArticles = _removeDuplicates(allArticles);
+      
+      // Resim olanları üste, tarihe göre sırala
+      uniqueArticles.sort((a, b) {
+        final aHasImage = a.imageUrl != null && a.imageUrl!.isNotEmpty;
+        final bHasImage = b.imageUrl != null && b.imageUrl!.isNotEmpty;
+        
+        if (aHasImage && !bHasImage) return -1;
+        if (!aHasImage && bHasImage) return 1;
+        
+        // Aynı durumda tarihe göre sırala
+        return b.publishedDate.compareTo(a.publishedDate);
+      });
       
       print('✅ $category: Toplam ${uniqueArticles.length} makale (${allArticles.length} feed\'den)');
       return uniqueArticles;
@@ -157,9 +168,20 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       throw const RssParseException('Hiç haber alınamadı');
     }
     
-    // Duplicate'leri kaldır ve tarihe göre sırala (yeniden eskiye)
+    // Duplicate'leri kaldır
     final uniqueArticles = _removeDuplicates(allArticles);
-    uniqueArticles.sort((a, b) => b.publishedDate.compareTo(a.publishedDate));
+    
+    // Resim olanları üste, tarihe göre sırala
+    uniqueArticles.sort((a, b) {
+      final aHasImage = a.imageUrl != null && a.imageUrl!.isNotEmpty;
+      final bHasImage = b.imageUrl != null && b.imageUrl!.isNotEmpty;
+      
+      if (aHasImage && !bHasImage) return -1;
+      if (!aHasImage && bHasImage) return 1;
+      
+      // Aynı durumda tarihe göre sırala
+      return b.publishedDate.compareTo(a.publishedDate);
+    });
     
     print('✅ Tüm kategoriler: Toplam ${uniqueArticles.length} makale');
     return uniqueArticles;
@@ -293,6 +315,9 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         
         articleData['content'] = articleData['description'];
         
+        // Atom formatında görsel çekme
+        articleData['mediaContent'] = _getMediaContent(entry);
+        
         final article = ArticleModel.fromRssItem(
           rssItem: articleData,
           category: category,
@@ -322,11 +347,38 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
 
   /// Media content URL'ini çıkarır
   String? _getMediaContent(XmlElement item) {
-    // media:content elementi
-    final mediaElement = item.findElements('media:content').firstOrNull ??
-                         item.findElements('content').firstOrNull;
+    // media:content elementi (Media RSS namespace)
+    var mediaElement = item.findElements('media:content').firstOrNull;
+    if (mediaElement != null) {
+      final url = mediaElement.getAttribute('url');
+      if (url != null && url.isNotEmpty) return url;
+    }
     
-    return mediaElement?.getAttribute('url');
+    // content elementi (Atom format)
+    mediaElement = item.findElements('content').firstOrNull;
+    if (mediaElement != null) {
+      final url = mediaElement.getAttribute('url');
+      if (url != null && url.isNotEmpty) return url;
+    }
+    
+    // media:thumbnail elementi
+    final thumbnailElement = item.findElements('media:thumbnail').firstOrNull;
+    if (thumbnailElement != null) {
+      final url = thumbnailElement.getAttribute('url');
+      if (url != null && url.isNotEmpty) return url;
+    }
+    
+    // media:group içindeki media:content
+    final mediaGroup = item.findElements('media:group').firstOrNull;
+    if (mediaGroup != null) {
+      final groupContent = mediaGroup.findElements('media:content').firstOrNull;
+      if (groupContent != null) {
+        final url = groupContent.getAttribute('url');
+        if (url != null && url.isNotEmpty) return url;
+      }
+    }
+    
+    return null;
   }
 
   /// Enclosure URL'ini çıkarır  

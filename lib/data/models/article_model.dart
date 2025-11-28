@@ -164,22 +164,107 @@ class ArticleModel extends HiveObject {
 
   /// RSS item'ından görsel URL'i çıkarır
   static String? _extractImageUrl(Map<String, dynamic> rssItem) {
-    // media:content URL'i
-    if (rssItem['mediaContent'] != null) {
-      return rssItem['mediaContent'];
+    // 1. media:content URL'i (öncelikli)
+    if (rssItem['mediaContent'] != null && rssItem['mediaContent'].toString().isNotEmpty) {
+      final url = rssItem['mediaContent'].toString().trim();
+      if (_isValidImageUrl(url)) return url;
     }
     
-    // enclosure URL'i
-    if (rssItem['enclosure'] != null) {
-      return rssItem['enclosure'];
+    // 2. enclosure URL'i
+    if (rssItem['enclosure'] != null && rssItem['enclosure'].toString().isNotEmpty) {
+      final url = rssItem['enclosure'].toString().trim();
+      if (_isValidImageUrl(url)) return url;
     }
     
-    // description içindeki img tag'i
+    // 3. description içindeki img tag'i (farklı formatlar)
     final description = rssItem['description'] ?? '';
-    final RegExp imgRegex = RegExp(r'<img[^>]+src="([^"]+)"', caseSensitive: false);
-    final match = imgRegex.firstMatch(description);
+    if (description.isNotEmpty) {
+      // Standart img tag: <img src="..."> veya <img src='...'>
+      // Önce çift tırnak ile dene
+      var imgRegex = RegExp(r'<img[^>]+src="([^"]+)"', caseSensitive: false);
+      var match = imgRegex.firstMatch(description);
+      if (match == null) {
+        // Tek tırnak ile dene
+        imgRegex = RegExp(r"<img[^>]+src='([^']+)'", caseSensitive: false);
+        match = imgRegex.firstMatch(description);
+      }
+      if (match != null) {
+        final url = match.group(1)?.trim();
+        if (url != null && _isValidImageUrl(url)) return url;
+      }
+      
+      // data-src (lazy loading): <img data-src="...">
+      imgRegex = RegExp(r'<img[^>]+data-src="([^"]+)"', caseSensitive: false);
+      match = imgRegex.firstMatch(description);
+      if (match == null) {
+        imgRegex = RegExp(r"<img[^>]+data-src='([^']+)'", caseSensitive: false);
+        match = imgRegex.firstMatch(description);
+      }
+      if (match != null) {
+        final url = match.group(1)?.trim();
+        if (url != null && _isValidImageUrl(url)) return url;
+      }
+      
+      // data-lazy-src: <img data-lazy-src="...">
+      imgRegex = RegExp(r'<img[^>]+data-lazy-src="([^"]+)"', caseSensitive: false);
+      match = imgRegex.firstMatch(description);
+      if (match == null) {
+        imgRegex = RegExp(r"<img[^>]+data-lazy-src='([^']+)'", caseSensitive: false);
+        match = imgRegex.firstMatch(description);
+      }
+      if (match != null) {
+        final url = match.group(1)?.trim();
+        if (url != null && _isValidImageUrl(url)) return url;
+      }
+    }
     
-    return match?.group(1);
+    // 4. content içindeki img tag'i
+    final content = rssItem['content'] ?? '';
+    if (content.isNotEmpty && content != description) {
+      var imgRegex = RegExp(r'<img[^>]+src="([^"]+)"', caseSensitive: false);
+      var match = imgRegex.firstMatch(content);
+      if (match == null) {
+        imgRegex = RegExp(r"<img[^>]+src='([^']+)'", caseSensitive: false);
+        match = imgRegex.firstMatch(content);
+      }
+      if (match != null) {
+        final url = match.group(1)?.trim();
+        if (url != null && _isValidImageUrl(url)) return url;
+      }
+    }
+    
+    return null;
+  }
+  
+  /// Görsel URL'inin geçerli olup olmadığını kontrol eder
+  static bool _isValidImageUrl(String url) {
+    if (url.isEmpty) return false;
+    
+    // URL formatını kontrol et
+    try {
+      final uri = Uri.parse(url);
+      if (!uri.hasScheme || (!uri.scheme.startsWith('http'))) {
+        return false;
+      }
+      
+      // Görsel uzantılarını kontrol et
+      final lowerUrl = url.toLowerCase();
+      final imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+      final hasImageExtension = imageExtensions.any((ext) => lowerUrl.contains(ext));
+      
+      // URL'de görsel uzantısı yoksa ama domain'de görsel servisi varsa kabul et
+      if (!hasImageExtension) {
+        final imageDomains = ['imgur.com', 'i.imgur.com', 'cdn', 'image', 'photo', 'pic', 'media'];
+        final hasImageDomain = imageDomains.any((domain) => lowerUrl.contains(domain));
+        if (!hasImageDomain) {
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   /// Tarih parse eder - RSS feed'lerindeki farklı tarih formatlarını destekler

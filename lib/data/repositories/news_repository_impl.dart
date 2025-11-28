@@ -31,17 +31,20 @@ class NewsRepositoryImpl implements NewsRepository {
           
           // Cache articles locally
           await localDataSource.cacheArticles(articles);
-          // Convert ArticleModel to Article
-          return articles.map((model) => model.toEntity()).toList();
+          // Convert ArticleModel to Article and sort by image
+          final entities = articles.map((model) => model.toEntity()).toList();
+          return _sortArticlesByImage(entities);
         } catch (e) {
           // Fall back to cached data if network fails
           final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
-          return cachedArticles.map((model) => model.toEntity()).toList();
+          final entities = cachedArticles.map((model) => model.toEntity()).toList();
+          return _sortArticlesByImage(entities);
         }
       } else {
         // Offline - get from cache
         final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
-        return cachedArticles.map((model) => model.toEntity()).toList();
+        final entities = cachedArticles.map((model) => model.toEntity()).toList();
+        return _sortArticlesByImage(entities);
       }
     } catch (e) {
       throw Exception('Failed to get articles: $e');
@@ -67,10 +70,11 @@ class NewsRepositoryImpl implements NewsRepository {
           await localDataSource.cacheArticles(articles);
           print('✅ Cache\'e kaydetme başarılı');
           
-          // Convert ArticleModel to Article
+          // Convert ArticleModel to Article and sort by image
           final entities = articles.map((model) => model.toEntity()).toList();
-          print('✅ getAllArticles tamamlandı: ${entities.length} makale');
-          return entities;
+          final sortedEntities = _sortArticlesByImage(entities);
+          print('✅ getAllArticles tamamlandı: ${sortedEntities.length} makale');
+          return sortedEntities;
         } catch (e) {
           print('❌ Remote request hatası: $e');
           print('🔄 Cache\'den veri deneniyor...');
@@ -78,7 +82,8 @@ class NewsRepositoryImpl implements NewsRepository {
           try {
             final cachedArticles = await localDataSource.getCachedArticles();
             print('✅ Cache\'den ${cachedArticles.length} makale alındı');
-            return cachedArticles.map((model) => model.toEntity()).toList();
+            final entities = cachedArticles.map((model) => model.toEntity()).toList();
+            return _sortArticlesByImage(entities);
           } catch (cacheError) {
             print('❌ Cache de boş, demo data döndürülüyor');
             // Cache de boş ise demo data döndür
@@ -91,7 +96,8 @@ class NewsRepositoryImpl implements NewsRepository {
         try {
           final cachedArticles = await localDataSource.getCachedArticles();
           print('✅ Cache\'den ${cachedArticles.length} makale alındı');
-          return cachedArticles.map((model) => model.toEntity()).toList();
+          final entities = cachedArticles.map((model) => model.toEntity()).toList();
+          return _sortArticlesByImage(entities);
         } catch (cacheError) {
           print('❌ Offline ve cache boş, demo data döndürülüyor');
           // Cache boş ise demo data döndür
@@ -207,5 +213,29 @@ class NewsRepositoryImpl implements NewsRepository {
         isFavorite: false,
       ),
     ];
+  }
+  
+  /// Haberleri resim durumuna göre sıralar (resim olanlar üstte, olmayanlar altta)
+  /// Aynı zamanda tarihe göre de sıralar (yeniden eskiye)
+  List<Article> _sortArticlesByImage(List<Article> articles) {
+    final sorted = List<Article>.from(articles);
+    
+    sorted.sort((a, b) {
+      // Önce resim durumuna göre sırala (resim olanlar üstte)
+      final aHasImage = a.imageUrl != null && a.imageUrl!.isNotEmpty;
+      final bHasImage = b.imageUrl != null && b.imageUrl!.isNotEmpty;
+      
+      if (aHasImage && !bHasImage) {
+        return -1; // a üstte
+      } else if (!aHasImage && bHasImage) {
+        return 1; // b üstte
+      }
+      
+      // İkisi de aynı durumda (ikisi de resimli veya ikisi de resimsiz)
+      // Tarihe göre sırala (yeniden eskiye)
+      return b.publishedDate.compareTo(a.publishedDate);
+    });
+    
+    return sorted;
   }
 }
