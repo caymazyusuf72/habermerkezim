@@ -184,13 +184,13 @@ class AppTheme {
         space: 1,
       ),
 
-      // Tab Bar Theme
+      // Tab Bar Theme - Tema rengiyle vurgulu
       tabBarTheme: TabBarThemeData(
-        labelColor: colorScheme.primary,
-        unselectedLabelColor: colorScheme.onSurface.withOpacity(0.6),
-        indicatorColor: colorScheme.primary,
-        indicatorSize: TabBarIndicatorSize.label,
-        labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+        labelColor: primaryDark,
+        unselectedLabelColor: colorScheme.onSurface.withOpacity(0.5),
+        indicatorColor: primaryColor,
+        indicatorSize: TabBarIndicatorSize.tab,
+        labelStyle: const TextStyle(fontWeight: FontWeight.w700),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400),
       ),
 
@@ -317,7 +317,6 @@ class AppTheme {
         unselectedLabelColor: Colors.white.withOpacity(0.5),
         indicatorColor: primaryColor,
         indicatorSize: TabBarIndicatorSize.tab,
-        indicatorWeight: 3,
         labelStyle: const TextStyle(fontWeight: FontWeight.w700),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400),
       ),
