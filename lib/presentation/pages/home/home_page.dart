@@ -146,7 +146,12 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
             ),
             const SizedBox(width: 12),
-            const Text('Haber Merkezim'),
+            Flexible(
+              child: Text(
+                'Haber Merkezim',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         
