@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/article.dart';
 import '../../domain/repositories/news_repository.dart';
-import 'providers.dart';
+import 'providers.dart' show newsRepositoryProvider;
 
 /// Bildirim banner'ı için state
 class NotificationBannerState {

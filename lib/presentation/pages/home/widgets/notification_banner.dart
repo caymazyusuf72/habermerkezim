@@ -92,6 +92,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
             child: ListView.builder(
               controller: _horizontalScrollController,
               scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];

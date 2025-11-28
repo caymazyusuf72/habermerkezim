@@ -52,9 +52,9 @@ class ArticleCard extends ConsumerWidget {
             // Görsel ve kategori badge'i
             if (article.imageUrl != null) _buildImageSection(context, ref, categoryColor),
             
-            // İçerik
+            // İçerik - Daha geniş padding
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -120,7 +120,7 @@ class ArticleCard extends ConsumerWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
