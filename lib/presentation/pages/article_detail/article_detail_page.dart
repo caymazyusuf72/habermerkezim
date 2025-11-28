@@ -71,8 +71,6 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         ],
       ),
       
-      // Alt eylem çubuğu
-      bottomNavigationBar: _buildBottomActionBar(context, theme),
     );
   }
 
@@ -244,7 +242,12 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           // Kaynak butonu
           _buildSourceButton(context, theme),
           
-          const SizedBox(height: 100), // Bottom bar için alan
+          const SizedBox(height: 24),
+          
+          // Alt eylem butonları (yukarı taşındı)
+          _buildActionButtons(context, theme),
+          
+          const SizedBox(height: 32), // Alt padding
         ],
       ),
     );
@@ -390,19 +393,16 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     );
   }
 
-  /// Alt eylem çubuğu
-  Widget _buildBottomActionBar(BuildContext context, ThemeData theme) {
+  /// Alt eylem butonları (içerik içinde, yukarı taşındı)
+  Widget _buildActionButtons(BuildContext context, ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: theme.shadowColor.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
+        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outline.withOpacity(0.2),
+        ),
       ),
       child: Row(
         children: [
