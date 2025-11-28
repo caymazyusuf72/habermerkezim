@@ -26,23 +26,30 @@ class WidgetService {
   /// Widget'ı son haberlerle güncelle
   static Future<void> updateWidget(List<Article> articles) async {
     try {
+      print('🔄 Widget güncelleniyor: ${articles.length} haber');
+      
       if (articles.isEmpty) {
+        print('⚠️ Widget: Haber listesi boş, widget temizleniyor');
         await _clearWidget();
         return;
       }
 
       // Son 10 haberi al (kaydırma için)
       final topArticles = articles.take(10).toList();
+      print('📰 Widget: ${topArticles.length} haber kaydediliyor');
 
       // İlk haber (varsayılan gösterilecek)
       if (topArticles.isNotEmpty) {
         final firstArticle = topArticles[0];
+        print('📝 Widget: İlk haber - ${firstArticle.title.substring(0, firstArticle.title.length > 50 ? 50 : firstArticle.title.length)}...');
+        
         await HomeWidget.saveWidgetData<String>(_titleKey, firstArticle.title);
         await HomeWidget.saveWidgetData<String>(_descriptionKey, firstArticle.description);
         await HomeWidget.saveWidgetData<String>(_linkKey, firstArticle.link);
         if (firstArticle.imageUrl != null) {
           await HomeWidget.saveWidgetData<String>(_imageUrlKey, firstArticle.imageUrl!);
         }
+        print('✅ Widget: İlk haber kaydedildi');
       }
 
       // Toplam haber sayısı ve mevcut index
@@ -55,6 +62,7 @@ class WidgetService {
       ).join('|||');
       
       await HomeWidget.saveWidgetData<String>(_articlesKey, articlesJsonString);
+      print('✅ Widget: Tüm haberler kaydedildi (${articlesJsonString.length} karakter)');
 
       // Widget'ı yeniden yükle
       await HomeWidget.updateWidget(
@@ -63,8 +71,9 @@ class WidgetService {
       );
 
       print('✅ Widget güncellendi: ${topArticles.length} haber');
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('⚠️ Widget güncelleme hatası: $e');
+      print('Stack trace: $stackTrace');
     }
   }
 

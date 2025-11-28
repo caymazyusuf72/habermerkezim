@@ -73,10 +73,31 @@ public class NewsWidgetProvider extends AppWidgetProvider {
             }
             
             // Ana haber başlığını ayarla
-            if (title != null && !title.isEmpty()) {
+            if (title != null && !title.isEmpty() && !title.equals("Haber başlığı")) {
                 views.setTextViewText(R.id.widget_title, title);
+                android.util.Log.d("NewsWidget", "Title set: " + title.substring(0, Math.min(50, title.length())));
             } else {
-                views.setTextViewText(R.id.widget_title, "Haber başlığı");
+                // Eğer articles'tan veri yoksa, direkt title ve description'ı kullan
+                String directTitle = getWidgetData(context, "title");
+                String directDesc = getWidgetData(context, "description");
+                
+                if (directTitle != null && !directTitle.isEmpty()) {
+                    views.setTextViewText(R.id.widget_title, directTitle);
+                    android.util.Log.d("NewsWidget", "Direct title set: " + directTitle.substring(0, Math.min(50, directTitle.length())));
+                } else {
+                    views.setTextViewText(R.id.widget_title, "Haber başlığı");
+                }
+                
+                if (directDesc != null && !directDesc.isEmpty()) {
+                    String shortDesc = directDesc.length() > 120 
+                        ? directDesc.substring(0, 120) + "..." 
+                        : directDesc;
+                    views.setTextViewText(R.id.widget_description, shortDesc);
+                    android.util.Log.d("NewsWidget", "Direct description set");
+                } else {
+                    views.setTextViewText(R.id.widget_description, "Haberler yükleniyor...");
+                }
+                return; // Direkt verileri kullandık, devam etme
             }
             
             // Açıklama
@@ -86,8 +107,10 @@ public class NewsWidgetProvider extends AppWidgetProvider {
                     ? description.substring(0, 120) + "..." 
                     : description;
                 views.setTextViewText(R.id.widget_description, shortDesc);
+                android.util.Log.d("NewsWidget", "Description set");
             } else {
                 views.setTextViewText(R.id.widget_description, "Haberler yükleniyor...");
+                android.util.Log.w("NewsWidget", "Description is empty");
             }
             
             // İndikatör (1/3 gibi)
@@ -165,13 +188,18 @@ public class NewsWidgetProvider extends AppWidgetProvider {
      */
     private static String getWidgetData(Context context, String key) {
         try {
-            // home_widget paketi 'flutter.home_widget' adında SharedPreferences kullanır
+            // home_widget paketi 'group.com.habermerkezi.widget' adında SharedPreferences kullanır
+            // AppGroupId ile aynı olmalı
             android.content.SharedPreferences prefs = context.getSharedPreferences(
-                "flutter.home_widget", 
+                "group.com.habermerkezi.widget", 
                 Context.MODE_PRIVATE
             );
-            return prefs.getString(key, "");
+            String value = prefs.getString(key, "");
+            // Debug için log
+            android.util.Log.d("NewsWidget", "Key: " + key + ", Value: " + (value != null && value.length() > 50 ? value.substring(0, 50) + "..." : value));
+            return value != null ? value : "";
         } catch (Exception e) {
+            android.util.Log.e("NewsWidget", "Error getting widget data for key: " + key, e);
             return "";
         }
     }
@@ -188,7 +216,7 @@ public class NewsWidgetProvider extends AppWidgetProvider {
             
             // Mevcut index'i al
             android.content.SharedPreferences prefs = context.getSharedPreferences(
-                "flutter.home_widget", 
+                "group.com.habermerkezi.widget", 
                 Context.MODE_PRIVATE
             );
             String currentIndexStr = prefs.getString("currentIndex", "0");
