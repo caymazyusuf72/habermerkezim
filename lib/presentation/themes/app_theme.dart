@@ -367,6 +367,20 @@ class AppTheme {
         return customColors['technology'] ?? Colors.purple;
       case 'spor':
         return customColors['sports'] ?? warningOrange;
+      case 'dunya':
+        return const Color(0xFF607D8B); // Blue Grey
+      case 'saglik':
+        return const Color(0xFFE91E63); // Pink
+      case 'kultur':
+        return const Color(0xFF795548); // Brown
+      case 'magazin':
+        return const Color(0xFFFF5722); // Deep Orange
+      case 'bilim':
+        return const Color(0xFF00BCD4); // Cyan
+      case 'egitim':
+        return const Color(0xFF3F51B5); // Indigo
+      case 'otomobil':
+        return const Color(0xFFFFC107); // Amber
       default:
         return customColors['culture'] ?? Colors.brown;
     }

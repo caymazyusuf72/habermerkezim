@@ -44,30 +44,54 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   Future<List<ArticleModel>> getArticlesByCategory(String category) async {
     try {
       print('🌐 RSS Request: $category');
-      final feedUrl = ApiEndpoints.rssFeedUrls[category];
-      if (feedUrl == null) {
+      
+      // Kategoriye ait tüm RSS feed'lerini bul (örn: teknoloji, teknoloji_webtekno, teknoloji_shiftdelete)
+      final categoryFeeds = ApiEndpoints.rssFeedUrls.entries
+          .where((entry) => entry.key == category || entry.key.startsWith('$category_'))
+          .toList();
+      
+      if (categoryFeeds.isEmpty) {
         print('❌ Kategori bulunamadı: $category');
         throw RssParseException('Kategori bulunamadı: $category');
       }
       
-      print('📡 URL: $feedUrl');
-      final response = await _dio.get(feedUrl);
-      print('📊 Response: ${response.statusCode}');
+      final List<ArticleModel> allArticles = [];
       
-      if (response.statusCode != 200) {
-        print('❌ HTTP Error: ${response.statusCode}');
-        throw ServerException(
-          'RSS feed alınamadı: ${response.statusCode}',
-          statusCode: response.statusCode,
-        );
+      // Kategoriye ait tüm feed'leri paralel olarak çek
+      for (final feedEntry in categoryFeeds) {
+        try {
+          final feedUrl = feedEntry.value;
+          final feedKey = feedEntry.key;
+          
+          print('📡 URL [$feedKey]: $feedUrl');
+          final response = await _dio.get(feedUrl);
+          print('📊 Response [$feedKey]: ${response.statusCode}');
+          
+          if (response.statusCode == 200) {
+            final xmlString = response.data as String;
+            print('📝 Parsing XML [$feedKey]...');
+            final articles = await _parseRssXml(xmlString, category);
+            allArticles.addAll(articles);
+            print('✅ $feedKey: ${articles.length} makale');
+          } else {
+            print('⚠️ HTTP Error [$feedKey]: ${response.statusCode}');
+          }
+        } catch (e) {
+          // Bir feed başarısız olursa diğerlerine devam et
+          print('⚠️ Feed hatası [${feedEntry.key}]: $e');
+        }
       }
       
-      final xmlString = response.data as String;
-      print('📝 Parsing XML...');
-      final articles = await _parseRssXml(xmlString, category);
-      print('✅ $category: ${articles.length} makale');
+      if (allArticles.isEmpty) {
+        throw RssParseException('$category kategorisinden hiç haber alınamadı');
+      }
       
-      return articles;
+      // Tarihe göre sırala ve duplicate'leri kaldır
+      allArticles.sort((a, b) => b.publishedDate.compareTo(a.publishedDate));
+      final uniqueArticles = _removeDuplicates(allArticles);
+      
+      print('✅ $category: Toplam ${uniqueArticles.length} makale (${allArticles.length} feed\'den)');
+      return uniqueArticles;
       
     } on DioException catch (e) {
       print('💥 DioException [$category]: ${e.type} - ${e.message}');
@@ -77,12 +101,49 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       throw ServerException('RSS feed parse hatası: ${e.toString()}');
     }
   }
+  
+  /// Duplicate makaleleri kaldır (aynı link'e sahip)
+  List<ArticleModel> _removeDuplicates(List<ArticleModel> articles) {
+    final seenLinks = <String>{};
+    final uniqueArticles = <ArticleModel>[];
+    
+    for (final article in articles) {
+      if (!seenLinks.contains(article.link)) {
+        seenLinks.add(article.link);
+        uniqueArticles.add(article);
+      }
+    }
+    
+    return uniqueArticles;
+  }
+  
+  /// Ana kategorileri döndürür (alt feed'leri değil)
+  List<String> _getMainCategories() {
+    final categories = <String>{};
+    
+    for (final key in ApiEndpoints.rssFeedUrls.keys) {
+      // Alt feed'ler "_" ile ayrılmış (örn: teknoloji_webtekno)
+      // Ana kategori alt çizgi içermez veya sadece kategori adıdır
+      if (!key.contains('_') || key.split('_').length == 1) {
+        categories.add(key);
+      } else {
+        // Alt feed'lerden ana kategoriyi çıkar (teknoloji_webtekno -> teknoloji)
+        final mainCategory = key.split('_').first;
+        categories.add(mainCategory);
+      }
+    }
+    
+    return categories.toList()..sort();
+  }
 
   @override
   Future<List<ArticleModel>> getAllArticles() async {
     final List<ArticleModel> allArticles = [];
     
-    for (final category in ApiEndpoints.rssFeedUrls.keys) {
+    // Sadece ana kategorileri al (alt feed'leri değil)
+    final mainCategories = _getMainCategories();
+    
+    for (final category in mainCategories) {
       try {
         final articles = await getArticlesByCategory(category);
         allArticles.addAll(articles);
@@ -96,10 +157,12 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       throw const RssParseException('Hiç haber alınamadı');
     }
     
-    // Tarihe göre sırala (yeniden eskiye)
-    allArticles.sort((a, b) => b.publishedDate.compareTo(a.publishedDate));
+    // Duplicate'leri kaldır ve tarihe göre sırala (yeniden eskiye)
+    final uniqueArticles = _removeDuplicates(allArticles);
+    uniqueArticles.sort((a, b) => b.publishedDate.compareTo(a.publishedDate));
     
-    return allArticles;
+    print('✅ Tüm kategoriler: Toplam ${uniqueArticles.length} makale');
+    return uniqueArticles;
   }
 
   @override

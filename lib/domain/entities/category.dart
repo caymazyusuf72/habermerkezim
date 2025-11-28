@@ -106,5 +106,40 @@ class Category {
       iconName: 'health_and_safety',
       color: '#E91E63', // Pink
     ),
+    const Category(
+      id: 'kultur',
+      name: 'kultur',
+      displayName: 'Kültür-Sanat',
+      iconName: 'palette',
+      color: '#795548', // Brown
+    ),
+    const Category(
+      id: 'magazin',
+      name: 'magazin',
+      displayName: 'Magazin',
+      iconName: 'celebration',
+      color: '#FF5722', // Deep Orange
+    ),
+    const Category(
+      id: 'bilim',
+      name: 'bilim',
+      displayName: 'Bilim',
+      iconName: 'science',
+      color: '#00BCD4', // Cyan
+    ),
+    const Category(
+      id: 'egitim',
+      name: 'egitim',
+      displayName: 'Eğitim',
+      iconName: 'school',
+      color: '#3F51B5', // Indigo
+    ),
+    const Category(
+      id: 'otomobil',
+      name: 'otomobil',
+      displayName: 'Otomobil',
+      iconName: 'directions_car',
+      color: '#FFC107', // Amber
+    ),
   ];
 }
