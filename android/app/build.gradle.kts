@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.example.untitled"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34  // Android 14 - En son API'ler için
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -35,10 +35,15 @@ android {
         applicationId = "com.example.untitled"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion  // Updated to 23 for home_widget package compatibility
-        targetSdk = flutter.targetSdkVersion
+        // minSdk 21 = Android 5.0 (Lollipop) - %99+ cihaz desteği
+        // minSdk 23 = Android 6.0 (Marshmallow) - home_widget paketi için gerekli
+        minSdk = 23  // Android 6.0+ (Marshmallow) - %98+ cihaz desteği
+        targetSdk = 34  // Android 14 - En son özellikler için
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Multi-dex desteği (eski cihazlar için)
+        multiDexEnabled = true
     }
 
     signingConfigs {
@@ -60,7 +65,11 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.2")
+    // Core library desugaring - Java 8+ API'lerini eski Android sürümlerinde kullanmak için
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    
+    // Multi-dex desteği - 64K method limitini aşmak için
+    implementation("androidx.multidex:multidex:2.0.1")
 }
 
 flutter {
