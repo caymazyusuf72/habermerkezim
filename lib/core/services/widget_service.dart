@@ -49,19 +49,9 @@ class WidgetService {
       await HomeWidget.saveWidgetData<String>(_countKey, topArticles.length.toString());
       await HomeWidget.saveWidgetData<String>(_currentIndexKey, '0'); // İlk haber gösteriliyor
       
-      // Tüm haberleri JSON olarak kaydet (kaydırma için)
-      final articlesJson = topArticles.map((article) => {
-        return {
-          'title': article.title,
-          'description': article.description,
-          'link': article.link,
-          'imageUrl': article.imageUrl ?? '',
-        };
-      }).toList();
-      
-      // JSON'u string olarak kaydet
-      final articlesJsonString = articlesJson.map((a) => 
-        '${a['title']}|${a['description']}|${a['link']}|${a['imageUrl']}'
+      // Tüm haberleri string olarak kaydet (kaydırma için)
+      final articlesJsonString = topArticles.map((article) => 
+        '${article.title}|${article.description}|${article.link}|${article.imageUrl ?? ''}'
       ).join('|||');
       
       await HomeWidget.saveWidgetData<String>(_articlesKey, articlesJsonString);

@@ -92,7 +92,7 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="Sonraki"
             android:padding="6dp"
-            android:layout_marginStart="auto" />
+            android:layout_marginStart="8dp" />
     </LinearLayout>
     
     <!-- Haber İndikatörü (1/3 gibi) -->
