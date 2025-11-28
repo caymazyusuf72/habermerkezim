@@ -2,27 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/hive_service.dart';
-import '../themes/app_theme.dart';
+import '../themes/app_theme.dart' show AppTheme, ColorTheme;
 
 /// Theme state - dark/light mode, color theme ve font scale durumunu yönetir
 class ThemeState {
   final ThemeMode themeMode;
   final bool isDarkMode;
   final double fontScale;
-  final AppTheme.ColorTheme colorTheme;
+  final ColorTheme colorTheme;
   
   const ThemeState({
     this.themeMode = ThemeMode.light,
     this.isDarkMode = false,
     this.fontScale = 1.0,
-    this.colorTheme = AppTheme.ColorTheme.defaultTheme,
+    this.colorTheme = ColorTheme.defaultTheme,
   });
 
   ThemeState copyWith({
     ThemeMode? themeMode,
     bool? isDarkMode,
     double? fontScale,
-    AppTheme.ColorTheme? colorTheme,
+    ColorTheme? colorTheme,
   }) {
     return ThemeState(
       themeMode: themeMode ?? this.themeMode,
@@ -98,7 +98,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
   }
 
   /// Renk temasını ayarlar
-  Future<void> setColorTheme(AppTheme.ColorTheme colorTheme) async {
+  Future<void> setColorTheme(ColorTheme colorTheme) async {
     state = state.copyWith(colorTheme: colorTheme);
     
     try {
@@ -109,35 +109,35 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
   }
   
   /// ColorTheme'u string'e çevirir
-  String _colorThemeToString(AppTheme.ColorTheme colorTheme) {
+  String _colorThemeToString(ColorTheme colorTheme) {
     switch (colorTheme) {
-      case AppTheme.ColorTheme.defaultTheme:
+      case ColorTheme.defaultTheme:
         return 'default';
-      case AppTheme.ColorTheme.oceanBlue:
+      case ColorTheme.oceanBlue:
         return 'oceanBlue';
-      case AppTheme.ColorTheme.springRed:
+      case ColorTheme.springRed:
         return 'springRed';
-      case AppTheme.ColorTheme.purple:
+      case ColorTheme.purple:
         return 'purple';
-      case AppTheme.ColorTheme.amber:
+      case ColorTheme.amber:
         return 'amber';
     }
   }
   
   /// String'i ColorTheme'a çevirir
-  AppTheme.ColorTheme _stringToColorTheme(String themeString) {
+  ColorTheme _stringToColorTheme(String themeString) {
     switch (themeString) {
       case 'oceanBlue':
-        return AppTheme.ColorTheme.oceanBlue;
+        return ColorTheme.oceanBlue;
       case 'springRed':
-        return AppTheme.ColorTheme.springRed;
+        return ColorTheme.springRed;
       case 'purple':
-        return AppTheme.ColorTheme.purple;
+        return ColorTheme.purple;
       case 'amber':
-        return AppTheme.ColorTheme.amber;
+        return ColorTheme.amber;
       case 'default':
       default:
-        return AppTheme.ColorTheme.defaultTheme;
+        return ColorTheme.defaultTheme;
     }
   }
 
@@ -263,7 +263,7 @@ final fontScaleProvider = Provider<double>((ref) {
 });
 
 /// Color theme provider
-final colorThemeProvider = Provider<AppTheme.ColorTheme>((ref) {
+final colorThemeProvider = Provider<ColorTheme>((ref) {
   final themeState = ref.watch(themeProvider);
   return themeState.colorTheme;
 });

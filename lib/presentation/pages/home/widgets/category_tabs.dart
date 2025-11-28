@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../domain/entities/category.dart';
-import '../../../themes/app_theme.dart';
+import '../../../themes/app_theme.dart' show AppTheme, ColorTheme;
 import '../../../providers/category_order_provider.dart';
 import '../../../providers/theme_provider.dart';
 
@@ -222,7 +222,7 @@ class _AnimatedCategoryTabState extends State<AnimatedCategoryTab>
                     widget.category.displayName,
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: widget.isSelected
-                          ? AppTheme.getPrimaryColor(AppTheme.ColorTheme.defaultTheme)
+                          ? AppTheme.getPrimaryColor(ColorTheme.defaultTheme)
                           : theme.colorScheme.onSurface.withOpacity(0.7),
                       fontWeight: widget.isSelected
                           ? FontWeight.w600

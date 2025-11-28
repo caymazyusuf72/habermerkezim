@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Renk temaları enum
+enum ColorTheme {
+  defaultTheme, // Adaçayı yeşili
+  oceanBlue,    // Mavi
+  springRed,    // Kırmızımsı bahar
+  purple,       // Mor
+  amber,        // Turuncu
+}
+
 /// Haber Merkezi uygulaması için tema tanımları
 /// Adaçayı yeşili ve mat siyah renk paleti ile profesyonel haber okuma deneyimi
 class AppTheme {
@@ -417,15 +426,6 @@ class AppTheme {
     'culture': Color(0xFF795548),
   };
 
-  /// Renk temaları enum
-  enum ColorTheme {
-    defaultTheme, // Adaçayı yeşili
-    oceanBlue,    // Mavi
-    springRed,    // Kırmızımsı bahar
-    purple,       // Mor
-    amber,        // Turuncu
-  }
-  
   /// Seçili temaya göre primary color'ı döndürür
   static Color getPrimaryColor(ColorTheme theme) {
     switch (theme) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/providers.dart';
-import '../../themes/app_theme.dart';
+import '../../themes/app_theme.dart' show AppTheme, ColorTheme;
 import '../../widgets/dialogs/modern_alert_dialog.dart';
 import '../rss_sources/rss_sources_page.dart';
 import '../analytics/analytics_page.dart';
@@ -133,7 +133,7 @@ class SettingsPage extends ConsumerWidget {
           _buildColorThemeOption(
             context,
             ref,
-            AppTheme.ColorTheme.defaultTheme,
+            ColorTheme.defaultTheme,
             'Adaçayı Yeşili',
             'Doğal adaçayı yeşili',
             Icons.eco_rounded,
@@ -142,7 +142,7 @@ class SettingsPage extends ConsumerWidget {
           _buildColorThemeOption(
             context,
             ref,
-            AppTheme.ColorTheme.oceanBlue,
+            ColorTheme.oceanBlue,
             'Okyanus Mavisi',
             'Sakin ve profesyonel mavi tonlar',
             Icons.water_drop_rounded,
@@ -151,7 +151,7 @@ class SettingsPage extends ConsumerWidget {
           _buildColorThemeOption(
             context,
             ref,
-            AppTheme.ColorTheme.springRed,
+            ColorTheme.springRed,
             'Bahar Kırmızısı',
             'Sıcak bahar yaprağı kırmızısı',
             Icons.local_florist_rounded,
@@ -160,7 +160,7 @@ class SettingsPage extends ConsumerWidget {
           _buildColorThemeOption(
             context,
             ref,
-            AppTheme.ColorTheme.purple,
+            ColorTheme.purple,
             'Mor',
             'Zarif ve modern mor tonlar',
             Icons.colorize_rounded,
@@ -169,7 +169,7 @@ class SettingsPage extends ConsumerWidget {
           _buildColorThemeOption(
             context,
             ref,
-            AppTheme.ColorTheme.amber,
+            ColorTheme.amber,
             'Turuncu',
             'Enerjik turuncu tonlar',
             Icons.wb_sunny_rounded,
@@ -998,7 +998,7 @@ class SettingsPage extends ConsumerWidget {
   static Widget _buildColorThemeOption(
     BuildContext context,
     WidgetRef ref,
-    AppTheme.ColorTheme theme,
+    ColorTheme theme,
     String title,
     String subtitle,
     IconData icon,
