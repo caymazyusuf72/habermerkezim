@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@android:color/white"
+    android:clickable="true"
+    android:focusable="true">
+    
+    <!-- Başlık -->
+    <TextView
+        android:id="@+id/widget_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Son Haberler"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#87A96B"
+        android:paddingBottom="8dp" />
+    
+    <!-- Ana Haber -->
+    <TextView
+        android:id="@+id/widget_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Haber başlığı"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:paddingBottom="4dp" />
+    
+    <TextView
+        android:id="@+id/widget_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Haber açıklaması"
+        android:textSize="12sp"
+        android:textColor="#666666"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:paddingBottom="8dp" />
+    
+    <!-- İkinci Haber -->
+    <TextView
+        android:id="@+id/widget_title2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="12sp"
+        android:textColor="#333333"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:drawableStart="@android:drawable/ic_menu_recent_history"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:visibility="gone" />
+    
+    <!-- Üçüncü Haber -->
+    <TextView
+        android:id="@+id/widget_title3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="12sp"
+        android:textColor="#333333"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:drawableStart="@android:drawable/ic_menu_recent_history"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:visibility="gone" />
+    
+    <!-- Haber Sayısı -->
+    <TextView
+        android:id="@+id/widget_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="10sp"
+        android:textColor="#999999"
+        android:paddingTop="8dp"
+        android:gravity="end" />
+    
+</LinearLayout>
+
