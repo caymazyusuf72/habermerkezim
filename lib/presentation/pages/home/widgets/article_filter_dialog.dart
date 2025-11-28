@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -26,19 +28,71 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
   @override
   void initState() {
     super.initState();
-    final filter = ref.read(articleFilterProvider);
-    _startDate = filter.startDate;
-    _endDate = filter.endDate;
-    _selectedSources = List<String>.from(filter.selectedSources);
-    _selectedCategories = List<String>.from(filter.selectedCategories);
-    _isRead = filter.isRead;
+    // #region agent log
+    try {
+      final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
+      logFile.writeAsStringSync('${jsonEncode({"id":"log_initState_entry","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:27","message":"initState() called","data":{"hasRef":false},"sessionId":"debug-session","runId":"run1","hypothesisId":"A"})}\n', mode: FileMode.append);
+    } catch (_) {}
+    // #endregion
+    try {
+      // #region agent log
+      try {
+        final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
+        logFile.writeAsStringSync('${jsonEncode({"id":"log_before_ref_read","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:29","message":"Before ref.read() call","data":{},"sessionId":"debug-session","runId":"run1","hypothesisId":"A"})}\n', mode: FileMode.append);
+      } catch (_) {}
+      // #endregion
+      final filter = ref.read(articleFilterProvider);
+      // #region agent log
+      try {
+        final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
+        logFile.writeAsStringSync('${jsonEncode({"id":"log_after_ref_read","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:30","message":"After ref.read() - SUCCESS","data":{"filterStartDate":filter.startDate?.toString(),"filterEndDate":filter.endDate?.toString(),"selectedSourcesCount":filter.selectedSources.length,"selectedCategoriesCount":filter.selectedCategories.length,"isRead":filter.isRead},"sessionId":"debug-session","runId":"run1","hypothesisId":"A"})}\n', mode: FileMode.append);
+      } catch (_) {}
+      // #endregion
+      _startDate = filter.startDate;
+      _endDate = filter.endDate;
+      _selectedSources = List<String>.from(filter.selectedSources);
+      _selectedCategories = List<String>.from(filter.selectedCategories);
+      _isRead = filter.isRead;
+      // #region agent log
+      try {
+        final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
+        logFile.writeAsStringSync('${jsonEncode({"id":"log_state_init_complete","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:35","message":"State variables initialized","data":{"_startDate":_startDate?.toString(),"_endDate":_endDate?.toString(),"_selectedSourcesCount":_selectedSources.length,"_selectedCategoriesCount":_selectedCategories.length,"_isRead":_isRead},"sessionId":"debug-session","runId":"run1","hypothesisId":"C"})}\n', mode: FileMode.append);
+      } catch (_) {}
+      // #endregion
+    } catch (e, stackTrace) {
+      // #region agent log
+      try {
+        final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
+        logFile.writeAsStringSync('${jsonEncode({"id":"log_initState_error","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:29","message":"ERROR in initState() - ref.read() failed","data":{"error":e.toString(),"stackTrace":stackTrace.toString()},"sessionId":"debug-session","runId":"run1","hypothesisId":"B"})}\n', mode: FileMode.append);
+      } catch (_) {}
+      // #endregion
+      rethrow;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // #region agent log
+    try {
+      final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
+      logFile.writeAsStringSync('${jsonEncode({"id":"log_build_entry","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:38","message":"build() called","data":{"hasRef":true},"sessionId":"debug-session","runId":"run1","hypothesisId":"D"})}\n', mode: FileMode.append);
+    } catch (_) {}
+    // #endregion
     final theme = Theme.of(context);
+    // #region agent log
+    try {
+      final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
+      logFile.writeAsStringSync('${jsonEncode({"id":"log_before_ref_watch","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:40","message":"Before ref.watch() calls","data":{},"sessionId":"debug-session","runId":"run1","hypothesisId":"D"})}\n', mode: FileMode.append);
+    } catch (_) {}
+    // #endregion
     final filter = ref.watch(articleFilterProvider);
     final newsState = ref.watch(newsProvider);
+    // #region agent log
+    try {
+      final logFile = File(r'c:\Users\yusuf\Desktop\habermerkezim1\.cursor\debug.log');
+      logFile.writeAsStringSync('${jsonEncode({"id":"log_after_ref_watch","timestamp":DateTime.now().millisecondsSinceEpoch,"location":"article_filter_dialog.dart:42","message":"After ref.watch() - SUCCESS","data":{"filterStartDate":filter.startDate?.toString(),"filterEndDate":filter.endDate?.toString(),"newsArticlesCount":newsState.articles.length},"sessionId":"debug-session","runId":"run1","hypothesisId":"D"})}\n', mode: FileMode.append);
+    } catch (_) {}
+    // #endregion
     
     // Tüm kaynakları topla
     final allSources = newsState.articles
