@@ -41,7 +41,7 @@ class ArticleCard extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 4,
-      shadowColor: AppTheme.sageGreen.withOpacity(0.2),
+      shadowColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), // Daha köşeli, gazete gibi
       child: InkWell(
         onTap: onTap,
@@ -114,7 +114,7 @@ class ArticleCard extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: 3,
-      shadowColor: AppTheme.sageGreen.withOpacity(0.15),
+      shadowColor: Theme.of(context).colorScheme.primary.withOpacity(0.25),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: InkWell(
         onTap: onTap,

@@ -92,6 +92,7 @@ class AppTheme {
   static ThemeData getLightTheme([double fontScale = 1.0, ColorTheme colorTheme = ColorTheme.defaultTheme]) {
     final primaryColor = getPrimaryColor(colorTheme);
     final primaryLight = getPrimaryLightColor(colorTheme);
+    final primaryDark = getPrimaryDarkColor(colorTheme);
     
     final colorScheme = ColorScheme.fromSeed(
       seedColor: primaryColor,
@@ -106,38 +107,42 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       
-      // App Bar Theme - Merriweather font ile
+      // App Bar Theme - Tema rengiyle vurgulu
       appBarTheme: AppBarTheme(
         elevation: 0,
-        scrolledUnderElevation: 1,
-        backgroundColor: colorScheme.surface,
-        foregroundColor: colorScheme.onSurface,
+        scrolledUnderElevation: 2,
+        backgroundColor: primaryColor.withOpacity(0.15), // Tema rengiyle hafif arka plan
+        foregroundColor: primaryDark,
         titleTextStyle: TextStyle(
-          color: colorScheme.onSurface,
+          color: primaryDark,
           fontSize: 20 * fontScale,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
           fontFamily: GoogleFonts.merriweather().fontFamily,
         ),
-        iconTheme: IconThemeData(color: colorScheme.onSurface),
+        iconTheme: IconThemeData(color: primaryDark),
       ),
 
-      // Card Theme
+      // Card Theme - Tema rengiyle border
       cardTheme: CardThemeData(
-        elevation: 3,
+        elevation: 4,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Daha köşeli, gazete gibi
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(
+            color: primaryColor.withOpacity(0.3), // Tema rengiyle border
+            width: 1.5,
+          ),
         ),
         color: colorScheme.surface,
       ),
 
-      // Bottom Navigation Bar Theme
+      // Bottom Navigation Bar Theme - Tema rengiyle vurgulu
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: colorScheme.surface,
-        selectedItemColor: primaryColor,
-        unselectedItemColor: colorScheme.onSurface.withOpacity(0.6),
-        selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+        backgroundColor: primaryColor.withOpacity(0.1), // Tema rengiyle arka plan
+        selectedItemColor: primaryDark,
+        unselectedItemColor: colorScheme.onSurface.withOpacity(0.5),
+        selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
         unselectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
         elevation: 8,
       ),
@@ -211,6 +216,7 @@ class AppTheme {
   static ThemeData getDarkTheme([double fontScale = 1.0, ColorTheme colorTheme = ColorTheme.defaultTheme]) {
     final primaryColor = getPrimaryColor(colorTheme);
     final primaryLight = getPrimaryLightColor(colorTheme);
+    final primaryDark = getPrimaryDarkColor(colorTheme);
     
     final colorScheme = ColorScheme.fromSeed(
       seedColor: primaryColor,
@@ -225,46 +231,52 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       
-      // App Bar Theme - Merriweather font ile, mat siyah arka plan
+      // App Bar Theme - Tema rengiyle vurgulu
       appBarTheme: AppBarTheme(
         elevation: 0,
-        scrolledUnderElevation: 1,
-        backgroundColor: matBlackSurface,
-        foregroundColor: Colors.white,
+        scrolledUnderElevation: 2,
+        backgroundColor: primaryColor.withOpacity(0.2), // Tema rengiyle arka plan
+        foregroundColor: primaryLight,
         titleTextStyle: TextStyle(
-          color: Colors.white,
+          color: primaryLight,
           fontSize: 20 * fontScale,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
           fontFamily: GoogleFonts.merriweather().fontFamily,
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: primaryLight),
       ),
 
-      // Card Theme
+      // Card Theme - Tema rengiyle border
       cardTheme: CardThemeData(
-        elevation: 4,
+        elevation: 5,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Daha köşeli, gazete gibi
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(
+            color: primaryColor.withOpacity(0.4), // Tema rengiyle border
+            width: 1.5,
+          ),
         ),
         color: matBlackSurfaceVariant,
       ),
 
-      // Bottom Navigation Bar Theme - Mat siyah arka plan
+      // Bottom Navigation Bar Theme - Tema rengiyle vurgulu
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: matBlackSurface,
-        selectedItemColor: primaryColor,
-        unselectedItemColor: Colors.white.withOpacity(0.6),
-        selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+        backgroundColor: primaryColor.withOpacity(0.15), // Tema rengiyle arka plan
+        selectedItemColor: primaryLight,
+        unselectedItemColor: Colors.white.withOpacity(0.5),
+        selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
         unselectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
         elevation: 8,
       ),
 
-      // Elevated Button Theme
+      // Elevated Button Theme - Tema rengiyle
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          elevation: 2,
+          elevation: 3,
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -272,9 +284,10 @@ class AppTheme {
         ),
       ),
 
-      // Text Button Theme
+      // Text Button Theme - Tema rengiyle
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
+          foregroundColor: primaryLight,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -298,13 +311,14 @@ class AppTheme {
         space: 1,
       ),
 
-      // Tab Bar Theme
+      // Tab Bar Theme - Tema rengiyle vurgulu
       tabBarTheme: TabBarThemeData(
-        labelColor: colorScheme.primary,
-        unselectedLabelColor: colorScheme.onSurface.withOpacity(0.6),
-        indicatorColor: colorScheme.primary,
-        indicatorSize: TabBarIndicatorSize.label,
-        labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+        labelColor: primaryLight,
+        unselectedLabelColor: Colors.white.withOpacity(0.5),
+        indicatorColor: primaryColor,
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicatorWeight: 3,
+        labelStyle: const TextStyle(fontWeight: FontWeight.w700),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400),
       ),
 
