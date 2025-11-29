@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,14 +46,35 @@ final newsRepositoryProvider = Provider<NewsRepository>((ref) {
 final appInitializationProvider = FutureProvider<void>((ref) async {
   print('App initialization basliyor...');
   
+  // Minimum splash süresi (2 saniye) - kullanıcı deneyimi için
+  final minSplashDuration = Future.delayed(const Duration(seconds: 2));
+  
   try {
-    // RSS feedleri yukle - acilista direk guncelleme
+    // RSS feedleri yukle - timeout ile (10 saniye)
     print('RSS feedleri yukleniyor...');
-    await ref.read(newsProvider.notifier).loadAllArticles(refresh: true);
+    final loadArticlesFuture = ref.read(newsProvider.notifier).loadAllArticles(refresh: true);
+    
+    // Timeout ekle - 10 saniye içinde yüklenmezse devam et
+    try {
+      await loadArticlesFuture.timeout(
+        const Duration(seconds: 10),
+      );
+      print('✅ RSS feedleri basariyla yuklendi');
+    } on TimeoutException {
+      print('⚠️ RSS yukleme timeout oldu (10 saniye), cache\'den devam ediliyor');
+    } catch (e) {
+      print('⚠️ RSS yukleme hatasi (network veya diger): $e');
+    }
+    
+    // Minimum splash süresini bekle (eğer henüz geçmediyse)
+    await minSplashDuration;
+    
     print('RSS feedleri basariyla yuklendi');
     
   } catch (e) {
     print('RSS yukleme hatasi: $e');
+    // Hata durumunda minimum splash süresini bekle
+    await minSplashDuration;
     // Hata durumunda bos geciyoruz, kullanici manuel refresh yapabilir
   }
   

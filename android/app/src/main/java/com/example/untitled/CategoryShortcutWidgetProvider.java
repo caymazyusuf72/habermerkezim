@@ -53,4 +53,4 @@ public class CategoryShortcutWidgetProvider extends AppWidgetProvider {
             onUpdate(context, appWidgetManager, appWidgetIds);
         }
     }
-}
+} 
