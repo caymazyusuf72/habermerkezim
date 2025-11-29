@@ -55,20 +55,30 @@ class WidgetService {
           await HomeWidget.saveWidgetData<String>(_imageUrlKey, firstArticle.imageUrl!);
         }
 
-        // SharedPreferences üzerinden aynı veriyi kaydet
-        await prefs.setString(_titleKey, firstArticle.title);
-        await prefs.setString(_descriptionKey, firstArticle.description);
-        await prefs.setString(_linkKey, firstArticle.link);
-        if (firstArticle.imageUrl != null) {
-          await prefs.setString(_imageUrlKey, firstArticle.imageUrl!);
-        }
-        print('✅ Widget: İlk haber kaydedildi');
+      // SharedPreferences üzerinden aynı veriyi kaydet (flutter. prefix ile)
+      await prefs.setString('flutter.$_titleKey', firstArticle.title);
+      await prefs.setString('flutter.$_descriptionKey', firstArticle.description);
+      await prefs.setString('flutter.$_linkKey', firstArticle.link);
+      if (firstArticle.imageUrl != null) {
+        await prefs.setString('flutter.$_imageUrlKey', firstArticle.imageUrl!);
+      }
+      // Ayrıca direkt key'leri de kaydet (home_widget uyumluluğu için)
+      await prefs.setString(_titleKey, firstArticle.title);
+      await prefs.setString(_descriptionKey, firstArticle.description);
+      await prefs.setString(_linkKey, firstArticle.link);
+      if (firstArticle.imageUrl != null) {
+        await prefs.setString(_imageUrlKey, firstArticle.imageUrl!);
+      }
+      print('✅ Widget: İlk haber kaydedildi');
       }
 
       // Toplam haber sayısı ve mevcut index
       await HomeWidget.saveWidgetData<String>(_countKey, topArticles.length.toString());
       await HomeWidget.saveWidgetData<String>(_currentIndexKey, '0'); // İlk haber gösteriliyor
 
+      // Count ve currentIndex'i hem flutter. prefix ile hem de direkt kaydet
+      await prefs.setString('flutter.$_countKey', topArticles.length.toString());
+      await prefs.setString('flutter.$_currentIndexKey', '0');
       await prefs.setString(_countKey, topArticles.length.toString());
       await prefs.setString(_currentIndexKey, '0');
       
@@ -78,6 +88,7 @@ class WidgetService {
       ).join('|||');
       
       await HomeWidget.saveWidgetData<String>(_articlesKey, articlesJsonString);
+      await prefs.setString('flutter.$_articlesKey', articlesJsonString);
       await prefs.setString(_articlesKey, articlesJsonString);
       print('✅ Widget: Tüm haberler kaydedildi (${articlesJsonString.length} karakter)');
       
@@ -120,6 +131,14 @@ class WidgetService {
       await HomeWidget.saveWidgetData<String>(_currentIndexKey, '0');
       await HomeWidget.saveWidgetData<String>(_articlesKey, '');
 
+      // Hem flutter. prefix ile hem de direkt key'leri temizle
+      await prefs.setString('flutter.$_titleKey', '');
+      await prefs.setString('flutter.$_descriptionKey', '');
+      await prefs.setString('flutter.$_linkKey', '');
+      await prefs.setString('flutter.$_imageUrlKey', '');
+      await prefs.setString('flutter.$_countKey', '0');
+      await prefs.setString('flutter.$_currentIndexKey', '0');
+      await prefs.setString('flutter.$_articlesKey', '');
       await prefs.setString(_titleKey, '');
       await prefs.setString(_descriptionKey, '');
       await prefs.setString(_linkKey, '');

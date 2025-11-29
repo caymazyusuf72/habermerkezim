@@ -254,32 +254,36 @@ public class NewsWidgetProvider extends AppWidgetProvider {
         else if (intent.getAction().equals("com.example.untitled.ACTION_PLAY_PAUSE")) {
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
             
-            // Mevcut durumu al
-            android.content.SharedPreferences prefs1 = context.getSharedPreferences(
-                "flutter.home_widget", 
-                Context.MODE_PRIVATE
-            );
-            String isPausedStr = prefs1.getString("isPaused", "false");
-            
+            // Mevcut durumu al (getWidgetData kullanarak)
+            String isPausedStr = getWidgetData(context, "isPaused");
             if (isPausedStr == null || isPausedStr.isEmpty()) {
-                android.content.SharedPreferences prefs2 = context.getSharedPreferences(
-                    "group.com.habermerkezi.widget", 
-                    Context.MODE_PRIVATE
-                );
-                isPausedStr = prefs2.getString("isPaused", "false");
+                isPausedStr = "false";
             }
             
             // Durumu tersine çevir
             boolean isPaused = "true".equals(isPausedStr);
             String newPausedState = isPaused ? "false" : "true";
             
-            // Yeni durumu kaydet
-            prefs1.edit().putString("isPaused", newPausedState).apply();
-            android.content.SharedPreferences prefs2 = context.getSharedPreferences(
-                "group.com.habermerkezi.widget", 
-                Context.MODE_PRIVATE
-            );
-            prefs2.edit().putString("isPaused", newPausedState).apply();
+            // Yeni durumu kaydet (hem flutter. prefix ile hem de direkt)
+            try {
+                android.content.SharedPreferences flutterPrefs = context.getSharedPreferences(
+                    "FlutterSharedPreferences",
+                    Context.MODE_PRIVATE
+                );
+                flutterPrefs.edit()
+                    .putString("flutter.isPaused", newPausedState)
+                    .putString("isPaused", newPausedState)
+                    .apply();
+                
+                // Group prefs'e de kaydet
+                android.content.SharedPreferences groupPrefs = context.getSharedPreferences(
+                    "group.com.habermerkezi.widget",
+                    Context.MODE_PRIVATE
+                );
+                groupPrefs.edit().putString("isPaused", newPausedState).apply();
+            } catch (Exception e) {
+                android.util.Log.e("NewsWidget", "Error saving isPaused", e);
+            }
             
             // Widget'ı güncelle
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);

@@ -88,8 +88,8 @@ class NewsNotifier extends StateNotifier<NewsState> {
         currentPage: 1,
       );
       
-      // Widget'ı güncelle
-      WidgetService.updateWidget(allArticles);
+      // Widget'ı güncelle (await ile bekliyoruz)
+      await WidgetService.updateWidget(allArticles);
       
       // Breaking news kontrolü ve bildirim gönderimi
       _checkAndNotifyBreakingNews(allArticles);
