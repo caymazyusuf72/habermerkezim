@@ -70,23 +70,12 @@ class WidgetService {
       print('🔍 Debug - Kaydedilen title: ${savedTitle?.substring(0, savedTitle.length > 30 ? 30 : savedTitle.length)}');
       print('🔍 Debug - Kaydedilen articles length: ${savedArticles?.length ?? 0}');
 
-      // Widget'ı yeniden yükle - hem updateWidget hem de registerCallback kullan
+      // Widget'ı yeniden yükle
       try {
         await HomeWidget.updateWidget(
           name: _widgetName,
           androidName: 'NewsWidgetProvider',
         );
-        
-        // Ek olarak, widget'ı manuel olarak güncellemek için callback kullan
-        await HomeWidget.registerCallback((callbackName, callbackData) async {
-          print('📱 Widget callback: $callbackName');
-          if (callbackName == 'updateWidget') {
-            await HomeWidget.updateWidget(
-              name: _widgetName,
-              androidName: 'NewsWidgetProvider',
-            );
-          }
-        });
       } catch (e) {
         print('⚠️ Widget updateWidget hatası: $e');
       }

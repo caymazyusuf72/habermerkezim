@@ -13,7 +13,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/widget_purple" />
+        android:background="#9C27B0" />
     
     <!-- Ana Banner Container -->
     <LinearLayout
@@ -23,7 +23,7 @@
         android:gravity="center_vertical"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
-        android:background="@color/widget_dark_bg">
+        android:background="#1A1A1A">
         
         <!-- Hamburger Menu Icon (görünür ama tıklanamaz) -->
         <ImageView
@@ -34,7 +34,7 @@
             android:contentDescription="Menu"
             android:layout_marginEnd="8dp" />
         
-        <!-- SON DAKİKA Rozeti -->
+        <!-- SON DAKİKA Rozeti (mor kenarlıklı, mor yazılı) -->
         <TextView
             android:id="@+id/widget_breaking_badge"
             android:layout_width="wrap_content"
@@ -42,8 +42,8 @@
             android:text="SON DAKİKA"
             android:textSize="10sp"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:background="@color/widget_purple"
+            android:textColor="#9C27B0"
+            android:background="@drawable/widget_badge_background"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:paddingTop="4dp"
