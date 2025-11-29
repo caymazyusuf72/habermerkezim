@@ -1,4 +1,5 @@
 import 'package:home_widget/home_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/article.dart';
 
 /// Android widget servisi - widget verilerini günceller
@@ -38,16 +39,28 @@ class WidgetService {
       final topArticles = articles.take(10).toList();
       print('📰 Widget: ${topArticles.length} haber kaydediliyor');
 
+      // SharedPreferences instance (FlutterSharedPreferences)
+      final prefs = await SharedPreferences.getInstance();
+
       // İlk haber (varsayılan gösterilecek)
       if (topArticles.isNotEmpty) {
         final firstArticle = topArticles[0];
         print('📝 Widget: İlk haber - ${firstArticle.title.substring(0, firstArticle.title.length > 50 ? 50 : firstArticle.title.length)}...');
         
+        // HomeWidget üzerinden veri kaydet
         await HomeWidget.saveWidgetData<String>(_titleKey, firstArticle.title);
         await HomeWidget.saveWidgetData<String>(_descriptionKey, firstArticle.description);
         await HomeWidget.saveWidgetData<String>(_linkKey, firstArticle.link);
         if (firstArticle.imageUrl != null) {
           await HomeWidget.saveWidgetData<String>(_imageUrlKey, firstArticle.imageUrl!);
+        }
+
+        // SharedPreferences üzerinden aynı veriyi kaydet
+        await prefs.setString(_titleKey, firstArticle.title);
+        await prefs.setString(_descriptionKey, firstArticle.description);
+        await prefs.setString(_linkKey, firstArticle.link);
+        if (firstArticle.imageUrl != null) {
+          await prefs.setString(_imageUrlKey, firstArticle.imageUrl!);
         }
         print('✅ Widget: İlk haber kaydedildi');
       }
@@ -55,6 +68,9 @@ class WidgetService {
       // Toplam haber sayısı ve mevcut index
       await HomeWidget.saveWidgetData<String>(_countKey, topArticles.length.toString());
       await HomeWidget.saveWidgetData<String>(_currentIndexKey, '0'); // İlk haber gösteriliyor
+
+      await prefs.setString(_countKey, topArticles.length.toString());
+      await prefs.setString(_currentIndexKey, '0');
       
       // Tüm haberleri string olarak kaydet (kaydırma için)
       final articlesJsonString = topArticles.map((article) => 
@@ -62,6 +78,7 @@ class WidgetService {
       ).join('|||');
       
       await HomeWidget.saveWidgetData<String>(_articlesKey, articlesJsonString);
+      await prefs.setString(_articlesKey, articlesJsonString);
       print('✅ Widget: Tüm haberler kaydedildi (${articlesJsonString.length} karakter)');
       
       // Debug: Kaydedilen verileri kontrol et
@@ -90,6 +107,8 @@ class WidgetService {
   /// Widget'ı temizle
   static Future<void> _clearWidget() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+
       await HomeWidget.saveWidgetData<String>(_titleKey, '');
       await HomeWidget.saveWidgetData<String>(_descriptionKey, '');
       await HomeWidget.saveWidgetData<String>(_linkKey, '');
@@ -97,6 +116,14 @@ class WidgetService {
       await HomeWidget.saveWidgetData<String>(_countKey, '0');
       await HomeWidget.saveWidgetData<String>(_currentIndexKey, '0');
       await HomeWidget.saveWidgetData<String>(_articlesKey, '');
+
+      await prefs.setString(_titleKey, '');
+      await prefs.setString(_descriptionKey, '');
+      await prefs.setString(_linkKey, '');
+      await prefs.setString(_imageUrlKey, '');
+      await prefs.setString(_countKey, '0');
+      await prefs.setString(_currentIndexKey, '0');
+      await prefs.setString(_articlesKey, '');
       
       await HomeWidget.updateWidget(
         name: _widgetName,

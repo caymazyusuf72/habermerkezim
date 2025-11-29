@@ -157,36 +157,46 @@ public class NewsWidgetProvider extends AppWidgetProvider {
     }
     
     /**
-     * HomeWidget paketinin kullandığı SharedPreferences'tan veri çeker
-     * home_widget paketi genellikle "flutter.home_widget" key'ini kullanır
+     * HomeWidget / shared_preferences ile kaydedilen veriyi okur.
+     *
+     * HomeWidget.saveWidgetData<String>('title', ...) çağrıları, Android tarafında
+     * genellikle "FlutterSharedPreferences" isimli SharedPreferences içinde
+     * "flutter.title" şeklinde bir key ile saklanır.
      */
     private static String getWidgetData(Context context, String key) {
         try {
-            // Önce flutter.home_widget key'ini dene (home_widget paketinin varsayılan key'i)
-            android.content.SharedPreferences prefs1 = context.getSharedPreferences(
-                "flutter.home_widget", 
+            // Önce shared_preferences'in kullandığı dosyadan okumayı dene
+            android.content.SharedPreferences flutterPrefs = context.getSharedPreferences(
+                "FlutterSharedPreferences",
                 Context.MODE_PRIVATE
             );
-            String value1 = prefs1.getString(key, "");
-            
-            // Eğer bulunamazsa AppGroupId key'ini dene
-            if (value1 == null || value1.isEmpty()) {
-                android.content.SharedPreferences prefs2 = context.getSharedPreferences(
-                    "group.com.habermerkezi.widget", 
-                    Context.MODE_PRIVATE
-                );
-                String value2 = prefs2.getString(key, "");
-                
-                if (value2 != null && !value2.isEmpty()) {
-                    android.util.Log.d("NewsWidget", "Key: " + key + " found in AppGroupId, Value length: " + value2.length());
-                    return value2;
-                }
-            } else {
-                android.util.Log.d("NewsWidget", "Key: " + key + " found in flutter.home_widget, Value length: " + value1.length());
-                return value1;
+
+            String fullKey = "flutter." + key;
+            String value = flutterPrefs.getString(fullKey, null);
+
+            if (value != null && !value.isEmpty()) {
+                android.util.Log.d("NewsWidget", "Key: " + fullKey + " found in FlutterSharedPreferences, length: " + value.length());
+                return value;
             }
-            
-            // Debug için log
+
+            // Eski/direkt key ile de dene (geri uyumluluk)
+            value = flutterPrefs.getString(key, null);
+            if (value != null && !value.isEmpty()) {
+                android.util.Log.d("NewsWidget", "Key: " + key + " found in FlutterSharedPreferences (direct), length: " + value.length());
+                return value;
+            }
+
+            // Son çare: appGroupId ile oluşturulmuş özel prefs adını dene
+            android.content.SharedPreferences groupPrefs = context.getSharedPreferences(
+                "group.com.habermerkezi.widget",
+                Context.MODE_PRIVATE
+            );
+            value = groupPrefs.getString(key, "");
+            if (value != null && !value.isEmpty()) {
+                android.util.Log.d("NewsWidget", "Key: " + key + " found in group prefs, length: " + value.length());
+                return value;
+            }
+
             android.util.Log.w("NewsWidget", "Key: " + key + " not found in any SharedPreferences");
             return "";
         } catch (Exception e) {
@@ -205,35 +215,14 @@ public class NewsWidgetProvider extends AppWidgetProvider {
         if (intent.getAction().equals("com.example.untitled.ACTION_NEXT")) {
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
             
-            // Mevcut index'i al
-            android.content.SharedPreferences prefs1 = context.getSharedPreferences(
-                "flutter.home_widget", 
-                Context.MODE_PRIVATE
-            );
-            String currentIndexStr = prefs1.getString("currentIndex", "");
-            
-            if (currentIndexStr == null || currentIndexStr.isEmpty()) {
-                android.content.SharedPreferences prefs2 = context.getSharedPreferences(
-                    "group.com.habermerkezi.widget", 
-                    Context.MODE_PRIVATE
-                );
-                currentIndexStr = prefs2.getString("currentIndex", "0");
-            }
+            // Mevcut index'i ve makale listesini oku
+            String currentIndexStr = getWidgetData(context, "currentIndex");
+            String articlesJson = getWidgetData(context, "articles");
             int currentIndex = 0;
             try {
                 currentIndex = Integer.parseInt(currentIndexStr);
             } catch (NumberFormatException e) {
                 currentIndex = 0;
-            }
-            
-            // Toplam haber sayısını al
-            String articlesJson = prefs1.getString("articles", "");
-            if (articlesJson == null || articlesJson.isEmpty()) {
-                android.content.SharedPreferences prefs2 = context.getSharedPreferences(
-                    "group.com.habermerkezi.widget", 
-                    Context.MODE_PRIVATE
-                );
-                articlesJson = prefs2.getString("articles", "");
             }
             
             int totalArticles = articlesJson != null && !articlesJson.isEmpty() 
@@ -244,13 +233,18 @@ public class NewsWidgetProvider extends AppWidgetProvider {
             currentIndex = (currentIndex + 1) % totalArticles;
             if (totalArticles == 0) currentIndex = 0;
             
-            // Yeni index'i kaydet (her iki SharedPreferences'a da)
-            prefs1.edit().putString("currentIndex", String.valueOf(currentIndex)).apply();
-            android.content.SharedPreferences prefs2 = context.getSharedPreferences(
-                "group.com.habermerkezi.widget", 
-                Context.MODE_PRIVATE
-            );
-            prefs2.edit().putString("currentIndex", String.valueOf(currentIndex)).apply();
+            // Yeni index'i kaydet - Flutter tarafında okunacak şekilde "flutter.currentIndex"
+            try {
+                android.content.SharedPreferences flutterPrefs = context.getSharedPreferences(
+                    "FlutterSharedPreferences",
+                    Context.MODE_PRIVATE
+                );
+                flutterPrefs.edit()
+                    .putString("flutter.currentIndex", String.valueOf(currentIndex))
+                    .apply();
+            } catch (Exception e) {
+                android.util.Log.e("NewsWidget", "Error saving currentIndex", e);
+            }
             
             // Widget'ı güncelle
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
