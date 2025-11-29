@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_list_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/widget_dark_bg"
+    android:padding="8dp">
+
+    <!-- Başlık -->
+    <TextView
+        android:id="@+id/widget_list_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Son Haberler"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#9C27B0"
+        android:paddingBottom="4dp" />
+
+    <!-- 1. Haber -->
+    <TextView
+        android:id="@+id/widget_list_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Haber 1"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp" />
+
+    <!-- 2. Haber -->
+    <TextView
+        android:id="@+id/widget_list_title_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Haber 2"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp" />
+
+    <!-- 3. Haber -->
+    <TextView
+        android:id="@+id/widget_list_title_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Haber 3"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp" />
+
+</LinearLayout>
+
+

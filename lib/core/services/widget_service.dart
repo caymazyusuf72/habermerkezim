@@ -87,11 +87,14 @@ class WidgetService {
       print('🔍 Debug - Kaydedilen title: ${savedTitle?.substring(0, savedTitle.length > 30 ? 30 : savedTitle.length)}');
       print('🔍 Debug - Kaydedilen articles length: ${savedArticles?.length ?? 0}');
 
-      // Widget'ı yeniden yükle
+      // Widget'ları yeniden yükle (banner + liste)
       try {
         await HomeWidget.updateWidget(
           name: _widgetName,
           androidName: 'NewsWidgetProvider',
+        );
+        await HomeWidget.updateWidget(
+          androidName: 'NewsListWidgetProvider',
         );
       } catch (e) {
         print('⚠️ Widget updateWidget hatası: $e');

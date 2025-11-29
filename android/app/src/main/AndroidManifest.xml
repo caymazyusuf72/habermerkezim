@@ -64,7 +64,7 @@
             </intent-filter>
         </receiver>
         
-        <!-- Haber Widget Provider -->
+        <!-- Haber Widget Provider - banner -->
         <receiver
             android:name=".NewsWidgetProvider"
             android:exported="false">
@@ -74,6 +74,18 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/news_widget_info" />
+        </receiver>
+
+        <!-- Çoklu Haber Kartı Widget Provider -->
+        <receiver
+            android:name=".NewsListWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/news_list_widget_info" />
         </receiver>
     </application>
     <!-- Required to query activities that can process text, see:
