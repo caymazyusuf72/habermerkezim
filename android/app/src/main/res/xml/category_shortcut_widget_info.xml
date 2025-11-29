@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="250dp"
+    android:minHeight="48dp"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/category_shortcut_widget"
+    android:description="@string/widget_description"
+    android:resizeMode="horizontal"
+    android:widgetCategory="home_screen" />
+
+{
+  "cells": [],
+  "metadata": {
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 2
+}
