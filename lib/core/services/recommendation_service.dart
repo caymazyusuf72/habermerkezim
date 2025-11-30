@@ -1,4 +1,5 @@
 import '../../domain/entities/article.dart';
+import '../../domain/entities/reading_analytics.dart';
 import '../../core/services/hive_service.dart';
 import '../../core/services/analytics_service.dart';
 
@@ -90,12 +91,12 @@ class RecommendationService {
       
       for (final analytics in monthlyAnalytics) {
         // Kategori sayıları
-        for (final entry in analytics.categoriesBreakdown.entries) {
+        for (final entry in analytics.categoriesRead.entries) {
           categoryCounts[entry.key] = (categoryCounts[entry.key] ?? 0) + entry.value;
         }
         
         // Kaynak sayıları
-        for (final entry in analytics.sourcesBreakdown.entries) {
+        for (final entry in analytics.sourcesRead.entries) {
           sourceCounts[entry.key] = (sourceCounts[entry.key] ?? 0) + entry.value;
         }
       }

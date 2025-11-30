@@ -113,6 +113,9 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
                         ),
                       );
                     },
+                    onFavoriteToggle: () {
+                      // Favorite toggle logic
+                    },
                   ),
                 ),
               );

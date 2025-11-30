@@ -1,6 +1,7 @@
 import '../../core/services/analytics_service.dart';
 import '../../core/services/hive_service.dart';
 import '../../domain/entities/user_profile.dart';
+import '../../domain/entities/reading_analytics.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 import '../datasources/local/user_profile_local_data_source.dart';
 
@@ -103,7 +104,7 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
       final monthlyAnalytics = AnalyticsService.getLast30DaysAnalytics();
       
       for (final analytics in monthlyAnalytics) {
-        for (final entry in analytics.categoriesBreakdown.entries) {
+        for (final entry in analytics.categoriesRead.entries) {
           categoryReadCount[entry.key] = 
               (categoryReadCount[entry.key] ?? 0) + entry.value;
         }

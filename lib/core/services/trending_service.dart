@@ -1,4 +1,5 @@
 import '../../domain/entities/article.dart';
+import '../../domain/entities/reading_analytics.dart';
 import '../../core/services/hive_service.dart';
 import '../../core/services/analytics_service.dart';
 
@@ -119,7 +120,7 @@ class TrendingService {
       int categoryReadCount = 0;
       
       for (final analytics in monthlyAnalytics) {
-        categoryReadCount += analytics.categoriesBreakdown[category] ?? 0;
+        categoryReadCount += analytics.categoriesRead[category] ?? 0;
       }
       
       // Normalize et (0-10 arası)
@@ -136,7 +137,7 @@ class TrendingService {
       final categoryCounts = <String, int>{};
       
       for (final analytics in monthlyAnalytics) {
-        for (final entry in analytics.categoriesBreakdown.entries) {
+        for (final entry in analytics.categoriesRead.entries) {
           categoryCounts[entry.key] = (categoryCounts[entry.key] ?? 0) + entry.value;
         }
       }

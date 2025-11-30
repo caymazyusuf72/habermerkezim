@@ -279,11 +279,12 @@ class NewsListState extends ConsumerState<NewsList>
         // Repaint boundary ile widget'ı izole et (performans optimizasyonu)
         return RepaintBoundary(
           child: ArticleCard(
-          article: article,
-          onTap: () => _onArticleTap(article),
-          onFavoriteToggle: () => _onFavoriteToggle(article.id),
-          onShare: () => _onShareArticle(article),
-          showCategoryBadge: widget.category == 'genel',
+            article: article,
+            onTap: () => _onArticleTap(article),
+            onFavoriteToggle: () => _onFavoriteToggle(article.id),
+            onShare: () => _onShareArticle(article),
+            showCategoryBadge: widget.category == 'genel',
+          ),
         );
       },
     );

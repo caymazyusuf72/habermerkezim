@@ -232,11 +232,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     // Content'ten img tag'lerini çıkar
     if (widget.article.content != null) {
       final content = widget.article.content!;
-      final imgRegex = RegExp(r'<img[^>]+src=["\']([^"\']+)["\']', caseSensitive: false);
+      final imgRegex = RegExp(r'<img[^>]+src=(["''])([^"'']+)\1', caseSensitive: false);
       final matches = imgRegex.allMatches(content);
       
       for (final match in matches) {
-        final url = match.group(1);
+        final url = match.group(2);
         if (url != null && url.isNotEmpty && !imageUrls.contains(url)) {
           imageUrls.add(url);
         }

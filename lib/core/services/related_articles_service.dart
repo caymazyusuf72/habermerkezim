@@ -135,8 +135,8 @@ class RelatedArticlesService {
     const stopWords = {
       've', 'ile', 'için', 'bir', 'bu', 'şu', 'o', 'da', 'de', 'ki',
       'mi', 'mı', 'mu', 'mü', 'var', 'yok', 'olan', 'olarak', 'gibi',
-      'kadar', 'daha', 'en', 'çok', 'az', 'ise', 'ise', 'ama', 'fakat',
-      'ancak', 'lakin', 'çünkü', 'zira', 'dolayı', 'için', 'göre',
+      'kadar', 'daha', 'en', 'çok', 'az', 'ise', 'ama', 'fakat',
+      'ancak', 'lakin', 'çünkü', 'zira', 'dolayı', 'göre',
     };
     
     // Kelimeleri çıkar

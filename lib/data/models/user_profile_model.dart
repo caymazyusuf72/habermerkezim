@@ -152,7 +152,7 @@ class UserStatsModel extends HiveObject {
   }
 
   /// Boş istatistikler
-  static const UserStatsModel empty = UserStatsModel();
+  static UserStatsModel get empty => UserStatsModel();
 
   /// JSON'dan model oluşturur
   factory UserStatsModel.fromJson(Map<String, dynamic> json) {
@@ -226,7 +226,7 @@ class UserPreferencesModel extends HiveObject {
   }
 
   /// Varsayılan tercihler
-  static const UserPreferencesModel defaultPreferences = UserPreferencesModel();
+  static UserPreferencesModel get defaultPreferences => UserPreferencesModel();
 
   /// JSON'dan model oluşturur
   factory UserPreferencesModel.fromJson(Map<String, dynamic> json) {
