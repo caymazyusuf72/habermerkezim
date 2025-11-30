@@ -232,9 +232,9 @@ class ApiEndpoints {
   };
 
   /// Network timeout değerleri - gerçek cihaz için artırıldı
-  static const int connectTimeoutMs = 30000; // 30 saniye
-  static const int receiveTimeoutMs = 45000; // 45 saniye
-  static const int sendTimeoutMs = 20000; // 20 saniye
+  static const int connectTimeoutMs = 5000; // 5 saniye (optimize edildi)
+  static const int receiveTimeoutMs = 8000; // 8 saniye (optimize edildi)
+  static const int sendTimeoutMs = 5000; // 5 saniye (optimize edildi)
 
   /// Cache süreleri
   static const Duration cacheValidityDuration = Duration(minutes: 30);

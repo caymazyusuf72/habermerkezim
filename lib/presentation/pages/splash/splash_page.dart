@@ -243,12 +243,7 @@ class _SplashPageState extends State<SplashPage>
                             SizedBox(
                               width: 300,
                               height: 150,
-                              child: Lottie.asset(
-                                'animation/News.json',
-                                fit: BoxFit.contain,
-                                repeat: true,
-                                animate: true,
-                              ),
+                              child: _buildLottieAnimation(),
                             ),
                             
                             const SizedBox(height: 20),
@@ -295,6 +290,35 @@ class _SplashPageState extends State<SplashPage>
         },
       ),
     );
+  }
+
+  /// Lottie animasyonunu güvenli şekilde yükler
+  Widget _buildLottieAnimation() {
+    try {
+      return Lottie.asset(
+        'animation/News.json',
+        fit: BoxFit.contain,
+        repeat: true,
+        animate: true,
+        errorBuilder: (context, error, stackTrace) {
+          // Lottie yüklenemezse alternatif loading göster
+          return SpinKitFadingCircle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : AppTheme.sageGreen,
+            size: 50,
+          );
+        },
+      );
+    } catch (e) {
+      // Hata durumunda alternatif loading göster
+      return SpinKitFadingCircle(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white
+            : AppTheme.sageGreen,
+        size: 50,
+      );
+    }
   }
 }
 

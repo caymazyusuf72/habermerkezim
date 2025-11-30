@@ -57,42 +57,50 @@ final userProfileRepositoryProvider = Provider<UserProfileRepository>((ref) {
 });
 
 /// Uygulama başlangıcında çağrılacak initialization provider
+/// Cache'den hızlı göster, arka planda güncelle
 final appInitializationProvider = FutureProvider<void>((ref) async {
-  print('App initialization basliyor...');
+  print('🔄 App initialization basliyor...');
   
-  // Minimum splash süresi (2 saniye) - kullanıcı deneyimi için
-  final minSplashDuration = Future.delayed(const Duration(seconds: 2));
+  // Minimum splash süresi (0.8 saniye) - daha hızlı açılış
+  final minSplashDuration = Future.delayed(const Duration(milliseconds: 800));
   
   try {
-    // RSS feedleri yukle - timeout ile (10 saniye)
-    print('RSS feedleri yukleniyor...');
-    final loadArticlesFuture = ref.read(newsProvider.notifier).loadAllArticles(refresh: true);
-    
-    // Timeout ekle - 10 saniye içinde yüklenmezse devam et
+    // ÖNCE: Cache'den hızlıca yükle (refresh: false)
+    print('⚡ Cache\'den hızlı yükleme...');
     try {
-      await loadArticlesFuture.timeout(
-        const Duration(seconds: 10),
-      );
-      print('✅ RSS feedleri basariyla yuklendi');
-    } on TimeoutException {
-      print('⚠️ RSS yukleme timeout oldu (10 saniye), cache\'den devam ediliyor');
+      await ref.read(newsProvider.notifier).loadAllArticles(refresh: false);
+      print('✅ Cache\'den haberler yüklendi');
     } catch (e) {
-      print('⚠️ RSS yukleme hatasi (network veya diger): $e');
+      print('⚠️ Cache yükleme hatası: $e');
     }
     
-    // Minimum splash süresini bekle (eğer henüz geçmediyse)
+    // Minimum splash süresini bekle
     await minSplashDuration;
     
-    print('RSS feedleri basariyla yuklendi');
+    // SONRA: Arka planda güncelle (refresh: true) - timeout ile
+    print('🔄 Arka planda güncelleme başlatılıyor...');
+    Future.microtask(() async {
+      try {
+        await ref.read(newsProvider.notifier)
+            .loadAllArticles(refresh: true)
+            .timeout(const Duration(seconds: 15));
+        print('✅ Arka plan güncelleme tamamlandı');
+      } catch (e) {
+        if (e.toString().contains('timeout') || e.toString().contains('Timeout')) {
+          print('⚠️ Arka plan güncelleme timeout (15 saniye)');
+        } else {
+          print('⚠️ Arka plan güncelleme hatası: $e');
+        }
+      }
+    });
     
   } catch (e) {
-    print('RSS yukleme hatasi: $e');
+    print('⚠️ App initialization hatasi: $e');
     // Hata durumunda minimum splash süresini bekle
     await minSplashDuration;
-    // Hata durumunda bos geciyoruz, kullanici manuel refresh yapabilir
   }
   
-  print('App initialization tamamlandi');
+  print('✅ App initialization tamamlandi');
 });
 
 /// App lifecycle provider - uygulama yaşam döngüsünü izler

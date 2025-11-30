@@ -283,6 +283,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               Icons.local_fire_department_rounded,
               Colors.deepOrange,
             ),
+            if (stats.lastReadDate != null)
+              _buildStatCard(
+                context,
+                'Son Okuma',
+                _formatDate(stats.lastReadDate!),
+                Icons.access_time_rounded,
+                Colors.purple,
+              ),
           ],
         ),
         
@@ -449,33 +457,39 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   void _showEditProfileDialog(BuildContext context, UserProfile profile) {
-    final nameController = TextEditingController(text: profile.name);
-    final emailController = TextEditingController(text: profile.email);
+    final nameController = TextEditingController(text: profile.name ?? '');
+    final emailController = TextEditingController(text: profile.email ?? '');
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Profili Düzenle'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'İsim',
-                hintText: 'Adınızı girin',
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: 'İsim',
+                  hintText: 'Adınızı girin',
+                  prefixIcon: Icon(Icons.person_rounded),
+                ),
+                textCapitalization: TextCapitalization.words,
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'E-posta',
-                hintText: 'E-posta adresinizi girin',
+              const SizedBox(height: 16),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: 'E-posta',
+                  hintText: 'E-posta adresinizi girin',
+                  prefixIcon: Icon(Icons.email_rounded),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                autocorrect: false,
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -484,7 +498,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           ),
           ElevatedButton(
             onPressed: () {
-              ref.read(userProfileProvider.notifier).updateName(nameController.text);
+              final name = nameController.text.trim();
+              final email = emailController.text.trim();
+              
+              final updatedProfile = profile.copyWith(
+                name: name.isEmpty ? null : name,
+                email: email.isEmpty ? null : email,
+              );
+              ref.read(userProfileProvider.notifier).updateProfile(updatedProfile);
+              
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Profil güncellendi')),
@@ -498,6 +520,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   void _showAvatarEditDialog(BuildContext context, UserProfile profile) {
+    final urlController = TextEditingController(text: profile.avatarUrl ?? '');
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -508,16 +532,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             const Text('Avatar URL\'si girin:'),
             const SizedBox(height: 16),
             TextField(
+              controller: urlController,
               decoration: const InputDecoration(
                 labelText: 'Avatar URL',
                 hintText: 'https://example.com/avatar.jpg',
               ),
-              onSubmitted: (value) {
-                if (value.isNotEmpty) {
-                  ref.read(userProfileProvider.notifier).updateAvatar(value);
-                  Navigator.of(context).pop();
-                }
-              },
             ),
           ],
         ),
@@ -536,9 +555,38 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             },
             child: const Text('Kaldır'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              final url = urlController.text.trim();
+              ref.read(userProfileProvider.notifier).updateAvatar(url.isEmpty ? null : url);
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Avatar güncellendi')),
+              );
+            },
+            child: const Text('Kaydet'),
+          ),
         ],
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    
+    if (difference.inDays == 0) {
+      return 'Bugün';
+    } else if (difference.inDays == 1) {
+      return 'Dün';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} gün önce';
+    } else if (difference.inDays < 30) {
+      final weeks = (difference.inDays / 7).floor();
+      return '$weeks hafta önce';
+    } else {
+      return '${date.day}/${date.month}/${date.year}';
+    }
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'providers/providers.dart';
@@ -37,14 +38,23 @@ class HaberMerkeziApp extends ConsumerWidget {
       
       // Ana sayfa - initialization durumuna göre
       home: appInitialization.when(
-        data: (_) => const HomePage(),
-        loading: () => const SplashPage(),
-        error: (error, stackTrace) => ErrorPage(
-          error: error,
-          onRetry: () {
-            ref.invalidate(appInitializationProvider);
-          },
-        ),
+        data: (_) {
+          print('✅ App initialization tamamlandi, HomePage gosteriliyor');
+          return const HomePage();
+        },
+        loading: () {
+          print('⏳ App initialization devam ediyor, SplashPage gosteriliyor');
+          return const SplashPage();
+        },
+        error: (error, stackTrace) {
+          print('❌ App initialization hatasi: $error');
+          return ErrorPage(
+            error: error,
+            onRetry: () {
+              ref.invalidate(appInitializationProvider);
+            },
+          );
+        },
       ),
       
       // Route ayarları (gelecekte navigation için)
@@ -172,8 +182,8 @@ class ErrorPage extends StatelessWidget {
               // İptal butonu
               TextButton(
                 onPressed: () {
-                  // Uygulamayı kapat (Android'de back button gibi)
-                  Navigator.of(context).pop();
+                  // Uygulamayı kapat
+                  SystemNavigator.pop();
                 },
                 child: Text(
                   'Uygulamayı Kapat',

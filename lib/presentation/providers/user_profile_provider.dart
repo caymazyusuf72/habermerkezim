@@ -101,10 +101,30 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
 
   /// Profil adını güncelle
   Future<void> updateName(String name) async {
-    if (state.profile == null) return;
+    if (state.profile == null) {
+      // Profil yoksa önce yükle
+      await loadProfile();
+      if (state.profile == null) return;
+    }
 
     try {
-      final updatedProfile = state.profile!.copyWith(name: name);
+      final updatedProfile = state.profile!.copyWith(name: name.isEmpty ? null : name);
+      await _repository.updateProfile(updatedProfile);
+      state = state.copyWith(profile: updatedProfile);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// E-posta adresini güncelle
+  Future<void> updateEmail(String email) async {
+    if (state.profile == null) {
+      await loadProfile();
+      if (state.profile == null) return;
+    }
+
+    try {
+      final updatedProfile = state.profile!.copyWith(email: email.isEmpty ? null : email);
       await _repository.updateProfile(updatedProfile);
       state = state.copyWith(profile: updatedProfile);
     } catch (e) {

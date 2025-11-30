@@ -57,8 +57,8 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       
       final List<ArticleModel> allArticles = [];
       
-      // Kategoriye ait tüm feed'leri paralel olarak çek
-      for (final feedEntry in categoryFeeds) {
+      // Kategoriye ait tüm feed'leri PARALEL olarak çek (Future.wait ile)
+      final feedFutures = categoryFeeds.map((feedEntry) async {
         try {
           final feedUrl = feedEntry.value;
           final feedKey = feedEntry.key;
@@ -71,15 +71,23 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
             final xmlString = response.data as String;
             print('📝 Parsing XML [$feedKey]...');
             final articles = await _parseRssXml(xmlString, category);
-            allArticles.addAll(articles);
             print('✅ $feedKey: ${articles.length} makale');
+            return articles;
           } else {
             print('⚠️ HTTP Error [$feedKey]: ${response.statusCode}');
+            return <ArticleModel>[];
           }
         } catch (e) {
           // Bir feed başarısız olursa diğerlerine devam et
           print('⚠️ Feed hatası [${feedEntry.key}]: $e');
+          return <ArticleModel>[];
         }
+      }).toList();
+      
+      // Tüm feed'leri paralel yükle
+      final feedResults = await Future.wait(feedFutures);
+      for (final articles in feedResults) {
+        allArticles.addAll(articles);
       }
       
       if (allArticles.isEmpty) {
@@ -154,14 +162,22 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     // Sadece ana kategorileri al (alt feed'leri değil)
     final mainCategories = _getMainCategories();
     
-    for (final category in mainCategories) {
+    // Tüm kategorileri PARALEL olarak yükle (Future.wait ile)
+    final categoryFutures = mainCategories.map((category) async {
       try {
         final articles = await getArticlesByCategory(category);
-        allArticles.addAll(articles);
+        return articles;
       } catch (e) {
         // Tek kategori başarısız olursa devam et
         print('[$category] RSS feed hatası: $e');
+        return <ArticleModel>[];
       }
+    }).toList();
+    
+    // Tüm kategorileri paralel yükle
+    final categoryResults = await Future.wait(categoryFutures);
+    for (final articles in categoryResults) {
+      allArticles.addAll(articles);
     }
     
     if (allArticles.isEmpty) {
