@@ -92,7 +92,7 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
         ),
         
         SizedBox(
-          height: 280,
+          height: 320,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -100,11 +100,12 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
             itemBuilder: (context, index) {
               final article = _relatedArticles![index];
               return SizedBox(
-                width: 300,
+                width: 280,
                 child: Padding(
                   padding: const EdgeInsets.only(right: 12),
                   child: ArticleCard(
                     article: article,
+                    isCompact: true, // Kompakt mod kullan
                     onTap: () {
                       // Makale detay sayfasına git
                       Navigator.of(context).pushReplacement(

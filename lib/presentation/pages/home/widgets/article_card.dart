@@ -112,7 +112,7 @@ class ArticleCard extends ConsumerWidget {
     final categoryColor = AppTheme.getCategoryColor(article.category);
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       elevation: 3,
       shadowColor: Theme.of(context).colorScheme.primary.withOpacity(0.25),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -120,56 +120,71 @@ class ArticleCard extends ConsumerWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+          padding: const EdgeInsets.all(12),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Küçük görsel
-              if (article.imageUrl != null)
-                _buildCompactImage(context),
-              
-              // İçerik
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Kategori badge
-                    if (showCategoryBadge)
-                      _buildCategoryBadge(context, categoryColor),
-                    
-                    const SizedBox(height: 4),
-                    
-                    // Başlık
-                    Text(
-                      article.truncatedTitle,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        height: 1.3,
-                        color: article.isRead
-                            ? theme.colorScheme.onSurface.withOpacity(0.7)
-                            : theme.colorScheme.onSurface,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+              // Üst kısım: Kategori badge ve action butonları
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Kategori badge
+                  if (showCategoryBadge)
+                    Flexible(
+                      child: _buildCategoryBadge(context, categoryColor),
                     ),
-                    
-                    const SizedBox(height: 8),
-                    
-                    // Alt bilgiler
-                    _buildCompactFooter(context),
-                  ],
-                ),
+                  
+                  // Action butonları
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildShareButton(context),
+                      const SizedBox(width: 4),
+                      _buildFavoriteButton(context, ref),
+                    ],
+                  ),
+                ],
               ),
               
-              // Action butonları
-              Column(
-                mainAxisSize: MainAxisSize.min,
+              const SizedBox(height: 8),
+              
+              // Görsel ve içerik
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildShareButton(context),
-                  const SizedBox(height: 4),
-                  _buildReadingListButton(context, ref),
-                  const SizedBox(height: 4),
-                  _buildFavoriteButton(context, ref),
+                  // Küçük görsel
+                  if (article.imageUrl != null)
+                    _buildCompactImage(context),
+                  
+                  // İçerik
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Başlık
+                        Text(
+                          article.truncatedTitle,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            height: 1.3,
+                            color: article.isRead
+                                ? theme.colorScheme.onSurface.withOpacity(0.7)
+                                : theme.colorScheme.onSurface,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        
+                        const SizedBox(height: 6),
+                        
+                        // Alt bilgiler
+                        _buildCompactFooter(context),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ],

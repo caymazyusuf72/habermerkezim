@@ -128,50 +128,59 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
             
             const SizedBox(height: 16),
             
-            // Ayarlar
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            // Ayarlar - Column ile dikey yerleşim (overflow önlemek için)
+            Column(
               children: [
                 // Hız
-                Column(
-                  children: [
-                    Text(
-                      'Hız',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                    Slider(
-                      value: _ttsService.speechRate,
-                      min: 0.0,
-                      max: 1.0,
-                      divisions: 10,
-                      label: (_ttsService.speechRate * 100).toInt().toString(),
-                      onChanged: (value) {
-                        _ttsService.setSpeechRate(value);
-                        setState(() {});
-                      },
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Hız',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      Slider(
+                        value: _ttsService.speechRate,
+                        min: 0.0,
+                        max: 1.0,
+                        divisions: 10,
+                        label: (_ttsService.speechRate * 100).toInt().toString(),
+                        onChanged: (value) {
+                          _ttsService.setSpeechRate(value);
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 
+                const SizedBox(height: 8),
+                
                 // Ses
-                Column(
-                  children: [
-                    Text(
-                      'Ses',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                    Slider(
-                      value: _ttsService.volume,
-                      min: 0.0,
-                      max: 1.0,
-                      divisions: 10,
-                      label: (_ttsService.volume * 100).toInt().toString(),
-                      onChanged: (value) {
-                        _ttsService.setVolume(value);
-                        setState(() {});
-                      },
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Ses',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      Slider(
+                        value: _ttsService.volume,
+                        min: 0.0,
+                        max: 1.0,
+                        divisions: 10,
+                        label: (_ttsService.volume * 100).toInt().toString(),
+                        onChanged: (value) {
+                          _ttsService.setVolume(value);
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
