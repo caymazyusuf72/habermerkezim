@@ -72,19 +72,27 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Row(
             children: [
-              Icon(
-                Icons.article_rounded,
-                color: theme.colorScheme.primary,
-                size: 20,
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.article_rounded,
+                  color: theme.colorScheme.primary,
+                  size: 20,
+                ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Text(
                 'İlgili Haberler',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
                 ),
               ),
             ],
@@ -92,22 +100,21 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
         ),
         
         SizedBox(
-          height: 320,
+          height: 420,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             itemCount: _relatedArticles!.length,
             itemBuilder: (context, index) {
               final article = _relatedArticles![index];
               return SizedBox(
-                width: 280,
+                width: 360,
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsets.only(right: 16),
                   child: ArticleCard(
                     article: article,
-                    isCompact: true, // Kompakt mod kullan
+                    isCompact: false, // Tam boyutlu kart kullan
                     onTap: () {
-                      // Makale detay sayfasına git
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => _getArticleDetailPage(article),
@@ -123,6 +130,7 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
             },
           ),
         ),
+        const SizedBox(height: 8),
       ],
     );
   }

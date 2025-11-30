@@ -64,12 +64,13 @@ class ArticleCard extends ConsumerWidget {
                   
                   const SizedBox(height: 8),
                   
-                  // Başlık - Merriweather font ile
+                  // Başlık - Daha büyük ve okunabilir
                   Text(
                     article.truncatedTitle,
-                    style: theme.textTheme.headlineLarge?.copyWith(
+                    style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
                       height: 1.3,
+                      fontSize: 18,
                       color: article.isRead
                           ? theme.colorScheme.onSurface.withOpacity(0.6)
                           : theme.colorScheme.onSurface,
@@ -79,17 +80,18 @@ class ArticleCard extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   
-                  // Özet - Gazete okuma deneyimi için
+                  // Özet - Daha okunabilir
                   Text(
                     article.truncatedDescription,
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.75),
-                      height: 1.6, // Daha geniş satır aralığı
-                      letterSpacing: 0.2,
+                      height: 1.5,
+                      fontSize: 14,
+                      letterSpacing: 0.1,
                     ),
-                    maxLines: 4,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                   
@@ -106,88 +108,235 @@ class ArticleCard extends ConsumerWidget {
     );
   }
 
-  /// Kompakt kart (liste görünümü için)
+  /// Kompakt kart (liste görünümü için) - Modern ve profesyonel tasarım
   Widget _buildCompactCard(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final categoryColor = AppTheme.getCategoryColor(article.category);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      elevation: 3,
-      shadowColor: Theme.of(context).colorScheme.primary.withOpacity(0.25),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark 
+              ? theme.colorScheme.outline.withOpacity(0.2)
+              : Colors.grey.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Üst kısım: Kategori badge ve action butonları
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Kategori badge
-                  if (showCategoryBadge)
-                    Flexible(
-                      child: _buildCategoryBadge(context, categoryColor),
-                    ),
-                  
-                  // Action butonları
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildShareButton(context),
-                      const SizedBox(width: 4),
-                      _buildFavoriteButton(context, ref),
-                    ],
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 8),
-              
-              // Görsel ve içerik
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Küçük görsel
-                  if (article.imageUrl != null)
-                    _buildCompactImage(context),
-                  
-                  // İçerik
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: isDark ? theme.colorScheme.surface : Colors.white,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Üst kısım: Kategori badge ve action butonları
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Kategori badge - daha modern
+                    if (showCategoryBadge)
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: categoryColor.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: categoryColor.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            article.sourceName,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: categoryColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 11,
+                              letterSpacing: 0.2,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    
+                    // Action butonları - daha küçük ve modern
+                    Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Başlık
-                        Text(
-                          article.truncatedTitle,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            height: 1.3,
-                            color: article.isRead
-                                ? theme.colorScheme.onSurface.withOpacity(0.7)
-                                : theme.colorScheme.onSurface,
-                          ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
+                        _buildCompactActionButton(
+                          context,
+                          icon: Icons.share_outlined,
+                          onTap: onShare ?? () => _shareArticle(context),
                         ),
-                        
-                        const SizedBox(height: 6),
-                        
-                        // Alt bilgiler
-                        _buildCompactFooter(context),
+                        const SizedBox(width: 6),
+                        _buildCompactActionButton(
+                          context,
+                          icon: ref.watch(isFavoriteProvider(article.id))
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                          color: ref.watch(isFavoriteProvider(article.id))
+                              ? Colors.red
+                              : null,
+                          onTap: onFavoriteToggle,
+                        ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+                
+                const SizedBox(height: 12),
+                
+                // Görsel ve içerik
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Küçük görsel - daha modern
+                    if (article.imageUrl != null)
+                      Container(
+                        width: 80,
+                        height: 80,
+                        margin: const EdgeInsets.only(right: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: CachedNetworkImage(
+                            imageUrl: ArticleCardUtils.optimizeImageUrl(
+                              article.imageUrl,
+                              width: 80,
+                              height: 80,
+                            ) ?? article.imageUrl!,
+                            fit: BoxFit.cover,
+                            memCacheWidth: 80,
+                            memCacheHeight: 80,
+                            placeholder: (context, url) => Container(
+                              color: theme.colorScheme.surfaceVariant,
+                              child: const Center(
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: theme.colorScheme.surfaceVariant,
+                              child: Icon(
+                                Icons.image_not_supported_rounded,
+                                size: 24,
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    
+                    // İçerik
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Başlık - daha okunabilir
+                          Text(
+                            article.truncatedTitle,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              height: 1.4,
+                              fontSize: 15,
+                              color: article.isRead
+                                  ? theme.colorScheme.onSurface.withOpacity(0.6)
+                                  : theme.colorScheme.onSurface,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          
+                          const SizedBox(height: 8),
+                          
+                          // Alt bilgiler - daha kompakt
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.access_time_rounded,
+                                size: 12,
+                                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                article.shortDateTime,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                                  fontSize: 11,
+                                ),
+                              ),
+                              if (article.isRead) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  width: 4,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primaryBlue,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Kompakt action butonu - daha modern
+  Widget _buildCompactActionButton(
+    BuildContext context, {
+    required IconData icon,
+    required VoidCallback onTap,
+    Color? color,
+  }) {
+    final theme = Theme.of(context);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            icon,
+            size: 16,
+            color: color ?? theme.colorScheme.onSurface.withOpacity(0.7),
           ),
         ),
       ),
