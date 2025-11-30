@@ -27,27 +27,49 @@ class NewsRepositoryImpl implements NewsRepository {
 
       if (hasConnection) {
         try {
+          // Önce remote'dan çekmeyi dene
+          print('🔄 Remote\'dan $category kategorisi için haberler çekiliyor...');
           final articles = await remoteDataSource.getArticlesByCategory(category);
           
           // Cache articles locally
           await localDataSource.cacheArticles(articles);
           // Convert ArticleModel to Article and sort by image
           final entities = articles.map((model) => model.toEntity()).toList();
+          print('✅ $category kategorisi için ${entities.length} haber alındı');
           return _sortArticlesByImage(entities);
         } catch (e) {
+          print('⚠️ Remote request hatası: $e');
+          print('🔄 Cache\'den veri deneniyor...');
           // Fall back to cached data if network fails
-          final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
-          final entities = cachedArticles.map((model) => model.toEntity()).toList();
-          return _sortArticlesByImage(entities);
+          try {
+            final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
+            final entities = cachedArticles.map((model) => model.toEntity()).toList();
+            print('✅ Cache\'den $category kategorisi için ${entities.length} haber alındı');
+            return _sortArticlesByImage(entities);
+          } catch (cacheError) {
+            print('❌ Cache de boş, demo data döndürülüyor');
+            // Cache de boş ise demo data döndür
+            return _createDemoArticlesByCategory(category);
+          }
         }
       } else {
         // Offline - get from cache
-        final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
-        final entities = cachedArticles.map((model) => model.toEntity()).toList();
-        return _sortArticlesByImage(entities);
+        print('📱 Offline mod - cache\'den veri alınıyor');
+        try {
+          final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
+          final entities = cachedArticles.map((model) => model.toEntity()).toList();
+          print('✅ Cache\'den $category kategorisi için ${entities.length} haber alındı');
+          return _sortArticlesByImage(entities);
+        } catch (cacheError) {
+          print('❌ Offline ve cache boş, demo data döndürülüyor');
+          // Cache boş ise demo data döndür
+          return _createDemoArticlesByCategory(category);
+        }
       }
     } catch (e) {
-      throw Exception('Failed to get articles: $e');
+      print('💥 getArticlesByCategory HATA: $e');
+      // Son çare olarak demo data döndür
+      return _createDemoArticlesByCategory(category);
     }
   }
 
@@ -208,6 +230,48 @@ class NewsRepositoryImpl implements NewsRepository {
         imageUrl: null,
         publishedDate: now.subtract(const Duration(minutes: 15)),
         category: 'genel',
+        sourceName: 'Haber Merkezi',
+        isRead: false,
+        isFavorite: false,
+      ),
+    ];
+  }
+
+  /// Kategori bazlı demo makaleler
+  List<Article> _createDemoArticlesByCategory(String category) {
+    final now = DateTime.now();
+    final categoryNames = {
+      'magazin': 'Magazin',
+      'bilim': 'Bilim',
+      'egitim': 'Eğitim',
+      'otomobil': 'Otomobil',
+    };
+    
+    final categoryName = categoryNames[category] ?? category;
+    
+    return [
+      Article(
+        id: 'demo_${category}_1',
+        title: '$categoryName kategorisi yükleniyor...',
+        description: 'İnternet bağlantınız kurulduğunda $categoryName kategorisindeki güncel haberler yüklenecek.',
+        content: 'Bu demo içeriktir. İnternet bağlantınızı kontrol edin ve sayfayı yenileyin.',
+        link: '',
+        imageUrl: null,
+        publishedDate: now.subtract(const Duration(minutes: 5)),
+        category: category,
+        sourceName: 'Haber Merkezi',
+        isRead: false,
+        isFavorite: false,
+      ),
+      Article(
+        id: 'demo_${category}_2',
+        title: 'Yenile Butonunu Kullanın',
+        description: 'Sayfayı aşağı çekerek yenileme yapabilir veya ayarlardan cache\'i temizleyebilirsiniz.',
+        content: 'Pull-to-refresh özelliği ile haberleri manuel olarak güncelleyebilirsiniz.',
+        link: '',
+        imageUrl: null,
+        publishedDate: now.subtract(const Duration(minutes: 10)),
+        category: category,
         sourceName: 'Haber Merkezi',
         isRead: false,
         isFavorite: false,

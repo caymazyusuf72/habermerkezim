@@ -45,6 +45,13 @@ class ArticleFilterNotifier extends StateNotifier<ArticleFilter> {
     state = state.copyWith(isRead: isRead);
   }
 
+  /// Arama sorgusu ayarla
+  void setSearchQuery(String? query) {
+    state = state.copyWith(
+      searchQuery: query?.trim().isEmpty == true ? null : query?.trim(),
+    );
+  }
+
   /// Filtreyi temizle
   void clearFilter() {
     state = const ArticleFilter();

@@ -10,6 +10,8 @@ import '../../providers/providers.dart';
 import '../../providers/analytics_provider.dart';
 import '../../providers/reading_list_provider.dart';
 import '../../themes/app_theme.dart';
+import 'widgets/image_gallery.dart';
+import 'widgets/related_articles_section.dart';
 
 /// Haber detay sayfası - tek bir haberin ayrıntılı görünümü
 /// Görsel, başlık, içerik, tarih, paylaşma ve kaynak görme özellikleri
@@ -163,24 +165,83 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
 
   /// Header image
   Widget _buildHeaderImage(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _toggleImageExpansion(),
-      child: Hero(
-        tag: 'article_image_${widget.article.id}',
-        child: CachedNetworkImage(
-          imageUrl: widget.article.imageUrl!,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => Container(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            child: const Center(child: CircularProgressIndicator()),
-          ),
-          errorWidget: (context, url, error) => Container(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            child: const Icon(Icons.image_not_supported, size: 48),
+    // Görselleri topla (ana görsel + content'ten çıkarılan görseller)
+    final imageUrls = _extractImageUrls();
+    
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: () {
+            if (imageUrls.length > 1) {
+              // Birden fazla görsel varsa galeri göster
+              showDialog(
+                context: context,
+                barrierColor: Colors.black,
+                builder: (context) => ImageGallery(
+                  imageUrls: imageUrls,
+                  initialIndex: 0,
+                ),
+              );
+            } else {
+              // Tek görsel varsa eski davranış
+              _toggleImageExpansion();
+            }
+          },
+          child: Hero(
+            tag: 'article_image_${widget.article.id}',
+            child: CachedNetworkImage(
+              imageUrl: widget.article.imageUrl!,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+              errorWidget: (context, url, error) => Container(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                child: const Icon(Icons.image_not_supported, size: 48),
+              ),
+            ),
           ),
         ),
-      ),
+        
+        // Galeri butonu (birden fazla görsel varsa)
+        if (imageUrls.length > 1)
+          Positioned(
+            top: 16,
+            right: 16,
+            child: ImageGalleryButton(
+              imageUrls: imageUrls,
+              imageCount: imageUrls.length,
+            ),
+          ),
+      ],
     );
+  }
+  
+  /// Content'ten görsel URL'lerini çıkarır
+  List<String> _extractImageUrls() {
+    final imageUrls = <String>[];
+    
+    // Ana görseli ekle
+    if (widget.article.imageUrl != null && widget.article.imageUrl!.isNotEmpty) {
+      imageUrls.add(widget.article.imageUrl!);
+    }
+    
+    // Content'ten img tag'lerini çıkar
+    if (widget.article.content != null) {
+      final content = widget.article.content!;
+      final imgRegex = RegExp(r'<img[^>]+src=["\']([^"\']+)["\']', caseSensitive: false);
+      final matches = imgRegex.allMatches(content);
+      
+      for (final match in matches) {
+        final url = match.group(1);
+        if (url != null && url.isNotEmpty && !imageUrls.contains(url)) {
+          imageUrls.add(url);
+        }
+      }
+    }
+    
+    return imageUrls;
   }
 
   /// Header gradient (görsel yoksa)
@@ -246,6 +307,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           
           // Alt eylem butonları (yukarı taşındı)
           _buildActionButtons(context, theme),
+          
+          const SizedBox(height: 32),
+          
+          // İlgili haberler bölümü
+          RelatedArticlesSection(currentArticle: widget.article),
           
           const SizedBox(height: 32), // Alt padding
         ],

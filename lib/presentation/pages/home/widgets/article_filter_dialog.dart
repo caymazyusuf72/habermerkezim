@@ -22,6 +22,8 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
   List<String> _selectedSources = [];
   List<String> _selectedCategories = [];
   bool? _isRead;
+  String? _searchQuery;
+  final TextEditingController _searchController = TextEditingController();
   bool _initialized = false;
 
   @override
@@ -37,6 +39,8 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
           _selectedSources = List<String>.from(filter.selectedSources);
           _selectedCategories = List<String>.from(filter.selectedCategories);
           _isRead = filter.isRead;
+          _searchQuery = filter.searchQuery;
+          _searchController.text = filter.searchQuery ?? '';
           _initialized = true;
         });
       }
@@ -56,6 +60,8 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
       _selectedSources = List<String>.from(filter.selectedSources);
       _selectedCategories = List<String>.from(filter.selectedCategories);
       _isRead = filter.isRead;
+      _searchQuery = filter.searchQuery;
+      _searchController.text = filter.searchQuery ?? '';
       _initialized = true;
     }
     
@@ -115,6 +121,10 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Kelime Arama
+                    _buildSearchFilter(theme),
+                    const SizedBox(height: 24),
+                    
                     // Tarih Aralığı
                     _buildDateRangeSection(theme),
                     const SizedBox(height: 24),
@@ -166,6 +176,9 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
                             selectedSources: _selectedSources,
                             selectedCategories: _selectedCategories,
                             isRead: _isRead,
+                            searchQuery: _searchController.text.trim().isEmpty
+                                ? null
+                                : _searchController.text.trim(),
                           ),
                         );
                         Navigator.of(context).pop();
@@ -183,6 +196,45 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSearchFilter(ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Kelime Ara',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: 'Başlık, açıklama veya içerikte ara...',
+            prefixIcon: const Icon(Icons.search_rounded),
+            suffixIcon: _searchController.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear_rounded),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() {});
+                    },
+                  )
+                : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onChanged: (value) {
+            setState(() {
+              _searchQuery = value.isEmpty ? null : value;
+            });
+          },
+        ),
+      ],
     );
   }
 

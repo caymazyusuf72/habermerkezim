@@ -9,6 +9,8 @@ import '../../../../core/services/hive_service.dart';
 import '../../favorites/favorites_page.dart';
 import '../../reading_list/reading_list_page.dart';
 import '../../settings/settings_page.dart';
+import '../../profile/profile_page.dart';
+import '../../custom_categories/custom_categories_page.dart';
 
 /// Ana drawer widget'ı - yan menü
 /// Kullanıcı profili, ayarlar, hakkında vs. bölümler içerir
@@ -34,6 +36,23 @@ class AppDrawer extends ConsumerWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                // Profil
+                _buildMenuTile(
+                  context,
+                  icon: Icons.person_rounded,
+                  title: 'Profil',
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const ProfilePage(),
+                      ),
+                    );
+                  },
+                ),
+                
+                const Divider(),
+                
                 // Ana Sayfa
                 _buildMenuTile(
                   context,
@@ -82,6 +101,21 @@ class AppDrawer extends ConsumerWidget {
                 _buildThemeSection(context, ref, isDarkMode),
                 
                 const Divider(),
+                
+                // Özel Kategoriler
+                _buildMenuTile(
+                  context,
+                  icon: Icons.category_rounded,
+                  title: 'Özel Kategoriler',
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const CustomCategoriesPage(),
+                      ),
+                    );
+                  },
+                ),
                 
                 // Ayarlar
                 _buildMenuTile(

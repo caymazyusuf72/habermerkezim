@@ -12,6 +12,7 @@ import 'widgets/app_drawer.dart';
 import 'widgets/article_filter_dialog.dart';
 import 'widgets/notification_banner.dart';
 import '../search/search_page.dart';
+import '../profile/profile_page.dart';
 
 /// CategoryTabs için PreferredSizeWidget wrapper
 class CategoryTabsWrapper extends StatelessWidget implements PreferredSizeWidget {
@@ -158,6 +159,19 @@ class _HomePageState extends ConsumerState<HomePage>
         
         // App bar actions
         actions: [
+          // Profil butonu (sağ üst, ilk sırada)
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const ProfilePage(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.person_rounded),
+            tooltip: 'Profil',
+          ),
+          
           // Filtre butonu
           Consumer(
             builder: (context, ref, child) {

@@ -4,10 +4,14 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/datasources/local/news_local_data_source.dart';
+import '../../data/datasources/local/user_profile_local_data_source.dart';
 import '../../data/datasources/remote/rss_remote_data_source.dart';
 import '../../data/repositories/news_repository_impl.dart';
+import '../../data/repositories/user_profile_repository_impl.dart';
 import '../../domain/repositories/news_repository.dart';
+import '../../domain/repositories/user_profile_repository.dart';
 import 'news_provider.dart';
+import 'user_profile_provider.dart';
 
 // Export specific providers only
 export 'news_provider.dart';
@@ -19,6 +23,7 @@ export 'notification_banner_provider.dart';
 export 'category_order_provider.dart';
 export 'reading_list_provider.dart';
 export 'article_filter_provider.dart';
+export 'user_profile_provider.dart';
 
 /// Dependency Injection - Tüm provider'ları burada tanımlıyoruz
 /// Clean Architecture'da dependency direction'ını sağlıyoruz
@@ -32,6 +37,9 @@ final newsLocalDataSourceProvider = Provider<NewsLocalDataSource>((ref) {
   return NewsLocalDataSourceImpl();
 });
 
+final userProfileLocalDataSourceProvider = Provider<UserProfileLocalDataSource>((ref) {
+  return UserProfileLocalDataSourceImpl();
+});
 
 // Repository
 final newsRepositoryProvider = Provider<NewsRepository>((ref) {
@@ -39,6 +47,12 @@ final newsRepositoryProvider = Provider<NewsRepository>((ref) {
     remoteDataSource: ref.read(rssRemoteDataSourceProvider),
     localDataSource: ref.read(newsLocalDataSourceProvider),
     connectivity: Connectivity(),
+  );
+});
+
+final userProfileRepositoryProvider = Provider<UserProfileRepository>((ref) {
+  return UserProfileRepositoryImpl(
+    localDataSource: ref.read(userProfileLocalDataSourceProvider),
   );
 });
 

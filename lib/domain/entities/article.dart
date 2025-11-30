@@ -8,6 +8,8 @@ class Article {
   final String? content;
   final String link;
   final String? imageUrl;
+  final String? videoUrl;
+  final String? videoThumbnail;
   final DateTime publishedDate;
   final String category;
   final String sourceName;
@@ -21,6 +23,8 @@ class Article {
     this.content,
     required this.link,
     this.imageUrl,
+    this.videoUrl,
+    this.videoThumbnail,
     required this.publishedDate,
     required this.category,
     required this.sourceName,
@@ -36,6 +40,8 @@ class Article {
     String? content,
     String? link,
     String? imageUrl,
+    String? videoUrl,
+    String? videoThumbnail,
     DateTime? publishedDate,
     String? category,
     String? sourceName,
@@ -49,6 +55,8 @@ class Article {
       content: content ?? this.content,
       link: link ?? this.link,
       imageUrl: imageUrl ?? this.imageUrl,
+      videoUrl: videoUrl ?? this.videoUrl,
+      videoThumbnail: videoThumbnail ?? this.videoThumbnail,
       publishedDate: publishedDate ?? this.publishedDate,
       category: category ?? this.category,
       sourceName: sourceName ?? this.sourceName,

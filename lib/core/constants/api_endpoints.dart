@@ -50,18 +50,33 @@ class ApiEndpoints {
     // Magazin
     'magazin': 'https://www.hurriyet.com.tr/rss/magazin',
     'magazin_sabah': 'https://www.sabah.com.tr/rss/magazin.xml',
+    'magazin_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/magazinRSS.xml',
+    'magazin_posta': 'https://www.posta.com.tr/rss/magazin.xml',
+    'magazin_mynet': 'https://www.mynet.com/rss/magazin',
+    'magazin_ensonhaber': 'https://www.ensonhaber.com/rss/magazin.xml',
     
     // Bilim
     'bilim': 'https://www.hurriyet.com.tr/rss/bilim',
     'bilim_ntv': 'https://www.ntv.com.tr/bilim.rss',
+    'bilim_sabah': 'https://www.sabah.com.tr/rss/bilim.xml',
+    'bilim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/bilimRSS.xml',
+    'bilim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/bilim.xml',
     
     // Eğitim
     'egitim': 'https://www.hurriyet.com.tr/rss/egitim',
     'egitim_sabah': 'https://www.sabah.com.tr/rss/egitim.xml',
+    'egitim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/egitimRSS.xml',
+    'egitim_ntv': 'https://www.ntv.com.tr/egitim.rss',
+    'egitim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/egitim.xml',
+    'egitim_ensonhaber': 'https://www.ensonhaber.com/rss/egitim.xml',
     
     // Otomobil
     'otomobil': 'https://www.hurriyet.com.tr/rss/otomobil',
     'otomobil_sabah': 'https://www.sabah.com.tr/rss/otomobil.xml',
+    'otomobil_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/otomobilRSS.xml',
+    'otomobil_ntv': 'https://www.ntv.com.tr/otomobil.rss',
+    'otomobil_ensonhaber': 'https://www.ensonhaber.com/rss/otomobil.xml',
+    'otomobil_otokoc': 'https://www.otokoc.com.tr/rss',
   };
 
   /// RSS Feed isimler - UI'da gösterilecek
@@ -111,18 +126,33 @@ class ApiEndpoints {
     // Magazin
     'magazin': 'Hürriyet - Magazin',
     'magazin_sabah': 'Sabah - Magazin',
+    'magazin_milliyet': 'Milliyet - Magazin',
+    'magazin_posta': 'Posta - Magazin',
+    'magazin_mynet': 'Mynet - Magazin',
+    'magazin_ensonhaber': 'Ensonhaber - Magazin',
     
     // Bilim
     'bilim': 'Hürriyet - Bilim',
     'bilim_ntv': 'NTV - Bilim',
+    'bilim_sabah': 'Sabah - Bilim',
+    'bilim_milliyet': 'Milliyet - Bilim',
+    'bilim_cumhuriyet': 'Cumhuriyet - Bilim',
     
     // Eğitim
     'egitim': 'Hürriyet - Eğitim',
     'egitim_sabah': 'Sabah - Eğitim',
+    'egitim_milliyet': 'Milliyet - Eğitim',
+    'egitim_ntv': 'NTV - Eğitim',
+    'egitim_cumhuriyet': 'Cumhuriyet - Eğitim',
+    'egitim_ensonhaber': 'Ensonhaber - Eğitim',
     
     // Otomobil
     'otomobil': 'Hürriyet - Otomobil',
     'otomobil_sabah': 'Sabah - Otomobil',
+    'otomobil_milliyet': 'Milliyet - Otomobil',
+    'otomobil_ntv': 'NTV - Otomobil',
+    'otomobil_ensonhaber': 'Ensonhaber - Otomobil',
+    'otomobil_otokoc': 'Oto Koç - Otomobil',
   };
 
   /// RSS Feed simgeleri - Material Icons
@@ -172,18 +202,33 @@ class ApiEndpoints {
     // Magazin
     'magazin': 'celebration',
     'magazin_sabah': 'celebration',
+    'magazin_milliyet': 'celebration',
+    'magazin_posta': 'celebration',
+    'magazin_mynet': 'celebration',
+    'magazin_ensonhaber': 'celebration',
     
     // Bilim
     'bilim': 'science',
     'bilim_ntv': 'science',
+    'bilim_sabah': 'science',
+    'bilim_milliyet': 'science',
+    'bilim_cumhuriyet': 'science',
     
     // Eğitim
     'egitim': 'school',
     'egitim_sabah': 'school',
+    'egitim_milliyet': 'school',
+    'egitim_ntv': 'school',
+    'egitim_cumhuriyet': 'school',
+    'egitim_ensonhaber': 'school',
     
     // Otomobil
     'otomobil': 'directions_car',
     'otomobil_sabah': 'directions_car',
+    'otomobil_milliyet': 'directions_car',
+    'otomobil_ntv': 'directions_car',
+    'otomobil_ensonhaber': 'directions_car',
+    'otomobil_otokoc': 'directions_car',
   };
 
   /// Network timeout değerleri - gerçek cihaz için artırıldı

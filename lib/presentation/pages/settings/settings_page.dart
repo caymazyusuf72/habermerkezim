@@ -7,6 +7,7 @@ import '../../widgets/dialogs/modern_alert_dialog.dart';
 import '../rss_sources/rss_sources_page.dart';
 import '../analytics/analytics_page.dart';
 import '../notifications/notification_settings_page.dart';
+import '../notifications/notification_preferences_page.dart';
 
 /// Ayarlar sayfası - uygulama ayarları
 class SettingsPage extends ConsumerWidget {
@@ -543,6 +544,31 @@ class SettingsPage extends ConsumerWidget {
       ),
       child: Column(
         children: [
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryBlue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.notifications_active_rounded,
+                color: AppTheme.primaryBlue,
+                size: 20,
+              ),
+            ),
+            title: const Text('Bildirim Tercihleri'),
+            subtitle: const Text('Kategori ve zaman bazlı ayarlar'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const NotificationPreferencesPage(),
+                ),
+              );
+            },
+          ),
           ListTile(
             leading: Container(
               width: 40,

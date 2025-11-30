@@ -28,13 +28,15 @@ class ArticleModelAdapter extends TypeAdapter<ArticleModel> {
       sourceName: fields[8] as String,
       isRead: fields[9] as bool,
       isFavorite: fields[10] as bool,
+      videoUrl: fields[11] as String?,
+      videoThumbnail: fields[12] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ArticleModel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +58,11 @@ class ArticleModelAdapter extends TypeAdapter<ArticleModel> {
       ..writeByte(9)
       ..write(obj.isRead)
       ..writeByte(10)
-      ..write(obj.isFavorite);
+      ..write(obj.isFavorite)
+      ..writeByte(11)
+      ..write(obj.videoUrl)
+      ..writeByte(12)
+      ..write(obj.videoThumbnail);
   }
 
   @override

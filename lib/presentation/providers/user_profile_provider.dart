@@ -1,0 +1,138 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../domain/entities/user_profile.dart';
+import '../../domain/repositories/user_profile_repository.dart';
+
+/// UserProfile State - profil durumunu tutar
+class UserProfileState {
+  final UserProfile? profile;
+  final bool isLoading;
+  final String? errorMessage;
+
+  const UserProfileState({
+    this.profile,
+    this.isLoading = false,
+    this.errorMessage,
+  });
+
+  UserProfileState copyWith({
+    UserProfile? profile,
+    bool? isLoading,
+    String? errorMessage,
+  }) {
+    return UserProfileState(
+      profile: profile ?? this.profile,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+    );
+  }
+
+  bool get isEmpty => profile == null && !isLoading;
+  bool get isError => errorMessage != null;
+  bool get hasData => profile != null;
+}
+
+/// UserProfile StateNotifier - profil işlemlerini yönetir
+class UserProfileNotifier extends StateNotifier<UserProfileState> {
+  final UserProfileRepository _repository;
+
+  UserProfileNotifier(this._repository) : super(const UserProfileState());
+
+  /// Profili yükle
+  Future<void> loadProfile() async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    try {
+      final profile = await _repository.getProfile();
+      state = state.copyWith(
+        profile: profile,
+        isLoading: false,
+        errorMessage: null,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Profili güncelle
+  Future<void> updateProfile(UserProfile profile) async {
+    try {
+      await _repository.updateProfile(profile);
+      state = state.copyWith(profile: profile);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// İstatistikleri güncelle
+  Future<void> refreshStats() async {
+    try {
+      await _repository.updateStatsFromAnalytics();
+      // Profili yeniden yükle
+      await loadProfile();
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// Tercihleri güncelle
+  Future<void> updatePreferences(UserPreferences preferences) async {
+    try {
+      await _repository.updatePreferences(preferences);
+      
+      // Mevcut profili güncelle
+      if (state.profile != null) {
+        final updatedProfile = state.profile!.copyWith(
+          preferences: preferences,
+        );
+        state = state.copyWith(profile: updatedProfile);
+      } else {
+        // Profil yoksa yükle
+        await loadProfile();
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// Profil adını güncelle
+  Future<void> updateName(String name) async {
+    if (state.profile == null) return;
+
+    try {
+      final updatedProfile = state.profile!.copyWith(name: name);
+      await _repository.updateProfile(updatedProfile);
+      state = state.copyWith(profile: updatedProfile);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// Avatar URL'ini güncelle
+  Future<void> updateAvatar(String? avatarUrl) async {
+    if (state.profile == null) return;
+
+    try {
+      final updatedProfile = state.profile!.copyWith(avatarUrl: avatarUrl);
+      await _repository.updateProfile(updatedProfile);
+      state = state.copyWith(profile: updatedProfile);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// Hata durumunu temizle
+  void clearError() {
+    state = state.copyWith(errorMessage: null);
+  }
+}
+
+/// UserProfile provider - StateNotifierProvider
+final userProfileProvider = StateNotifierProvider<UserProfileNotifier, UserProfileState>((ref) {
+  final repository = ref.read(userProfileRepositoryProvider);
+  return UserProfileNotifier(repository);
+});
+

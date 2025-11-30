@@ -41,6 +41,12 @@ class ArticleModel extends HiveObject {
   @HiveField(10)
   final bool isFavorite;
 
+  @HiveField(11)
+  final String? videoUrl;
+
+  @HiveField(12)
+  final String? videoThumbnail;
+
   ArticleModel({
     required this.id,
     required this.title,
@@ -53,6 +59,8 @@ class ArticleModel extends HiveObject {
     required this.sourceName,
     this.isRead = false,
     this.isFavorite = false,
+    this.videoUrl,
+    this.videoThumbnail,
   });
 
   /// JSON'dan ArticleModel oluşturur (RSS XML parse sonrası)
@@ -122,6 +130,8 @@ class ArticleModel extends HiveObject {
       content: content,
       link: link,
       imageUrl: imageUrl,
+      videoUrl: videoUrl,
+      videoThumbnail: videoThumbnail,
       publishedDate: publishedDate,
       category: category,
       sourceName: sourceName,
@@ -139,6 +149,8 @@ class ArticleModel extends HiveObject {
       content: article.content,
       link: article.link,
       imageUrl: article.imageUrl,
+      videoUrl: article.videoUrl,
+      videoThumbnail: article.videoThumbnail,
       publishedDate: article.publishedDate,
       category: article.category,
       sourceName: article.sourceName,

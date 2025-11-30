@@ -5,6 +5,7 @@ class ArticleFilter {
   final List<String> selectedSources;
   final List<String> selectedCategories;
   final bool? isRead; // null = hepsi, true = sadece okunmuş, false = sadece okunmamış
+  final String? searchQuery; // Kelime bazlı arama
 
   const ArticleFilter({
     this.startDate,
@@ -12,6 +13,7 @@ class ArticleFilter {
     this.selectedSources = const [],
     this.selectedCategories = const [],
     this.isRead,
+    this.searchQuery,
   });
 
   /// Filtre aktif mi kontrol et
@@ -20,7 +22,8 @@ class ArticleFilter {
         endDate != null ||
         selectedSources.isNotEmpty ||
         selectedCategories.isNotEmpty ||
-        isRead != null;
+        isRead != null ||
+        (searchQuery != null && searchQuery!.isNotEmpty);
   }
 
   /// Filtreyi temizle
@@ -35,6 +38,7 @@ class ArticleFilter {
     List<String>? selectedSources,
     List<String>? selectedCategories,
     bool? isRead,
+    String? searchQuery,
   }) {
     return ArticleFilter(
       startDate: startDate ?? this.startDate,
@@ -42,6 +46,7 @@ class ArticleFilter {
       selectedSources: selectedSources ?? this.selectedSources,
       selectedCategories: selectedCategories ?? this.selectedCategories,
       isRead: isRead ?? this.isRead,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 

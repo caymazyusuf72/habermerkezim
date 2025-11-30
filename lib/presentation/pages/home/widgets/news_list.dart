@@ -154,6 +154,18 @@ class NewsListState extends ConsumerState<NewsList>
           return false;
         }
         
+        // Kelime arama filtresi
+        if (filter.searchQuery != null && filter.searchQuery!.isNotEmpty) {
+          final query = filter.searchQuery!.toLowerCase();
+          final titleMatch = article.title.toLowerCase().contains(query);
+          final descMatch = article.description.toLowerCase().contains(query);
+          final contentMatch = article.content?.toLowerCase().contains(query) ?? false;
+          
+          if (!titleMatch && !descMatch && !contentMatch) {
+            return false;
+          }
+        }
+        
         return true;
       }).toList();
     }

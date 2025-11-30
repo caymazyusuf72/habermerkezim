@@ -7,6 +7,7 @@ import 'core/services/rss_sources_service.dart';
 import 'core/services/analytics_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/widget_service.dart';
+import 'core/services/custom_categories_service.dart';
 import 'presentation/app.dart';
 
 /// Haber Merkezi uygulamasının giriş noktası
@@ -33,6 +34,11 @@ Future<void> main() async {
     print('🔄 RSS Sources service initialize ediliyor...');
     await RssSourcesService.init();
     print('✅ RSS Sources service başarıyla initialize edildi');
+    
+    // Custom Categories servisini initialize et
+    print('🔄 Custom Categories service initialize ediliyor...');
+    await CustomCategoriesService.init();
+    print('✅ Custom Categories service başarıyla initialize edildi');
     
     // Analytics servisini initialize et
     print('🔄 Analytics service initialize ediliyor...');

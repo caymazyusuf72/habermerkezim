@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../data/models/article_model.dart';
+import '../../data/models/user_profile_model.dart';
 
 /// Hive database servis sınıfı
 /// Uygulama başlangıcında Hive'ı initialize eder ve box'ları açar
@@ -12,6 +13,7 @@ class HiveService {
   static const String _readingListBoxName = 'reading_list';
   static const String _notificationFrequencyBoxName = 'notification_frequency';
   static const String _categoryNotificationsBoxName = 'category_notifications';
+  static const String _userProfileBoxName = 'user_profile';
 
   static bool _initialized = false;
 
@@ -54,6 +56,15 @@ class HiveService {
     if (!Hive.isAdapterRegistered(0)) {
       Hive.registerAdapter(ArticleModelAdapter());
     }
+    if (!Hive.isAdapterRegistered(1)) {
+      Hive.registerAdapter(UserProfileModelAdapter());
+    }
+    if (!Hive.isAdapterRegistered(2)) {
+      Hive.registerAdapter(UserStatsModelAdapter());
+    }
+    if (!Hive.isAdapterRegistered(3)) {
+      Hive.registerAdapter(UserPreferencesModelAdapter());
+    }
   }
 
   /// Temel box'ları açar
@@ -67,6 +78,7 @@ class HiveService {
       Hive.openBox<String>(_readingListBoxName),
       Hive.openBox<dynamic>(_notificationFrequencyBoxName),
       Hive.openBox<dynamic>(_categoryNotificationsBoxName),
+      Hive.openBox<UserProfileModel>(_userProfileBoxName),
     ]);
   }
 
@@ -116,6 +128,12 @@ class HiveService {
   static Box<dynamic> get categoryNotificationsBox {
     _ensureInitialized();
     return Hive.box<dynamic>(_categoryNotificationsBoxName);
+  }
+
+  /// User profile box'ını döner
+  static Box<UserProfileModel> get userProfileBox {
+    _ensureInitialized();
+    return Hive.box<UserProfileModel>(_userProfileBoxName);
   }
 
   /// Box açmak için metod (static method)
