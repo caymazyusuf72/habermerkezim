@@ -252,10 +252,14 @@ class NewsListState extends ConsumerState<NewsList>
       return _buildEmptyState(context, isConnected);
     }
     
-    // Haber listesi
+    // Haber listesi - Lazy loading optimizasyonları
     return ListView.builder(
       controller: _scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
+      // Lazy loading optimizasyonları
+      addAutomaticKeepAlives: false, // Görünmeyen widget'ları dispose et
+      addRepaintBoundaries: true, // Repaint boundary ekle (performans)
+      cacheExtent: 500, // Cache extent (pixel) - görünmeyen alan için
       padding: const EdgeInsets.only(
         top: 8,
         bottom: 80, // FAB için alan bırak
@@ -272,7 +276,9 @@ class NewsListState extends ConsumerState<NewsList>
         
         final article = articles[index];
         
-        return ArticleCard(
+        // Repaint boundary ile widget'ı izole et (performans optimizasyonu)
+        return RepaintBoundary(
+          child: ArticleCard(
           article: article,
           onTap: () => _onArticleTap(article),
           onFavoriteToggle: () => _onFavoriteToggle(article.id),

@@ -11,6 +11,7 @@ import '../../reading_list/reading_list_page.dart';
 import '../../settings/settings_page.dart';
 import '../../profile/profile_page.dart';
 import '../../custom_categories/custom_categories_page.dart';
+import '../../trending/trending_page.dart';
 
 /// Ana drawer widget'ı - yan menü
 /// Kullanıcı profili, ayarlar, hakkında vs. bölümler içerir
@@ -60,6 +61,21 @@ class AppDrawer extends ConsumerWidget {
                   title: 'Ana Sayfa',
                   onTap: () {
                     Navigator.of(context).pop();
+                  },
+                ),
+                
+                // Trending
+                _buildMenuTile(
+                  context,
+                  icon: Icons.trending_up_rounded,
+                  title: 'Trending',
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const TrendingPage(),
+                      ),
+                    );
                   },
                 ),
                 
