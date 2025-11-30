@@ -12,6 +12,8 @@ import '../../providers/reading_list_provider.dart';
 import '../../themes/app_theme.dart';
 import 'widgets/image_gallery.dart';
 import 'widgets/related_articles_section.dart';
+import 'widgets/tts_controls.dart';
+import '../../reading_mode/reading_mode_page.dart';
 
 /// Haber detay sayfası - tek bir haberin ayrıntılı görünümü
 /// Görsel, başlık, içerik, tarih, paylaşma ve kaynak görme özellikleri
@@ -310,6 +312,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           
           const SizedBox(height: 32),
           
+          // TTS Kontrolleri
+          TtsControls(article: widget.article),
+          
+          const SizedBox(height: 32),
+          
           // İlgili haberler bölümü
           RelatedArticlesSection(currentArticle: widget.article),
           
@@ -530,6 +537,29 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Okuma modu butonu (ayrı bir yerde gösterilebilir)
+  Widget _buildReadingModeButton(BuildContext context, ThemeData theme) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ElevatedButton.icon(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ReadingModePage(article: widget.article),
+            ),
+          );
+        },
+        icon: const Icon(Icons.menu_book_rounded),
+        label: const Text('Okuma Modu'),
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: AppTheme.primaryBlue,
+          foregroundColor: Colors.white,
+        ),
       ),
     );
   }
