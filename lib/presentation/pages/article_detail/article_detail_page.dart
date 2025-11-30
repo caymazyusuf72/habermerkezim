@@ -13,7 +13,7 @@ import '../../themes/app_theme.dart';
 import 'widgets/image_gallery.dart';
 import 'widgets/related_articles_section.dart';
 import 'widgets/tts_controls.dart';
-import '../../reading_mode/reading_mode_page.dart';
+import '../reading_mode/reading_mode_page.dart';
 
 /// Haber detay sayfası - tek bir haberin ayrıntılı görünümü
 /// Görsel, başlık, içerik, tarih, paylaşma ve kaynak görme özellikleri

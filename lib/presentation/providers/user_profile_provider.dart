@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/user_profile_repository.dart';
+import 'providers.dart';
 
 /// UserProfile State - profil durumunu tutar
 class UserProfileState {

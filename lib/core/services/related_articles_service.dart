@@ -140,8 +140,9 @@ class RelatedArticlesService {
     };
     
     // Kelimeleri çıkar
+    final regexPattern = r'[\s\.,;:!?()\[\]{}"''-]+';
     final words = text
-        .split(RegExp(r'[\s\.,;:!?()\[\]{}"\'-]+'))
+        .split(RegExp(regexPattern))
         .where((word) => word.length > 2)
         .where((word) => !stopWords.contains(word))
         .toList();
