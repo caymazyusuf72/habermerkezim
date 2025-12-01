@@ -95,35 +95,35 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: isDark ? theme.colorScheme.surface : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(14),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Başlık
+            // Başlık - daha kompakt
             Row(
               children: [
                 Icon(
                   Icons.headphones_rounded,
                   color: AppTheme.primaryBlue,
-                  size: 20,
+                  size: 18,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 6),
                 Text(
                   'Sesli Okuma',
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.onSurface,
                   ),
@@ -131,29 +131,29 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
               ],
             ),
             
-            const SizedBox(height: 20),
+            const SizedBox(height: 14),
             
-            // Kontrol butonları
+            // Kontrol butonları - daha küçük
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Play/Pause butonu - daha büyük ve modern
+                // Play/Pause butonu
                 Material(
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: _togglePlayPause,
                     borderRadius: BorderRadius.circular(50),
                     child: Container(
-                      width: 64,
-                      height: 64,
+                      width: 52,
+                      height: 52,
                       decoration: BoxDecoration(
                         color: AppTheme.primaryBlue,
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.primaryBlue.withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
+                            color: AppTheme.primaryBlue.withOpacity(0.25),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -162,13 +162,13 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                             ? Icons.pause_rounded
                             : Icons.play_arrow_rounded,
                         color: Colors.white,
-                        size: 32,
+                        size: 26,
                       ),
                     ),
                   ),
                 ),
                 
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 
                 // Stop butonu
                 Material(
@@ -177,8 +177,8 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                     onTap: _isPlaying ? _stop : null,
                     borderRadius: BorderRadius.circular(50),
                     child: Container(
-                      width: 48,
-                      height: 48,
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
                         color: _isPlaying 
                             ? Colors.red.withOpacity(0.1)
@@ -194,7 +194,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                       child: Icon(
                         Icons.stop_rounded,
                         color: _isPlaying ? Colors.red : Colors.grey,
-                        size: 24,
+                        size: 20,
                       ),
                     ),
                   ),
@@ -202,39 +202,49 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
               ],
             ),
             
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             
-            // Ayarlar - Modern slider tasarımı
-            _buildModernSlider(
-              context,
-              label: 'Hız',
-              icon: Icons.speed_rounded,
-              value: _ttsService.speechRate,
-              min: 0.25,
-              max: 1.0,
-              divisions: 15,
-              onChanged: (value) {
-                _ttsService.setSpeechRate(value);
-                setState(() {});
-              },
-              formatValue: (value) => '${(value * 100).toInt()}%',
-            ),
-            
-            const SizedBox(height: 20),
-            
-            _buildModernSlider(
-              context,
-              label: 'Ses',
-              icon: Icons.volume_up_rounded,
-              value: _ttsService.volume,
-              min: 0.0,
-              max: 1.0,
-              divisions: 20,
-              onChanged: (value) {
-                _ttsService.setVolume(value);
-                setState(() {});
-              },
-              formatValue: (value) => '${(value * 100).toInt()}%',
+            // Ayarlar - yan yana kompakt slider'lar
+            Row(
+              children: [
+                // Hız slider
+                Expanded(
+                  child: _buildCompactSlider(
+                    context,
+                    label: 'Hız',
+                    icon: Icons.speed_rounded,
+                    value: _ttsService.speechRate,
+                    min: 0.25,
+                    max: 1.0,
+                    divisions: 15,
+                    onChanged: (value) {
+                      _ttsService.setSpeechRate(value);
+                      setState(() {});
+                    },
+                    formatValue: (value) => '${(value * 100).toInt()}%',
+                  ),
+                ),
+                
+                const SizedBox(width: 12),
+                
+                // Ses slider
+                Expanded(
+                  child: _buildCompactSlider(
+                    context,
+                    label: 'Ses',
+                    icon: Icons.volume_up_rounded,
+                    value: _ttsService.volume,
+                    min: 0.0,
+                    max: 1.0,
+                    divisions: 20,
+                    onChanged: (value) {
+                      _ttsService.setVolume(value);
+                      setState(() {});
+                    },
+                    formatValue: (value) => '${(value * 100).toInt()}%',
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -242,7 +252,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
     );
   }
 
-  Widget _buildModernSlider(
+  Widget _buildCompactSlider(
     BuildContext context, {
     required String label,
     required IconData icon,
@@ -259,7 +269,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Label ve değer
+        // Label ve değer - kompakt
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -267,29 +277,31 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
               children: [
                 Icon(
                   icon,
-                  size: 18,
+                  size: 14,
                   color: theme.colorScheme.onSurface.withOpacity(0.7),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 4),
                 Text(
                   label,
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w500,
+                    fontSize: 12,
                     color: theme.colorScheme.onSurface.withOpacity(0.8),
                   ),
                 ),
               ],
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
                 color: AppTheme.primaryBlue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 formatValue(value),
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
+                  fontSize: 11,
                   color: AppTheme.primaryBlue,
                 ),
               ),
@@ -297,17 +309,17 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
           ],
         ),
         
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         
-        // Slider
+        // Slider - daha ince
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: AppTheme.primaryBlue,
             inactiveTrackColor: AppTheme.primaryBlue.withOpacity(0.2),
             thumbColor: AppTheme.primaryBlue,
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-            overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
-            trackHeight: 4,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+            trackHeight: 3,
           ),
           child: Slider(
             value: value,

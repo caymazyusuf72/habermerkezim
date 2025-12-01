@@ -33,7 +33,31 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profil'),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryBlue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.person_rounded,
+                color: AppTheme.primaryBlue,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'Profil',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.5,
+              ),
+            ),
+          ],
+        ),
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
@@ -150,43 +174,101 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     UserProfile profile,
     ThemeData theme,
   ) {
-    return Card(
+    final isDark = theme.brightness == Brightness.dark;
+    
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [
+                  theme.colorScheme.surface,
+                  theme.colorScheme.surfaceVariant,
+                ]
+              : [
+                  Colors.white,
+                  AppTheme.primaryBlue.withOpacity(0.05),
+                ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            // Avatar
+            // Avatar - daha büyük ve modern
             GestureDetector(
               onTap: () => _showAvatarEditDialog(context, profile),
               child: Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: AppTheme.primaryBlue.withOpacity(0.1),
-                    backgroundImage: profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty
-                        ? CachedNetworkImageProvider(profile.avatarUrl!)
-                        : null,
-                    child: profile.avatarUrl == null || profile.avatarUrl!.isEmpty
-                        ? Icon(
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppTheme.primaryBlue,
+                          AppTheme.primaryBlue.withOpacity(0.7),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primaryBlue.withOpacity(0.3),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty
+                        ? ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: profile.avatarUrl!,
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) => Icon(
+                                Icons.person_rounded,
+                                size: 50,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : Icon(
                             Icons.person_rounded,
                             size: 50,
-                            color: AppTheme.primaryBlue,
-                          )
-                        : null,
+                            color: Colors.white,
+                          ),
                   ),
                   Positioned(
                     bottom: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.all(6),
+                      width: 32,
+                      height: 32,
                       decoration: BoxDecoration(
                         color: AppTheme.primaryBlue,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+                        border: Border.all(color: Colors.white, width: 3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: const Icon(
                         Icons.camera_alt_rounded,
-                        size: 16,
+                        size: 14,
                         color: Colors.white,
                       ),
                     ),
@@ -195,35 +277,53 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               ),
             ),
             
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             
-            // İsim
+            // İsim - daha büyük ve vurgulu
             Text(
               profile.name ?? 'Kullanıcı',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.5,
               ),
             ),
             
             if (profile.email != null && profile.email!.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                profile.email!,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
-                ),
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.email_rounded,
+                    size: 14,
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    profile.email!,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                  ),
+                ],
               ),
             ],
             
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             
-            // Düzenle Butonu
-            OutlinedButton.icon(
+            // Düzenle Butonu - daha modern
+            ElevatedButton.icon(
               onPressed: () => _showEditProfileDialog(context, profile),
-              icon: const Icon(Icons.edit_rounded),
+              icon: const Icon(Icons.edit_rounded, size: 18),
               label: const Text('Profili Düzenle'),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryBlue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
               ),
             ),
           ],
@@ -240,11 +340,29 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'İstatistikler',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryBlue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.analytics_rounded,
+                color: AppTheme.primaryBlue,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'İstatistikler',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.5,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         GridView.count(
@@ -253,7 +371,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           crossAxisCount: 2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 1.5,
+          childAspectRatio: 1.3, // Daha yüksek kartlar için
           children: [
             _buildStatCard(
               context,
@@ -358,30 +476,66 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     IconData icon,
     Color color,
   ) {
-    return Card(
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? theme.colorScheme.surface : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withOpacity(0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color, size: 32),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: color,
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const SizedBox(height: 10),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                  height: 1.2,
+                ),
+                maxLines: 1,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
+            const SizedBox(height: 6),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -397,11 +551,29 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Tercihler',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryBlue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.settings_rounded,
+                color: AppTheme.primaryBlue,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Tercihler',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.5,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         Card(
