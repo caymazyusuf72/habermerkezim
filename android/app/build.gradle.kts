@@ -66,7 +66,7 @@ android {
 
 dependencies {
     // Core library desugaring - Java 8+ API'lerini eski Android sürümlerinde kullanmak için
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     
     // Multi-dex desteği - 64K method limitini aşmak için
     implementation("androidx.multidex:multidex:2.0.1")

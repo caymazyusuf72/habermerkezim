@@ -17,6 +17,7 @@ class ArticleCard extends ConsumerWidget {
   final VoidCallback? onShare;
   final bool showCategoryBadge;
   final bool isCompact;
+  final bool showRecommendationBadge;
 
   const ArticleCard({
     super.key,
@@ -26,6 +27,7 @@ class ArticleCard extends ConsumerWidget {
     this.onShare,
     this.showCategoryBadge = true,
     this.isCompact = false,
+    this.showRecommendationBadge = false,
   });
 
   @override
@@ -145,32 +147,76 @@ class ArticleCard extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Kategori badge - daha modern
-                    if (showCategoryBadge)
-                      Flexible(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: categoryColor.withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: categoryColor.withOpacity(0.3),
-                              width: 1,
+                    // Rozetler (kategori ve öneri)
+                    Flexible(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Kategori badge
+                          if (showCategoryBadge)
+                            Flexible(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                decoration: BoxDecoration(
+                                  color: categoryColor.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: categoryColor.withOpacity(0.3),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  article.sourceName,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: categoryColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 11,
+                                    letterSpacing: 0.2,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            article.sourceName,
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: categoryColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 11,
-                              letterSpacing: 0.2,
+                          
+                          // Öneri rozeti
+                          if (showRecommendationBadge) ...[
+                            if (showCategoryBadge) const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.purple.shade400,
+                                    Colors.blue.shade400,
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.auto_awesome_rounded,
+                                    size: 12,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Öneri',
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+                          ],
+                        ],
                       ),
+                    ),
                     
                     // Action butonları - daha küçük ve modern
                     Row(
@@ -383,13 +429,62 @@ class ArticleCard extends ConsumerWidget {
           ),
         ),
         
-        // Kategori badge (görsel üstünde)
-        if (showCategoryBadge)
-          Positioned(
-            top: 12,
-            left: 12,
-            child: _buildCategoryBadge(context, categoryColor),
+        // Rozetler (görsel üstünde)
+        Positioned(
+          top: 12,
+          left: 12,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Kategori badge
+              if (showCategoryBadge)
+                _buildCategoryBadge(context, categoryColor),
+              
+              // Öneri rozeti
+              if (showRecommendationBadge) ...[
+                if (showCategoryBadge) const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.purple.shade400,
+                        Colors.blue.shade400,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.purple.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.auto_awesome_rounded,
+                        size: 12,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Öneri',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
           ),
+        ),
         
         // Action butonları (görsel üstünde)
         Positioned(
@@ -786,14 +881,4 @@ class ArticleCardUtils {
   static Size calculateImageSize(BuildContext context, {bool isCompact = false}) {
     final screenWidth = MediaQuery.of(context).size.width;
     
-    if (isCompact) {
-      return const Size(60, 60);
-    }
     
-    // Full card için 16:9 aspect ratio
-    final cardWidth = screenWidth - 32; // Padding
-    final cardHeight = cardWidth / imageAspectRatio;
-    
-    return Size(cardWidth, cardHeight);
-  }
-}
