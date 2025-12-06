@@ -14,6 +14,7 @@ import '../../custom_categories/custom_categories_page.dart';
 import '../../trending/trending_page.dart';
 import '../../discover/discover_page.dart';
 import '../../archive/archive_page.dart';
+import '../../recommendations/recommendations_page.dart';
 
 /// Ana drawer widget'ı - yan menü
 /// Kullanıcı profili, ayarlar, hakkında vs. bölümler içerir
@@ -63,6 +64,41 @@ class AppDrawer extends ConsumerWidget {
                   title: 'Ana Sayfa',
                   onTap: () {
                     Navigator.of(context).pop();
+                  },
+                ),
+                
+                // Sizin İçin Önerilen (ML Bazlı) - YENİ!
+                _buildMenuTile(
+                  context,
+                  icon: Icons.auto_awesome_rounded,
+                  title: 'Sizin İçin Önerilen',
+                  trailing: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.purple.shade400,
+                          Colors.blue.shade400,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      'YENİ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const RecommendationsPage(),
+                      ),
+                    );
                   },
                 ),
                 
