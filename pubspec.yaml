@@ -78,6 +78,13 @@ dependencies:
   # Video Player
   video_player: ^2.8.2
   
+  # Audio Player (for podcasts)
+  just_audio: ^0.9.36
+  audio_service: ^0.18.12
+  
+  # YouTube Player
+  youtube_player_flutter: ^9.0.3
+  
   # Text-to-Speech
   flutter_tts: ^4.0.2
   
