@@ -173,10 +173,9 @@ class NotificationService {
           sound: 'default',
         ),
       ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: 'daily_news_reminder',
       matchDateTimeComponents: DateTimeComponents.time,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
     );
 
     if (kDebugMode) {
@@ -221,10 +220,9 @@ class NotificationService {
           sound: 'default',
         ),
       ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: 'reading_goal_reminder',
       matchDateTimeComponents: DateTimeComponents.time,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
     );
 
     if (kDebugMode) {

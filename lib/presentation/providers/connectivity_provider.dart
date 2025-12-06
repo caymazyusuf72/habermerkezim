@@ -4,46 +4,49 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// Connectivity State - internet bağlantısı durumunu tutar
 class ConnectivityState {
   final bool isConnected;
-  final ConnectivityResult connectivityResult;
+  final List<ConnectivityResult> connectivityResults;
   final DateTime lastChecked;
 
   ConnectivityState({
     this.isConnected = false,
-    this.connectivityResult = ConnectivityResult.none,
+    this.connectivityResults = const [ConnectivityResult.none],
     DateTime? lastChecked,
   }) : lastChecked = lastChecked ?? DateTime.now();
 
   ConnectivityState copyWith({
     bool? isConnected,
-    ConnectivityResult? connectivityResult,
+    List<ConnectivityResult>? connectivityResults,
     DateTime? lastChecked,
   }) {
     return ConnectivityState(
       isConnected: isConnected ?? this.isConnected,
-      connectivityResult: connectivityResult ?? this.connectivityResult,
+      connectivityResults: connectivityResults ?? this.connectivityResults,
       lastChecked: lastChecked ?? this.lastChecked,
     );
   }
+  
+  // Primary connectivity result (first in list)
+  ConnectivityResult get primaryResult => connectivityResults.first;
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is ConnectivityState &&
            other.isConnected == isConnected &&
-           other.connectivityResult == connectivityResult;
+           other.connectivityResults.toString() == connectivityResults.toString();
   }
 
   @override
   int get hashCode {
-    return isConnected.hashCode ^ 
-           connectivityResult.hashCode ^ 
+    return isConnected.hashCode ^
+           connectivityResults.hashCode ^
            lastChecked.hashCode;
   }
 
   @override
   String toString() {
     return 'ConnectivityState(isConnected: $isConnected, '
-           'connectivityResult: $connectivityResult, '
+           'connectivityResults: $connectivityResults, '
            'lastChecked: $lastChecked)';
   }
 }
@@ -60,36 +63,36 @@ class ConnectivityNotifier extends StateNotifier<ConnectivityState> {
   /// İlk bağlantı durumunu kontrol eder
   Future<void> _initConnectivity() async {
     try {
-      final result = await _connectivity.checkConnectivity();
-      _updateConnectivityStatus(result);
+      final results = await _connectivity.checkConnectivity();
+      _updateConnectivityStatus(results);
     } catch (e) {
       print('Connectivity initialization error: $e');
       state = state.copyWith(
         isConnected: false,
-        connectivityResult: ConnectivityResult.none,
+        connectivityResults: [ConnectivityResult.none],
         lastChecked: DateTime.now(),
       );
     }
   }
 
   /// Bağlantı durumunu günceller
-  void _updateConnectivityStatus(ConnectivityResult result) {
-    final isConnected = result != ConnectivityResult.none;
+  void _updateConnectivityStatus(List<ConnectivityResult> results) {
+    final isConnected = !results.contains(ConnectivityResult.none) && results.isNotEmpty;
 
     state = state.copyWith(
       isConnected: isConnected,
-      connectivityResult: result,
+      connectivityResults: results,
       lastChecked: DateTime.now(),
     );
 
-    print('Connectivity changed: $result (connected: $isConnected)');
+    print('Connectivity changed: $results (connected: $isConnected)');
   }
 
   /// Manuel olarak bağlantı durumunu kontrol et
   Future<void> checkConnectivity() async {
     try {
-      final result = await _connectivity.checkConnectivity();
-      _updateConnectivityStatus(result);
+      final results = await _connectivity.checkConnectivity();
+      _updateConnectivityStatus(results);
     } catch (e) {
       print('Manual connectivity check error: $e');
     }
@@ -98,8 +101,8 @@ class ConnectivityNotifier extends StateNotifier<ConnectivityState> {
   /// Network erişilebilirlik testi
   Future<bool> testNetworkAccess() async {
     try {
-      final result = await _connectivity.checkConnectivity();
-      return result != ConnectivityResult.none;
+      final results = await _connectivity.checkConnectivity();
+      return !results.contains(ConnectivityResult.none) && results.isNotEmpty;
     } catch (e) {
       return false;
     }

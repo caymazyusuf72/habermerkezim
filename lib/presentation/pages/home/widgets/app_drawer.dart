@@ -26,7 +26,7 @@ class AppDrawer extends ConsumerWidget {
     final isDarkMode = ref.watch(isDarkModeProvider);
     final connectivityState = ref.watch(connectivityProvider);
     final isConnected = connectivityState.isConnected;
-    final connectionType = connectivityState.connectivityResult;
+    final connectionType = connectivityState.primaryResult;
 
     return Drawer(
       child: Column(

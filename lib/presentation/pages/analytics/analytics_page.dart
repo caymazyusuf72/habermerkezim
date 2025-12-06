@@ -628,7 +628,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
         barTouchData: BarTouchData(
           touchTooltipData: BarTouchTooltipData(
             getTooltipColor: (group) => Colors.black87,
-            tooltipRoundedRadius: 8,
+            
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               return BarTooltipItem(
                 '${rod.toY.round()} makale\n',
@@ -837,7 +837,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
             getTooltipColor: (touchedSpot) => Colors.black87,
-            tooltipRoundedRadius: 8,
+            
             getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
               return touchedBarSpots.map((barSpot) {
                 return LineTooltipItem(

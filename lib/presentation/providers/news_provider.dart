@@ -337,6 +337,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
   }
 }
 
+
 /// News provider - StateNotifierProvider
 final newsProvider = StateNotifierProvider<NewsNotifier, NewsState>((ref) {
   final repository = ref.read(newsRepositoryProvider);
