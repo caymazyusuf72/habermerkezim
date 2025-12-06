@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/error/exceptions.dart';
 import '../../models/article_model.dart';
 
@@ -57,18 +58,33 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
       
       print('📊 Mevcut cache durumu: ${articlesBox.length} makale');
       
+      // 7 günden eski makaleleri otomatik temizle (sadece favori/okunmuş olmayanlar)
+      // Performans için sadece belirli aralıklarla çalıştır (her günde bir)
+      final prefs = await SharedPreferences.getInstance();
+      final lastCleanup = prefs.getInt('_lastCleanupTimestamp') ?? 0;
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final oneDayInMs = 24 * 60 * 60 * 1000;
+      
+      if (now - lastCleanup > oneDayInMs) {
+        await clearOldCache();
+        await prefs.setInt('_lastCleanupTimestamp', now);
+      }
+      
       // Mevcut read ve favorite durumlarını koru
       final Map<String, bool> readStatus = {};
       final Map<String, bool> favoriteStatus = {};
       
+      // Tüm mevcut makalelerin durumlarını kontrol et (sadece yeni gelenler değil)
       for (final article in articles) {
-        readStatus[article.id] = readArticlesBox.containsKey(article.id);
-        favoriteStatus[article.id] = favoritesBox.containsKey(article.id);
+        final existingArticle = articlesBox.get(article.id);
+        readStatus[article.id] = existingArticle?.isRead ?? readArticlesBox.containsKey(article.id);
+        favoriteStatus[article.id] = existingArticle?.isFavorite ?? favoritesBox.containsKey(article.id);
       }
       
       print('🔄 Makale durumları kontrol edildi');
       
-      // Yeni makaleleri kaydet
+      // Yeni makaleleri kaydet veya mevcut olanları güncelle
+      // Eski makaleleri silme, sadece güncelle
       for (final article in articles) {
         final updatedArticle = ArticleModel(
           id: article.id,
@@ -135,8 +151,11 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
         throw const DataNotFoundException('Cache\'de makale bulunamadı');
       }
       
+      // Ana kategori ve alt feed'leri dahil et (örn: turkiye için turkiye, turkiye_ntv, turkiye_milliyet)
       final articles = articlesBox.values
-          .where((article) => article.category == category)
+          .where((article) => 
+              article.category == category || 
+              article.category.startsWith('${category}_'))
           .toList();
       
       if (articles.isEmpty) {
@@ -288,14 +307,24 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
       await _ensureBoxesOpen();
       
       final articlesBox = _articlesBox!;
+      final readArticlesBox = _readArticlesBox!;
+      final favoritesBox = _favoritesBox!;
       final cutoffDate = DateTime.now().subtract(const Duration(days: 7));
       
-      // 7 günden eski makaleleri sil
+      // 7 günden eski makaleleri sil (favori veya okunmuş olanları koru)
       final keysToDelete = <String>[];
       
       for (final entry in articlesBox.toMap().entries) {
-        if (entry.value.publishedDate.isBefore(cutoffDate)) {
-          keysToDelete.add(entry.key);
+        final article = entry.value;
+        final articleId = entry.key;
+        
+        // Favori veya okunmuş makaleleri koru
+        final isFavorite = favoritesBox.containsKey(articleId);
+        final isRead = readArticlesBox.containsKey(articleId);
+        
+        // Sadece favori/okunmuş olmayan ve 7 günden eski makaleleri sil
+        if (article.publishedDate.isBefore(cutoffDate) && !isFavorite && !isRead) {
+          keysToDelete.add(articleId);
         }
       }
       
@@ -303,7 +332,9 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
         await articlesBox.delete(key);
       }
       
-      print('${keysToDelete.length} eski makale cache\'den temizlendi');
+      if (keysToDelete.isNotEmpty) {
+        print('${keysToDelete.length} eski makale cache\'den temizlendi (favori/okunmuş makaleler korundu)');
+      }
       
     } catch (e) {
       throw DatabaseException('Eski cache temizlenemedi: ${e.toString()}');

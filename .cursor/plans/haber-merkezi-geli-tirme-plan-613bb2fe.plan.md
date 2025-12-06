@@ -1,4 +1,57 @@
-<!-- 613bb2fe-c8ef-4841-919f-8fd4270ca64d cddba115-0ff6-4164-a101-34dfeea7a421 -->
+---
+name: Untitled Plan
+overview: ""
+todos:
+  - id: ef566771-7c77-4cc6-a997-53e24224aeff
+    content: pubspec.yaml'a google_fonts paketini ekle
+    status: completed
+  - id: 553f3ade-a82d-41f9-a327-dcc07a96b322
+    content: AppTheme dosyasında adaçayı yeşili ve mat siyah renk paletini oluştur
+    status: completed
+  - id: e92673cb-fcba-4326-af3d-46d42cabeb01
+    content: TextTheme stillerini Merriweather serif font ile güncelle
+    status: completed
+  - id: f44a2c68-14a3-4bb0-821b-d6acebefc54f
+    content: Notification banner widget ve provider oluştur
+    status: completed
+  - id: 1811148b-c344-4f80-b7bb-8db837797f76
+    content: Home page'e bildirim banner'ı entegre et
+    status: completed
+  - id: d94d08cd-fd8e-4fc1-80db-e0fc6c8036a3
+    content: Splash screen tasarımını adaçayı yeşili/mat siyah ile güncelle ve animasyonları iyileştir
+    status: completed
+  - id: 36ba94f7-5f3f-432c-a6e2-345fa103f654
+    content: Loading indicator ve shimmer efektini adaçayı yeşili tonlarıyla güncelle
+    status: completed
+  - id: 5e02c749-e129-4c10-b118-4883af3da5ea
+    content: Article card tasarımını profesyonel gazete havasına uygun şekilde güncelle
+    status: completed
+  - id: a0486c43-08a7-4e88-8092-6952ee6adfdd
+    content: AppBar, kategori tab ve bottom navigation stillerini yeni tema ile uyumlu hale getir
+    status: completed
+  - id: 207e541f-a050-4006-8d2c-5f9dcd475e0c
+    content: Notification banner'ın boş görünme sorununu düzelt
+    status: completed
+  - id: b484d725-9dc0-482c-9d2c-54a02d6258c3
+    content: Ana manşet (banner tarzı) widget’ının tasarımını ve veri modelini netleştirip implementasyona hazırlamak
+    status: pending
+  - id: ef84ea99-ce2e-4661-8f68-1de84af7603a
+    content: Çoklu haber kartı widget’ının (2–3 satırlı liste) layout ve veri yapısını planlamak
+    status: pending
+  - id: 0dd4e935-a1e7-47b2-9168-58c77119e496
+    content: Tek ve çok kategorili kısayol widget’larının kullanım senaryosu ve layout’unu planlamak
+    status: pending
+  - id: 6707d417-fe3f-4b7e-9718-9fbc6f757adb
+    content: Okuma listesi / yer imi widget’ının veri akışını ve tasarımını planlamak
+    status: pending
+  - id: ab555e0d-91cd-4268-b39f-5792ac6a1ee7
+    content: Günlük özet / sabah bülteni widget’ının veri kaynağı ve gösterim şeklini planlamak
+    status: pending
+  - id: d43b6c18-e250-47a7-b51d-37b0cc383f2e
+    content: Tüm widget’lar için ortak SharedPreferences key sözleşmesi ve `WidgetService` genişletmesini tasarlamak
+    status: pending
+---
+
 ## Haber Uygulaması Widget Stratejisi
 
 ### Hedef
@@ -111,22 +164,3 @@ Uygulamanın haber deneyimini ana ekrana taşıyan, görsel olarak tutarlı, per
 - Ardından Kategori Kısayol ve Okuma Listesi widget’larını ekle.
 - Son aşamada Günlük Özet widget’ını ekleyip performans/regresyon testleri yap.
 - Gerçek cihaz ve en az 2 farklı Android sürümünde (ör. 8.1 ve 14) widget davranışlarını test et.
-
-### To-dos
-
-- [x] pubspec.yaml'a google_fonts paketini ekle
-- [x] AppTheme dosyasında adaçayı yeşili ve mat siyah renk paletini oluştur
-- [x] TextTheme stillerini Merriweather serif font ile güncelle
-- [x] Notification banner widget ve provider oluştur
-- [x] Home page'e bildirim banner'ı entegre et
-- [x] Splash screen tasarımını adaçayı yeşili/mat siyah ile güncelle ve animasyonları iyileştir
-- [x] Loading indicator ve shimmer efektini adaçayı yeşili tonlarıyla güncelle
-- [x] Article card tasarımını profesyonel gazete havasına uygun şekilde güncelle
-- [x] AppBar, kategori tab ve bottom navigation stillerini yeni tema ile uyumlu hale getir
-- [x] Notification banner'ın boş görünme sorununu düzelt
-- [ ] Ana manşet (banner tarzı) widget’ının tasarımını ve veri modelini netleştirip implementasyona hazırlamak
-- [ ] Çoklu haber kartı widget’ının (2–3 satırlı liste) layout ve veri yapısını planlamak
-- [ ] Tek ve çok kategorili kısayol widget’larının kullanım senaryosu ve layout’unu planlamak
-- [ ] Okuma listesi / yer imi widget’ının veri akışını ve tasarımını planlamak
-- [ ] Günlük özet / sabah bülteni widget’ının veri kaynağı ve gösterim şeklini planlamak
-- [ ] Tüm widget’lar için ortak SharedPreferences key sözleşmesi ve `WidgetService` genişletmesini tasarlamak

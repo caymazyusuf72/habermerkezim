@@ -239,4 +239,19 @@ class ApiEndpoints {
   /// Cache süreleri
   static const Duration cacheValidityDuration = Duration(minutes: 30);
   static const Duration offlineCacheDuration = Duration(days: 7);
+
+  /// Versiyon kontrol endpoint'i (opsiyonel - manuel kontrol için)
+  /// Bu endpoint'ten JSON formatında versiyon bilgisi alınır
+  /// Örnek JSON yapısı:
+  /// {
+  ///   "version": "1.0.1",
+  ///   "versionCode": 2,
+  ///   "forceUpdate": false,
+  ///   "message": "Yeni özellikler ve iyileştirmeler",
+  ///   "downloadUrl": "https://play.google.com/store/apps/details?id=..."
+  /// }
+  static const String versionCheckUrl = 'https://raw.githubusercontent.com/your-repo/version-check.json';
+  
+  /// Play Store uygulama URL'i
+  static const String playStoreUrl = 'https://play.google.com/store/apps/details?id=com.example.untitled';
 }

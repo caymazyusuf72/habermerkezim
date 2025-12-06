@@ -24,6 +24,9 @@ export 'category_order_provider.dart';
 export 'reading_list_provider.dart';
 export 'article_filter_provider.dart';
 export 'user_profile_provider.dart';
+export 'update_provider.dart';
+export 'onboarding_provider.dart';
+export 'personalized_news_provider.dart';
 
 /// Dependency Injection - Tüm provider'ları burada tanımlıyoruz
 /// Clean Architecture'da dependency direction'ını sağlıyoruz

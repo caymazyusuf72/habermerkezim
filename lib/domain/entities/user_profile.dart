@@ -127,12 +127,14 @@ class UserPreferences {
   final List<String> blockedSources;
   final bool enableNotifications;
   final String preferredLanguage;
+  final List<String> interestTags; // Seçilen hashtag ID'leri
 
   const UserPreferences({
     this.favoriteCategories = const [],
     this.blockedSources = const [],
     this.enableNotifications = true,
     this.preferredLanguage = 'tr',
+    this.interestTags = const [],
   });
 
   /// UserPreferences kopyalama methodu
@@ -141,12 +143,14 @@ class UserPreferences {
     List<String>? blockedSources,
     bool? enableNotifications,
     String? preferredLanguage,
+    List<String>? interestTags,
   }) {
     return UserPreferences(
       favoriteCategories: favoriteCategories ?? this.favoriteCategories,
       blockedSources: blockedSources ?? this.blockedSources,
       enableNotifications: enableNotifications ?? this.enableNotifications,
       preferredLanguage: preferredLanguage ?? this.preferredLanguage,
+      interestTags: interestTags ?? this.interestTags,
     );
   }
 

@@ -69,17 +69,61 @@ class HiveService {
 
   /// Temel box'ları açar
   static Future<void> _openBoxes() async {
-    await Future.wait([
-      Hive.openBox<ArticleModel>(_articlesBoxName),
-      Hive.openBox<String>(_favoritesBoxName),
-      Hive.openBox<String>(_readArticlesBoxName),
-      Hive.openBox<dynamic>(_settingsBoxName),
-      Hive.openBox<dynamic>(_categoryOrderBoxName),
-      Hive.openBox<String>(_readingListBoxName),
-      Hive.openBox<dynamic>(_notificationFrequencyBoxName),
-      Hive.openBox<dynamic>(_categoryNotificationsBoxName),
-      Hive.openBox<UserProfileModel>(_userProfileBoxName),
-    ]);
+    try {
+      await Future.wait([
+        Hive.openBox<ArticleModel>(_articlesBoxName),
+        Hive.openBox<String>(_favoritesBoxName),
+        Hive.openBox<String>(_readArticlesBoxName),
+        Hive.openBox<dynamic>(_settingsBoxName),
+        Hive.openBox<dynamic>(_categoryOrderBoxName),
+        Hive.openBox<String>(_readingListBoxName),
+        Hive.openBox<dynamic>(_notificationFrequencyBoxName),
+        Hive.openBox<dynamic>(_categoryNotificationsBoxName),
+        _openUserProfileBoxSafely(),
+      ]);
+    } catch (e) {
+      print('❌ Box açma hatası: $e');
+      // User profile box'ında hata varsa, box'ı temizle ve yeniden aç
+      if (e.toString().contains('interestTags') || e.toString().contains('UserPreferencesModel')) {
+        print('🔧 User profile box eski format, temizleniyor...');
+        try {
+          if (Hive.isBoxOpen(_userProfileBoxName)) {
+            await Hive.box(_userProfileBoxName).deleteFromDisk();
+          }
+          await Hive.openBox<UserProfileModel>(_userProfileBoxName);
+          print('✅ User profile box temizlendi ve yeniden açıldı');
+        } catch (e2) {
+          print('❌ User profile box temizleme hatası: $e2');
+          rethrow;
+        }
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  /// User profile box'ını güvenli bir şekilde açar
+  static Future<Box<UserProfileModel>> _openUserProfileBoxSafely() async {
+    try {
+      return await Hive.openBox<UserProfileModel>(_userProfileBoxName);
+    } catch (e) {
+      // Eski format hatası varsa box'ı temizle
+      if (e.toString().contains('interestTags') || 
+          e.toString().contains('type cast') ||
+          e.toString().contains('Null') ||
+          e.toString().contains('List')) {
+        print('⚠️ User profile box eski format, temizleniyor...');
+        try {
+          if (Hive.isBoxOpen(_userProfileBoxName)) {
+            await Hive.box(_userProfileBoxName).deleteFromDisk();
+          }
+        } catch (_) {
+          // Box zaten kapalı veya yok, devam et
+        }
+        return await Hive.openBox<UserProfileModel>(_userProfileBoxName);
+      }
+      rethrow;
+    }
   }
 
   /// Articles box'ını döner

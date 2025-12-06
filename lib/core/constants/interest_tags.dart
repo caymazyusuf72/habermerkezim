@@ -1,0 +1,250 @@
+import 'package:flutter/material.dart';
+import '../../domain/entities/interest_tag.dart';
+
+/// Önceden tanımlı ilgi alanı hashtag'leri
+/// Her hashtag için keywords ve kategori eşleştirmeleri içerir
+class InterestTags {
+  InterestTags._();
+
+  /// Tüm mevcut hashtag'ler
+  static List<InterestTag> get allTags => [
+    teknoloji,
+    spor,
+    siyasi,
+    savunmaSanayi,
+    oyun,
+    kripto,
+    saglik,
+    dunya,
+    islam,
+    tarih,
+    yapayZeka,
+  ];
+
+  /// Teknoloji hashtag'i
+  static const InterestTag teknoloji = InterestTag(
+    id: 'teknoloji',
+    name: 'Teknoloji',
+    displayName: '#Teknoloji',
+    icon: Icons.computer,
+    category: 'teknoloji',
+    keywords: [
+      'teknoloji', 'teknolojik', 'teknolojik gelişme', 'yazılım', 'donanım',
+      'bilgisayar', 'telefon', 'akıllı telefon', 'tablet', 'laptop',
+      'internet', 'web', 'dijital', 'siber', 'güvenlik', 'yapay zeka',
+      'makine öğrenmesi', 'blockchain', 'bulut', 'veri', 'algoritma',
+      'startup', 'inovasyon', 'girişim', 'silicon valley', 'apple', 'google',
+      'microsoft', 'meta', 'amazon', 'tesla', 'nvidia', 'intel', 'amd',
+    ],
+    color: '#2196F3',
+  );
+
+  /// Spor hashtag'i
+  static const InterestTag spor = InterestTag(
+    id: 'spor',
+    name: 'Spor',
+    displayName: '#Spor',
+    icon: Icons.sports_soccer,
+    category: 'spor',
+    keywords: [
+      'spor', 'futbol', 'basketbol', 'voleybol', 'tenis', 'atletizm',
+      'olimpiyat', 'şampiyon', 'lig', 'takım', 'oyuncu', 'antrenör',
+      'maç', 'gol', 'saha', 'stadyum', 'galibiyet', 'mağlubiyet',
+      'transfer', 'sözleşme', 'milli takım', 'federasyon', 'galatasaray',
+      'fenerbahçe', 'beşiktaş', 'trabzonspor', 'premier league', 'la liga',
+      'champions league', 'world cup', 'euro', 'nba', 'nfl',
+    ],
+    color: '#4CAF50',
+  );
+
+  /// Siyasi hashtag'i
+  static const InterestTag siyasi = InterestTag(
+    id: 'siyasi',
+    name: 'Siyasi',
+    displayName: '#Siyasi',
+    icon: Icons.account_balance,
+    category: 'turkiye',
+    keywords: [
+      'siyaset', 'siyasi', 'politika', 'politikacı', 'parti', 'seçim',
+      'oy', 'oy verme', 'meclis', 'bakan', 'başbakan', 'cumhurbaşkanı',
+      'hükümet', 'muhalefet', 'koalisyon', 'demokrasi', 'seçim kampanyası',
+      'referandum', 'anayasa', 'yasama', 'yürütme', 'yargı', 'mahkeme',
+      'kanun', 'yasa', 'tasarı', 'teklif', 'gündem', 'güven oylaması',
+      'bütçe', 'ekonomi politikası', 'dış politika', 'iç politika',
+    ],
+    color: '#F44336',
+  );
+
+  /// Savunma Sanayi hashtag'i
+  static const InterestTag savunmaSanayi = InterestTag(
+    id: 'savunma_sanayi',
+    name: 'Savunma Sanayi',
+    displayName: '#SavunmaSanayi',
+    icon: Icons.security,
+    keywords: [
+      'savunma sanayi', 'savunma', 'askeri', 'silah', 'silah sanayi',
+      'baykar', 'bayraktar', 'tb2', 'tb3', 'akıncı', 'kızılelma',
+      'aselsan', 'roketsan', 'tusaş', 'tai', 'havelsan', 'stm',
+      'drone', 'insansız hava aracı', 'iha', 'siha', 'füze', 'roket',
+      'radar', 'elektronik harp', 'siber güvenlik', 'savunma teknolojisi',
+      'milli savunma', 'milli proje', 'yerli ve milli', 'savunma bütçesi',
+      'nato', 'savunma anlaşması', 'askeri işbirliği', 'savunma ihracatı',
+    ],
+    color: '#9C27B0',
+  );
+
+  /// Oyun hashtag'i
+  static const InterestTag oyun = InterestTag(
+    id: 'oyun',
+    name: 'Oyun',
+    displayName: '#Oyun',
+    icon: Icons.sports_esports,
+    keywords: [
+      'oyun', 'video oyunu', 'bilgisayar oyunu', 'konsol oyunu', 'mobil oyun',
+      'espor', 'e-spor', 'oyuncu', 'gamer', 'stream', 'twitch', 'youtube gaming',
+      'playstation', 'xbox', 'nintendo', 'steam', 'epic games', 'ubisoft',
+      'ea', 'activision', 'blizzard', 'riot games', 'valorant', 'league of legends',
+      'counter strike', 'cs go', 'cs2', 'dota', 'fortnite', 'pubg', 'apex legends',
+      'call of duty', 'fifa', 'pes', 'nba 2k', 'minecraft', 'roblox',
+      'rpg', 'fps', 'moba', 'battle royale', 'mmorpg', 'indie oyun',
+    ],
+    color: '#FF9800',
+  );
+
+  /// Kripto hashtag'i
+  static const InterestTag kripto = InterestTag(
+    id: 'kripto',
+    name: 'Kripto',
+    displayName: '#Kripto',
+    icon: Icons.currency_bitcoin,
+    keywords: [
+      'kripto', 'kripto para', 'bitcoin', 'btc', 'ethereum', 'eth',
+      'blockchain', 'defi', 'nft', 'web3', 'metaverse', 'crypto',
+      'coin', 'token', 'altcoin', 'stablecoin', 'binance', 'coinbase',
+      'crypto exchange', 'kripto borsa', 'wallet', 'cüzdan', 'mining',
+      'madencilik', 'staking', 'yield farming', 'liquidity', 'swap',
+      'decentralized', 'merkezi olmayan', 'smart contract', 'akıllı sözleşme',
+      'crypto news', 'kripto haber', 'crypto market', 'kripto piyasası',
+    ],
+    color: '#FFC107',
+  );
+
+  /// Sağlık hashtag'i
+  static const InterestTag saglik = InterestTag(
+    id: 'saglik',
+    name: 'Sağlık',
+    displayName: '#Sağlık',
+    icon: Icons.health_and_safety,
+    category: 'saglik',
+    keywords: [
+      'sağlık', 'tıp', 'doktor', 'hastane', 'tedavi', 'ilaç', 'aşı',
+      'kanser', 'kalp', 'beyin', 'cerrahi', 'ameliyat', 'teşhis',
+      'hastalık', 'virüs', 'bakteri', 'enfeksiyon', 'bağışıklık',
+      'beslenme', 'diyet', 'spor', 'egzersiz', 'fitness', 'yoga',
+      'mental sağlık', 'psikoloji', 'psikiyatri', 'stres', 'depresyon',
+      'sağlık bakanlığı', 'who', 'dünya sağlık örgütü', 'pandemi',
+      'epidemi', 'halk sağlığı', 'koruyucu hekimlik', 'check-up',
+    ],
+    color: '#E91E63',
+  );
+
+  /// Dünya hashtag'i
+  static const InterestTag dunya = InterestTag(
+    id: 'dunya',
+    name: 'Dünya',
+    displayName: '#Dünya',
+    icon: Icons.public,
+    category: 'dunya',
+    keywords: [
+      'dünya', 'uluslararası', 'global', 'küresel', 'yurt dışı',
+      'abd', 'amerika', 'avrupa', 'asya', 'afrika', 'orta doğu',
+      'rusya', 'çin', 'almanya', 'fransa', 'ingiltere', 'italya',
+      'japonya', 'güney kore', 'hint', 'brezilya', 'mexico',
+      'diplomasi', 'uluslararası ilişkiler', 'dış politika',
+      'birleşmiş milletler', 'bm', 'nato', 'ab', 'avrupa birliği',
+      'g7', 'g20', 'dünya ekonomisi', 'küresel ticaret',
+    ],
+    color: '#00BCD4',
+  );
+
+  /// İslam hashtag'i
+  static const InterestTag islam = InterestTag(
+    id: 'islam',
+    name: 'İslam',
+    displayName: '#İslam',
+    icon: Icons.mosque,
+    keywords: [
+      'islam', 'müslüman', 'islami', 'din', 'dini', 'kuran', 'kur\'an',
+      'hadis', 'sünnet', 'peygamber', 'hz. muhammed', 'sahabi',
+      'ibadet', 'namaz', 'oruç', 'zekat', 'hac', 'umre', 'kabe',
+      'cami', 'mescid', 'ezan', 'ramazan', 'kurban', 'bayram',
+      'islam tarihi', 'halifelik', 'osmanlı', 'endülüs', 'abbasi',
+      'islam felsefesi', 'islam hukuku', 'fıkıh', 'tefsir', 'kelam',
+      'tasavvuf', 'sufi', 'mevlana', 'yunus emre', 'islam kültürü',
+      'islam sanatı', 'hat', 'ebru', 'islam mimarisi', 'islam medeniyeti',
+    ],
+    color: '#009688',
+  );
+
+  /// Tarih hashtag'i
+  static const InterestTag tarih = InterestTag(
+    id: 'tarih',
+    name: 'Tarih',
+    displayName: '#Tarih',
+    icon: Icons.history,
+    keywords: [
+      'tarih', 'tarihi', 'geçmiş', 'antik', 'eski', 'medeniyet',
+      'osmanlı', 'osmanlı imparatorluğu', 'türk tarihi', 'türkiye tarihi',
+      'cumhuriyet', 'atatürk', 'kurtuluş savaşı', 'çanakkale',
+      'dünya savaşı', '1. dünya savaşı', '2. dünya savaşı',
+      'roma', 'bizans', 'selçuklu', 'beylikler', 'anadolu',
+      'arkeoloji', 'kazı', 'müze', 'antik kent', 'tarihi eser',
+      'tarihçi', 'tarih araştırması', 'belge', 'arşiv', 'kronoloji',
+      'tarih bilimi', 'tarih yazımı', 'tarih felsefesi',
+    ],
+    color: '#795548',
+  );
+
+  /// Yapay Zeka hashtag'i
+  static const InterestTag yapayZeka = InterestTag(
+    id: 'yapay_zeka',
+    name: 'Yapay Zeka',
+    displayName: '#YapayZeka',
+    icon: Icons.psychology,
+    keywords: [
+      'yapay zeka', 'ai', 'artificial intelligence', 'machine learning',
+      'makine öğrenmesi', 'deep learning', 'derin öğrenme', 'neural network',
+      'sinir ağı', 'chatgpt', 'openai', 'claude', 'bard', 'gemini',
+      'llm', 'large language model', 'büyük dil modeli', 'gpt', 'gpt-4',
+      'computer vision', 'bilgisayarlı görü', 'natural language processing',
+      'doğal dil işleme', 'nlp', 'robotics', 'robotik', 'otomasyon',
+      'algorithm', 'algoritma', 'data science', 'veri bilimi',
+      'big data', 'büyük veri', 'data mining', 'veri madenciliği',
+      'ai ethics', 'yapay zeka etiği', 'ai safety', 'yapay zeka güvenliği',
+      'agi', 'artificial general intelligence', 'genel yapay zeka',
+      'singularity', 'tekillik', 'ai research', 'yapay zeka araştırması',
+    ],
+    color: '#9C27B0',
+  );
+
+  /// ID'ye göre tag bul
+  static InterestTag? getTagById(String id) {
+    try {
+      return allTags.firstWhere((tag) => tag.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// İsimlere göre tag'leri filtrele
+  static List<InterestTag> searchTags(String query) {
+    if (query.isEmpty) return allTags;
+    final lowerQuery = query.toLowerCase();
+    return allTags.where((tag) {
+      return tag.name.toLowerCase().contains(lowerQuery) ||
+          tag.displayName.toLowerCase().contains(lowerQuery) ||
+          tag.keywords.any((keyword) => keyword.toLowerCase().contains(lowerQuery));
+    }).toList();
+  }
+}
+

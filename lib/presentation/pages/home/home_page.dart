@@ -11,6 +11,7 @@ import 'widgets/category_tabs.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/article_filter_dialog.dart';
 import 'widgets/notification_banner.dart';
+import 'widgets/personalized_news_section.dart';
 import '../search/search_page.dart';
 import '../profile/profile_page.dart';
 
@@ -279,6 +280,9 @@ class _HomePageState extends ConsumerState<HomePage>
         children: [
           // Bildirim banner'ı
           const NotificationBanner(),
+          
+          // İlgilendiğiniz Haberler bölümü
+          const PersonalizedNewsSection(),
           
           // Hata mesajı (varsa)
           if (newsState.hasError && !newsState.isLoading)

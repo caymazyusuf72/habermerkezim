@@ -246,30 +246,6 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
                   children: [
-                    // Kategori badge (varsa)
-                    if (items.isNotEmpty && items[_currentIndex].isArticle)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        margin: const EdgeInsets.only(right: 12),
-                        decoration: BoxDecoration(
-                          color: primaryColor.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: primaryColor.withOpacity(0.4),
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          'SON DAKİKA',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: primaryColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 9,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ),
-                    
                     // Haber başlığı - Marquee animasyonu
                     Expanded(
                       child: AnimatedSwitcher(

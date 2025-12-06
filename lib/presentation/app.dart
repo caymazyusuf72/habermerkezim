@@ -3,9 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'providers/providers.dart';
+import 'providers/onboarding_provider.dart';
 import 'themes/app_theme.dart';
 import 'pages/home/home_page.dart';
 import 'pages/splash/splash_page.dart';
+import 'pages/onboarding/onboarding_page.dart';
+import 'pages/update/update_dialog.dart';
+import '../../core/services/update_service.dart';
 
 /// Ana uygulama widget'ı - Haber Merkezi
 /// Riverpod ile state management ve theme management
@@ -39,8 +43,13 @@ class HaberMerkeziApp extends ConsumerWidget {
       // Ana sayfa - initialization durumuna göre
       home: appInitialization.when(
         data: (_) {
-          print('✅ App initialization tamamlandi, HomePage gosteriliyor');
-          return const HomePage();
+          print('✅ App initialization tamamlandi, onboarding kontrolü yapılıyor...');
+          // Onboarding kontrolü yap
+          return _OnboardingCheckWrapper(
+            child: _UpdateCheckWrapper(
+              child: const HomePage(),
+            ),
+          );
         },
         loading: () {
           print('⏳ App initialization devam ediyor, SplashPage gosteriliyor');
@@ -61,6 +70,7 @@ class HaberMerkeziApp extends ConsumerWidget {
       routes: {
         '/home': (context) => const HomePage(),
         '/splash': (context) => const SplashPage(),
+        '/onboarding': (context) => const OnboardingPage(),
       },
       
       // App boyut ve orientation ayarları
@@ -196,6 +206,97 @@ class ErrorPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Güncelleme kontrolü wrapper widget'ı
+/// HomePage'e geçmeden önce güncelleme kontrolü yapar
+class _UpdateCheckWrapper extends ConsumerStatefulWidget {
+  final Widget child;
+
+  const _UpdateCheckWrapper({required this.child});
+
+  @override
+  ConsumerState<_UpdateCheckWrapper> createState() => _UpdateCheckWrapperState();
+}
+
+class _UpdateCheckWrapperState extends ConsumerState<_UpdateCheckWrapper> {
+  bool _hasCheckedUpdate = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Widget mount olduktan sonra güncelleme kontrolü yap
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForUpdates();
+    });
+  }
+
+  Future<void> _checkForUpdates() async {
+    if (_hasCheckedUpdate) return;
+    _hasCheckedUpdate = true;
+
+    try {
+      // Güncelleme kontrolü yap (non-blocking)
+      final updateResult = await ref.read(checkForUpdatesProvider.future);
+      
+      if (updateResult != null && mounted) {
+        // Güncelleme mevcut, dialog göster
+        showDialog(
+          context: context,
+          barrierDismissible: updateResult.type != UpdateType.immediate &&
+              !(updateResult.updateInfo?.forceUpdate ?? false),
+          builder: (context) => UpdateDialog(
+            updateResult: updateResult,
+            onUpdateComplete: () {
+              // Güncelleme tamamlandığında callback
+            },
+          ),
+        );
+      }
+    } catch (e) {
+      print('⚠️ Güncelleme kontrolü hatası: $e');
+      // Hata durumunda sessizce devam et
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
+
+/// Onboarding kontrolü wrapper widget'ı
+/// İlk giriş kontrolü yapar, onboarding tamamlanmamışsa OnboardingPage gösterir
+class _OnboardingCheckWrapper extends ConsumerWidget {
+  final Widget child;
+
+  const _OnboardingCheckWrapper({required this.child});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasCompletedOnboarding = ref.watch(hasCompletedOnboardingProvider);
+
+    return hasCompletedOnboarding.when(
+      data: (completed) {
+        if (completed) {
+          // Onboarding tamamlanmış, ana sayfaya geç
+          return child;
+        } else {
+          // Onboarding tamamlanmamış, onboarding sayfasını göster
+          return const OnboardingPage();
+        }
+      },
+      loading: () {
+        // Loading sırasında splash göster
+        return const SplashPage();
+      },
+      error: (error, stackTrace) {
+        // Hata durumunda ana sayfaya geç (onboarding'i atla)
+        print('⚠️ Onboarding kontrolü hatası: $error');
+        return child;
+      },
     );
   }
 }

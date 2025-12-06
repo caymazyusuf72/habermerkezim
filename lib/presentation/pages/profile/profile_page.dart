@@ -6,6 +6,8 @@ import '../../../domain/entities/user_profile.dart';
 import '../../providers/providers.dart';
 import '../../themes/app_theme.dart';
 import '../../widgets/loading/shimmer_loading.dart';
+import '../onboarding/edit_interests_page.dart';
+import '../../../core/constants/interest_tags.dart';
 
 /// Profil sayfası - kullanıcı profili, istatistikler ve tercihler
 class ProfilePage extends ConsumerStatefulWidget {
@@ -159,6 +161,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           
           // İstatistik Kartları
           _buildStatsSection(context, profile.stats, theme),
+          
+          const SizedBox(height: 24),
+          
+          // İlgi Alanları Bölümü
+          _buildInterestsSection(context, profile.preferences, theme),
           
           const SizedBox(height: 24),
           
@@ -541,6 +548,157 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildInterestsSection(
+    BuildContext context,
+    UserPreferences preferences,
+    ThemeData theme,
+  ) {
+    final interestTags = preferences.interestTags;
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.sageGreen.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.favorite,
+                  color: AppTheme.sageGreen,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'İlgi Alanlarım',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const EditInterestsPage(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.edit, size: 18),
+                label: const Text('Düzenle'),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppTheme.sageGreen,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (interestTags.isEmpty)
+            Column(
+              children: [
+                Icon(
+                  Icons.favorite_border,
+                  size: 48,
+                  color: isDark ? Colors.grey[600] : Colors.grey[400],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Henüz ilgi alanı seçmediniz',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const EditInterestsPage(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('İlgi Alanları Seç'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.sageGreen,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            )
+          else
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: interestTags.map((tagId) {
+                final tag = InterestTags.getTagById(tagId);
+                if (tag == null) return const SizedBox.shrink();
+                
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: _getColorFromHex(tag.color).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: _getColorFromHex(tag.color).withOpacity(0.3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        tag.icon,
+                        size: 16,
+                        color: _getColorFromHex(tag.color),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        tag.displayName,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: _getColorFromHex(tag.color),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Color _getColorFromHex(String hexString) {
+    try {
+      final buffer = StringBuffer();
+      if (hexString.length == 6 || hexString.length == 7) {
+        buffer.write('ff');
+        buffer.write(hexString.replaceFirst('#', ''));
+        return Color(int.parse(buffer.toString(), radix: 16));
+      }
+    } catch (e) {
+      // Hata durumunda varsayılan renk
+    }
+    return AppTheme.primaryBlue;
   }
 
   Widget _buildPreferencesSection(

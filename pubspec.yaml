@@ -80,6 +80,10 @@ dependencies:
   
   # Text-to-Speech
   flutter_tts: ^4.0.2
+  
+  # App Update
+  in_app_update: ^4.2.5
+  package_info_plus: ^8.0.2
 
 dev_dependencies:
   flutter_test:

@@ -198,11 +198,15 @@ class UserPreferencesModel extends HiveObject {
   @HiveField(3)
   final String preferredLanguage;
 
+  @HiveField(4)
+  final List<String> interestTags;
+
   UserPreferencesModel({
     this.favoriteCategories = const [],
     this.blockedSources = const [],
     this.enableNotifications = true,
     this.preferredLanguage = 'tr',
+    this.interestTags = const [],
   });
 
   /// Domain entity'den model oluşturur
@@ -212,6 +216,7 @@ class UserPreferencesModel extends HiveObject {
       blockedSources: List<String>.from(preferences.blockedSources),
       enableNotifications: preferences.enableNotifications,
       preferredLanguage: preferences.preferredLanguage,
+      interestTags: List<String>.from(preferences.interestTags),
     );
   }
 
@@ -222,6 +227,7 @@ class UserPreferencesModel extends HiveObject {
       blockedSources: List<String>.from(blockedSources),
       enableNotifications: enableNotifications,
       preferredLanguage: preferredLanguage,
+      interestTags: List<String>.from(interestTags),
     );
   }
 
@@ -239,6 +245,9 @@ class UserPreferencesModel extends HiveObject {
           : [],
       enableNotifications: json['enableNotifications'] ?? true,
       preferredLanguage: json['preferredLanguage'] ?? 'tr',
+      interestTags: json['interestTags'] != null
+          ? List<String>.from(json['interestTags'])
+          : [],
     );
   }
 
@@ -249,6 +258,7 @@ class UserPreferencesModel extends HiveObject {
       'blockedSources': blockedSources,
       'enableNotifications': enableNotifications,
       'preferredLanguage': preferredLanguage,
+      'interestTags': interestTags,
     };
   }
 }
