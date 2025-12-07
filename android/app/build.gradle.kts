@@ -64,12 +64,14 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            // Minification ve resource shrinking kapatıldı - text rendering sorununu önlemek için
+            isMinifyEnabled = false
+            isShrinkResources = false
+            // ProGuard kuralları artık kullanılmıyor
+            // proguardFiles(
+            //     getDefaultProguardFile("proguard-android-optimize.txt"),
+            //     "proguard-rules.pro"
+            // )
         }
     }
 }

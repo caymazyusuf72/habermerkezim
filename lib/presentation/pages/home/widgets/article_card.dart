@@ -54,17 +54,19 @@ class ArticleCard extends ConsumerWidget {
             // Görsel ve kategori badge'i
             if (article.imageUrl != null) _buildImageSection(context, ref, categoryColor),
             
-            // İçerik - Daha geniş padding
+            // İçerik - Optimize edilmiş padding
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   // Kategori badge (görsel yoksa)
                   if (article.imageUrl == null && showCategoryBadge)
                     _buildCategoryBadge(context, categoryColor),
                   
-                  const SizedBox(height: 8),
+                  if (article.imageUrl == null && showCategoryBadge)
+                    const SizedBox(height: 6),
                   
                   // Başlık - Daha büyük ve okunabilir
                   Text(
@@ -72,32 +74,32 @@ class ArticleCard extends ConsumerWidget {
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
                       height: 1.3,
-                      fontSize: 18,
+                      fontSize: 16,
                       color: article.isRead
                           ? theme.colorScheme.onSurface.withOpacity(0.6)
                           : theme.colorScheme.onSurface,
                       letterSpacing: -0.2,
                     ),
-                    maxLines: 3,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 6),
                   
                   // Özet - Daha okunabilir
                   Text(
                     article.truncatedDescription,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.75),
-                      height: 1.5,
-                      fontSize: 14,
+                      height: 1.4,
+                      fontSize: 13,
                       letterSpacing: 0.1,
                     ),
-                    maxLines: 3,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   
                   // Alt bilgiler
                   _buildFooter(context),
@@ -677,64 +679,63 @@ class ArticleCard extends ConsumerWidget {
     
     return Row(
       mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Kaynak ve tarih
-        Expanded(
-          flex: 3,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.access_time_rounded,
-                size: 14,
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: Text(
-                  article.shortDateTime,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.source_rounded,
-                size: 14,
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  article.sourceName,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-            ],
+        // Tarih ikonu ve metni
+        Icon(
+          Icons.access_time_rounded,
+          size: 14,
+          color: theme.colorScheme.onSurface.withOpacity(0.6),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          article.shortDateTime,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            fontSize: 12,
+          ),
+        ),
+        
+        const SizedBox(width: 12),
+        
+        // Kaynak ikonu ve metni
+        Icon(
+          Icons.source_rounded,
+          size: 14,
+          color: theme.colorScheme.onSurface.withOpacity(0.6),
+        ),
+        const SizedBox(width: 4),
+        Flexible(
+          child: Text(
+            article.sourceName,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              fontSize: 12,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ),
         
         // Okundu göstergesi
         if (article.isRead) ...[
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: AppTheme.sageGreen.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: AppTheme.sageGreen.withOpacity(0.3),
+                width: 1,
+              ),
             ),
             child: Text(
               'Okundu',
               style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.primary,
-                fontSize: 9,
+                color: AppTheme.sageGreen,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

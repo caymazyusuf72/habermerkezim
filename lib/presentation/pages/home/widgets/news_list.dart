@@ -261,15 +261,7 @@ class NewsListState extends ConsumerState<NewsList>
       addRepaintBoundaries: true, // Repaint boundary ekle (performans)
       addSemanticIndexes: false, // Semantic index'leri kapat (daha hızlı)
       cacheExtent: 1000, // Cache extent artırıldı (500→1000) - daha smooth scroll
-      // Item extent hint - her item'ın yaklaşık boyutu (scroll performansı için)
-      itemExtentBuilder: (index, dimensions) {
-        // Loading item farklı boyutta
-        if (index == articles.length && newsState.isLoadingMore) {
-          return 80.0; // Loading indicator boyutu
-        }
-        // Normal article card boyutu (ortalama)
-        return 180.0; // Article card ortalama yüksekliği
-      },
+      // itemExtentBuilder kaldırıldı - kartlar dinamik yüksekliğe sahip olacak
       padding: const EdgeInsets.only(
         top: 8,
         bottom: 80, // FAB için alan bırak
