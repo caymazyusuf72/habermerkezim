@@ -42,8 +42,8 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // minSdk 21 = Android 5.0 (Lollipop) - %99+ cihaz desteği
-        // minSdk 23 = Android 6.0 (Marshmallow) - home_widget paketi için gerekli
-        minSdk = flutter.minSdkVersion  // Android 6.0+ (Marshmallow) - %98+ cihaz desteği
+        // minSdk 23 = Android 6.0 (Marshmallow) - home_widget ve glance paketleri için gerekli
+        minSdk = 23  // Android 6.0+ (Marshmallow) - %98+ cihaz desteği
         targetSdk = 34  // Android 14 - En son özellikler için
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -64,8 +64,12 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }
