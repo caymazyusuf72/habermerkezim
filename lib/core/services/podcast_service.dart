@@ -105,13 +105,13 @@ class PodcastService {
   PodcastEpisode? articleToPodcast(Article article) {
     // Article içinde audio URL varsa podcast'e dönüştür
     // Bu özellik gelecekte genişletilebilir
-    if (article.description.contains('audio') || 
+    if (article.description.contains('audio') ||
         article.description.contains('podcast')) {
       return PodcastEpisode(
         title: article.title,
         description: article.description,
         audioUrl: '', // Article'dan audio URL çıkar
-        pubDate: article.publishedAt.toString(),
+        pubDate: article.publishedDate.toString(),
         imageUrl: article.imageUrl,
       );
     }

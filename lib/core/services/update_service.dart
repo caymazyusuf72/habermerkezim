@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -94,7 +93,7 @@ class UpdateService {
       }
 
       // Android'de Google Play In-App Update kontrolü
-      if (Platform.isAndroid) {
+      if (!kIsWeb) {
         try {
           final appUpdateInfo = await InAppUpdate.checkForUpdate();
           
@@ -182,8 +181,8 @@ class UpdateService {
   /// Zorunlu güncelleme başlat (Google Play In-App Update)
   Future<bool> startImmediateUpdate() async {
     try {
-      if (!Platform.isAndroid) {
-        print('⚠️ In-App Update sadece Android\'de desteklenir');
+      if (kIsWeb) {
+        print('⚠️ In-App Update web\'de desteklenmez');
         return false;
       }
 
@@ -205,8 +204,8 @@ class UpdateService {
   /// Esnek güncelleme başlat (Google Play In-App Update)
   Future<bool> startFlexibleUpdate() async {
     try {
-      if (!Platform.isAndroid) {
-        print('⚠️ In-App Update sadece Android\'de desteklenir');
+      if (kIsWeb) {
+        print('⚠️ In-App Update web\'de desteklenmez');
         return false;
       }
 
@@ -228,7 +227,7 @@ class UpdateService {
   /// Esnek güncelleme tamamlandığında çağrılır
   Future<void> completeFlexibleUpdate() async {
     try {
-      if (Platform.isAndroid) {
+      if (!kIsWeb) {
         await InAppUpdate.completeFlexibleUpdate();
       }
     } catch (e) {
