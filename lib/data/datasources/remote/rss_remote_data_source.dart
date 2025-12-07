@@ -4,6 +4,7 @@ import 'package:xml/xml.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/error/exceptions.dart';
 import '../../../core/utils/retry_helper.dart';
+import '../../../core/services/rss_health_check_service.dart';
 import '../../models/article_model.dart';
 
 /// RSS feed'lerini çeken remote data source
@@ -46,10 +47,22 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     try {
       print('🌐 RSS Request: $category');
       
-      // Kategoriye ait tüm RSS feed'lerini bul (örn: teknoloji, teknoloji_webtekno, teknoloji_shiftdelete)
+      // Disabled feed'leri al
+      final healthCheckService = RssHealthCheckService();
+      final disabledFeeds = await healthCheckService.getDisabledFeeds();
+      
+      // Kategoriye ait tüm RSS feed'lerini bul (disabled olanları hariç tut)
       final categoryFeeds = ApiEndpoints.rssFeedUrls.entries
-          .where((entry) => entry.key == category || entry.key.startsWith('${category}_'))
+          .where((entry) {
+            final matchesCategory = entry.key == category || entry.key.startsWith('${category}_');
+            final isNotDisabled = !disabledFeeds.contains(entry.key);
+            return matchesCategory && isNotDisabled;
+          })
           .toList();
+      
+      if (disabledFeeds.isNotEmpty) {
+        print('⚠️ Devre dışı feed\'ler: ${disabledFeeds.join(", ")}');
+      }
       
       if (categoryFeeds.isEmpty) {
         print('❌ Kategori bulunamadı: $category');

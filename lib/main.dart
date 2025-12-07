@@ -8,6 +8,7 @@ import 'core/services/analytics_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/widget_service.dart';
 import 'core/services/custom_categories_service.dart';
+import 'core/services/rss_health_check_service.dart';
 import 'presentation/app.dart';
 
 /// Haber Merkezi uygulamasının giriş noktası
@@ -54,6 +55,13 @@ Future<void> main() async {
     print('🔄 Widget service initialize ediliyor...');
     await WidgetService.initialize();
     print('✅ Widget service başarıyla initialize edildi');
+    
+    // RSS Health Check servisini başlat (6 saatte bir kontrol)
+    print('🔄 RSS Health Check service başlatılıyor...');
+    RssHealthCheckService().startPeriodicHealthCheck(
+      interval: const Duration(hours: 6),
+    );
+    print('✅ RSS Health Check service başarıyla başlatıldı');
     
     // Uygulamayı başlat
     runApp(
