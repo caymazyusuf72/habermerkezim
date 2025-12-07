@@ -74,7 +74,7 @@ class MLRecommendationService {
 
     for (final analytics in monthlyAnalytics) {
       totalReads += analytics.articlesRead;
-      totalTimeSpent += analytics.readingTimeMinutes;
+      totalTimeSpent += analytics.timeSpentMinutes;
 
       // Kategori ağırlıkları (normalize edilmiş)
       for (final entry in analytics.categoriesRead.entries) {

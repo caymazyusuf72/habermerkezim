@@ -881,4 +881,11 @@ class ArticleCardUtils {
   static Size calculateImageSize(BuildContext context, {bool isCompact = false}) {
     final screenWidth = MediaQuery.of(context).size.width;
     
+    if (isCompact) {
+      return const Size(compactImageSize, compactImageSize);
+    }
     
+    final imageHeight = screenWidth / imageAspectRatio;
+    return Size(screenWidth, imageHeight);
+  }
+}
