@@ -246,7 +246,7 @@ class RssHealthCheckService {
       await box.put('feed_failure_counts', countMap);
       
     } catch (e) {
-      print('⚠️ Unhealthy feed'ler işlenemedi: $e');
+      print('⚠️ Unhealthy feedler işlenemedi: $e');
     }
   }
 
@@ -338,9 +338,9 @@ class RssHealthCheckService {
     try {
       final box = HiveService.settingsBox;
       await box.put('feed_failure_counts', <String, int>{});
-      print('✅ Tüm failure count'lar sıfırlandı');
+      print('✅ Tüm failure countlar sıfırlandı');
     } catch (e) {
-      print('⚠️ Failure count'lar sıfırlanamadı: $e');
+      print('⚠️ Failure countlar sıfırlanamadı: $e');
     }
   }
 
@@ -350,9 +350,9 @@ class RssHealthCheckService {
       final box = HiveService.settingsBox;
       await box.put('disabled_feeds', <String>[]);
       await resetFailureCounts();
-      print('✅ Tüm feed\'ler etkinleştirildi');
+      print('✅ Tüm feedler etkinleştirildi');
     } catch (e) {
-      print('⚠️ Feed\'ler etkinleştirilemedi: $e');
+      print('⚠️ Feedler etkinleştirilemedi: $e');
     }
   }
 }
