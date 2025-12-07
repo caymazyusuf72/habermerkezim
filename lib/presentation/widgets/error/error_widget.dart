@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/error/failures.dart';
+import '../../../core/utils/error_message_helper.dart';
 import '../../themes/app_theme.dart';
 
 /// Custom error widget - hataları kullanıcı dostu şekilde gösterir
 /// Farklı hata tiplerini farklı görsellerle sunar
 class CustomErrorWidget extends StatelessWidget {
-  final Failure error;
+  final dynamic error;  // Failure veya Exception kabul eder
   final VoidCallback? onRetry;
   final bool showOfflineMessage;
   final bool isCompact;
+  final String? customMessage;
 
   const CustomErrorWidget({
     super.key,
@@ -17,6 +19,7 @@ class CustomErrorWidget extends StatelessWidget {
     this.onRetry,
     this.showOfflineMessage = false,
     this.isCompact = false,
+    this.customMessage,
   });
 
   @override
@@ -66,12 +69,44 @@ class CustomErrorWidget extends StatelessWidget {
 
             // Açıklama
             Text(
-              _getErrorMessage(),
+              customMessage ?? _getErrorMessage(),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
               textAlign: TextAlign.center,
             ),
+            
+            // Önerilen aksiyon
+            if (_getSuggestedAction() != null) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline,
+                      color: theme.colorScheme.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _getSuggestedAction()!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
 
             // Offline mesajı
             if (showOfflineMessage) ...[
@@ -106,8 +141,8 @@ class CustomErrorWidget extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            // Yeniden dene butonu
-            if (onRetry != null)
+            // Yeniden dene butonu (sadece retry edilebilir hatalar için)
+            if (onRetry != null && _isRetryable())
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -245,26 +280,48 @@ class CustomErrorWidget extends StatelessWidget {
 
   /// Kullanıcı dostu hata mesajı
   String _getErrorMessage() {
-    if (error is NetworkFailure) {
-      final networkError = error as NetworkFailure;
-      
-      switch (networkError.code) {
-        case 'NO_INTERNET':
-          return 'Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.';
-        case 'TIMEOUT':
-          return 'İstek çok uzun sürdü. Bağlantınızı kontrol edip tekrar deneyin.';
-        case 'SERVER_ERROR':
-          return 'Sunucu şu anda yanıt vermiyor. Lütfen daha sonra tekrar deneyin.';
-        default:
-          return 'Haberler yüklenirken bir sorun oluştu. Lütfen tekrar deneyin.';
+    // Failure nesnesi ise
+    if (error is Failure) {
+      if (error is NetworkFailure) {
+        final networkError = error as NetworkFailure;
+        
+        switch (networkError.code) {
+          case 'NO_INTERNET':
+            return 'Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.';
+          case 'TIMEOUT':
+            return 'İstek çok uzun sürdü. Bağlantınızı kontrol edip tekrar deneyin.';
+          case 'SERVER_ERROR':
+            return 'Sunucu şu anda yanıt vermiyor. Lütfen daha sonra tekrar deneyin.';
+          default:
+            return 'Haberler yüklenirken bir sorun oluştu. Lütfen tekrar deneyin.';
+        }
+      } else if (error is RssParseFailure) {
+        return 'Haber kaynağından veri alınırken sorun oluştu. Kaynak geçici olarak erişilemez olabilir.';
+      } else if (error is CacheFailure) {
+        return 'Önbelleğe alınmış veriler okurken sorun oluştu. Önbellek temizlenebilir.';
+      } else {
+        return (error as Failure).message;
       }
-    } else if (error is RssParseFailure) {
-      return 'Haber kaynağından veri alınırken sorun oluştu. Kaynak geçici olarak erişilemez olabilir.';
-    } else if (error is CacheFailure) {
-      return 'Önbelleğe alınmış veriler okurken sorun oluştu. Önbellek temizlenebilir.';
-    } else {
-      return error.message;
     }
+    
+    // Exception veya string ise ErrorMessageHelper kullan
+    return ErrorMessageHelper.getErrorMessage(error);
+  }
+  
+  /// Önerilen aksiyon mesajı
+  String? _getSuggestedAction() {
+    if (error is Failure) {
+      return null; // Failure için önceden tanımlı mesajlar var
+    }
+    return ErrorMessageHelper.getSuggestedAction(error);
+  }
+  
+  /// Hatanın retry edilebilir olup olmadığını kontrol eder
+  bool _isRetryable() {
+    if (error is Failure) {
+      return error is NetworkFailure || error is RssParseFailure;
+    }
+    return ErrorMessageHelper.isRetryable(error);
   }
 }
 

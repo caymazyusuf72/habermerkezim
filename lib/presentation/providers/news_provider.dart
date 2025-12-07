@@ -6,6 +6,7 @@ import '../../core/services/widget_service.dart';
 import '../../core/services/breaking_news_service.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/services/hive_service.dart';
+import '../../core/utils/error_message_helper.dart';
 import 'providers.dart';
 
 /// News State - haber listesinin durumunu tutar
@@ -93,10 +94,11 @@ class NewsNotifier extends StateNotifier<NewsState> {
       
       // Breaking news kontrolü ve bildirim gönderimi
       _checkAndNotifyBreakingNews(allArticles);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('❌ Haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString(),
+        errorMessage: ErrorMessageHelper.getErrorMessage(e),
       );
     }
   }
@@ -119,10 +121,11 @@ class NewsNotifier extends StateNotifier<NewsState> {
         hasMore: paginatedArticles.length < state.allArticles.length,
         currentPage: nextPage,
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('❌ Daha fazla haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoadingMore: false,
-        errorMessage: e.toString(),
+        errorMessage: ErrorMessageHelper.getErrorMessage(e),
       );
     }
   }
@@ -154,10 +157,11 @@ class NewsNotifier extends StateNotifier<NewsState> {
         hasMore: allArticles.length > NewsState.pageSize,
         currentPage: 1,
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('❌ Kategori yükleme hatası [$category]: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString(),
+        errorMessage: ErrorMessageHelper.getErrorMessage(e),
       );
     }
   }

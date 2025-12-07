@@ -3,6 +3,7 @@ import 'package:xml/xml.dart';
 
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/error/exceptions.dart';
+import '../../../core/utils/retry_helper.dart';
 import '../../models/article_model.dart';
 
 /// RSS feed'lerini çeken remote data source
@@ -63,20 +64,32 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
           final feedUrl = feedEntry.value;
           final feedKey = feedEntry.key;
           
-          print('📡 URL [$feedKey]: $feedUrl');
-          final response = await _dio.get(feedUrl);
-          print('📊 Response [$feedKey]: ${response.statusCode}');
+          // Retry mekanizması ile feed çek
+          final articles = await RetryHelper.retryOrNull(
+            operation: () async {
+              print('📡 URL [$feedKey]: $feedUrl');
+              final response = await _dio.get(feedUrl);
+              print('📊 Response [$feedKey]: ${response.statusCode}');
+              
+              if (response.statusCode != 200) {
+                throw ServerException(
+                  'HTTP Hatası: ${response.statusCode}',
+                  statusCode: response.statusCode,
+                );
+              }
+              
+              final xmlString = response.data as String;
+              print('📝 Parsing XML [$feedKey]...');
+              final articles = await _parseRssXml(xmlString, category);
+              print('✅ $feedKey: ${articles.length} makale');
+              return articles;
+            },
+            maxAttempts: 3,
+            initialDelay: const Duration(seconds: 1),
+            maxDelay: const Duration(seconds: 5),
+          );
           
-          if (response.statusCode == 200) {
-            final xmlString = response.data as String;
-            print('📝 Parsing XML [$feedKey]...');
-            final articles = await _parseRssXml(xmlString, category);
-            print('✅ $feedKey: ${articles.length} makale');
-            return articles;
-          } else {
-            print('⚠️ HTTP Error [$feedKey]: ${response.statusCode}');
-            return <ArticleModel>[];
-          }
+          return articles ?? <ArticleModel>[];
         } catch (e) {
           // Bir feed başarısız olursa diğerlerine devam et
           print('⚠️ Feed hatası [${feedEntry.key}]: $e');
@@ -214,20 +227,31 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     final refreshUrl = '$feedUrl?t=${DateTime.now().millisecondsSinceEpoch}';
     
     try {
-      final response = await _dio.get(refreshUrl);
-      
-      if (response.statusCode != 200) {
-        throw ServerException(
-          'RSS feed yenilenemedi: ${response.statusCode}',
-          statusCode: response.statusCode,
-        );
-      }
-      
-      final xmlString = response.data as String;
-      final articles = await _parseRssXml(xmlString, category);
-      
-      return articles;
-      
+      // Retry mekanizması ile refresh yap
+      return await RetryHelper.retry(
+        operation: () async {
+          final response = await _dio.get(refreshUrl);
+          
+          if (response.statusCode != 200) {
+            throw ServerException(
+              'RSS feed yenilenemedi: ${response.statusCode}',
+              statusCode: response.statusCode,
+            );
+          }
+          
+          final xmlString = response.data as String;
+          final articles = await _parseRssXml(xmlString, category);
+          
+          return articles;
+        },
+        maxAttempts: 3,
+        initialDelay: const Duration(seconds: 1),
+        maxDelay: const Duration(seconds: 5),
+        shouldRetry: RetryHelper.shouldRetryError,
+        onRetry: (attempt, error) {
+          print('🔄 Refresh retry [$category]: Deneme $attempt - $error');
+        },
+      );
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
