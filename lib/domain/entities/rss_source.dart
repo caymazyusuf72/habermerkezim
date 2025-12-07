@@ -460,6 +460,44 @@ class DefaultRssSources {
       iconUrl: 'https://www.saglikaktuel.com/favicon.ico',
     ),
 
+    // Bilim
+    RssSource(
+      id: 'ntv_bilim',
+      name: 'NTV Bilim',
+      url: 'https://www.ntv.com.tr/bilim.rss',
+      category: 'bilim',
+      description: 'NTV bilim haberleri',
+      createdAt: DateTime.now(),
+      iconUrl: 'https://www.ntv.com.tr/favicon.ico',
+    ),
+    RssSource(
+      id: 'webtekno_bilim',
+      name: 'Webtekno Bilim',
+      url: 'https://www.webtekno.com/bilim',
+      category: 'bilim',
+      description: 'Webtekno bilim haberleri',
+      createdAt: DateTime.now(),
+      iconUrl: 'https://www.webtekno.com/favicon.ico',
+    ),
+    RssSource(
+      id: 'evrimagaci',
+      name: 'Evrim Ağacı',
+      url: 'https://evrimagaci.org/rss',
+      category: 'bilim',
+      description: 'Evrim Ağacı bilim haberleri',
+      createdAt: DateTime.now(),
+      iconUrl: 'https://evrimagaci.org/favicon.ico',
+    ),
+    RssSource(
+      id: 'bilimfili',
+      name: 'Bilim Fili',
+      url: 'https://bilimfili.com/feed/',
+      category: 'bilim',
+      description: 'Bilim Fili bilim haberleri',
+      createdAt: DateTime.now(),
+      iconUrl: 'https://bilimfili.com/favicon.ico',
+    ),
+
     // Magazin
     RssSource(
       id: 'mynet_magazin',
@@ -567,6 +605,7 @@ class DefaultRssSources {
     'ekonomi',
     'spor',
     'sağlık',
+    'bilim',
     'eğitim',
     'kültür',
     'sanat',

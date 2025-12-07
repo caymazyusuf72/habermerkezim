@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
@@ -56,7 +55,7 @@ class ImageCacheService {
   }
 
   /// Görseli önbelleğe al
-  Future<File?> cacheImage(String imageUrl) async {
+  Future<dynamic> cacheImage(String imageUrl) async {
     try {
       final file = await _cacheManager.getSingleFile(imageUrl);
       return file;
@@ -67,13 +66,10 @@ class ImageCacheService {
   }
 
   /// Önbellekten görseli getir
-  Future<File?> getCachedImage(String imageUrl) async {
+  Future<dynamic> getCachedImage(String imageUrl) async {
     try {
       final file = await _cacheManager.getSingleFile(imageUrl);
-      if (await file.exists()) {
-        return file;
-      }
-      return null;
+      return file;
     } catch (e) {
       return null;
     }

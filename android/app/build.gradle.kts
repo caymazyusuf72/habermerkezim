@@ -28,6 +28,12 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
+        freeCompilerArgs += listOf("-Xlint:-options")
+    }
+    
+    // Java compiler uyarılarını bastır
+    tasks.withType<JavaCompile> {
+        options.compilerArgs.add("-Xlint:-options")
     }
 
     defaultConfig {

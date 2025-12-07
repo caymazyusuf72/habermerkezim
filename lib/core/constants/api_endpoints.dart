@@ -9,43 +9,60 @@ class ApiEndpoints {
     'genel': 'https://www.hurriyet.com.tr/rss/anasayfa',
     'genel_ntv': 'https://www.ntv.com.tr/son-dakika.rss',
     'genel_sabah': 'https://www.sabah.com.tr/rss/sondakika.xml',
+    'genel_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/son_dakika.xml',
+    'genel_haberturk': 'https://www.haberturk.com/rss',
+    'genel_cnnturk': 'https://www.cnnturk.com/feed/rss/all/news',
     
     // Türkiye
     'turkiye': 'https://www.sabah.com.tr/rss/gundem.xml',
     'turkiye_ntv': 'https://www.ntv.com.tr/gundem.rss',
-    'turkiye_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/gundemRSS.xml',
+    'turkiye_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/1.xml',
+    'turkiye_haberturk': 'https://www.haberturk.com/rss/kategori/gundem.xml',
     
     // Ekonomi
     'ekonomi': 'https://www.hurriyet.com.tr/rss/ekonomi',
     'ekonomi_sabah': 'https://www.sabah.com.tr/rss/ekonomi.xml',
-    'ekonomi_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/ekonomiRSS.xml',
+    'ekonomi_ntv': 'https://www.ntv.com.tr/ekonomi.rss',
+    'ekonomi_haberturk': 'https://www.haberturk.com/rss/kategori/ekonomi.xml',
+    'ekonomi_bloomberght': 'https://www.bloomberght.com/rss',
     
     // Teknoloji
     'teknoloji': 'https://www.hurriyet.com.tr/rss/teknoloji',
-    'teknoloji_webtekno': 'https://www.webtekno.com/rss',
     'teknoloji_shiftdelete': 'https://shiftdelete.net/rss',
-    'teknoloji_donanimhaber': 'https://www.donanimhaber.com/rss',
     'teknoloji_chip': 'https://www.chip.com.tr/rss',
+    'teknoloji_webtekno': 'https://www.webtekno.com/rss.xml',
+    'teknoloji_donanimhaber': 'https://www.donanimhaber.com/rss',
+    'teknoloji_log': 'https://www.log.com.tr/feed/',
     
     // Spor
     'spor': 'https://www.hurriyet.com.tr/rss/spor',
     'spor_sabah': 'https://www.sabah.com.tr/rss/spor.xml',
-    'spor_fanatik': 'https://www.fanatik.com.tr/rss/manset',
-    'spor_ntvspor': 'https://www.ntvspor.net/rss',
+    'spor_ntv': 'https://www.ntv.com.tr/spor.rss',
+    'spor_fanatik': 'https://www.fanatik.com.tr/rss',
+    'spor_sporx': 'https://www.sporx.com/rss',
     
     // Dünya
     'dunya': 'https://www.hurriyet.com.tr/rss/dunya',
     'dunya_sabah': 'https://www.sabah.com.tr/rss/dunya.xml',
     'dunya_ntv': 'https://www.ntv.com.tr/dunya.rss',
+    'dunya_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/2.xml',
+    'dunya_haberturk': 'https://www.haberturk.com/rss/kategori/dunya.xml',
+    'dunya_euronews': 'https://tr.euronews.com/rss',
     
     // Sağlık
     'saglik': 'https://www.sabah.com.tr/rss/saglik.xml',
     'saglik_hurriyet': 'https://www.hurriyet.com.tr/rss/saglik',
     'saglik_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/saglikRSS.xml',
+    'saglik_ntv': 'https://www.ntv.com.tr/saglik.rss',
+    'saglik_haberturk': 'https://www.haberturk.com/rss/kategori/saglik.xml',
+    'saglik_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/11.xml',
     
     // Kültür-Sanat
     'kultur': 'https://www.hurriyet.com.tr/rss/kultur-sanat',
     'kultur_sabah': 'https://www.sabah.com.tr/rss/kultur-sanat.xml',
+    'kultur_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/kulturSanatRSS.xml',
+    'kultur_ntv': 'https://www.ntv.com.tr/yasam.rss',
+    'kultur_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/5.xml',
     
     // Magazin
     'magazin': 'https://www.hurriyet.com.tr/rss/magazin',
@@ -54,29 +71,30 @@ class ApiEndpoints {
     'magazin_posta': 'https://www.posta.com.tr/rss/magazin.xml',
     'magazin_mynet': 'https://www.mynet.com/rss/magazin',
     'magazin_ensonhaber': 'https://www.ensonhaber.com/rss/magazin.xml',
+    'magazin_haberturk': 'https://www.haberturk.com/rss/kategori/magazin.xml',
+    'magazin_hurses': 'https://www.hurses.com.tr/rss',
     
     // Bilim
-    'bilim': 'https://www.hurriyet.com.tr/rss/bilim',
+    'bilim': 'https://shiftdelete.net/rss',
+    'bilim_shiftdelete': 'https://shiftdelete.net/rss',
+    'bilim_webtekno': 'https://www.webtekno.com/rss.xml',
     'bilim_ntv': 'https://www.ntv.com.tr/bilim.rss',
-    'bilim_sabah': 'https://www.sabah.com.tr/rss/bilim.xml',
-    'bilim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/bilimRSS.xml',
-    'bilim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/bilim.xml',
     
     // Eğitim
     'egitim': 'https://www.hurriyet.com.tr/rss/egitim',
     'egitim_sabah': 'https://www.sabah.com.tr/rss/egitim.xml',
-    'egitim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/egitimRSS.xml',
     'egitim_ntv': 'https://www.ntv.com.tr/egitim.rss',
-    'egitim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/egitim.xml',
-    'egitim_ensonhaber': 'https://www.ensonhaber.com/rss/egitim.xml',
+    'egitim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/egitimRSS.xml',
+    'egitim_haberturk': 'https://www.haberturk.com/rss/kategori/egitim.xml',
+    'egitim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/12.xml',
     
     // Otomobil
-    'otomobil': 'https://www.hurriyet.com.tr/rss/otomobil',
-    'otomobil_sabah': 'https://www.sabah.com.tr/rss/otomobil.xml',
-    'otomobil_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/otomobilRSS.xml',
+    'otomobil': 'https://www.ntv.com.tr/otomobil.rss',
     'otomobil_ntv': 'https://www.ntv.com.tr/otomobil.rss',
     'otomobil_ensonhaber': 'https://www.ensonhaber.com/rss/otomobil.xml',
-    'otomobil_otokoc': 'https://www.otokoc.com.tr/rss',
+    'otomobil_haberturk': 'https://www.haberturk.com/rss/kategori/otomobil.xml',
+    'otomobil_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/otomotivRSS.xml',
+    'otomobil_arabam': 'https://www.arabam.com/rss',
   };
 
   /// RSS Feed isimler - UI'da gösterilecek
@@ -85,43 +103,60 @@ class ApiEndpoints {
     'genel': 'Hürriyet - Son Dakika',
     'genel_ntv': 'NTV - Son Dakika',
     'genel_sabah': 'Sabah - Son Dakika',
+    'genel_cumhuriyet': 'Cumhuriyet - Son Dakika',
+    'genel_haberturk': 'Habertürk - Son Dakika',
+    'genel_cnnturk': 'CNN Türk - Tüm Haberler',
     
     // Türkiye
     'turkiye': 'Sabah - Türkiye',
     'turkiye_ntv': 'NTV - Türkiye',
-    'turkiye_milliyet': 'Milliyet - Türkiye',
+    'turkiye_cumhuriyet': 'Cumhuriyet - Türkiye',
+    'turkiye_haberturk': 'Habertürk - Gündem',
     
     // Ekonomi
     'ekonomi': 'Hürriyet - Ekonomi',
     'ekonomi_sabah': 'Sabah - Ekonomi',
-    'ekonomi_milliyet': 'Milliyet - Ekonomi',
+    'ekonomi_ntv': 'NTV - Ekonomi',
+    'ekonomi_haberturk': 'Habertürk - Ekonomi',
+    'ekonomi_bloomberght': 'Bloomberg HT',
     
     // Teknoloji
     'teknoloji': 'Hürriyet - Teknoloji',
-    'teknoloji_webtekno': 'Webtekno',
     'teknoloji_shiftdelete': 'ShiftDelete.Net',
-    'teknoloji_donanimhaber': 'Donanım Haber',
     'teknoloji_chip': 'CHIP Online',
+    'teknoloji_webtekno': 'Webtekno',
+    'teknoloji_donanimhaber': 'Donanım Haber',
+    'teknoloji_log': 'LOG Teknoloji',
     
     // Spor
     'spor': 'Hürriyet - Spor',
     'spor_sabah': 'Sabah - Spor',
+    'spor_ntv': 'NTV - Spor',
     'spor_fanatik': 'Fanatik',
-    'spor_ntvspor': 'NTV Spor',
+    'spor_sporx': 'Sporx',
     
     // Dünya
     'dunya': 'Hürriyet - Dünya',
     'dunya_sabah': 'Sabah - Dünya',
     'dunya_ntv': 'NTV - Dünya',
+    'dunya_cumhuriyet': 'Cumhuriyet - Dünya',
+    'dunya_haberturk': 'Habertürk - Dünya',
+    'dunya_euronews': 'Euronews Türkçe',
     
     // Sağlık
     'saglik': 'Sabah - Sağlık',
     'saglik_hurriyet': 'Hürriyet - Sağlık',
     'saglik_milliyet': 'Milliyet - Sağlık',
+    'saglik_ntv': 'NTV - Sağlık',
+    'saglik_haberturk': 'Habertürk - Sağlık',
+    'saglik_cumhuriyet': 'Cumhuriyet - Sağlık',
     
     // Kültür-Sanat
     'kultur': 'Hürriyet - Kültür-Sanat',
     'kultur_sabah': 'Sabah - Kültür-Sanat',
+    'kultur_milliyet': 'Milliyet - Kültür-Sanat',
+    'kultur_ntv': 'NTV - Yaşam',
+    'kultur_cumhuriyet': 'Cumhuriyet - Kültür-Sanat',
     
     // Magazin
     'magazin': 'Hürriyet - Magazin',
@@ -130,29 +165,30 @@ class ApiEndpoints {
     'magazin_posta': 'Posta - Magazin',
     'magazin_mynet': 'Mynet - Magazin',
     'magazin_ensonhaber': 'Ensonhaber - Magazin',
+    'magazin_haberturk': 'Habertürk - Magazin',
+    'magazin_hurses': 'Hürses',
     
     // Bilim
-    'bilim': 'Hürriyet - Bilim',
+    'bilim': 'ShiftDelete - Bilim & Teknoloji',
+    'bilim_shiftdelete': 'ShiftDelete - Bilim & Teknoloji',
+    'bilim_webtekno': 'Webtekno - Bilim & Teknoloji',
     'bilim_ntv': 'NTV - Bilim',
-    'bilim_sabah': 'Sabah - Bilim',
-    'bilim_milliyet': 'Milliyet - Bilim',
-    'bilim_cumhuriyet': 'Cumhuriyet - Bilim',
     
     // Eğitim
     'egitim': 'Hürriyet - Eğitim',
     'egitim_sabah': 'Sabah - Eğitim',
-    'egitim_milliyet': 'Milliyet - Eğitim',
     'egitim_ntv': 'NTV - Eğitim',
+    'egitim_milliyet': 'Milliyet - Eğitim',
+    'egitim_haberturk': 'Habertürk - Eğitim',
     'egitim_cumhuriyet': 'Cumhuriyet - Eğitim',
-    'egitim_ensonhaber': 'Ensonhaber - Eğitim',
     
     // Otomobil
-    'otomobil': 'Hürriyet - Otomobil',
-    'otomobil_sabah': 'Sabah - Otomobil',
-    'otomobil_milliyet': 'Milliyet - Otomobil',
+    'otomobil': 'NTV - Otomobil',
     'otomobil_ntv': 'NTV - Otomobil',
     'otomobil_ensonhaber': 'Ensonhaber - Otomobil',
-    'otomobil_otokoc': 'Oto Koç - Otomobil',
+    'otomobil_haberturk': 'Habertürk - Otomobil',
+    'otomobil_milliyet': 'Milliyet - Otomotiv',
+    'otomobil_arabam': 'Arabam.com',
   };
 
   /// RSS Feed simgeleri - Material Icons
@@ -161,43 +197,60 @@ class ApiEndpoints {
     'genel': 'breaking_news',
     'genel_ntv': 'breaking_news',
     'genel_sabah': 'breaking_news',
+    'genel_cumhuriyet': 'breaking_news',
+    'genel_haberturk': 'breaking_news',
+    'genel_cnnturk': 'breaking_news',
     
     // Türkiye
     'turkiye': 'flag',
     'turkiye_ntv': 'flag',
-    'turkiye_milliyet': 'flag',
+    'turkiye_cumhuriyet': 'flag',
+    'turkiye_haberturk': 'flag',
     
     // Ekonomi
     'ekonomi': 'trending_up',
     'ekonomi_sabah': 'trending_up',
-    'ekonomi_milliyet': 'trending_up',
+    'ekonomi_ntv': 'trending_up',
+    'ekonomi_haberturk': 'trending_up',
+    'ekonomi_bloomberght': 'trending_up',
     
     // Teknoloji
     'teknoloji': 'computer',
-    'teknoloji_webtekno': 'computer',
     'teknoloji_shiftdelete': 'computer',
-    'teknoloji_donanimhaber': 'memory',
     'teknoloji_chip': 'devices',
+    'teknoloji_webtekno': 'computer',
+    'teknoloji_donanimhaber': 'memory',
+    'teknoloji_log': 'computer',
     
     // Spor
     'spor': 'sports_soccer',
     'spor_sabah': 'sports_soccer',
+    'spor_ntv': 'sports_soccer',
     'spor_fanatik': 'sports_soccer',
-    'spor_ntvspor': 'sports_soccer',
+    'spor_sporx': 'sports_soccer',
     
     // Dünya
     'dunya': 'public',
     'dunya_sabah': 'public',
     'dunya_ntv': 'public',
+    'dunya_cumhuriyet': 'public',
+    'dunya_haberturk': 'public',
+    'dunya_euronews': 'public',
     
     // Sağlık
     'saglik': 'health_and_safety',
     'saglik_hurriyet': 'health_and_safety',
     'saglik_milliyet': 'health_and_safety',
+    'saglik_ntv': 'health_and_safety',
+    'saglik_haberturk': 'health_and_safety',
+    'saglik_cumhuriyet': 'health_and_safety',
     
     // Kültür-Sanat
     'kultur': 'palette',
     'kultur_sabah': 'palette',
+    'kultur_milliyet': 'palette',
+    'kultur_ntv': 'palette',
+    'kultur_cumhuriyet': 'palette',
     
     // Magazin
     'magazin': 'celebration',
@@ -206,35 +259,36 @@ class ApiEndpoints {
     'magazin_posta': 'celebration',
     'magazin_mynet': 'celebration',
     'magazin_ensonhaber': 'celebration',
+    'magazin_haberturk': 'celebration',
+    'magazin_hurses': 'celebration',
     
     // Bilim
     'bilim': 'science',
+    'bilim_shiftdelete': 'science',
+    'bilim_webtekno': 'science',
     'bilim_ntv': 'science',
-    'bilim_sabah': 'science',
-    'bilim_milliyet': 'science',
-    'bilim_cumhuriyet': 'science',
     
     // Eğitim
     'egitim': 'school',
     'egitim_sabah': 'school',
-    'egitim_milliyet': 'school',
     'egitim_ntv': 'school',
+    'egitim_milliyet': 'school',
+    'egitim_haberturk': 'school',
     'egitim_cumhuriyet': 'school',
-    'egitim_ensonhaber': 'school',
     
     // Otomobil
     'otomobil': 'directions_car',
-    'otomobil_sabah': 'directions_car',
-    'otomobil_milliyet': 'directions_car',
     'otomobil_ntv': 'directions_car',
     'otomobil_ensonhaber': 'directions_car',
-    'otomobil_otokoc': 'directions_car',
+    'otomobil_haberturk': 'directions_car',
+    'otomobil_milliyet': 'directions_car',
+    'otomobil_arabam': 'directions_car',
   };
 
-  /// Network timeout değerleri - gerçek cihaz için artırıldı
-  static const int connectTimeoutMs = 5000; // 5 saniye (optimize edildi)
-  static const int receiveTimeoutMs = 8000; // 8 saniye (optimize edildi)
-  static const int sendTimeoutMs = 5000; // 5 saniye (optimize edildi)
+  /// Network timeout değerleri - yavaş sunucular için artırıldı
+  static const int connectTimeoutMs = 15000; // 15 saniye (yavaş sunucular için)
+  static const int receiveTimeoutMs = 20000; // 20 saniye (büyük feed'ler için)
+  static const int sendTimeoutMs = 10000; // 10 saniye
 
   /// Cache süreleri
   static const Duration cacheValidityDuration = Duration(minutes: 30);

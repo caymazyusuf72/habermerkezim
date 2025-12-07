@@ -252,14 +252,24 @@ class NewsListState extends ConsumerState<NewsList>
       return _buildEmptyState(context, isConnected);
     }
     
-    // Haber listesi - Lazy loading optimizasyonları
+    // Haber listesi - Gelişmiş lazy loading optimizasyonları
     return ListView.builder(
       controller: _scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
-      // Lazy loading optimizasyonları
+      // Lazy loading optimizasyonları - PERFORMANS İYİLEŞTİRMELERİ
       addAutomaticKeepAlives: false, // Görünmeyen widget'ları dispose et
       addRepaintBoundaries: true, // Repaint boundary ekle (performans)
-      cacheExtent: 500, // Cache extent (pixel) - görünmeyen alan için
+      addSemanticIndexes: false, // Semantic index'leri kapat (daha hızlı)
+      cacheExtent: 1000, // Cache extent artırıldı (500→1000) - daha smooth scroll
+      // Item extent hint - her item'ın yaklaşık boyutu (scroll performansı için)
+      itemExtentBuilder: (index, dimensions) {
+        // Loading item farklı boyutta
+        if (index == articles.length && newsState.isLoadingMore) {
+          return 80.0; // Loading indicator boyutu
+        }
+        // Normal article card boyutu (ortalama)
+        return 180.0; // Article card ortalama yüksekliği
+      },
       padding: const EdgeInsets.only(
         top: 8,
         bottom: 80, // FAB için alan bırak
@@ -270,14 +280,17 @@ class NewsListState extends ConsumerState<NewsList>
         if (index == articles.length) {
           return const Padding(
             padding: EdgeInsets.all(16.0),
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
           );
         }
         
         final article = articles[index];
         
-        // Repaint boundary ile widget'ı izole et (performans optimizasyonu)
+        // Repaint boundary ve key ile widget'ı optimize et
         return RepaintBoundary(
+          key: ValueKey(article.id), // Unique key - rebuild optimizasyonu
           child: ArticleCard(
             article: article,
             onTap: () => _onArticleTap(article),
