@@ -22,16 +22,12 @@ class ApiEndpoints {
     
     // Teknoloji
     'teknoloji': 'https://www.hurriyet.com.tr/rss/teknoloji',
-    'teknoloji_webtekno': 'https://www.webtekno.com/rss',
     'teknoloji_shiftdelete': 'https://shiftdelete.net/rss',
-    'teknoloji_donanimhaber': 'https://www.donanimhaber.com/rss',
     'teknoloji_chip': 'https://www.chip.com.tr/rss',
     
     // Spor
     'spor': 'https://www.hurriyet.com.tr/rss/spor',
     'spor_sabah': 'https://www.sabah.com.tr/rss/spor.xml',
-    'spor_fanatik': 'https://www.fanatik.com.tr/rss/manset',
-    'spor_ntvspor': 'https://www.ntvspor.net/rss',
     
     // Dünya
     'dunya': 'https://www.hurriyet.com.tr/rss/dunya',
@@ -56,27 +52,17 @@ class ApiEndpoints {
     'magazin_ensonhaber': 'https://www.ensonhaber.com/rss/magazin.xml',
     
     // Bilim
-    'bilim': 'https://www.hurriyet.com.tr/rss/bilim',
     'bilim_ntv': 'https://www.ntv.com.tr/bilim.rss',
     'bilim_sabah': 'https://www.sabah.com.tr/rss/bilim.xml',
-    'bilim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/bilimRSS.xml',
-    'bilim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/bilim.xml',
     
     // Eğitim
     'egitim': 'https://www.hurriyet.com.tr/rss/egitim',
     'egitim_sabah': 'https://www.sabah.com.tr/rss/egitim.xml',
-    'egitim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/egitimRSS.xml',
     'egitim_ntv': 'https://www.ntv.com.tr/egitim.rss',
-    'egitim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/egitim.xml',
-    'egitim_ensonhaber': 'https://www.ensonhaber.com/rss/egitim.xml',
     
     // Otomobil
-    'otomobil': 'https://www.hurriyet.com.tr/rss/otomobil',
-    'otomobil_sabah': 'https://www.sabah.com.tr/rss/otomobil.xml',
-    'otomobil_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/otomobilRSS.xml',
     'otomobil_ntv': 'https://www.ntv.com.tr/otomobil.rss',
     'otomobil_ensonhaber': 'https://www.ensonhaber.com/rss/otomobil.xml',
-    'otomobil_otokoc': 'https://www.otokoc.com.tr/rss',
   };
 
   /// RSS Feed isimler - UI'da gösterilecek
@@ -98,16 +84,12 @@ class ApiEndpoints {
     
     // Teknoloji
     'teknoloji': 'Hürriyet - Teknoloji',
-    'teknoloji_webtekno': 'Webtekno',
     'teknoloji_shiftdelete': 'ShiftDelete.Net',
-    'teknoloji_donanimhaber': 'Donanım Haber',
     'teknoloji_chip': 'CHIP Online',
     
     // Spor
     'spor': 'Hürriyet - Spor',
     'spor_sabah': 'Sabah - Spor',
-    'spor_fanatik': 'Fanatik',
-    'spor_ntvspor': 'NTV Spor',
     
     // Dünya
     'dunya': 'Hürriyet - Dünya',
@@ -132,27 +114,17 @@ class ApiEndpoints {
     'magazin_ensonhaber': 'Ensonhaber - Magazin',
     
     // Bilim
-    'bilim': 'Hürriyet - Bilim',
     'bilim_ntv': 'NTV - Bilim',
     'bilim_sabah': 'Sabah - Bilim',
-    'bilim_milliyet': 'Milliyet - Bilim',
-    'bilim_cumhuriyet': 'Cumhuriyet - Bilim',
     
     // Eğitim
     'egitim': 'Hürriyet - Eğitim',
     'egitim_sabah': 'Sabah - Eğitim',
-    'egitim_milliyet': 'Milliyet - Eğitim',
     'egitim_ntv': 'NTV - Eğitim',
-    'egitim_cumhuriyet': 'Cumhuriyet - Eğitim',
-    'egitim_ensonhaber': 'Ensonhaber - Eğitim',
     
     // Otomobil
-    'otomobil': 'Hürriyet - Otomobil',
-    'otomobil_sabah': 'Sabah - Otomobil',
-    'otomobil_milliyet': 'Milliyet - Otomobil',
     'otomobil_ntv': 'NTV - Otomobil',
     'otomobil_ensonhaber': 'Ensonhaber - Otomobil',
-    'otomobil_otokoc': 'Oto Koç - Otomobil',
   };
 
   /// RSS Feed simgeleri - Material Icons
@@ -174,16 +146,12 @@ class ApiEndpoints {
     
     // Teknoloji
     'teknoloji': 'computer',
-    'teknoloji_webtekno': 'computer',
     'teknoloji_shiftdelete': 'computer',
-    'teknoloji_donanimhaber': 'memory',
     'teknoloji_chip': 'devices',
     
     // Spor
     'spor': 'sports_soccer',
     'spor_sabah': 'sports_soccer',
-    'spor_fanatik': 'sports_soccer',
-    'spor_ntvspor': 'sports_soccer',
     
     // Dünya
     'dunya': 'public',
@@ -208,33 +176,23 @@ class ApiEndpoints {
     'magazin_ensonhaber': 'celebration',
     
     // Bilim
-    'bilim': 'science',
     'bilim_ntv': 'science',
     'bilim_sabah': 'science',
-    'bilim_milliyet': 'science',
-    'bilim_cumhuriyet': 'science',
     
     // Eğitim
     'egitim': 'school',
     'egitim_sabah': 'school',
-    'egitim_milliyet': 'school',
     'egitim_ntv': 'school',
-    'egitim_cumhuriyet': 'school',
-    'egitim_ensonhaber': 'school',
     
     // Otomobil
-    'otomobil': 'directions_car',
-    'otomobil_sabah': 'directions_car',
-    'otomobil_milliyet': 'directions_car',
     'otomobil_ntv': 'directions_car',
     'otomobil_ensonhaber': 'directions_car',
-    'otomobil_otokoc': 'directions_car',
   };
 
-  /// Network timeout değerleri - gerçek cihaz için artırıldı
-  static const int connectTimeoutMs = 5000; // 5 saniye (optimize edildi)
-  static const int receiveTimeoutMs = 8000; // 8 saniye (optimize edildi)
-  static const int sendTimeoutMs = 5000; // 5 saniye (optimize edildi)
+  /// Network timeout değerleri - yavaş sunucular için artırıldı
+  static const int connectTimeoutMs = 15000; // 15 saniye (yavaş sunucular için)
+  static const int receiveTimeoutMs = 20000; // 20 saniye (büyük feed'ler için)
+  static const int sendTimeoutMs = 10000; // 10 saniye
 
   /// Cache süreleri
   static const Duration cacheValidityDuration = Duration(minutes: 30);
