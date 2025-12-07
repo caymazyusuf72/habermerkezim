@@ -12,6 +12,14 @@ class ApiEndpoints {
     'genel_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/son_dakika.xml',
     'genel_haberturk': 'https://www.haberturk.com/rss',
     'genel_cnnturk': 'https://www.cnnturk.com/feed/rss/all/news',
+    'genel_trthaber': 'https://www.trthaber.com/xml_mobile.rss',
+    'genel_ahaber': 'https://www.ahaber.com.tr/rss/anasayfa.xml',
+    'genel_anadoluajansi': 'https://www.aa.com.tr/tr/rss/default?cat=guncel',
+    'genel_showhaber': 'https://www.showhaber.com/rss/anasayfa.xml',
+    'genel_star': 'https://www.star.com.tr/rss/rss.xml',
+    'genel_yenisafak': 'https://www.yenisafak.com/rss',
+    'genel_iha': 'https://www.iha.com.tr/rss',
+    'genel_dha': 'https://www.dha.com.tr/rss.xml',
     
     // Türkiye
     'turkiye': 'https://www.sabah.com.tr/rss/gundem.xml',
@@ -37,9 +45,10 @@ class ApiEndpoints {
     // Spor
     'spor': 'https://www.hurriyet.com.tr/rss/spor',
     'spor_sabah': 'https://www.sabah.com.tr/rss/spor.xml',
-    'spor_ntv': 'https://www.ntv.com.tr/spor.rss',
     'spor_fanatik': 'https://www.fanatik.com.tr/rss',
     'spor_sporx': 'https://www.sporx.com/rss',
+    'spor_aspor': 'https://www.aspor.com.tr/rss',
+    'spor_fotomac': 'https://www.fotomac.com.tr/rss/anasayfa.xml',
     
     // Dünya
     'dunya': 'https://www.hurriyet.com.tr/rss/dunya',
@@ -94,7 +103,8 @@ class ApiEndpoints {
     'otomobil_ensonhaber': 'https://www.ensonhaber.com/rss/otomobil.xml',
     'otomobil_haberturk': 'https://www.haberturk.com/rss/kategori/otomobil.xml',
     'otomobil_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/otomotivRSS.xml',
-    'otomobil_arabam': 'https://www.arabam.com/rss',
+    'otomobil_gazetevatan': 'https://www.gazetevatan.com/rss/otomobil.xml',
+    'otomobil_otomobilturkiye': 'https://www.otomobilturkiye.com/rss.xml',
   };
 
   /// RSS Feed isimler - UI'da gösterilecek
@@ -106,6 +116,14 @@ class ApiEndpoints {
     'genel_cumhuriyet': 'Cumhuriyet - Son Dakika',
     'genel_haberturk': 'Habertürk - Son Dakika',
     'genel_cnnturk': 'CNN Türk - Tüm Haberler',
+    'genel_trthaber': 'TRT Haber - Son Dakika',
+    'genel_ahaber': 'A Haber - Son Dakika',
+    'genel_anadoluajansi': 'Anadolu Ajansı - Güncel',
+    'genel_showhaber': 'Show Haber - Son Dakika',
+    'genel_star': 'Star Gazetesi - Son Dakika',
+    'genel_yenisafak': 'Yeni Şafak - Son Dakika',
+    'genel_iha': 'İHA - İhlas Haber Ajansı',
+    'genel_dha': 'DHA - Demirören Haber Ajansı',
     
     // Türkiye
     'turkiye': 'Sabah - Türkiye',
@@ -131,9 +149,10 @@ class ApiEndpoints {
     // Spor
     'spor': 'Hürriyet - Spor',
     'spor_sabah': 'Sabah - Spor',
-    'spor_ntv': 'NTV - Spor',
     'spor_fanatik': 'Fanatik',
     'spor_sporx': 'Sporx',
+    'spor_aspor': 'A Spor',
+    'spor_fotomac': 'Fotomaç',
     
     // Dünya
     'dunya': 'Hürriyet - Dünya',
@@ -188,7 +207,8 @@ class ApiEndpoints {
     'otomobil_ensonhaber': 'Ensonhaber - Otomobil',
     'otomobil_haberturk': 'Habertürk - Otomobil',
     'otomobil_milliyet': 'Milliyet - Otomotiv',
-    'otomobil_arabam': 'Arabam.com',
+    'otomobil_gazetevatan': 'Gazete Vatan - Otomobil',
+    'otomobil_otomobilturkiye': 'Otomobil Türkiye',
   };
 
   /// RSS Feed simgeleri - Material Icons
@@ -200,6 +220,14 @@ class ApiEndpoints {
     'genel_cumhuriyet': 'breaking_news',
     'genel_haberturk': 'breaking_news',
     'genel_cnnturk': 'breaking_news',
+    'genel_trthaber': 'breaking_news',
+    'genel_ahaber': 'breaking_news',
+    'genel_anadoluajansi': 'newspaper',
+    'genel_showhaber': 'breaking_news',
+    'genel_star': 'breaking_news',
+    'genel_yenisafak': 'breaking_news',
+    'genel_iha': 'article',
+    'genel_dha': 'article',
     
     // Türkiye
     'turkiye': 'flag',
