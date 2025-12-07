@@ -31,6 +31,29 @@
 -keep class io.flutter.embedding.engine.dart.DartExecutor { *; }
 -keep class io.flutter.plugin.common.** { *; }
 
+# Flutter rendering ve text sınıfları - Text widget'larının görünmesi için
+-keep class io.flutter.embedding.android.FlutterView { *; }
+-keep class io.flutter.embedding.android.FlutterSurfaceView { *; }
+-keep class io.flutter.embedding.android.FlutterTextureView { *; }
+-keep class io.flutter.embedding.engine.renderer.** { *; }
+-keep class io.flutter.embedding.engine.systemchannels.** { *; }
+
+# Flutter text ve typography
+-keep class io.flutter.plugin.editing.** { *; }
+-keep class io.flutter.plugin.platform.** { *; }
+
+# Android text rendering sınıfları
+-keep class android.text.** { *; }
+-keep class android.widget.TextView { *; }
+-keep class android.graphics.** { *; }
+-keep class android.graphics.Paint { *; }
+-keep class android.graphics.Typeface { *; }
+
+# Material Design ve AppCompat text sınıfları
+-keep class com.google.android.material.** { *; }
+-keep class androidx.appcompat.widget.** { *; }
+-keep class androidx.core.widget.** { *; }
+
 # Preserve all native methods (Flutter FFI calls)
 -keepclasseswithmembernames class * {
     native <methods>;
