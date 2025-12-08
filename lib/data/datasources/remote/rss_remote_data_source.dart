@@ -93,7 +93,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
               
               final xmlString = response.data as String;
               print('📝 Parsing XML [$feedKey]...');
-              final articles = await _parseRssXml(xmlString, category);
+              final articles = await _parseRssXml(xmlString, category, feedKey);
               print('✅ $feedKey: ${articles.length} makale');
               return articles;
             },
@@ -253,7 +253,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
           }
           
           final xmlString = response.data as String;
-          final articles = await _parseRssXml(xmlString, category);
+          final articles = await _parseRssXml(xmlString, category, category);
           
           return articles;
         },
@@ -271,10 +271,10 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   }
 
   /// RSS XML'ini parse eder ve ArticleModel listesi döner
-  Future<List<ArticleModel>> _parseRssXml(String xmlString, String category) async {
+  Future<List<ArticleModel>> _parseRssXml(String xmlString, String category, String feedKey) async {
     try {
       final document = XmlDocument.parse(xmlString);
-      final sourceName = ApiEndpoints.feedNames[category] ?? category;
+      final sourceName = ApiEndpoints.feedNames[feedKey] ?? ApiEndpoints.feedNames[category] ?? feedKey;
       
       // RSS 2.0 format kontrolü
       if (document.findAllElements('rss').isNotEmpty) {
@@ -286,7 +286,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         return _parseAtomFormat(document, category, sourceName);
       }
       
-      throw InvalidRssFeedException(ApiEndpoints.rssFeedUrls[category] ?? '');
+      throw InvalidRssFeedException(ApiEndpoints.rssFeedUrls[feedKey] ?? '');
       
     } catch (e) {
       if (e is RssParseException) rethrow;

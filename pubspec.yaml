@@ -42,8 +42,9 @@ dependencies:
   dio: ^5.4.0
   connectivity_plus: ^7.0.0
   
-  # XML Parsing
+  # XML & HTML Parsing
   xml: ^6.4.2
+  html: ^0.15.5
   
   # Local Database
   hive: ^2.2.3

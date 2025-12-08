@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../domain/entities/article.dart';
+import '../../../core/services/article_content_service.dart';
 import '../../providers/providers.dart';
 import '../../providers/analytics_provider.dart';
 import '../../providers/reading_list_provider.dart';
@@ -32,6 +33,12 @@ class ArticleDetailPage extends ConsumerStatefulWidget {
 class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isImageExpanded = false;
+  
+  // Tam içerik yükleme state'leri
+  ArticleContent? _fullContent;
+  bool _isLoadingFullContent = false;
+  bool _showFullContent = false;
+  String? _fullContentError;
 
   @override
   void initState() {
@@ -54,6 +61,46 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  // Tam içeriği yükle
+  Future<void> _loadFullContent() async {
+    if (_isLoadingFullContent || _fullContent != null) return;
+
+    setState(() {
+      _isLoadingFullContent = true;
+      _fullContentError = null;
+    });
+
+    try {
+      final contentService = ArticleContentService();
+      final result = await contentService.getFullArticleContent(widget.article.link);
+      
+      if (result != null && result.hasContent) {
+        setState(() {
+          _fullContent = result;
+          _showFullContent = true;
+          _isLoadingFullContent = false;
+        });
+      } else {
+        setState(() {
+          _fullContentError = 'İçerik çıkarılamadı veya bulunamadı';
+          _isLoadingFullContent = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _fullContentError = 'Beklenmeyen hata: $e';
+        _isLoadingFullContent = false;
+      });
+    }
+  }
+
+  // Orijinal içeriği göster
+  void _showOriginalContent() {
+    setState(() {
+      _showFullContent = false;
+    });
   }
 
   @override
@@ -431,16 +478,198 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         
         const SizedBox(height: 20),
         
-        // Ana içerik
-        if (widget.article.content != null && widget.article.content!.isNotEmpty)
-          Text(
-            widget.article.content!,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              height: 1.7,
-              fontSize: 16,
+        // Ana içerik (RSS'den gelen kısa içerik veya tam içerik)
+        if (widget.article.content != null && widget.article.content!.isNotEmpty && !_showFullContent)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.article.content!,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  height: 1.7,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Tam içerik yükleme butonu
+              _buildFullContentButton(context, theme),
+            ],
+          ),
+        
+        // Tam içerik
+        if (_showFullContent && _fullContent != null)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // İçerik türü badge'i
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: theme.colorScheme.primary, width: 1),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.article_outlined,
+                      size: 16,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Tam İçerik',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Tam içerik metni
+              Text(
+                _fullContent!.content ?? 'İçerik bulunamadı',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  height: 1.7,
+                  fontSize: 16,
+                ),
+              ),
+              
+              // İçerik kalitesi ve kaynak bilgisi
+              if (_fullContent!.hasContent)
+                Container(
+                  margin: const EdgeInsets.only(top: 16),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 16,
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Web scraping ile çıkarıldı • ${_fullContent!.wordCount ?? 0} kelime • ${_fullContent!.readingTimeMinutes ?? 1} dk okuma',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              
+              const SizedBox(height: 20),
+              // Orijinal içeriği göster butonu
+              _buildOriginalContentButton(context, theme),
+            ],
+          ),
+        
+        // Tam içerik yükleme hatası
+        if (_fullContentError != null)
+          Container(
+            margin: const EdgeInsets.only(top: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.red.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.red.withOpacity(0.3)),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Tam içerik yüklenemedi',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _fullContentError!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.red.withOpacity(0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
       ],
+    );
+  }
+
+  /// Tam içerik yükleme butonu
+  Widget _buildFullContentButton(BuildContext context, ThemeData theme) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: _isLoadingFullContent ? null : _loadFullContent,
+        icon: _isLoadingFullContent
+            ? SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    theme.colorScheme.onPrimary,
+                  ),
+                ),
+              )
+            : const Icon(Icons.download_rounded),
+        label: Text(_isLoadingFullContent ? 'Yükleniyor...' : 'Tam İçeriği Yükle'),
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Orijinal içeriği göster butonu
+  Widget _buildOriginalContentButton(BuildContext context, ThemeData theme) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: _showOriginalContent,
+        icon: const Icon(Icons.undo_rounded),
+        label: const Text('Orijinal İçeriği Göster'),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          side: BorderSide(
+            color: theme.colorScheme.outline,
+            width: 1.5,
+          ),
+        ),
+      ),
     );
   }
 

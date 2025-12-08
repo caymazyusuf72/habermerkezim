@@ -33,12 +33,13 @@ class ArticleContentService {
     if (url.isEmpty) return null;
 
     try {
-      // Cache'den kontrol et
-      final cachedContent = await _getCachedContent(url);
-      if (cachedContent != null) {
-        print('📋 Cache\'den içerik alındı: ${url.substring(0, 50)}...');
-        return cachedContent;
-      }
+      // Cache'den kontrol et - ancak yeni temizleme sistemi için cache'yi bypass et
+      // Geçici olarak cache'i devre dışı bırak
+      // final cachedContent = await _getCachedContent(url);
+      // if (cachedContent != null) {
+      //   print('📋 Cache\'den içerik alındı: ${url.substring(0, 50)}...');
+      //   return cachedContent;
+      // }
 
       print('🌐 Web scraping başlatılıyor: ${url.substring(0, 50)}...');
 
@@ -82,6 +83,9 @@ class ArticleContentService {
   /// HTML'den makale içeriğini çıkarır (Readability algoritması)
   ArticleContent _extractArticleContent(String html, String url) {
     final document = parse(html);
+    
+    // HTML'den gereksiz elementleri temizle
+    _cleanHtmlDocument(document);
     
     // Farklı haber sitelerinin yapılarına göre içerik çıkarma
     final extractors = [
@@ -265,12 +269,124 @@ class ArticleContentService {
     );
   }
 
-  /// Metni temizler
+  /// HTML dökümanından gereksiz elementleri temizler
+  void _cleanHtmlDocument(dom.Document document) {
+    // Script tag'lerini kaldır (JavaScript kodları)
+    final scripts = document.querySelectorAll('script');
+    for (final script in scripts) {
+      script.remove();
+    }
+    
+    // Style tag'lerini kaldır (CSS kodları)
+    final styles = document.querySelectorAll('style');
+    for (final style in styles) {
+      style.remove();
+    }
+    
+    // Yaygın reklam ve sosyal medya widget'larını kaldır
+    final unwantedSelectors = [
+      '.taboola',
+      '[id*="taboola"]',
+      '[class*="taboola"]',
+      '.outbrain',
+      '[id*="outbrain"]',
+      '[class*="outbrain"]',
+      '.google-ad',
+      '.adsystem',
+      '.advertisement',
+      '.ad-container',
+      '.social-widget',
+      '.social-share',
+      '.newsletter',
+      '.popup',
+      '.modal',
+      '.overlay',
+      '.sidebar',
+      '.comments',
+      '.comment-section',
+      '.related-news',
+      '.breaking-news-ticker',
+      'iframe[src*="google"]',
+      'iframe[src*="facebook"]',
+      'iframe[src*="twitter"]',
+      'iframe[src*="youtube"]',
+      '[id*="disqus"]',
+      '[class*="disqus"]',
+    ];
+    
+    for (final selector in unwantedSelectors) {
+      final elements = document.querySelectorAll(selector);
+      for (final element in elements) {
+        element.remove();
+      }
+    }
+    
+    // Boş veya sadece whitespace içeren elementleri kaldır
+    _removeEmptyElements(document);
+  }
+  
+  /// Boş elementleri temizler
+  void _removeEmptyElements(dom.Document document) {
+    final allElements = document.querySelectorAll('*');
+    for (final element in allElements) {
+      if (element.text.trim().isEmpty &&
+          element.children.isEmpty &&
+          element.attributes.isEmpty) {
+        element.remove();
+      }
+    }
+  }
+
+  /// Metni temizler ve JavaScript kodlarını filtreler
   String _cleanText(String text) {
-    return text
+    // JavaScript keyword'lerini ve kodlarını temizle
+    final jsKeywords = [
+      'window.isTaboolaMobile',
+      'window._taboola',
+      'document.querySelector',
+      'setAttribute',
+      'getElementById',
+      'className',
+      'innerHTML',
+      'addEventListener',
+      'function',
+      'var ',
+      'let ',
+      'const ',
+      'taboola',
+      'outbrain',
+      'google-ad',
+    ];
+    
+    String cleanedText = text;
+    
+    // JavaScript kodlarını çıkar
+    for (final keyword in jsKeywords) {
+      if (cleanedText.toLowerCase().contains(keyword.toLowerCase())) {
+        // Bu satırı tamamen çıkar
+        final lines = cleanedText.split('\n');
+        final filteredLines = lines.where((line) =>
+          !line.toLowerCase().contains(keyword.toLowerCase())).toList();
+        cleanedText = filteredLines.join('\n');
+      }
+    }
+    
+    // JavaScript pattern'lerini temizle
+    cleanedText = cleanedText
+        .replaceAll(RegExp(r'window\.[a-zA-Z_][a-zA-Z0-9_.]*\s*=.*?;', multiLine: true), '') // window object assignments
+        .replaceAll(RegExp(r'document\.[a-zA-Z_][a-zA-Z0-9_.]*\(.*?\)', multiLine: true), '') // document method calls
+        .replaceAll(RegExp(r'[a-zA-Z_][a-zA-Z0-9_.]*\s*=\s*[a-zA-Z_][a-zA-Z0-9_.]*\s*\|\|\s*.*?;', multiLine: true), '') // variable assignments with ||
+        .replaceAll(RegExp(r'{[^{}]*:[^{}]*}', multiLine: true), '') // object literals
+        .replaceAll(RegExp(r'function\s*\([^)]*\)\s*{[^}]*}', multiLine: true), '') // function definitions
+        .replaceAll(RegExp(r'\w+\.\w+\([^)]*\)', multiLine: true), '') // method calls
+        .replaceAll(RegExp(r'[a-zA-Z_]\w*\s*\+\+\s*;', multiLine: true), '') // increment operations
+        .replaceAll(RegExp(r'"[^"]*"', multiLine: true), '') // quoted strings that might be JS
+        .replaceAll(RegExp(r"'[^']*'", multiLine: true), '') // single quoted strings
         .replaceAll(RegExp(r'\s+'), ' ')  // Çoklu boşlukları tek boşluğa çevir
         .replaceAll(RegExp(r'\n\s*\n'), '\n\n')  // Çoklu satır atlamalarını düzenle
         .trim();
+        
+    return cleanedText;
   }
 
   /// Navigasyon metni kontrolü
