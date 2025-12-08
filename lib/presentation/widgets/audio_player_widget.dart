@@ -358,11 +358,48 @@ class FullAudioPlayer extends ConsumerWidget {
                             .toList(),
                         onChanged: (speed) {
                           if (speed != null) {
+                            print('🔊 DEBUG: UI Speed değiştiriliyor: $speed');
                             notifier.setSpeed(speed);
                           }
                         },
                       ),
                     ],
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Volume Control
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Ses: '),
+                            Text('${(audioState.volume * 100).round()}%'),
+                          ],
+                        ),
+                        SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            trackHeight: 4,
+                            thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 8,
+                            ),
+                          ),
+                          child: Slider(
+                            value: audioState.volume.clamp(0.0, 1.0),
+                            min: 0.0,
+                            max: 1.0,
+                            divisions: 20,
+                            onChanged: (volume) {
+                              print('🔊 DEBUG: UI Volume değiştiriliyor: $volume');
+                              notifier.setVolume(volume);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

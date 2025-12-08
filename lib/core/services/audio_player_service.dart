@@ -17,6 +17,7 @@ class AudioPlayerService {
   Stream<Duration?> get positionStream => _audioPlayer.positionStream;
   Stream<Duration?> get durationStream => _audioPlayer.durationStream;
   Stream<double> get speedStream => _audioPlayer.speedStream;
+  Stream<double> get volumeStream => _audioPlayer.volumeStream;
 
   /// Servisi başlat
   Future<void> initialize() async {
@@ -124,18 +125,22 @@ class AudioPlayerService {
   /// Oynatma hızını ayarla
   Future<void> setSpeed(double speed) async {
     try {
+      print('⚡ AudioService: Setting speed to $speed');
       await _audioPlayer.setSpeed(speed);
+      print('⚡ AudioService: Speed set successfully');
     } catch (e) {
-      print('Set speed error: $e');
+      print('⚡ AudioService: Set speed error: $e');
     }
   }
 
   /// Ses seviyesini ayarla (0.0 - 1.0)
   Future<void> setVolume(double volume) async {
     try {
+      print('🎚️ AudioService: Setting volume to $volume');
       await _audioPlayer.setVolume(volume);
+      print('🎚️ AudioService: Volume set successfully');
     } catch (e) {
-      print('Set volume error: $e');
+      print('🎚️ AudioService: Set volume error: $e');
     }
   }
 
