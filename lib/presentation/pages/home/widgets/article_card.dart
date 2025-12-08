@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -438,49 +439,66 @@ class ArticleCard extends ConsumerWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Kategori badge
+              // Kategori badge - glassmorphism efekti
               if (showCategoryBadge)
-                _buildCategoryBadge(context, categoryColor),
+                _buildGlassmorphismCategoryBadge(context, categoryColor),
               
-              // Öneri rozeti
+              // Öneri rozeti - glassmorphism efekti
               if (showRecommendationBadge) ...[
                 if (showCategoryBadge) const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.purple.shade400,
-                        Colors.blue.shade400,
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.purple.withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.auto_awesome_rounded,
-                        size: 12,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Öneri',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 10,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.purple.shade400.withOpacity(0.85),
+                            Colors.blue.shade400.withOpacity(0.85),
+                          ],
                         ),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.purple.withOpacity(0.25),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                    ],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.auto_awesome_rounded,
+                            size: 12,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Öneri',
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 10,
+                              shadows: [
+                                Shadow(
+                                  offset: const Offset(0.5, 0.5),
+                                  blurRadius: 1.0,
+                                  color: Colors.black.withOpacity(0.3),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -556,7 +574,7 @@ class ArticleCard extends ConsumerWidget {
     );
   }
 
-  /// Kategori badge'i - Adaçayı yeşili accent ile
+  /// Kategori badge'i - Normal tasarım (görsel olmayan kartlar için)
   Widget _buildCategoryBadge(BuildContext context, Color categoryColor) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
@@ -572,6 +590,58 @@ class ArticleCard extends ConsumerWidget {
           color: categoryColor,
           fontWeight: FontWeight.w500,
           fontSize: 10,
+        ),
+      ),
+    );
+  }
+
+  /// Glassmorphism kategori badge'i - Görsel üzerindeki badge'ler için
+  Widget _buildGlassmorphismCategoryBadge(BuildContext context, Color categoryColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.black.withOpacity(0.4)
+                : Colors.white.withOpacity(0.25),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark
+                  ? categoryColor.withOpacity(0.6)
+                  : categoryColor.withOpacity(0.4),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Text(
+            article.sourceName,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: isDark
+                  ? categoryColor.withOpacity(0.95)
+                  : categoryColor,
+              fontWeight: FontWeight.w700,
+              fontSize: 10,
+              shadows: isDark
+                  ? null
+                  : [
+                      Shadow(
+                        offset: const Offset(0.5, 0.5),
+                        blurRadius: 1.0,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ],
+            ),
+          ),
         ),
       ),
     );

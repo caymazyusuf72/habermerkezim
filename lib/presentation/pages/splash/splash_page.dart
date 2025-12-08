@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
@@ -32,9 +33,9 @@ class _SplashPageState extends State<SplashPage>
       vsync: this,
     );
 
-    // Rotasyon animasyonu (logo için)
+    // Rotasyon animasyonu (logo için) - Yavaşlatıldı
     _rotationController = AnimationController(
-      duration: const Duration(milliseconds: 3000),
+      duration: const Duration(milliseconds: 5500), // 5.5 saniye
       vsync: this,
     )..repeat();
 
@@ -106,9 +107,11 @@ class _SplashPageState extends State<SplashPage>
                         AppTheme.matBlackSurfaceVariant,
                       ]
                     : [
+                        // SpringRed teması ile pastel kırmızımsı gradyan
+                        AppTheme.springRed.withOpacity(0.1),
+                        AppTheme.springRedLight.withOpacity(0.15),
+                        AppTheme.springRed.withOpacity(0.08),
                         AppTheme.lightBackground,
-                        AppTheme.lightSurface,
-                        AppTheme.lightSurfaceVariant,
                       ],
               ),
             ),
@@ -140,24 +143,33 @@ class _SplashPageState extends State<SplashPage>
                                   height: 140,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
-                                      colors: [
-                                        AppTheme.sageGreen,
-                                        AppTheme.sageGreenLight,
-                                        AppTheme.sageGreenDark,
-                                      ],
+                                      colors: isDark
+                                        ? [
+                                            AppTheme.sageGreen,
+                                            AppTheme.sageGreenLight,
+                                            AppTheme.sageGreenDark,
+                                          ]
+                                        : [
+                                            // SpringRed teması ile logo rengi
+                                            AppTheme.springRed,
+                                            AppTheme.springRedLight,
+                                            AppTheme.springRedDark,
+                                          ],
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
                                     ),
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppTheme.sageGreen.withOpacity(0.4),
+                                        color: isDark
+                                            ? AppTheme.sageGreen.withOpacity(0.4)
+                                            : AppTheme.springRed.withOpacity(0.4),
                                         blurRadius: 30,
                                         spreadRadius: 5,
                                         offset: const Offset(0, 15),
                                       ),
                                       BoxShadow(
-                                        color: isDark 
+                                        color: isDark
                                             ? AppTheme.matBlack.withOpacity(0.5)
                                             : Colors.black.withOpacity(0.1),
                                         blurRadius: 20,
@@ -195,7 +207,7 @@ class _SplashPageState extends State<SplashPage>
                                   'Haber Merkezi',
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                    color: isDark ? Colors.white : AppTheme.sageGreenDark,
+                                    color: isDark ? Colors.white : AppTheme.springRedDark,
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: -0.5,
                                   ),
@@ -212,9 +224,9 @@ class _SplashPageState extends State<SplashPage>
                                       'Güncel haberlerin merkezi',
                                       textAlign: TextAlign.center,
                                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                        color: isDark 
-                                            ? Colors.white.withOpacity(0.8) 
-                                            : AppTheme.sageGreenDark.withOpacity(0.7),
+                                        color: isDark
+                                            ? Colors.white.withOpacity(0.8)
+                                            : AppTheme.springRedDark.withOpacity(0.7),
                                         fontWeight: FontWeight.w400,
                                         letterSpacing: 0.5,
                                       ),
@@ -252,9 +264,9 @@ class _SplashPageState extends State<SplashPage>
                               'Haberler yükleniyor...',
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: isDark 
-                                    ? Colors.white.withOpacity(0.7) 
-                                    : AppTheme.sageGreenDark.withOpacity(0.6),
+                                color: isDark
+                                    ? Colors.white.withOpacity(0.7)
+                                    : AppTheme.springRedDark.withOpacity(0.6),
                                 letterSpacing: 0.5,
                               ),
                             ),
