@@ -238,16 +238,20 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           },
           child: Hero(
             tag: 'article_image_${widget.article.id}',
-            child: CachedNetworkImage(
-              imageUrl: widget.article.imageUrl!,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                color: Theme.of(context).colorScheme.surfaceVariant,
-                child: const Center(child: CircularProgressIndicator()),
-              ),
-              errorWidget: (context, url, error) => Container(
-                color: Theme.of(context).colorScheme.surfaceVariant,
-                child: const Icon(Icons.image_not_supported, size: 48),
+            child: SizedBox(
+              width: double.infinity,
+              height: 300,
+              child: CachedNetworkImage(
+                imageUrl: widget.article.imageUrl!,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  child: const Icon(Icons.image_not_supported, size: 48),
+                ),
               ),
             ),
           ),

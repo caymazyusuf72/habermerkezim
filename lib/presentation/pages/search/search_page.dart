@@ -5,8 +5,11 @@ import 'package:share_plus/share_plus.dart';
 import '../../providers/search_provider.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/analytics_provider.dart';
+import '../../providers/article_filter_provider.dart';
+import '../../themes/app_theme.dart';
 import '../../../domain/entities/article.dart';
 import '../home/widgets/article_card.dart';
+import '../home/widgets/article_filter_dialog.dart';
 import '../article_detail/article_detail_page.dart';
 
 /// Arama sayfası - makalelerde arama yapma
@@ -105,6 +108,44 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ara'),
+        actions: [
+          // Filtre butonu
+          Consumer(
+            builder: (context, ref, child) {
+              final filter = ref.watch(articleFilterProvider);
+              return IconButton(
+                icon: Stack(
+                  children: [
+                    Icon(
+                      Icons.filter_list_rounded,
+                      color: filter.isActive ? AppTheme.sageGreen : null,
+                    ),
+                    if (filter.isActive)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const ArticleFilterDialog(),
+                  );
+                },
+                tooltip: 'Filtrele',
+              );
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Padding(

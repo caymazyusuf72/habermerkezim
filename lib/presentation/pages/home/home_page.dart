@@ -173,42 +173,6 @@ class _HomePageState extends ConsumerState<HomePage>
             tooltip: 'Profil',
           ),
           
-          // Filtre butonu
-          Consumer(
-            builder: (context, ref, child) {
-              final filter = ref.watch(articleFilterProvider);
-              return IconButton(
-                icon: Stack(
-                  children: [
-                    Icon(
-                      Icons.filter_list_rounded,
-                      color: filter.isActive ? AppTheme.sageGreen : null,
-                    ),
-                    if (filter.isActive)
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => const ArticleFilterDialog(),
-                  );
-                },
-                tooltip: 'Filtrele',
-              );
-            },
-          ),
           // Bağlantı durumu göstergesi
           if (!isConnected)
             Container(
