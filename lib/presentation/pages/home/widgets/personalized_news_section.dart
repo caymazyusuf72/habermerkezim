@@ -41,7 +41,7 @@ class PersonalizedNewsSection extends ConsumerWidget {
     }
 
     if (!personalizedState.hasArticles) {
-      return _buildNoArticlesState(context, theme, isDark);
+      return const SizedBox.shrink();
     }
 
     return Container(
@@ -250,32 +250,5 @@ class PersonalizedNewsSection extends ConsumerWidget {
     );
   }
 
-  Widget _buildNoArticlesState(BuildContext context, ThemeData theme, bool isDark) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.article_outlined,
-            size: 48,
-            color: isDark ? Colors.grey[600] : Colors.grey[400],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'İlgi alanlarınıza uygun haber bulunamadı',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
 }
 

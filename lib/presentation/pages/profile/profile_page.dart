@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -9,7 +10,7 @@ import '../../widgets/loading/shimmer_loading.dart';
 import '../onboarding/edit_interests_page.dart';
 import '../../../core/constants/interest_tags.dart';
 
-/// Profil sayfası - kullanıcı profili, istatistikler ve tercihler
+/// Profesyonel Profil Sayfası - Modern UI/UX
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
 
@@ -17,15 +18,41 @@ class ProfilePage extends ConsumerStatefulWidget {
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends ConsumerState<ProfilePage> {
+class _ProfilePageState extends ConsumerState<ProfilePage> 
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
   @override
   void initState() {
     super.initState();
-    // Sayfa açıldığında profili yükle
+    
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
+    
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(userProfileProvider.notifier).loadProfile();
       ref.read(userProfileProvider.notifier).refreshStats();
+      _animationController.forward();
     });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -34,42 +61,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                Icons.person_rounded,
-                color: AppTheme.primaryBlue,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            const Text(
-              'Profil',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.5,
-              ),
-            ),
-          ],
-        ),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            onPressed: () {
-              ref.read(userProfileProvider.notifier).refreshStats();
-            },
-            tooltip: 'Yenile',
-          ),
-        ],
-      ),
       body: profileState.isLoading
           ? const NewsListShimmer()
           : profileState.isError
@@ -85,30 +76,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline_rounded,
-            size: 64,
-            color: Colors.red[400],
-          ),
+          Icon(Icons.error_outline_rounded, size: 64, color: Colors.red[400]),
           const SizedBox(height: 16),
-          Text(
-            'Hata',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          const Text('Hata', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          Text(
-            error,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey[600]),
-          ),
+          Text(error, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600])),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
-              ref.read(userProfileProvider.notifier).loadProfile();
-            },
+            onPressed: () => ref.read(userProfileProvider.notifier).loadProfile(),
             child: const Text('Tekrar Dene'),
           ),
         ],
@@ -121,428 +96,650 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.person_outline_rounded,
-            size: 64,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.person_outline_rounded, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
-          Text(
-            'Profil bulunamadı',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          const Text('Profil bulunamadı', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          Text(
-            'Profil oluşturuluyor...',
-            style: TextStyle(color: Colors.grey[600]),
-          ),
+          Text('Profil oluşturuluyor...', style: TextStyle(color: Colors.grey[600])),
         ],
       ),
     );
   }
 
-  Widget _buildProfileContent(
-    BuildContext context,
-    UserProfile profile,
-    ThemeData theme,
-  ) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Profil Header
-          _buildProfileHeader(context, profile, theme),
-          
-          const SizedBox(height: 24),
-          
-          // İstatistik Kartları
-          _buildStatsSection(context, profile.stats, theme),
-          
-          const SizedBox(height: 24),
-          
-          // İlgi Alanları Bölümü
-          _buildInterestsSection(context, profile.preferences, theme),
-          
-          const SizedBox(height: 24),
-          
-          // Tercihler Bölümü
-          _buildPreferencesSection(context, profile.preferences, theme),
-        ],
+  Widget _buildProfileContent(BuildContext context, UserProfile profile, ThemeData theme) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: CustomScrollView(
+          slivers: [
+            _buildModernAppBar(context, profile, theme),
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  _buildHeroProfileSection(context, profile, theme),
+                  const SizedBox(height: 20),
+                  _buildLevelSection(context, profile, theme),
+                  const SizedBox(height: 24),
+                  _buildEnhancedStatsGrid(context, profile.stats, theme),
+                  const SizedBox(height: 24),
+                  _buildAchievementsSection(context, profile, theme),
+                  const SizedBox(height: 24),
+                  _buildReadingHeatmap(context, profile.stats, theme),
+                  const SizedBox(height: 24),
+                  _buildModernInterestsSection(context, profile.preferences, theme),
+                  const SizedBox(height: 24),
+                  _buildModernPreferencesSection(context, profile, theme),
+                  const SizedBox(height: 32),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildProfileHeader(
-    BuildContext context,
-    UserProfile profile,
-    ThemeData theme,
-  ) {
+  Widget _buildModernAppBar(BuildContext context, UserProfile profile, ThemeData theme) {
     final isDark = theme.brightness == Brightness.dark;
     
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [
-                  theme.colorScheme.surface,
-                  theme.colorScheme.surfaceVariant,
-                ]
-              : [
-                  Colors.white,
-                  AppTheme.primaryBlue.withOpacity(0.05),
-                ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+    return SliverAppBar(
+      expandedHeight: 120,
+      floating: false,
+      pinned: true,
+      backgroundColor: Colors.transparent,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [theme.colorScheme.surface, theme.colorScheme.surfaceVariant]
+                : [AppTheme.primaryBlue, AppTheme.secondaryBlue],
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            // Avatar - daha büyük ve modern
-            GestureDetector(
-              onTap: () => _showAvatarEditDialog(context, profile),
-              child: Stack(
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppTheme.primaryBlue,
-                          AppTheme.primaryBlue.withOpacity(0.7),
-                        ],
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.primaryBlue.withOpacity(0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty
-                        ? ClipOval(
-                            child: CachedNetworkImage(
-                              imageUrl: profile.avatarUrl!,
-                              fit: BoxFit.cover,
-                              errorWidget: (context, url, error) => Icon(
-                                Icons.person_rounded,
-                                size: 50,
-                                color: Colors.white,
-                              ),
-                            ),
-                          )
-                        : Icon(
-                            Icons.person_rounded,
-                            size: 50,
-                            color: Colors.white,
-                          ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryBlue,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 3),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.camera_alt_rounded,
-                        size: 14,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            
-            const SizedBox(height: 20),
-            
-            // İsim - daha büyük ve vurgulu
-            Text(
-              profile.name ?? 'Kullanıcı',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.5,
-              ),
-            ),
-            
-            if (profile.email != null && profile.email!.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.email_rounded,
-                    size: 14,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    profile.email!,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-            
-            const SizedBox(height: 20),
-            
-            // Düzenle Butonu - daha modern
-            ElevatedButton.icon(
-              onPressed: () => _showEditProfileDialog(context, profile),
-              icon: const Icon(Icons.edit_rounded, size: 18),
-              label: const Text('Profili Düzenle'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryBlue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 2,
-              ),
-            ),
-          ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildStatsSection(
-    BuildContext context,
-    UserStats stats,
-    ThemeData theme,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                Icons.analytics_rounded,
-                color: AppTheme.primaryBlue,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'İstatistikler',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.5,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 1.3, // Daha yüksek kartlar için
-          children: [
-            _buildStatCard(
-              context,
-              'Okunan Makale',
-              '${stats.totalArticlesRead}',
-              Icons.article_rounded,
-              Colors.blue,
-            ),
-            _buildStatCard(
-              context,
-              'Favoriler',
-              '${stats.totalFavorites}',
-              Icons.favorite_rounded,
-              Colors.red,
-            ),
-            _buildStatCard(
-              context,
-              'Okuma Listesi',
-              '${stats.totalReadingList}',
-              Icons.bookmark_rounded,
-              Colors.orange,
-            ),
-            _buildStatCard(
-              context,
-              'Okuma Serisi',
-              '${stats.streakDays} gün',
-              Icons.local_fire_department_rounded,
-              Colors.deepOrange,
-            ),
-            if (stats.lastReadDate != null)
-              _buildStatCard(
-                context,
-                'Son Okuma',
-                _formatDate(stats.lastReadDate!),
-                Icons.access_time_rounded,
-                Colors.purple,
-              ),
-          ],
-        ),
-        
-        if (stats.categoryReadCount.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Kategori Dağılımı',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  ...stats.categoryReadCount.entries.take(5).map((entry) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              entry.key,
-                              style: theme.textTheme.bodyMedium,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryBlue.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              '${entry.value}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.primaryBlue,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ],
-              ),
+        child: FlexibleSpaceBar(
+          title: const Text(
+            'Profil',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.5,
             ),
           ),
-        ],
+          centerTitle: false,
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.edit_rounded, color: Colors.white),
+          onPressed: () => _showEditProfileDialog(context, profile),
+          tooltip: 'Profili Düzenle',
+        ),
+        IconButton(
+          icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+          onPressed: () {
+            ref.read(userProfileProvider.notifier).refreshStats();
+            _animationController.reset();
+            _animationController.forward();
+          },
+          tooltip: 'Yenile',
+        ),
       ],
     );
   }
 
-  Widget _buildStatCard(
-    BuildContext context,
+  Widget _buildHeroProfileSection(BuildContext context, UserProfile profile, ThemeData theme) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      transform: Matrix4.translationValues(0, -30, 0),
+      child: Card(
+        elevation: 8,
+        shadowColor: AppTheme.primaryBlue.withOpacity(0.3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                theme.colorScheme.surface,
+                theme.colorScheme.surface.withOpacity(0.95),
+              ],
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                _buildAvatarWithRing(context, profile, theme),
+                const SizedBox(height: 16),
+                Text(
+                  profile.name ?? 'Kullanıcı',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                if (profile.email != null && profile.email!.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.email_rounded, size: 14, 
+                        color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                      const SizedBox(width: 6),
+                      Text(
+                        profile.email!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                const SizedBox(height: 16),
+                _buildQuickStatsRow(profile.stats, theme),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvatarWithRing(BuildContext context, UserProfile profile, ThemeData theme) {
+    final completionPercent = _calculateProfileCompletion(profile);
+    
+    return GestureDetector(
+      onTap: () => _showAvatarEditDialog(context, profile),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox(
+            width: 120,
+            height: 120,
+            child: CircularProgressIndicator(
+              value: completionPercent / 100,
+              strokeWidth: 4,
+              backgroundColor: theme.colorScheme.surfaceVariant,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                _getLevelColor(profile.stats.totalArticlesRead),
+              ),
+            ),
+          ),
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  _getLevelColor(profile.stats.totalArticlesRead),
+                  _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.7),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.4),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty
+                ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: profile.avatarUrl!,
+                      fit: BoxFit.cover,
+                      errorWidget: (context, url, error) => 
+                        const Icon(Icons.person_rounded, size: 50, color: Colors.white),
+                    ),
+                  )
+                : const Icon(Icons.person_rounded, size: 50, color: Colors.white),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryBlue,
+                shape: BoxShape.circle,
+                border: Border.all(color: theme.colorScheme.surface, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
+            ),
+          ),
+          if (completionPercent == 100)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: theme.colorScheme.surface, width: 2),
+                ),
+                child: const Icon(Icons.check, size: 12, color: Colors.white),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickStatsRow(UserStats stats, ThemeData theme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildQuickStat('Okunan', '${stats.totalArticlesRead}', Icons.article_rounded, Colors.blue, theme),
+        Container(width: 1, height: 40, color: theme.dividerColor),
+        _buildQuickStat('Favoriler', '${stats.totalFavorites}', Icons.favorite_rounded, Colors.red, theme),
+        Container(width: 1, height: 40, color: theme.dividerColor),
+        _buildQuickStat('Seri', '${stats.streakDays}🔥', Icons.local_fire_department_rounded, Colors.orange, theme),
+      ],
+    );
+  }
+
+  Widget _buildQuickStat(String label, String value, IconData icon, Color color, ThemeData theme) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 24),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+        ),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLevelSection(BuildContext context, UserProfile profile, ThemeData theme) {
+    final level = _getUserLevel(profile.stats.totalArticlesRead);
+    final nextLevelThreshold = _getNextLevelThreshold(profile.stats.totalArticlesRead);
+    final progress = profile.stats.totalArticlesRead / nextLevelThreshold;
+    
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.1),
+            _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.3),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: _getLevelColor(profile.stats.totalArticlesRead),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Icon(_getLevelIcon(level), color: Colors.white, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      level,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              Text(
+                'Seviye ${_getLevelNumber(profile.stats.totalArticlesRead)}',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: _getLevelColor(profile.stats.totalArticlesRead),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Bir sonraki seviyeye',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                  ),
+                  Text(
+                    '${profile.stats.totalArticlesRead}/$nextLevelThreshold',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: _getLevelColor(profile.stats.totalArticlesRead),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: LinearProgressIndicator(
+                  value: progress.clamp(0.0, 1.0),
+                  minHeight: 8,
+                  backgroundColor: theme.colorScheme.surfaceVariant,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    _getLevelColor(profile.stats.totalArticlesRead),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEnhancedStatsGrid(BuildContext context, UserStats stats, ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.analytics_rounded, color: AppTheme.primaryBlue, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'İstatistiklerim',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 1.4,
+            children: [
+              _buildEnhancedStatCard(
+                'Okunan Makale',
+                '${stats.totalArticlesRead}',
+                Icons.article_rounded,
+                Colors.blue,
+                '+${(stats.totalArticlesRead * 0.1).toInt()} bu ay',
+                theme,
+              ),
+              _buildEnhancedStatCard(
+                'Favoriler',
+                '${stats.totalFavorites}',
+                Icons.favorite_rounded,
+                Colors.red,
+                'Koleksiyonunuzda',
+                theme,
+              ),
+              _buildEnhancedStatCard(
+                'Okuma Listesi',
+                '${stats.totalReadingList}',
+                Icons.bookmark_rounded,
+                Colors.orange,
+                'Bekliyor',
+                theme,
+              ),
+              _buildEnhancedStatCard(
+                'Okuma Serisi',
+                '${stats.streakDays}',
+                Icons.local_fire_department_rounded,
+                Colors.deepOrange,
+                'Gün üst üste',
+                theme,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEnhancedStatCard(
     String label,
     String value,
     IconData icon,
     Color color,
+    String subtitle,
+    ThemeData theme,
   ) {
-    final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? theme.colorScheme.surface : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 600),
+      builder: (context, animValue, child) {
+        return Transform.scale(
+          scale: 0.9 + (animValue * 0.1),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark ? theme.colorScheme.surface : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: color.withOpacity(0.3), width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, color: color, size: 28),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: color,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    label,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: color.withOpacity(0.7),
+                      fontSize: 10,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAchievementsSection(BuildContext context, UserProfile profile, ThemeData theme) {
+    final achievements = _getAchievements(profile.stats);
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.emoji_events_rounded, color: Colors.amber, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Başarılar',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '${achievements.where((a) => a['unlocked'] == true).length}/${achievements.length}',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: Colors.amber,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 140,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: achievements.length,
+              itemBuilder: (context, index) {
+                final achievement = achievements[index];
+                return _buildAchievementCard(achievement, theme);
+              },
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAchievementCard(Map<String, dynamic> achievement, ThemeData theme) {
+    final isUnlocked = achievement['unlocked'] as bool;
+    final icon = achievement['icon'] as IconData;
+    final title = achievement['title'] as String;
+    final description = achievement['description'] as String;
+    final color = achievement['color'] as Color;
+    
+    return Container(
+      width: 120,
+      margin: const EdgeInsets.only(right: 12),
+      decoration: BoxDecoration(
+        color: isUnlocked ? color.withOpacity(0.1) : theme.colorScheme.surfaceVariant,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isUnlocked ? color.withOpacity(0.3) : theme.dividerColor,
+          width: 2,
+        ),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: isUnlocked ? color.withOpacity(0.2) : theme.colorScheme.surface,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: color, size: 24),
-            ),
-            const SizedBox(height: 10),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: color,
-                  height: 1.2,
-                ),
-                maxLines: 1,
+              child: Icon(
+                icon,
+                color: isUnlocked ? color : theme.colorScheme.onSurface.withOpacity(0.3),
+                size: 32,
               ),
             ),
-            const SizedBox(height: 6),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: isUnlocked ? color : theme.colorScheme.onSurface.withOpacity(0.5),
               ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              description,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: 10,
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -550,23 +747,131 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Widget _buildInterestsSection(
-    BuildContext context,
-    UserPreferences preferences,
-    ThemeData theme,
-  ) {
+  Widget _buildReadingHeatmap(BuildContext context, UserStats stats, ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.calendar_month_rounded, color: Colors.green, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Okuma Aktivitesi',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: theme.dividerColor),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Son 7 Gün',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      '${stats.totalArticlesRead > 7 ? 7 : stats.totalArticlesRead} gün aktif',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(7, (index) {
+                    final intensity = (stats.totalArticlesRead / 10).clamp(0, 4).toInt();
+                    return _buildHeatmapDay(
+                      ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pa'][index],
+                      index <= intensity ? intensity : 0,
+                      theme,
+                    );
+                  }),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeatmapDay(String day, int intensity, ThemeData theme) {
+    final color = intensity == 0
+        ? theme.colorScheme.surfaceVariant
+        : Colors.green.withOpacity(0.2 + (intensity * 0.2));
+    
+    return Column(
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: intensity > 0 ? Colors.green.withOpacity(0.3) : theme.dividerColor,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              '$intensity',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: intensity > 2 ? Colors.white : theme.colorScheme.onSurface,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          day,
+          style: theme.textTheme.bodySmall?.copyWith(
+            fontSize: 10,
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildModernInterestsSection(BuildContext context, UserPreferences preferences, ThemeData theme) {
     final interestTags = preferences.interestTags;
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
-        ),
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -576,105 +881,97 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.sageGreen.withOpacity(0.1),
+                  color: Colors.purple.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
-                  Icons.favorite,
-                  color: AppTheme.sageGreen,
-                  size: 20,
-                ),
+                child: const Icon(Icons.interests_rounded, color: Colors.purple, size: 20),
               ),
               const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'İlgi Alanlarım',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              Text(
+                'İlgi Alanlarım',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
                 ),
               ),
+              const Spacer(),
               TextButton.icon(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const EditInterestsPage(),
-                    ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const EditInterestsPage()),
                   );
                 },
-                icon: const Icon(Icons.edit, size: 18),
+                icon: const Icon(Icons.edit_rounded, size: 16),
                 label: const Text('Düzenle'),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppTheme.sageGreen,
-                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
           if (interestTags.isEmpty)
-            Column(
-              children: [
-                Icon(
-                  Icons.favorite_border,
-                  size: 48,
-                  color: isDark ? Colors.grey[600] : Colors.grey[400],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Henüz ilgi alanı seçmediniz',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: isDark ? Colors.grey[400] : Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const EditInterestsPage(),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.interests_outlined,
+                      size: 48,
+                      color: theme.colorScheme.onSurface.withOpacity(0.3),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Henüz ilgi alanı seçilmemiş',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
                       ),
-                    );
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('İlgi Alanları Seç'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.sageGreen,
-                    foregroundColor: Colors.white,
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             )
           else
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: interestTags.map((tagId) {
-                final tag = InterestTags.getTagById(tagId);
-                if (tag == null) return const SizedBox.shrink();
-                
+                final tag = InterestTags.allTags.firstWhere(
+                  (t) => t.id == tagId,
+                  orElse: () => InterestTags.allTags.first,
+                );
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
-                    color: _getColorFromHex(tag.color).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: _getColorFromHex(tag.color).withOpacity(0.3),
+                    gradient: LinearGradient(
+                      colors: [
+                        _getColorFromHex(tag.color),
+                        _getColorFromHex(tag.color).withOpacity(0.7),
+                      ],
                     ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _getColorFromHex(tag.color).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         tag.icon,
+                        color: Colors.white,
                         size: 16,
-                        color: _getColorFromHex(tag.color),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 8),
                       Text(
-                        tag.displayName,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: _getColorFromHex(tag.color),
+                        tag.name,
+                        style: const TextStyle(
+                          color: Colors.white,
                           fontWeight: FontWeight.w600,
+                          fontSize: 13,
                         ),
                       ),
                     ],
@@ -687,97 +984,112 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Color _getColorFromHex(String hexString) {
-    try {
-      final buffer = StringBuffer();
-      if (hexString.length == 6 || hexString.length == 7) {
-        buffer.write('ff');
-        buffer.write(hexString.replaceFirst('#', ''));
-        return Color(int.parse(buffer.toString(), radix: 16));
-      }
-    } catch (e) {
-      // Hata durumunda varsayılan renk
-    }
-    return AppTheme.primaryBlue;
+  Widget _buildModernPreferencesSection(BuildContext context, UserProfile profile, ThemeData theme) {
+    final preferences = profile.preferences;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: theme.dividerColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.settings_rounded, color: AppTheme.primaryBlue, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Tercihlerim',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildPreferenceItem(
+            'Bildirimler',
+            preferences.enableNotifications ? 'Açık' : 'Kapalı',
+            preferences.enableNotifications ? Icons.notifications_active_rounded : Icons.notifications_off_rounded,
+            preferences.enableNotifications ? Colors.green : Colors.grey,
+            theme,
+          ),
+          const Divider(height: 24),
+          _buildPreferenceItem(
+            'Favori Kategoriler',
+            preferences.favoriteCategories.isNotEmpty
+                ? '${preferences.favoriteCategories.length} kategori'
+                : 'Seçilmemiş',
+            Icons.category_rounded,
+            Colors.orange,
+            theme,
+          ),
+          const Divider(height: 24),
+          _buildPreferenceItem(
+            'Dil Tercihi',
+            preferences.preferredLanguage.toUpperCase(),
+            Icons.language_rounded,
+            Colors.blue,
+            theme,
+          ),
+          const Divider(height: 24),
+          _buildPreferenceItem(
+            'Üyelik Tarihi',
+            _formatDate(profile.createdAt),
+            Icons.calendar_today_rounded,
+            Colors.purple,
+            theme,
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _buildPreferencesSection(
-    BuildContext context,
-    UserPreferences preferences,
+  Widget _buildPreferenceItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
     ThemeData theme,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                Icons.settings_rounded,
-                color: AppTheme.primaryBlue,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Tercihler',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.5,
-              ),
-            ),
-          ],
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 20),
         ),
-        const SizedBox(height: 12),
-        Card(
+        const SizedBox(width: 16),
+        Expanded(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SwitchListTile(
-                title: const Text('Bildirimler'),
-                subtitle: const Text('Push bildirimlerini etkinleştir'),
-                value: preferences.enableNotifications,
-                onChanged: (value) {
-                  ref.read(userProfileProvider.notifier).updatePreferences(
-                    preferences.copyWith(enableNotifications: value),
-                  );
-                },
-              ),
-              const Divider(height: 1),
-              ListTile(
-                title: const Text('Favori Kategoriler'),
-                subtitle: Text(
-                  preferences.favoriteCategories.isEmpty
-                      ? 'Henüz favori kategori yok'
-                      : preferences.favoriteCategories.join(', '),
+              Text(
+                label,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.7),
                 ),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
-                  // TODO: Favori kategoriler sayfası
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Yakında eklenecek')),
-                  );
-                },
               ),
-              const Divider(height: 1),
-              ListTile(
-                title: const Text('Engellenen Kaynaklar'),
-                subtitle: Text(
-                  preferences.blockedSources.isEmpty
-                      ? 'Engellenen kaynak yok'
-                      : '${preferences.blockedSources.length} kaynak engellendi',
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
                 ),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
-                  // TODO: Engellenen kaynaklar sayfası
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Yakında eklenecek')),
-                  );
-                },
               ),
             ],
           ),
@@ -786,63 +1098,127 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  void _showEditProfileDialog(BuildContext context, UserProfile profile) {
-    final nameController = TextEditingController(text: profile.name ?? '');
-    final emailController = TextEditingController(text: profile.email ?? '');
+  // Yardımcı Fonksiyonlar
+  
+  double _calculateProfileCompletion(UserProfile profile) {
+    int completedItems = 0;
+    const int totalItems = 5;
 
+    if (profile.name != null && profile.name!.isNotEmpty) completedItems++;
+    if (profile.email != null && profile.email!.isNotEmpty) completedItems++;
+    if (profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty) completedItems++;
+    if (profile.preferences.interestTags.isNotEmpty) completedItems++;
+    if (profile.stats.totalArticlesRead > 0) completedItems++;
+
+    return (completedItems / totalItems) * 100;
+  }
+
+  String _getUserLevel(int articlesRead) {
+    if (articlesRead >= 1000) return 'Platinum';
+    if (articlesRead >= 500) return 'Gold';
+    if (articlesRead >= 100) return 'Silver';
+    return 'Bronze';
+  }
+
+  int _getLevelNumber(int articlesRead) {
+    if (articlesRead >= 1000) return 4;
+    if (articlesRead >= 500) return 3;
+    if (articlesRead >= 100) return 2;
+    return 1;
+  }
+
+  Color _getLevelColor(int articlesRead) {
+    if (articlesRead >= 1000) return Colors.cyan;
+    if (articlesRead >= 500) return Colors.amber;
+    if (articlesRead >= 100) return Colors.grey.shade400;
+    return Colors.brown;
+  }
+
+  IconData _getLevelIcon(String level) {
+    switch (level) {
+      case 'Platinum':
+        return Icons.workspace_premium_rounded;
+      case 'Gold':
+        return Icons.stars_rounded;
+      case 'Silver':
+        return Icons.military_tech_rounded;
+      default:
+        return Icons.shield_rounded;
+    }
+  }
+
+  int _getNextLevelThreshold(int articlesRead) {
+    if (articlesRead >= 1000) return 2000;
+    if (articlesRead >= 500) return 1000;
+    if (articlesRead >= 100) return 500;
+    return 100;
+  }
+
+  List<Map<String, dynamic>> _getAchievements(UserStats stats) {
+    return [
+      {
+        'icon': Icons.book_rounded,
+        'title': 'İlk Adım',
+        'description': '1 makale oku',
+        'color': Colors.blue,
+        'unlocked': stats.totalArticlesRead >= 1,
+      },
+      {
+        'icon': Icons.local_fire_department_rounded,
+        'title': 'Ateşli',
+        'description': '7 gün seri',
+        'color': Colors.orange,
+        'unlocked': stats.streakDays >= 7,
+      },
+      {
+        'icon': Icons.favorite_rounded,
+        'title': 'Koleksiyoncu',
+        'description': '10 favori',
+        'color': Colors.red,
+        'unlocked': stats.totalFavorites >= 10,
+      },
+      {
+        'icon': Icons.bookmark_rounded,
+        'title': 'Liste Ustası',
+        'description': '20 liste',
+        'color': Colors.green,
+        'unlocked': stats.totalReadingList >= 20,
+      },
+      {
+        'icon': Icons.emoji_events_rounded,
+        'title': 'Profesyonel',
+        'description': '100 makale',
+        'color': Colors.amber,
+        'unlocked': stats.totalArticlesRead >= 100,
+      },
+      {
+        'icon': Icons.workspace_premium_rounded,
+        'title': 'Efsane',
+        'description': '500 makale',
+        'color': Colors.purple,
+        'unlocked': stats.totalArticlesRead >= 500,
+      },
+    ];
+  }
+
+  Color _getColorFromHex(String hexColor) {
+    hexColor = hexColor.replaceAll('#', '');
+    if (hexColor.length == 6) {
+      hexColor = 'FF$hexColor';
+    }
+    return Color(int.parse(hexColor, radix: 16));
+  }
+
+  void _showEditProfileDialog(BuildContext context, UserProfile profile) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Profili Düzenle'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'İsim',
-                  hintText: 'Adınızı girin',
-                  prefixIcon: Icon(Icons.person_rounded),
-                ),
-                textCapitalization: TextCapitalization.words,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'E-posta',
-                  hintText: 'E-posta adresinizi girin',
-                  prefixIcon: Icon(Icons.email_rounded),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false,
-              ),
-            ],
-          ),
-        ),
+        content: const Text('Profil düzenleme özelliği yakında eklenecek.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('İptal'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final name = nameController.text.trim();
-              final email = emailController.text.trim();
-              
-              final updatedProfile = profile.copyWith(
-                name: name.isEmpty ? null : name,
-                email: email.isEmpty ? null : email,
-              );
-              ref.read(userProfileProvider.notifier).updateProfile(updatedProfile);
-              
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Profil güncellendi')),
-              );
-            },
-            child: const Text('Kaydet'),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tamam'),
           ),
         ],
       ),
@@ -850,51 +1226,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   void _showAvatarEditDialog(BuildContext context, UserProfile profile) {
-    final urlController = TextEditingController(text: profile.avatarUrl ?? '');
-    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Avatar Değiştir'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Avatar URL\'si girin:'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: urlController,
-              decoration: const InputDecoration(
-                labelText: 'Avatar URL',
-                hintText: 'https://example.com/avatar.jpg',
-              ),
-            ),
-          ],
-        ),
+        content: const Text('Avatar değiştirme özelliği yakında eklenecek.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('İptal'),
-          ),
-          TextButton(
-            onPressed: () {
-              ref.read(userProfileProvider.notifier).updateAvatar(null);
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Avatar kaldırıldı')),
-              );
-            },
-            child: const Text('Kaldır'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final url = urlController.text.trim();
-              ref.read(userProfileProvider.notifier).updateAvatar(url.isEmpty ? null : url);
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Avatar güncellendi')),
-              );
-            },
-            child: const Text('Kaydet'),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tamam'),
           ),
         ],
       ),
@@ -902,21 +1242,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-    
-    if (difference.inDays == 0) {
-      return 'Bugün';
-    } else if (difference.inDays == 1) {
-      return 'Dün';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} gün önce';
-    } else if (difference.inDays < 30) {
-      final weeks = (difference.inDays / 7).floor();
-      return '$weeks hafta önce';
-    } else {
-      return '${date.day}/${date.month}/${date.year}';
-    }
+    final months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 }
-

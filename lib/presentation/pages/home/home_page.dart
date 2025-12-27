@@ -134,8 +134,8 @@ class _HomePageState extends ConsumerState<HomePage>
           children: [
             // Logo
             Container(
-              width: 32,
-              height: 32,
+              width: 28,
+              height: 28,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [AppTheme.sageGreen, AppTheme.sageGreenLight],
@@ -144,11 +144,11 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
               child: const Icon(
                 Icons.dynamic_feed_rounded,
-                size: 18,
+                size: 16,
                 color: Colors.white,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Flexible(
               child: Text(
                 'Haber Merkezim',
