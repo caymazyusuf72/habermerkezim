@@ -71,8 +71,8 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       
       final List<ArticleModel> allArticles = [];
       
-      // Kategoriye ait tüm feed'leri PARALEL olarak çek (Future.wait ile)
-      final feedFutures = categoryFeeds.map((feedEntry) async {
+      // Kategoriye ait tüm feed'leri SIRALI olarak çek (performans için)
+      for (final feedEntry in categoryFeeds) {
         try {
           final feedUrl = feedEntry.value;
           final feedKey = feedEntry.key;
@@ -93,27 +93,22 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
               
               final xmlString = response.data as String;
               print('📝 Parsing XML [$feedKey]...');
-              final articles = await _parseRssXml(xmlString, category, feedKey);
-              print('✅ $feedKey: ${articles.length} makale');
-              return articles;
+              final parsedArticles = await _parseRssXml(xmlString, category, feedKey);
+              print('✅ $feedKey: ${parsedArticles.length} makale');
+              return parsedArticles;
             },
             maxAttempts: 3,
             initialDelay: const Duration(seconds: 1),
             maxDelay: const Duration(seconds: 5),
           );
           
-          return articles ?? <ArticleModel>[];
+          if (articles != null && articles.isNotEmpty) {
+            allArticles.addAll(articles);
+          }
         } catch (e) {
           // Bir feed başarısız olursa diğerlerine devam et
           print('⚠️ Feed hatası [${feedEntry.key}]: $e');
-          return <ArticleModel>[];
         }
-      }).toList();
-      
-      // Tüm feed'leri paralel yükle
-      final feedResults = await Future.wait(feedFutures);
-      for (final articles in feedResults) {
-        allArticles.addAll(articles);
       }
       
       if (allArticles.isEmpty) {
@@ -188,23 +183,24 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     // Sadece ana kategorileri al (alt feed'leri değil)
     final mainCategories = _getMainCategories();
     
-    // Tüm kategorileri PARALEL olarak yükle (Future.wait ile)
-    final categoryFutures = mainCategories.map((category) async {
+    print('🔄 Toplam ${mainCategories.length} kategori yüklenecek...');
+    
+    // Tüm kategorileri SIRALI olarak yükle (performans için)
+    int loadedCount = 0;
+    for (final category in mainCategories) {
       try {
+        loadedCount++;
+        print('📂 [$loadedCount/${mainCategories.length}] Kategori yükleniyor: $category');
         final articles = await getArticlesByCategory(category);
-        return articles;
+        allArticles.addAll(articles);
+        print('✅ $category: ${articles.length} makale eklendi (Toplam: ${allArticles.length})');
       } catch (e) {
         // Tek kategori başarısız olursa devam et
-        print('[$category] RSS feed hatası: $e');
-        return <ArticleModel>[];
+        print('⚠️ [$category] RSS feed hatası: $e');
       }
-    }).toList();
-    
-    // Tüm kategorileri paralel yükle
-    final categoryResults = await Future.wait(categoryFutures);
-    for (final articles in categoryResults) {
-      allArticles.addAll(articles);
     }
+    
+    print('🎉 Yükleme tamamlandı: ${allArticles.length} makale');
     
     if (allArticles.isEmpty) {
       throw const RssParseException('Hiç haber alınamadı');

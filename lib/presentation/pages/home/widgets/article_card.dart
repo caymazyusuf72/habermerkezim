@@ -396,14 +396,15 @@ class ArticleCard extends ConsumerWidget {
   Widget _buildImageSection(BuildContext context, WidgetRef ref, Color categoryColor) {
     return Stack(
       children: [
-        // Ana görsel
+        // Ana görsel - Sabit yükseklik ile
         ClipRRect(
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(8),
             topRight: Radius.circular(8),
           ),
-          child: AspectRatio(
-            aspectRatio: 16 / 9,
+          child: SizedBox(
+            width: double.infinity,
+            height: 200,
             child: CachedNetworkImage(
               imageUrl: ArticleCardUtils.optimizeImageUrl(
                 article.imageUrl,
@@ -411,9 +412,9 @@ class ArticleCard extends ConsumerWidget {
               ) ?? article.imageUrl!,
               fit: BoxFit.cover,
               memCacheWidth: MediaQuery.of(context).size.width.toInt(),
-              memCacheHeight: (MediaQuery.of(context).size.width / ArticleCardUtils.imageAspectRatio).toInt(),
+              memCacheHeight: 200,
               maxWidthDiskCache: 800,
-              maxHeightDiskCache: 450,
+              maxHeightDiskCache: 200,
               placeholder: (context, url) => Container(
                 color: Theme.of(context).colorScheme.surfaceVariant,
                 child: const Center(

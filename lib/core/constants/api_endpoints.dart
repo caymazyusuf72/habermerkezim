@@ -313,10 +313,10 @@ class ApiEndpoints {
     'otomobil_arabam': 'directions_car',
   };
 
-  /// Network timeout değerleri - yavaş sunucular için artırıldı
-  static const int connectTimeoutMs = 15000; // 15 saniye (yavaş sunucular için)
-  static const int receiveTimeoutMs = 20000; // 20 saniye (büyük feed'ler için)
-  static const int sendTimeoutMs = 10000; // 10 saniye
+  /// Network timeout değerleri - Android 11 performans optimizasyonu
+  static const int connectTimeoutMs = 8000; // 8 saniye (daha hızlı timeout)
+  static const int receiveTimeoutMs = 12000; // 12 saniye (optimize edilmiş)
+  static const int sendTimeoutMs = 6000; // 6 saniye (hızlandırılmış)
 
   /// Cache süreleri
   static const Duration cacheValidityDuration = Duration(minutes: 30);
