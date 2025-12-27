@@ -243,6 +243,29 @@ class ArticleModel extends HiveObject {
         final url = match.group(1)?.trim();
         if (url != null && _isValidImageUrl(url)) return url;
       }
+      
+      // content içinde data-src kontrol et
+      imgRegex = RegExp(r'<img[^>]+data-src="([^"]+)"', caseSensitive: false);
+      match = imgRegex.firstMatch(content);
+      if (match != null) {
+        final url = match.group(1)?.trim();
+        if (url != null && _isValidImageUrl(url)) return url;
+      }
+    }
+    
+    // 5. Herhangi bir URL içinde görsel uzantısı ara (son çare)
+    final allText = '$description $content';
+    if (allText.isNotEmpty) {
+      // HTTP(S) ile başlayan ve görsel uzantısı içeren URL'leri bul
+      final urlRegex = RegExp(
+        r'https?://[^\s<>"]+?\.(?:jpg|jpeg|png|gif|webp|bmp)(?:\?[^\s<>"]*)?',
+        caseSensitive: false,
+      );
+      final match = urlRegex.firstMatch(allText);
+      if (match != null) {
+        final url = match.group(0)?.trim();
+        if (url != null && _isValidImageUrl(url)) return url;
+      }
     }
     
     return null;
@@ -261,12 +284,15 @@ class ArticleModel extends HiveObject {
       
       // Görsel uzantılarını kontrol et
       final lowerUrl = url.toLowerCase();
-      final imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+      final imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg', '.avif'];
       final hasImageExtension = imageExtensions.any((ext) => lowerUrl.contains(ext));
       
       // URL'de görsel uzantısı yoksa ama domain'de görsel servisi varsa kabul et
       if (!hasImageExtension) {
-        final imageDomains = ['imgur.com', 'i.imgur.com', 'cdn', 'image', 'photo', 'pic', 'media'];
+        final imageDomains = [
+          'imgur.com', 'i.imgur.com', 'cdn', 'image', 'photo', 'pic', 'media',
+          'img', 'static', 'assets', 'upload', 'content', 'cloudinary', 'imgix'
+        ];
         final hasImageDomain = imageDomains.any((domain) => lowerUrl.contains(domain));
         if (!hasImageDomain) {
           return false;

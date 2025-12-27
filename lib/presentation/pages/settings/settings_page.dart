@@ -8,6 +8,7 @@ import '../rss_sources/rss_sources_page.dart';
 import '../analytics/analytics_page.dart';
 import '../notifications/notification_settings_page.dart';
 import '../notifications/notification_preferences_page.dart';
+import '../../../core/services/rss_sources_service.dart';
 
 /// Ayarlar sayfası - uygulama ayarları
 class SettingsPage extends ConsumerWidget {
@@ -523,6 +524,26 @@ class SettingsPage extends ConsumerWidget {
                 // Bu otomatik açılmayacak, kullanıcı manuel olarak + butonuna basacak
               });
             },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.refresh_rounded,
+                color: Colors.orange,
+                size: 20,
+              ),
+            ),
+            title: const Text('Kaynakları Sıfırla'),
+            subtitle: const Text('Varsayılan kaynaklara dön'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => _showResetSourcesDialog(context, ref),
           ),
         ],
       ),
@@ -1126,5 +1147,54 @@ class SettingsPage extends ConsumerWidget {
         behavior: SnackBarBehavior.floating,
       ),
     );
+  }
+
+  /// RSS kaynaklarını sıfırla dialog
+  void _showResetSourcesDialog(BuildContext context, WidgetRef ref) async {
+    final result = await ModernDialogs.showDangerDialog(
+      context: context,
+      title: 'Kaynakları Sıfırla',
+      content: 'Tüm özel RSS kaynakları silinecek ve varsayılan kaynaklar yüklenecek. Bu işlem geri alınamaz. Devam etmek istiyor musunuz?',
+      icon: Icons.refresh_rounded,
+      confirmText: 'Sıfırla',
+      cancelText: 'İptal',
+    );
+    
+    if (result == true && context.mounted) {
+      try {
+        // RSS kaynaklarını varsayılana sıfırla
+        await RssSourcesService.resetToDefaults();
+        
+        // Haberleri yeniden yükle
+        ref.read(newsProvider.notifier).refreshArticles();
+        
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+                  SizedBox(width: 8),
+                  Text('RSS kaynakları varsayılana sıfırlandı'),
+                ],
+              ),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ModernDialogs.showErrorDialog(
+            context: context,
+            title: 'Hata Oluştu',
+            content: 'RSS kaynakları sıfırlanırken hata oluştu: ${e.toString()}',
+          );
+        }
+      }
+    }
   }
 }
