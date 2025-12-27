@@ -155,24 +155,36 @@ class ArticleContentService {
     }
 
     // Başlık çıkarma
-    final title = document.querySelector('h1')?.text?.trim() ??
-                  document.querySelector('.article-title')?.text?.trim() ??
-                  document.querySelector('title')?.text?.trim();
+    final h1Element = document.querySelector('h1');
+    final articleTitleElement = document.querySelector('.article-title');
+    final titleElement = document.querySelector('title');
+    final title = h1Element?.text.trim() ??
+                  articleTitleElement?.text.trim() ??
+                  titleElement?.text.trim();
 
     // Görsel çıkarma
-    final imageUrl = document.querySelector('meta[property="og:image"]')?.attributes['content'] ??
-                     document.querySelector('.article-image img')?.attributes['src'] ??
-                     document.querySelector('article img')?.attributes['src'];
+    final ogImage = document.querySelector('meta[property="og:image"]');
+    final articleImage = document.querySelector('.article-image img');
+    final articleImg = document.querySelector('article img');
+    final imageUrl = ogImage?.attributes['content'] ??
+                     articleImage?.attributes['src'] ??
+                     articleImg?.attributes['src'];
 
     // Yazar çıkarma
-    final author = document.querySelector('.author')?.text?.trim() ??
-                   document.querySelector('.byline')?.text?.trim() ??
-                   document.querySelector('[rel="author"]')?.text?.trim();
+    final authorElement = document.querySelector('.author');
+    final bylineElement = document.querySelector('.byline');
+    final relAuthorElement = document.querySelector('[rel="author"]');
+    final author = authorElement?.text.trim() ??
+                   bylineElement?.text.trim() ??
+                   relAuthorElement?.text.trim();
 
     // Tarih çıkarma
-    final publishDate = document.querySelector('time')?.attributes['datetime'] ??
-                        document.querySelector('.date')?.text?.trim() ??
-                        document.querySelector('.publish-date')?.text?.trim();
+    final timeElement = document.querySelector('time');
+    final dateElement = document.querySelector('.date');
+    final publishDateElement = document.querySelector('.publish-date');
+    final publishDate = timeElement?.attributes['datetime'] ??
+                        dateElement?.text.trim() ??
+                        publishDateElement?.text.trim();
 
     return ArticleContent(
       url: url,
@@ -415,7 +427,8 @@ class ArticleContentService {
     return (wordCount / 200).ceil();
   }
 
-  /// İçeriği cache'den alır
+  /// İçeriği cache'den alır (şu an kullanılmıyor)
+  // ignore: unused_element
   Future<ArticleContent?> _getCachedContent(String url) async {
     try {
       final box = HiveService.settingsBox;

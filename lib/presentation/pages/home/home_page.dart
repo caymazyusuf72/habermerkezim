@@ -245,8 +245,8 @@ class _HomePageState extends ConsumerState<HomePage>
           // Bildirim banner'ı
           const NotificationBanner(),
           
-          // İlgilendiğiniz Haberler bölümü
-          const PersonalizedNewsSection(),
+          // İlgilendiğiniz Haberler bölümü - Devre dışı
+          // const PersonalizedNewsSection(),
           
           // Hata mesajı (varsa)
           if (newsState.hasError && !newsState.isLoading)

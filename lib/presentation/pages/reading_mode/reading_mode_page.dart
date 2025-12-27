@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/article.dart';
-import '../../themes/app_theme.dart';
 
 /// Okuma modu sayfası - Distraction-free okuma, özelleştirilebilir font/stil, gece modu
 class ReadingModePage extends ConsumerStatefulWidget {

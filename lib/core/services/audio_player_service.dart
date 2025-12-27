@@ -29,6 +29,7 @@ class AudioPlayerService {
         AudioSource.uri(Uri.parse(''), tag: null),
       ).catchError((_) {
         // İlk başlatma için boş source
+        return null;
       });
       
       _isInitialized = true;

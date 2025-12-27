@@ -106,13 +106,7 @@ class AnalyticsService {
       final analytics = <ReadingAnalytics>[];
       
       for (final map in _box!.values) {
-        if (map is Map<String, dynamic>) {
-          final analytic = ReadingAnalytics.fromMap(map);
-          if (analytic.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
-              analytic.date.isBefore(endDate.add(const Duration(days: 1)))) {
-            analytics.add(analytic);
-          }
-        } else if (map is Map) {
+        if (map is Map) {
           final convertedMap = Map<String, dynamic>.from(map);
           final analytic = ReadingAnalytics.fromMap(convertedMap);
           if (analytic.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
@@ -137,9 +131,7 @@ class AnalyticsService {
       final analytics = <ReadingAnalytics>[];
       
       for (final map in _box!.values) {
-        if (map is Map<String, dynamic>) {
-          analytics.add(ReadingAnalytics.fromMap(map));
-        } else if (map is Map) {
+        if (map is Map) {
           final convertedMap = Map<String, dynamic>.from(map);
           analytics.add(ReadingAnalytics.fromMap(convertedMap));
         }

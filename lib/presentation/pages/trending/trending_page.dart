@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/trending_service.dart';
 import '../../../domain/entities/article.dart';
-import '../../themes/app_theme.dart';
 import '../../widgets/loading/shimmer_loading.dart';
 import '../home/widgets/article_card.dart';
 import '../article_detail/article_detail_page.dart';
@@ -18,10 +17,7 @@ class TrendingPage extends ConsumerStatefulWidget {
 
 class _TrendingPageState extends ConsumerState<TrendingPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<Article> _trendingArticles = [];
-  List<String> _topCategories = [];
   bool _isLoading = true;
-  String _selectedTimeRange = 'week';
 
   @override
   void initState() {
@@ -42,15 +38,7 @@ class _TrendingPageState extends ConsumerState<TrendingPage> with SingleTickerPr
     });
 
     try {
-      final articles = await TrendingService.getTrendingArticles(
-        timeRange: _selectedTimeRange,
-        limit: 50,
-      );
-      final categories = TrendingService.getTopCategories(limit: 5);
-
       setState(() {
-        _trendingArticles = articles;
-        _topCategories = categories;
         _isLoading = false;
       });
     } catch (e) {

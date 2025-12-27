@@ -138,7 +138,7 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
         itemCount: 5,
         itemBuilder: (context, index) => const Padding(
           padding: EdgeInsets.only(bottom: 16),
-          child: ShimmerArticleCard(),
+          child: ArticleCardShimmer(),
         ),
       );
     }
@@ -146,7 +146,6 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
     if (_errorMessage != null) {
       return Center(
         child: CustomErrorWidget(
-          message: 'Öneriler yüklenirken hata oluştu',
           error: _errorMessage!,
           onRetry: _loadRecommendations,
         ),
@@ -178,6 +177,9 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
                     child: ArticleCard(
                       article: article,
                       onTap: () => _navigateToDetail(article),
+                      onFavoriteToggle: () {
+                        // Favori toggle işlemi - provider kullanılacak
+                      },
                       showRecommendationBadge: true,
                     ),
                   );

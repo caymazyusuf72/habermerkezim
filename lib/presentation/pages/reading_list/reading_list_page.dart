@@ -5,7 +5,6 @@ import 'package:share_plus/share_plus.dart';
 import '../../providers/reading_list_provider.dart';
 import '../../themes/app_theme.dart';
 import '../../widgets/dialogs/modern_alert_dialog.dart';
-import '../../../domain/entities/article.dart';
 import '../home/widgets/article_card.dart';
 import '../article_detail/article_detail_page.dart';
 
