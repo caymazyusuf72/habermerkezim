@@ -277,8 +277,8 @@ class ArticleCard extends ConsumerWidget {
                               height: 80,
                             ) ?? article.imageUrl!,
                             fit: BoxFit.cover,
-                            memCacheWidth: 80,
-                            memCacheHeight: 80,
+                            memCacheWidth: 60, // RAM için optimize edildi
+                            memCacheHeight: 60,
                             placeholder: (context, url) => Container(
                               color: theme.colorScheme.surfaceVariant,
                               child: const Center(
@@ -411,10 +411,10 @@ class ArticleCard extends ConsumerWidget {
                 width: MediaQuery.of(context).size.width.toInt(),
               ) ?? article.imageUrl!,
               fit: BoxFit.cover,
-              memCacheWidth: MediaQuery.of(context).size.width.toInt(),
-              memCacheHeight: 200,
-              maxWidthDiskCache: 800,
-              maxHeightDiskCache: 200,
+              memCacheWidth: 400, // RAM kullanımı için düşürüldü
+              memCacheHeight: 150,
+              maxWidthDiskCache: 600,
+              maxHeightDiskCache: 150,
               placeholder: (context, url) => Container(
                 color: Theme.of(context).colorScheme.surfaceVariant,
                 child: const Center(
@@ -558,10 +558,10 @@ class ArticleCard extends ConsumerWidget {
             height: 60,
           ) ?? article.imageUrl!,
           fit: BoxFit.cover,
-          memCacheWidth: 60,
-          memCacheHeight: 60,
-          maxWidthDiskCache: 120,
-          maxHeightDiskCache: 120,
+          memCacheWidth: 50, // RAM için optimize edildi
+          memCacheHeight: 50,
+          maxWidthDiskCache: 100,
+          maxHeightDiskCache: 100,
           placeholder: (context, url) => Container(
             color: Theme.of(context).colorScheme.surfaceVariant,
             child: const Icon(Icons.image_rounded, size: 20),

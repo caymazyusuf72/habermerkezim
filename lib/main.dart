@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'core/services/hive_service.dart';
 import 'core/services/rss_sources_service.dart';
@@ -9,6 +10,7 @@ import 'core/services/notification_service.dart';
 import 'core/services/widget_service.dart';
 import 'core/services/custom_categories_service.dart';
 import 'core/services/rss_health_check_service.dart';
+import 'core/services/image_cache_service.dart';
 import 'presentation/app.dart';
 
 /// Haber Merkezi uygulamasının giriş noktası
@@ -26,10 +28,21 @@ Future<void> main() async {
   );
   
   try {
+    // Memory cache boyutunu optimize et (RAM tasarrufu için)
+    print('🔄 Memory cache optimize ediliyor...');
+    PaintingBinding.instance.imageCache.maximumSize = 50; // Varsayılan 1000'den 50'ye düşürüldü
+    PaintingBinding.instance.imageCache.maximumSizeBytes = 25 * 1024 * 1024; // 25 MB (varsayılan 100 MB)
+    print('✅ Memory cache optimize edildi');
+    
     // Hive database'i initialize et
     print('🔄 Hive database initialize ediliyor...');
     await HiveService.initialize();
     print('✅ Hive başarıyla initialize edildi');
+    
+    // Image Cache servisini initialize et
+    print('🔄 Image Cache service initialize ediliyor...');
+    await ImageCacheService().init();
+    print('✅ Image Cache service başarıyla initialize edildi');
     
     // RSS Sources servisini initialize et
     print('🔄 RSS Sources service initialize ediliyor...');

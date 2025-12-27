@@ -7,8 +7,8 @@ class ImageCacheService {
   factory ImageCacheService() => _instance;
   ImageCacheService._internal();
 
-  static const int _maxCacheSize = 200 * 1024 * 1024; // 200 MB
-  static const int _maxCacheObjects = 200;
+  static const int _maxCacheSize = 50 * 1024 * 1024; // 50 MB (düşürüldü)
+  static const int _maxCacheObjects = 50; // Maksimum cache sayısı düşürüldü
   
   late final CacheManager _cacheManager;
 
