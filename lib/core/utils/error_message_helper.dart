@@ -18,14 +18,13 @@ class ErrorMessageHelper {
     }
     
     if (error is ServerException) {
-      final serverError = error as ServerException;
-      if (serverError.statusCode == 500) {
+      if (error.statusCode == 500) {
         return '🔧 Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.';
       }
-      if (serverError.statusCode == 503) {
+      if (error.statusCode == 503) {
         return '⚠️ Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.';
       }
-      return '❌ Sunucu hatası: ${serverError.message}';
+      return '❌ Sunucu hatası: ${error.message}';
     }
     
     if (error is RssParseException) {

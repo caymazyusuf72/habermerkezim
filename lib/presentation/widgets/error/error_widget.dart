@@ -514,8 +514,7 @@ class ErrorSnackbarHelper {
 
   static String _getShortErrorMessage(Failure error) {
     if (error is NetworkFailure) {
-      final networkError = error as NetworkFailure;
-      switch (networkError.code) {
+      switch (error.code) {
         case 'NO_INTERNET':
           return 'İnternet bağlantısı yok';
         case 'TIMEOUT':

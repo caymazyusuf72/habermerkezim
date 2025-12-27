@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 
 import '../constants/api_endpoints.dart';
-import '../error/exceptions.dart';
 import 'hive_service.dart';
 
 /// RSS kaynaklarının sağlığını kontrol eden servis
