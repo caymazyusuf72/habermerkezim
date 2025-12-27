@@ -330,6 +330,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           // Kategori badge
           _buildCategoryBadge(context, categoryColor),
           
+          const SizedBox(height: 12),
+          
+          // Kaynak Atfı - Belirgin Badge
+          _buildSourceAttribution(context, theme, categoryColor),
+          
           const SizedBox(height: 16),
           
           // Başlık
@@ -351,9 +356,14 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           // İçerik
           _buildArticleContent(context, theme),
           
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
           
-          // Kaynak butonu
+          // Disclaimer - İçerik Uyarısı
+          _buildContentDisclaimer(context, theme),
+          
+          const SizedBox(height: 16),
+          
+          // Kaynak butonu - Daha belirgin
           _buildSourceButton(context, theme),
           
           const SizedBox(height: 24),
@@ -392,6 +402,120 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           color: categoryColor,
           fontWeight: FontWeight.w600,
         ),
+      ),
+    );
+  }
+
+  /// Kaynak atfı badge'i - Daha belirgin
+  Widget _buildSourceAttribution(BuildContext context, ThemeData theme, Color categoryColor) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            categoryColor.withOpacity(0.15),
+            categoryColor.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: categoryColor.withOpacity(0.3),
+          width: 2,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: categoryColor.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.source_rounded,
+              color: categoryColor,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Kaynak',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.article.sourceName,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: categoryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.verified_rounded,
+            color: categoryColor,
+            size: 20,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// İçerik disclaimer'ı
+  Widget _buildContentDisclaimer(BuildContext context, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outline.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.info_outline_rounded,
+            size: 20,
+            color: theme.colorScheme.primary,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'İçerik Bilgisi',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Bu içerik ${widget.article.sourceName} tarafından yayınlanmıştır. RSS feed üzerinden alınmış özet gösterilmektedir. Tam içerik için lütfen orijinal kaynağa gidiniz.',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -488,10 +612,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.article.content!,
+                _formatContentForReading(widget.article.content!),
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  height: 1.7,
-                  fontSize: 16,
+                  height: 2.0,
+                  fontSize: 17,
+                  letterSpacing: 0.3,
                 ),
               ),
               const SizedBox(height: 20),
@@ -536,10 +661,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               
               // Tam içerik metni
               Text(
-                _fullContent!.content ?? 'İçerik bulunamadı',
+                _formatContentForReading(_fullContent!.content ?? 'İçerik bulunamadı'),
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  height: 1.7,
-                  fontSize: 16,
+                  height: 2.0,
+                  fontSize: 17,
+                  letterSpacing: 0.3,
                 ),
               ),
               
@@ -968,5 +1094,83 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         _openInBrowser();
         break;
     }
+  }
+
+  /// İçeriği okumak için formatla - Paragraflar arası boşluk ekle
+  String _formatContentForReading(String content) {
+    if (content.isEmpty) return content;
+    
+    // HTML tag'lerini temizle
+    String cleaned = content
+        .replaceAll(RegExp(r'<[^>]*>'), '')
+        .replaceAll(RegExp(r'&nbsp;'), ' ')
+        .replaceAll(RegExp(r'&quot;'), '"')
+        .replaceAll(RegExp(r'&amp;'), '&')
+        .replaceAll(RegExp(r'&lt;'), '<')
+        .replaceAll(RegExp(r'&gt;'), '>');
+    
+    // Birden fazla boşluğu tek boşluğa çevir
+    cleaned = cleaned.replaceAll(RegExp(r'\s+'), ' ');
+    
+    // Cümleleri ayır ve paragraf boşlukları ekle
+    // Nokta, soru işareti veya ünlem işaretinden sonra büyük harfle başlayan cümleleri ayır
+    final sentences = <String>[];
+    final buffer = StringBuffer();
+    
+    for (int i = 0; i < cleaned.length; i++) {
+      buffer.write(cleaned[i]);
+      
+      // Cümle sonu kontrolü
+      if ((cleaned[i] == '.' || cleaned[i] == '!' || cleaned[i] == '?') &&
+          i + 1 < cleaned.length) {
+        // Sonraki karakterler boşluk ve büyük harf mi?
+        int nextCharIndex = i + 1;
+        while (nextCharIndex < cleaned.length && cleaned[nextCharIndex] == ' ') {
+          nextCharIndex++;
+        }
+        
+        if (nextCharIndex < cleaned.length &&
+            cleaned[nextCharIndex] == cleaned[nextCharIndex].toUpperCase() &&
+            cleaned[nextCharIndex] != cleaned[nextCharIndex].toLowerCase()) {
+          sentences.add(buffer.toString().trim());
+          buffer.clear();
+        }
+      }
+    }
+    
+    // Kalan içeriği ekle
+    if (buffer.isNotEmpty) {
+      sentences.add(buffer.toString().trim());
+    }
+    
+    // Her 3-4 cümlede bir paragraf oluştur
+    final paragraphs = <String>[];
+    final currentParagraph = StringBuffer();
+    int sentenceCount = 0;
+    
+    for (final sentence in sentences) {
+      if (sentence.isEmpty) continue;
+      
+      if (currentParagraph.isNotEmpty) {
+        currentParagraph.write(' ');
+      }
+      currentParagraph.write(sentence);
+      sentenceCount++;
+      
+      // Her 3-4 cümlede bir paragraf oluştur
+      if (sentenceCount >= 3 || sentence.length > 150) {
+        paragraphs.add(currentParagraph.toString());
+        currentParagraph.clear();
+        sentenceCount = 0;
+      }
+    }
+    
+    // Kalan cümleleri ekle
+    if (currentParagraph.isNotEmpty) {
+      paragraphs.add(currentParagraph.toString());
+    }
+    
+    // Paragrafları birleştir - aralarında çift satır sonu ekle
+    return paragraphs.join('\n\n');
   }
 }

@@ -14,7 +14,7 @@ import '../../custom_categories/custom_categories_page.dart';
 import '../../trending/trending_page.dart';
 import '../../discover/discover_page.dart';
 import '../../archive/archive_page.dart';
-import '../../podcast/podcast_page.dart';
+import '../../performance/performance_monitor_page.dart';
 
 /// Ana drawer widget'ı - yan menü
 /// Kullanıcı profili, ayarlar, hakkında vs. bölümler içerir
@@ -92,21 +92,6 @@ class AppDrawer extends ConsumerWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const DiscoverPage(),
-                      ),
-                    );
-                  },
-                ),
-                
-                // Podcast
-                _buildMenuTile(
-                  context,
-                  icon: Icons.podcasts_rounded,
-                  title: 'Podcast Haberleri',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const PodcastPage(),
                       ),
                     );
                   },
@@ -196,6 +181,21 @@ class AppDrawer extends ConsumerWidget {
                   },
                 ),
                 
+                
+                // Performans İzleme
+                _buildMenuTile(
+                  context,
+                  icon: Icons.speed_rounded,
+                  title: 'Performans İzleme',
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const PerformanceMonitorPage(),
+                      ),
+                    );
+                  },
+                ),
                 
                 // Cache Temizle
                 _buildMenuTile(
