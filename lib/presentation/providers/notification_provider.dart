@@ -133,12 +133,11 @@ class NotificationState {
 /// Notification provider
 class NotificationNotifier extends StateNotifier<NotificationState> {
   final NotificationService _notificationService;
-  final HiveService _hiveService;
   final Ref _ref;
 
   static const String _settingsKey = 'notification_settings';
 
-  NotificationNotifier(this._notificationService, this._hiveService, this._ref)
+  NotificationNotifier(this._notificationService, this._ref)
       : super(const NotificationState()) {
     _initialize();
   }
@@ -405,8 +404,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
 final notificationProvider =
     StateNotifierProvider<NotificationNotifier, NotificationState>((ref) {
   final notificationService = NotificationService();
-  final hiveService = HiveService();
-  return NotificationNotifier(notificationService, hiveService, ref);
+  return NotificationNotifier(notificationService, ref);
 });
 
 /// Notification service provider

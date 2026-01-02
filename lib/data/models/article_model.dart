@@ -325,9 +325,11 @@ class ArticleModel extends HiveObject {
         if (parts.length >= 5) {
           // Ay ismini sayıya çevir
           final monthMap = {
+            // English month names
             'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
             'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12,
-            'Oca': 1, 'Şub': 2, 'Mar': 3, 'Nis': 4, 'May': 5, 'Haz': 6,
+            // Turkish month names
+            'Oca': 1, 'Şub': 2, 'Nis': 4, 'Haz': 6,
             'Tem': 7, 'Ağu': 8, 'Eyl': 9, 'Eki': 10, 'Kas': 11, 'Ara': 12,
           };
           

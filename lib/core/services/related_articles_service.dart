@@ -1,5 +1,4 @@
 import '../../domain/entities/article.dart';
-import '../../data/datasources/local/news_local_data_source.dart';
 import '../../core/services/hive_service.dart';
 
 /// İlgili haberler servisi

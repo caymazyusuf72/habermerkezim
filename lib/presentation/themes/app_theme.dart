@@ -96,8 +96,8 @@ class AppTheme {
     }
     
     final epc = colorTheme == ColorTheme.dynamic && dynamicColorScheme != null ? cs.primary : pColor;
-    final epd = colorTheme == ColorTheme.dynamic && dynamicColorScheme != null ? cs.primaryContainer : pDark;
-    final epl = colorTheme == ColorTheme.dynamic && dynamicColorScheme != null ? cs.secondary : pLight;
+    final effectivePrimaryDark = colorTheme == ColorTheme.dynamic && dynamicColorScheme != null ? cs.primaryContainer : pDark;
+    final effectivePrimaryLight = colorTheme == ColorTheme.dynamic && dynamicColorScheme != null ? cs.secondary : pLight;
 
     return ThemeData(
       useMaterial3: true,
@@ -106,14 +106,14 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 2,
         backgroundColor: epc.withOpacity(0.15),
-        foregroundColor: epd,
+        foregroundColor: effectivePrimaryDark,
         titleTextStyle: TextStyle(
-          color: epd,
+          color: effectivePrimaryDark,
           fontSize: 20 * fontScale,
           fontWeight: FontWeight.w700,
           fontFamily: GoogleFonts.merriweather().fontFamily,
         ),
-        iconTheme: IconThemeData(color: epd),
+        iconTheme: IconThemeData(color: effectivePrimaryDark),
       ),
       cardTheme: CardThemeData(
         elevation: 4,
@@ -128,7 +128,7 @@ class AppTheme {
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
         backgroundColor: epc.withOpacity(0.1),
-        selectedItemColor: epd,
+        selectedItemColor: effectivePrimaryDark,
         unselectedItemColor: cs.onSurface.withOpacity(0.5),
         selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
         unselectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
@@ -140,13 +140,13 @@ class AppTheme {
         indicatorColor: epc.withOpacity(0.2),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: epd);
+            return TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: effectivePrimaryDark);
           }
           return TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: cs.onSurface.withOpacity(0.6));
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return IconThemeData(color: epd, size: 24);
+            return IconThemeData(color: effectivePrimaryDark, size: 24);
           }
           return IconThemeData(color: cs.onSurface.withOpacity(0.6), size: 24);
         }),
@@ -171,7 +171,7 @@ class AppTheme {
       ),
       dividerTheme: DividerThemeData(color: cs.outline.withOpacity(0.2), thickness: 1, space: 1),
       tabBarTheme: TabBarThemeData(
-        labelColor: epd,
+        labelColor: effectivePrimaryDark,
         unselectedLabelColor: cs.onSurface.withOpacity(0.5),
         indicatorColor: epc,
         indicatorSize: TabBarIndicatorSize.tab,
@@ -185,7 +185,7 @@ class AppTheme {
         side: BorderSide.none,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         selectedColor: epc.withOpacity(0.2),
-        checkmarkColor: epd,
+        checkmarkColor: effectivePrimaryDark,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: epc,
@@ -196,7 +196,7 @@ class AppTheme {
       snackBarTheme: SnackBarThemeData(
         backgroundColor: cs.inverseSurface,
         contentTextStyle: TextStyle(color: cs.onInverseSurface),
-        actionTextColor: epl,
+        actionTextColor: effectivePrimaryLight,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
@@ -248,7 +248,6 @@ class AppTheme {
   ]) {
     final pColor = getPrimaryColor(colorTheme);
     final pLight = getPrimaryLightColor(colorTheme);
-    final pDark = getPrimaryDarkColor(colorTheme);
     
     final ColorScheme cs;
     if (colorTheme == ColorTheme.dynamic && dynamicColorScheme != null) {
@@ -267,7 +266,6 @@ class AppTheme {
     }
     
     final epc = colorTheme == ColorTheme.dynamic && dynamicColorScheme != null ? cs.primary : pColor;
-    final epd = colorTheme == ColorTheme.dynamic && dynamicColorScheme != null ? cs.primaryContainer : pDark;
     final epl = colorTheme == ColorTheme.dynamic && dynamicColorScheme != null ? cs.secondary : pLight;
 
     return ThemeData(

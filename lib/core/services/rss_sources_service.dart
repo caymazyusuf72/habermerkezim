@@ -43,13 +43,9 @@ class RssSourcesService {
       final sources = <RssSource>[];
       
       for (final map in _box!.values) {
-        if (map is Map<String, dynamic>) {
-          sources.add(RssSource.fromMap(map));
-        } else if (map is Map) {
-          // Type casting için
-          final convertedMap = Map<String, dynamic>.from(map);
-          sources.add(RssSource.fromMap(convertedMap));
-        }
+        // Type casting için
+        final convertedMap = Map<String, dynamic>.from(map);
+        sources.add(RssSource.fromMap(convertedMap));
       }
       
       // ID'ye göre sırala
@@ -85,12 +81,8 @@ class RssSourcesService {
     try {
       final map = _box!.get(id);
       if (map != null) {
-        if (map is Map<String, dynamic>) {
-          return RssSource.fromMap(map);
-        } else if (map is Map) {
-          final convertedMap = Map<String, dynamic>.from(map);
-          return RssSource.fromMap(convertedMap);
-        }
+        final convertedMap = Map<String, dynamic>.from(map);
+        return RssSource.fromMap(convertedMap);
       }
       return null;
     } catch (e) {

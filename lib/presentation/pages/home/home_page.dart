@@ -4,15 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/providers.dart';
 import '../../providers/connectivity_provider.dart';
 import '../../themes/app_theme.dart';
-import '../../../core/constants/api_endpoints.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../../../domain/entities/category.dart';
 import 'widgets/news_list.dart';
 import 'widgets/category_tabs.dart';
 import 'widgets/app_drawer.dart';
-import 'widgets/article_filter_dialog.dart';
 import 'widgets/notification_banner.dart';
-import 'widgets/personalized_news_section.dart';
 import '../search/search_page.dart';
 import '../profile/profile_page.dart';
 import '../favorites/favorites_page.dart';
@@ -658,40 +655,5 @@ class _HomePageState extends ConsumerState<HomePage>
         ),
       ],
     );
-  }
-}
-
-/// Home page ile ilgili utility fonksiyonlar
-class HomePageUtils {
-  HomePageUtils._();
-  
-  /// Kategori renklerini döner
-  static Color getCategoryColor(String categoryId) {
-    return AppTheme.getCategoryColor(categoryId);
-  }
-  
-  /// Kategori iconunu döner
-  static IconData getCategoryIcon(String categoryId) {
-    final iconName = ApiEndpoints.feedIcons[categoryId];
-    
-    switch (iconName) {
-      case 'breaking_news':
-        return Icons.flash_on;
-      case 'flag':
-        return Icons.flag;
-      case 'trending_up':
-        return Icons.trending_up;
-      case 'computer':
-        return Icons.computer;
-      case 'sports_soccer':
-        return Icons.sports_soccer;
-      default:
-        return Icons.article;
-    }
-  }
-  
-  /// Kategori adını formatlar
-  static String formatCategoryName(String categoryId) {
-    return ApiEndpoints.feedNames[categoryId] ?? categoryId;
   }
 }

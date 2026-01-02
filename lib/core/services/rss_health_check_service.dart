@@ -131,7 +131,6 @@ class RssHealthCheckService {
     final urlsToTry = alternativeUrls.isNotEmpty ? alternativeUrls : [feedUrl];
     
     FeedHealthStatus? lastStatus;
-    String? workingUrl;
     
     // Her URL'yi sırayla dene
     for (int i = 0; i < urlsToTry.length; i++) {
@@ -166,7 +165,6 @@ class RssHealthCheckService {
             if (!isLastAttempt) continue;
           } else {
             // Başarılı - çalışan URL'yi cache'le
-            workingUrl = currentUrl;
             _workingUrlCache[feedKey] = currentUrl;
             
             return FeedHealthStatus(

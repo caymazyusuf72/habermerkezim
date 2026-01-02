@@ -1152,29 +1152,6 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     );
   }
 
-  /// Okuma modu butonu (ayrı bir yerde gösterilebilir)
-  Widget _buildReadingModeButton(BuildContext context, ThemeData theme) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ElevatedButton.icon(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => ReadingModePage(article: widget.article),
-            ),
-          );
-        },
-        icon: const Icon(Icons.menu_book_rounded),
-        label: const Text('Okuma Modu'),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: AppTheme.primaryBlue,
-          foregroundColor: Colors.white,
-        ),
-      ),
-    );
-  }
-
   /// Makaleyi paylaş
   void _shareArticle() {
     final text = '${widget.article.title}\n\n${widget.article.link}';

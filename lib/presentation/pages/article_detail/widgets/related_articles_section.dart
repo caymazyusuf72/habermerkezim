@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../domain/entities/article.dart';
-import '../../../widgets/loading/shimmer_loading.dart';
 import '../../home/widgets/article_card.dart';
 import '../../../../core/services/related_articles_service.dart';
 import '../article_detail_page.dart';

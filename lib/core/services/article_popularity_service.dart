@@ -237,24 +237,22 @@ class ArticlePopularityService {
       final now = DateTime.now();
 
       for (final map in _box!.values) {
-        if (map is Map) {
-          final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(map));
-          
-          // Kategori filtresi
-          if (category != null && popularity.category != category) {
+        final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(map));
+        
+        // Kategori filtresi
+        if (category != null && popularity.category != category) {
+          continue;
+        }
+        
+        // Zaman aralığı filtresi
+        if (timeRange != null) {
+          final cutoffDate = now.subtract(timeRange);
+          if (popularity.lastViewed.isBefore(cutoffDate)) {
             continue;
           }
-          
-          // Zaman aralığı filtresi
-          if (timeRange != null) {
-            final cutoffDate = now.subtract(timeRange);
-            if (popularity.lastViewed.isBefore(cutoffDate)) {
-              continue;
-            }
-          }
-          
-          allPopularity.add(popularity);
         }
+        
+        allPopularity.add(popularity);
       }
 
       // Popülerlik puanına göre sırala
@@ -274,13 +272,11 @@ class ArticlePopularityService {
       final cutoffDate = DateTime.now().subtract(const Duration(hours: 24));
 
       for (final map in _box!.values) {
-        if (map is Map) {
-          final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(map));
-          
-          // Son 24 saat içinde görüntülenen ve en az 2 görüntülenme
-          if (popularity.lastViewed.isAfter(cutoffDate) && popularity.viewCount >= 2) {
-            allPopularity.add(popularity);
-          }
+        final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(map));
+        
+        // Son 24 saat içinde görüntülenen ve en az 2 görüntülenme
+        if (popularity.lastViewed.isAfter(cutoffDate) && popularity.viewCount >= 2) {
+          allPopularity.add(popularity);
         }
       }
 
@@ -320,9 +316,7 @@ class ArticlePopularityService {
     try {
       int total = 0;
       for (final map in _box!.values) {
-        if (map is Map) {
-          total += (map['viewCount'] as int?) ?? 0;
-        }
+        total += (map['viewCount'] as int?) ?? 0;
       }
       return total;
     } catch (e) {
@@ -346,11 +340,9 @@ class ArticlePopularityService {
       final keysToDelete = <String>[];
 
       for (final entry in _box!.toMap().entries) {
-        if (entry.value is Map) {
-          final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(entry.value));
-          if (popularity.lastViewed.isBefore(cutoffDate)) {
-            keysToDelete.add(entry.key.toString());
-          }
+        final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(entry.value));
+        if (popularity.lastViewed.isBefore(cutoffDate)) {
+          keysToDelete.add(entry.key.toString());
         }
       }
 

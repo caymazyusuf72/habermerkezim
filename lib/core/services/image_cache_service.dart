@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -16,8 +15,6 @@ class ImageCacheService {
   ImageCacheService._internal();
 
   /// Cache boyut limitleri - cihaz belleğine göre ayarlanabilir
-  static const int _defaultMaxCacheSize = 100 * 1024 * 1024; // 100 MB
-  static const int _lowMemoryMaxCacheSize = 50 * 1024 * 1024; // 50 MB
   static const int _defaultMaxCacheObjects = 200;
   static const int _lowMemoryMaxCacheObjects = 100;
   

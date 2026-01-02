@@ -30,9 +30,6 @@ class HaberMerkeziApp extends ConsumerWidget {
     // App initialization durumunu izle
     final appInitialization = ref.watch(appInitializationProvider);
     
-    // Dynamic color state'i izle
-    final dynamicColorState = ref.watch(dynamicColorProvider);
-
     // DynamicColorBuilder ile sistem renklerini al
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {

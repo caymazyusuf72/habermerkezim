@@ -74,8 +74,8 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
       // 2. UserProfile'a interestTags ekle
       final profile = await _profileRepository.getProfile();
-      if (profile != null) {
-        final updatedPreferences = profile.preferences.copyWith(
+      if (profile case final existingProfile?) {
+        final updatedPreferences = existingProfile.preferences.copyWith(
           interestTags: state.selectedTagIds,
         );
         await _profileRepository.updatePreferences(updatedPreferences);

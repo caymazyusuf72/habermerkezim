@@ -1,5 +1,4 @@
 import '../../domain/entities/article.dart';
-import '../../domain/entities/reading_analytics.dart';
 import '../../core/services/hive_service.dart';
 import '../../core/services/analytics_service.dart';
 

@@ -863,7 +863,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
 
   Widget _buildModernInterestsSection(BuildContext context, UserPreferences preferences, ThemeData theme) {
     final interestTags = preferences.interestTags;
-    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),

@@ -107,8 +107,6 @@ class _ArchivePageState extends ConsumerState<ArchivePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Arşiv'),

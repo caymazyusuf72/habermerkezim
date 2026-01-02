@@ -38,12 +38,9 @@ void main() {
     });
 
     test('should throw after max attempts exceeded', () async {
-      int attempts = 0;
-      
       expect(
         () => RetryHelper.retry<String>(
           operation: () async {
-            attempts++;
             throw Exception('Persistent error');
           },
           maxAttempts: 3,

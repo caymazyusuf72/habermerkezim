@@ -132,7 +132,6 @@ class NewsNotifier extends StateNotifier<NewsState> {
 
   /// Haberleri sayfalara böler
   List<Article> _paginateArticles(List<Article> allArticles, {required int page}) {
-    final startIndex = 0;
     final endIndex = page * NewsState.pageSize;
     return allArticles.sublist(0, endIndex > allArticles.length ? allArticles.length : endIndex);
   }
