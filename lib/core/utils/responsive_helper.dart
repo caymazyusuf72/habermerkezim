@@ -226,6 +226,20 @@ class ResponsiveHelper {
     }
   }
 
+  /// Maksimum içerik genişliği (desktop için)
+  double get maxContentWidth {
+    switch (_deviceType) {
+      case DeviceType.mobile:
+        return _width;
+      case DeviceType.tablet:
+        return 720;
+      case DeviceType.desktop:
+        return 900;
+      case DeviceType.largeDesktop:
+        return 1200;
+    }
+  }
+
   /// Responsive değer döndür
   T value<T>({
     required T mobile,

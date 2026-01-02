@@ -32,8 +32,10 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.untitled"
+        // Application ID - Haber Merkezim
+        // Not: namespace com.example.untitled olarak kalıyor çünkü Java dosyaları bu package'da
+        // Ancak applicationId farklı olabilir (store'da görünen ID)
+        applicationId = "com.habermerkezi.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // minSdk 21 = Android 5.0 (Lollipop) - %99+ cihaz desteği

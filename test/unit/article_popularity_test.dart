@@ -1,51 +1,59 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:haber_merkezi/core/services/article_popularity_service.dart';
-import 'package:haber_merkezi/domain/entities/article.dart';
 
 void main() {
   group('ArticlePopularity Tests', () {
-    test('ArticlePopularity should be created with default values', () {
+    test('should create ArticlePopularity with required fields', () {
+      final now = DateTime.now();
       final popularity = ArticlePopularity(
-        articleId: 'test-id',
-        title: 'Test Title',
+        articleId: 'test-123',
+        title: 'Test Article',
         sourceName: 'Test Source',
-        category: 'genel',
+        category: 'Gündem',
+        lastViewed: now,
+        firstViewed: now,
       );
 
-      expect(popularity.articleId, 'test-id');
-      expect(popularity.title, 'Test Title');
+      expect(popularity.articleId, 'test-123');
+      expect(popularity.title, 'Test Article');
       expect(popularity.sourceName, 'Test Source');
-      expect(popularity.category, 'genel');
+      expect(popularity.category, 'Gündem');
       expect(popularity.viewCount, 0);
       expect(popularity.shareCount, 0);
       expect(popularity.favoriteCount, 0);
-      expect(popularity.imageUrl, isNull);
-      expect(popularity.link, isNull);
     });
 
-    test('ArticlePopularity should calculate popularity score correctly', () {
+    test('should calculate popularity score correctly', () {
+      final now = DateTime.now();
       final popularity = ArticlePopularity(
-        articleId: 'test-id',
-        title: 'Test Title',
+        articleId: 'test-123',
+        title: 'Test Article',
         sourceName: 'Test Source',
-        category: 'genel',
+        category: 'Gündem',
         viewCount: 10,
         shareCount: 5,
         favoriteCount: 3,
+        lastViewed: now,
+        firstViewed: now,
       );
 
-      // Score = viewCount * 1 + shareCount * 3 + favoriteCount * 2
-      // Score = 10 * 1 + 5 * 3 + 3 * 2 = 10 + 15 + 6 = 31
-      expect(popularity.popularityScore, 31);
+      // Base score: 10*1 + 5*3 + 3*2 = 10 + 15 + 6 = 31
+      // Time factor depends on lastViewed (recent = 1.5x bonus)
+      // Expected: 31 * 1.5 = 46.5
+      expect(popularity.popularityScore, greaterThan(0));
+      expect(popularity.popularityScore, closeTo(46.5, 1.0));
     });
 
-    test('ArticlePopularity copyWith should update specified fields', () {
+    test('should copy with new values', () {
+      final now = DateTime.now();
       final original = ArticlePopularity(
-        articleId: 'test-id',
-        title: 'Test Title',
+        articleId: 'test-123',
+        title: 'Test Article',
         sourceName: 'Test Source',
-        category: 'genel',
+        category: 'Gündem',
         viewCount: 5,
+        lastViewed: now,
+        firstViewed: now,
       );
 
       final updated = original.copyWith(
@@ -53,147 +61,143 @@ void main() {
         shareCount: 2,
       );
 
-      expect(updated.articleId, 'test-id'); // Unchanged
-      expect(updated.viewCount, 10); // Updated
-      expect(updated.shareCount, 2); // Updated
-      expect(updated.favoriteCount, 0); // Unchanged (default)
+      expect(updated.articleId, 'test-123');
+      expect(updated.viewCount, 10);
+      expect(updated.shareCount, 2);
+      expect(original.viewCount, 5); // Original unchanged
     });
 
-    test('ArticlePopularity fromArticle should create from Article entity', () {
-      final article = Article(
-        id: 'article-123',
-        title: 'Article Title',
-        description: 'Article description',
-        link: 'https://example.com/article',
-        publishedDate: DateTime.now(),
-        category: 'teknoloji',
-        sourceName: 'Tech News',
+    test('should serialize to and from Map', () {
+      final now = DateTime.now();
+      final popularity = ArticlePopularity(
+        articleId: 'test-789',
+        title: 'Map Test',
+        sourceName: 'Source',
+        category: 'Teknoloji',
+        viewCount: 15,
+        shareCount: 3,
+        favoriteCount: 7,
         imageUrl: 'https://example.com/image.jpg',
+        lastViewed: now,
+        firstViewed: now,
       );
 
-      final popularity = ArticlePopularity.fromArticle(article);
+      final map = popularity.toMap();
+      final restored = ArticlePopularity.fromMap(map);
 
-      expect(popularity.articleId, 'article-123');
-      expect(popularity.title, 'Article Title');
-      expect(popularity.sourceName, 'Tech News');
-      expect(popularity.category, 'teknoloji');
-      expect(popularity.imageUrl, 'https://example.com/image.jpg');
-      expect(popularity.link, 'https://example.com/article');
-      expect(popularity.viewCount, 0);
-      expect(popularity.shareCount, 0);
-      expect(popularity.favoriteCount, 0);
+      expect(restored.articleId, popularity.articleId);
+      expect(restored.title, popularity.title);
+      expect(restored.viewCount, popularity.viewCount);
+      expect(restored.shareCount, popularity.shareCount);
+      expect(restored.favoriteCount, popularity.favoriteCount);
+      expect(restored.imageUrl, popularity.imageUrl);
+    });
+  });
+
+  group('ArticlePopularity Edge Cases', () {
+    test('should handle zero counts', () {
+      final now = DateTime.now();
+      final popularity = ArticlePopularity(
+        articleId: 'zero-test',
+        title: 'Zero Test',
+        sourceName: 'Source',
+        category: 'Test',
+        viewCount: 0,
+        shareCount: 0,
+        favoriteCount: 0,
+        lastViewed: now,
+        firstViewed: now,
+      );
+
+      // Zero base score with time bonus = 0
+      expect(popularity.popularityScore, 0);
     });
 
-    test('ArticlePopularity toJson and fromJson should work correctly', () {
-      final original = ArticlePopularity(
-        articleId: 'test-id',
-        title: 'Test Title',
-        sourceName: 'Test Source',
-        category: 'genel',
+    test('should handle large counts', () {
+      final now = DateTime.now();
+      final popularity = ArticlePopularity(
+        articleId: 'large-test',
+        title: 'Large Test',
+        sourceName: 'Source',
+        category: 'Test',
+        viewCount: 1000000,
+        shareCount: 500000,
+        favoriteCount: 250000,
+        lastViewed: now,
+        firstViewed: now,
+      );
+
+      expect(popularity.popularityScore, greaterThan(0));
+      expect(popularity.popularityScore.isFinite, true);
+    });
+
+    test('should handle null imageUrl', () {
+      final now = DateTime.now();
+      final popularity = ArticlePopularity(
+        articleId: 'null-image',
+        title: 'No Image',
+        sourceName: 'Source',
+        category: 'Test',
+        imageUrl: null,
+        lastViewed: now,
+        firstViewed: now,
+      );
+
+      expect(popularity.imageUrl, isNull);
+    });
+
+    test('should detect trending articles', () {
+      final now = DateTime.now();
+      final trending = ArticlePopularity(
+        articleId: 'trending',
+        title: 'Trending Article',
+        sourceName: 'Source',
+        category: 'Test',
+        viewCount: 5,
+        lastViewed: now,
+        firstViewed: now,
+      );
+
+      final notTrending = ArticlePopularity(
+        articleId: 'not-trending',
+        title: 'Not Trending',
+        sourceName: 'Source',
+        category: 'Test',
+        viewCount: 1,
+        lastViewed: now,
+        firstViewed: now,
+      );
+
+      expect(trending.isTrending, true);
+      expect(notTrending.isTrending, false);
+    });
+
+    test('should apply time decay for old articles', () {
+      final now = DateTime.now();
+      final oldDate = now.subtract(const Duration(days: 10));
+      
+      final recentArticle = ArticlePopularity(
+        articleId: 'recent',
+        title: 'Recent',
+        sourceName: 'Source',
+        category: 'Test',
         viewCount: 10,
-        shareCount: 5,
-        favoriteCount: 3,
-        imageUrl: 'https://example.com/image.jpg',
-        link: 'https://example.com/article',
-        lastViewedAt: DateTime(2025, 1, 15, 10, 30),
-        firstViewedAt: DateTime(2025, 1, 10, 8, 0),
+        lastViewed: now,
+        firstViewed: now,
       );
 
-      final json = original.toJson();
-      final restored = ArticlePopularity.fromJson(json);
-
-      expect(restored.articleId, original.articleId);
-      expect(restored.title, original.title);
-      expect(restored.sourceName, original.sourceName);
-      expect(restored.category, original.category);
-      expect(restored.viewCount, original.viewCount);
-      expect(restored.shareCount, original.shareCount);
-      expect(restored.favoriteCount, original.favoriteCount);
-      expect(restored.imageUrl, original.imageUrl);
-      expect(restored.link, original.link);
-      expect(restored.popularityScore, original.popularityScore);
-    });
-  });
-
-  group('PopularTimeRange Tests', () {
-    test('PopularTimeRange enum should have correct values', () {
-      expect(PopularTimeRange.values.length, 4);
-      expect(PopularTimeRange.values.contains(PopularTimeRange.today), true);
-      expect(PopularTimeRange.values.contains(PopularTimeRange.thisWeek), true);
-      expect(PopularTimeRange.values.contains(PopularTimeRange.thisMonth), true);
-      expect(PopularTimeRange.values.contains(PopularTimeRange.allTime), true);
-    });
-
-    test('PopularTimeRange displayName should return correct Turkish names', () {
-      expect(PopularTimeRange.today.displayName, 'Bugün');
-      expect(PopularTimeRange.thisWeek.displayName, 'Bu Hafta');
-      expect(PopularTimeRange.thisMonth.displayName, 'Bu Ay');
-      expect(PopularTimeRange.allTime.displayName, 'Tüm Zamanlar');
-    });
-
-    test('PopularTimeRange duration should return correct Duration', () {
-      expect(PopularTimeRange.today.duration, const Duration(days: 1));
-      expect(PopularTimeRange.thisWeek.duration, const Duration(days: 7));
-      expect(PopularTimeRange.thisMonth.duration, const Duration(days: 30));
-      expect(PopularTimeRange.allTime.duration, const Duration(days: 365 * 10));
-    });
-  });
-
-  group('Popularity Score Calculation Tests', () {
-    test('View only should give score of viewCount', () {
-      final popularity = ArticlePopularity(
-        articleId: 'test',
-        title: 'Test',
+      final oldArticle = ArticlePopularity(
+        articleId: 'old',
+        title: 'Old',
         sourceName: 'Source',
-        category: 'genel',
-        viewCount: 100,
-        shareCount: 0,
-        favoriteCount: 0,
+        category: 'Test',
+        viewCount: 10,
+        lastViewed: oldDate,
+        firstViewed: oldDate,
       );
 
-      expect(popularity.popularityScore, 100);
-    });
-
-    test('Share should give 3x weight', () {
-      final popularity = ArticlePopularity(
-        articleId: 'test',
-        title: 'Test',
-        sourceName: 'Source',
-        category: 'genel',
-        viewCount: 0,
-        shareCount: 10,
-        favoriteCount: 0,
-      );
-
-      expect(popularity.popularityScore, 30); // 10 * 3
-    });
-
-    test('Favorite should give 2x weight', () {
-      final popularity = ArticlePopularity(
-        articleId: 'test',
-        title: 'Test',
-        sourceName: 'Source',
-        category: 'genel',
-        viewCount: 0,
-        shareCount: 0,
-        favoriteCount: 10,
-      );
-
-      expect(popularity.popularityScore, 20); // 10 * 2
-    });
-
-    test('Combined actions should calculate correctly', () {
-      final popularity = ArticlePopularity(
-        articleId: 'test',
-        title: 'Test',
-        sourceName: 'Source',
-        category: 'genel',
-        viewCount: 50,   // 50 * 1 = 50
-        shareCount: 20,  // 20 * 3 = 60
-        favoriteCount: 15, // 15 * 2 = 30
-      );
-
-      expect(popularity.popularityScore, 140); // 50 + 60 + 30
+      // Recent article should have higher score due to time bonus
+      expect(recentArticle.popularityScore, greaterThan(oldArticle.popularityScore));
     });
   });
 }
