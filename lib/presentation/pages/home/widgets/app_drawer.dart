@@ -15,6 +15,7 @@ import '../../trending/trending_page.dart';
 import '../../discover/discover_page.dart';
 import '../../archive/archive_page.dart';
 import '../../performance/performance_monitor_page.dart';
+import '../../popular/popular_articles_page.dart';
 
 /// Ana drawer widget'ı - yan menü
 /// Kullanıcı profili, ayarlar, hakkında vs. bölümler içerir
@@ -77,6 +78,21 @@ class AppDrawer extends ConsumerWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const TrendingPage(),
+                      ),
+                    );
+                  },
+                ),
+                
+                // Popüler Haberler
+                _buildMenuTile(
+                  context,
+                  icon: Icons.star_rounded,
+                  title: 'Popüler Haberler',
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const PopularArticlesPage(),
                       ),
                     );
                   },

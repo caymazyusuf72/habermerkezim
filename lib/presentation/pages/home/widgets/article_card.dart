@@ -252,45 +252,48 @@ class ArticleCard extends ConsumerWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Küçük görsel - daha modern
+                    // Küçük görsel - daha modern - Hero animation eklendi
                     if (article.imageUrl != null)
-                      Container(
-                        width: 80,
-                        height: 80,
-                        margin: const EdgeInsets.only(right: 12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: CachedNetworkImage(
-                            imageUrl: ArticleCardUtils.optimizeImageUrl(
-                              article.imageUrl,
-                              width: 80,
-                              height: 80,
-                            ) ?? article.imageUrl!,
-                            fit: BoxFit.cover,
-                            memCacheWidth: 60, // RAM için optimize edildi
-                            memCacheHeight: 60,
-                            placeholder: (context, url) => Container(
-                              color: theme.colorScheme.surfaceVariant,
-                              child: const Center(
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                      Hero(
+                        tag: 'article_image_${article.id}',
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          margin: const EdgeInsets.only(right: 12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
                               ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              color: theme.colorScheme.surfaceVariant,
-                              child: Icon(
-                                Icons.image_not_supported_rounded,
-                                size: 24,
-                                color: theme.colorScheme.onSurfaceVariant,
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: CachedNetworkImage(
+                              imageUrl: ArticleCardUtils.optimizeImageUrl(
+                                article.imageUrl,
+                                width: 80,
+                                height: 80,
+                              ) ?? article.imageUrl!,
+                              fit: BoxFit.cover,
+                              memCacheWidth: 60, // RAM için optimize edildi
+                              memCacheHeight: 60,
+                              placeholder: (context, url) => Container(
+                                color: theme.colorScheme.surfaceVariant,
+                                child: const Center(
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                color: theme.colorScheme.surfaceVariant,
+                                child: Icon(
+                                  Icons.image_not_supported_rounded,
+                                  size: 24,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ),
@@ -396,37 +399,40 @@ class ArticleCard extends ConsumerWidget {
   Widget _buildImageSection(BuildContext context, WidgetRef ref, Color categoryColor) {
     return Stack(
       children: [
-        // Ana görsel - Sabit yükseklik ile
-        ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
-          ),
-          child: SizedBox(
-            width: double.infinity,
-            height: 200,
-            child: CachedNetworkImage(
-              imageUrl: ArticleCardUtils.optimizeImageUrl(
-                article.imageUrl,
-                width: MediaQuery.of(context).size.width.toInt(),
-              ) ?? article.imageUrl!,
-              fit: BoxFit.cover,
-              memCacheWidth: 400, // RAM kullanımı için düşürüldü
-              memCacheHeight: 150,
-              maxWidthDiskCache: 600,
-              maxHeightDiskCache: 150,
-              placeholder: (context, url) => Container(
-                color: Theme.of(context).colorScheme.surfaceVariant,
-                child: const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
+        // Ana görsel - Sabit yükseklik ile - Hero animation eklendi
+        Hero(
+          tag: 'article_image_${article.id}',
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              height: 200,
+              child: CachedNetworkImage(
+                imageUrl: ArticleCardUtils.optimizeImageUrl(
+                  article.imageUrl,
+                  width: MediaQuery.of(context).size.width.toInt(),
+                ) ?? article.imageUrl!,
+                fit: BoxFit.cover,
+                memCacheWidth: 400, // RAM kullanımı için düşürüldü
+                memCacheHeight: 150,
+                maxWidthDiskCache: 600,
+                maxHeightDiskCache: 150,
+                placeholder: (context, url) => Container(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
                 ),
-              ),
-              errorWidget: (context, url, error) => Container(
-                color: Theme.of(context).colorScheme.surfaceVariant,
-                child: Icon(
-                  Icons.image_not_supported_rounded,
-                  size: 40,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                errorWidget: (context, url, error) => Container(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  child: Icon(
+                    Icons.image_not_supported_rounded,
+                    size: 40,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),

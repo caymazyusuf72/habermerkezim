@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 
 import 'providers/providers.dart';
 import 'providers/onboarding_provider.dart';
+import 'providers/theme_provider.dart';
 import 'themes/app_theme.dart';
 import 'pages/home/home_page.dart';
 import 'pages/splash/splash_page.dart';
@@ -13,6 +15,7 @@ import '../../core/services/update_service.dart';
 
 /// Ana uygulama widget'ı - Haber Merkezi
 /// Riverpod ile state management ve theme management
+/// Material Design 3 Dynamic Color desteği ile
 class HaberMerkeziApp extends ConsumerWidget {
   const HaberMerkeziApp({super.key});
 
@@ -26,61 +29,83 @@ class HaberMerkeziApp extends ConsumerWidget {
     
     // App initialization durumunu izle
     final appInitialization = ref.watch(appInitializationProvider);
+    
+    // Dynamic color state'i izle
+    final dynamicColorState = ref.watch(dynamicColorProvider);
 
-    return MaterialApp(
-      title: 'Haber Merkezim',
-      debugShowCheckedModeBanner: false,
-      showPerformanceOverlay: false, // Performans overlay'i (gerekirse true yapılabilir)
+    // DynamicColorBuilder ile sistem renklerini al
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        // Dynamic color'ları provider'a kaydet
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (lightDynamic != null && darkDynamic != null) {
+            ref.read(dynamicColorProvider.notifier).setDynamicColors(
+              lightDynamic,
+              darkDynamic,
+            );
+          }
+        });
+        
+        // Dynamic color kullanılıyorsa ve destekleniyorsa
+        final effectiveLightDynamic = colorTheme == ColorTheme.dynamic ? lightDynamic : null;
+        final effectiveDarkDynamic = colorTheme == ColorTheme.dynamic ? darkDynamic : null;
+
+        return MaterialApp(
+          title: 'Haber Merkezim',
+          debugShowCheckedModeBanner: false,
+          showPerformanceOverlay: false,
+          
+          // Tema ayarları - font scale, color theme ve dynamic color ile birlikte
+          theme: AppTheme.getLightTheme(fontScale, colorTheme, effectiveLightDynamic),
+          darkTheme: AppTheme.getDarkTheme(fontScale, colorTheme, effectiveDarkDynamic),
+          themeMode: themeMode,
       
-      // Tema ayarları - font scale ve color theme ile birlikte
-      theme: AppTheme.getLightTheme(fontScale, colorTheme),
-      darkTheme: AppTheme.getDarkTheme(fontScale, colorTheme),
-      themeMode: themeMode,
-      
-      // Localization ayarları
-      locale: const Locale('tr', 'TR'),
-      
-      // Ana sayfa - initialization durumuna göre
-      home: appInitialization.when(
-        data: (_) {
-          print('✅ App initialization tamamlandi, onboarding kontrolü yapılıyor...');
-          // Onboarding kontrolü yap
-          return _OnboardingCheckWrapper(
-            child: _UpdateCheckWrapper(
-              child: const HomePage(),
-            ),
-          );
-        },
-        loading: () {
-          print('⏳ App initialization devam ediyor, SplashPage gosteriliyor');
-          return const SplashPage();
-        },
-        error: (error, stackTrace) {
-          print('❌ App initialization hatasi: $error');
-          return ErrorPage(
-            error: error,
-            onRetry: () {
-              ref.invalidate(appInitializationProvider);
+          // Localization ayarları
+          locale: const Locale('tr', 'TR'),
+          
+          // Ana sayfa - initialization durumuna göre
+          home: appInitialization.when(
+            data: (_) {
+              print('✅ App initialization tamamlandi, onboarding kontrolü yapılıyor...');
+              // Onboarding kontrolü yap
+              return _OnboardingCheckWrapper(
+                child: _UpdateCheckWrapper(
+                  child: const HomePage(),
+                ),
+              );
             },
-          );
-        },
-      ),
-      
-      // Route ayarları (gelecekte navigation için)
-      routes: {
-        '/home': (context) => const HomePage(),
-        '/splash': (context) => const SplashPage(),
-        '/onboarding': (context) => const OnboardingPage(),
-      },
-      
-      // App boyut ve orientation ayarları
-      builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            // Font scale'i provider'dan alınan değerle sınırla (deprecated textScaleFactor yerine textScaler)
-            textScaler: TextScaler.linear(fontScale.clamp(0.8, 1.6)),
+            loading: () {
+              print('⏳ App initialization devam ediyor, SplashPage gosteriliyor');
+              return const SplashPage();
+            },
+            error: (error, stackTrace) {
+              print('❌ App initialization hatasi: $error');
+              return ErrorPage(
+                error: error,
+                onRetry: () {
+                  ref.invalidate(appInitializationProvider);
+                },
+              );
+            },
           ),
-          child: child!,
+          
+          // Route ayarları (gelecekte navigation için)
+          routes: {
+            '/home': (context) => const HomePage(),
+            '/splash': (context) => const SplashPage(),
+            '/onboarding': (context) => const OnboardingPage(),
+          },
+          
+          // App boyut ve orientation ayarları
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                // Font scale'i provider'dan alınan değerle sınırla
+                textScaler: TextScaler.linear(fontScale.clamp(0.8, 1.6)),
+              ),
+              child: child!,
+            );
+          },
         );
       },
     );

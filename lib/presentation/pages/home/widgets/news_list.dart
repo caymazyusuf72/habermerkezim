@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:share_plus/share_plus.dart';
@@ -6,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../providers/providers.dart';
 import '../../../providers/connectivity_provider.dart';
 import '../../../providers/article_filter_provider.dart';
+import '../../../providers/reading_list_provider.dart';
 import '../../../../domain/entities/article.dart';
 import '../../../widgets/loading/shimmer_loading.dart';
 import '../../article_detail/article_detail_page.dart';
@@ -13,14 +15,22 @@ import 'article_card.dart';
 
 /// Haber listesi widget'ı - Pull-to-refresh ve shimmer loading ile
 /// Kategoriye göre haberleri listeler
+///
+/// Performans İyileştirmeleri:
+/// - Optimize edilmiş cacheExtent (2000px)
+/// - RepaintBoundary ile izole render
+/// - Lazy loading ve infinite scroll
+/// - Haptic feedback desteği
 class NewsList extends ConsumerStatefulWidget {
   final String category;
   final Future<void> Function()? onRefresh;
+  final bool enableHapticFeedback;
 
   const NewsList({
     super.key,
     required this.category,
     this.onRefresh,
+    this.enableHapticFeedback = true,
   });
 
   @override
@@ -32,6 +42,12 @@ class NewsListState extends ConsumerState<NewsList>
 
   late RefreshController _refreshController;
   final ScrollController _scrollController = ScrollController();
+  
+  /// Scroll pozisyonunu cache'le - tab değişimlerinde korumak için
+  double _lastScrollPosition = 0.0;
+  
+  /// Yükleme durumu - çift yüklemeyi önlemek için
+  bool _isLoadingMore = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -47,26 +63,35 @@ class NewsListState extends ConsumerState<NewsList>
 
   @override
   void dispose() {
+    _lastScrollPosition = _scrollController.hasClients ? _scrollController.offset : 0.0;
     _refreshController.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
 
-  /// Scroll olaylarını dinler
+  /// Scroll olaylarını dinler - optimize edilmiş
   void _onScroll() {
     if (!_scrollController.hasClients) return;
     
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
-    final threshold = maxScroll * 0.8; // %80'e ulaşıldığında yükle
     
-    if (currentScroll >= threshold) {
+    // Daha erken yükleme başlat - %70'e ulaşıldığında
+    final threshold = maxScroll * 0.7;
+    
+    if (currentScroll >= threshold && !_isLoadingMore) {
       final newsState = ref.read(newsProvider);
       if (newsState.hasMore && !newsState.isLoadingMore) {
-        ref.read(newsProvider.notifier).loadMoreArticles();
+        _isLoadingMore = true;
+        ref.read(newsProvider.notifier).loadMoreArticles().then((_) {
+          _isLoadingMore = false;
+        });
       }
     }
+    
+    // Scroll pozisyonunu kaydet
+    _lastScrollPosition = currentScroll;
   }
 
   /// Listeyi en üste kaydırır
@@ -255,43 +280,194 @@ class NewsListState extends ConsumerState<NewsList>
     // Haber listesi - Gelişmiş lazy loading optimizasyonları
     return ListView.builder(
       controller: _scrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       // Lazy loading optimizasyonları - PERFORMANS İYİLEŞTİRMELERİ
       addAutomaticKeepAlives: false, // Görünmeyen widget'ları dispose et
       addRepaintBoundaries: true, // Repaint boundary ekle (performans)
       addSemanticIndexes: false, // Semantic index'leri kapat (daha hızlı)
-      cacheExtent: 1000, // Cache extent artırıldı (500→1000) - daha smooth scroll
-      // itemExtentBuilder kaldırıldı - kartlar dinamik yüksekliğe sahip olacak
+      cacheExtent: 2000, // Cache extent artırıldı (1000→2000) - daha smooth scroll
+      // Tahmini item yüksekliği - scroll bar hesaplaması için
+      // itemExtent kullanılmıyor çünkü kartlar dinamik yüksekliğe sahip
       padding: const EdgeInsets.only(
         top: 8,
-        bottom: 80, // FAB için alan bırak
+        bottom: 100, // FAB ve bottom navigation için alan bırak
       ),
       itemCount: articles.length + (newsState.isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
         // Loading item (en sonda - infinite scroll için)
         if (index == articles.length) {
-          return const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-          );
+          return _buildLoadingIndicator();
         }
         
         final article = articles[index];
         
         // Repaint boundary ve key ile widget'ı optimize et
         return RepaintBoundary(
-          key: ValueKey(article.id), // Unique key - rebuild optimizasyonu
-          child: ArticleCard(
-            article: article,
-            onTap: () => _onArticleTap(article),
-            onFavoriteToggle: () => _onFavoriteToggle(article.id),
-            onShare: () => _onShareArticle(article),
-            showCategoryBadge: widget.category == 'genel',
-          ),
+          key: ValueKey('article_${article.id}'), // Unique key - rebuild optimizasyonu
+          child: _buildArticleCard(article, index),
         );
       },
+    );
+  }
+  
+  /// Loading indicator widget'ı
+  Widget _buildLoadingIndicator() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 24.0),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Daha fazla haber yükleniyor...',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  /// Article card widget'ı - optimize edilmiş - Swipe-to-dismiss eklendi
+  Widget _buildArticleCard(Article article, int index) {
+    return Dismissible(
+      key: Key('dismissible_${article.id}'),
+      direction: DismissDirection.horizontal,
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.endToStart) {
+          // Sağdan sola: Okuma listesine ekle/çıkar
+          _onToggleReadingList(article);
+          return false; // Kartı silme, sadece aksiyon yap
+        } else if (direction == DismissDirection.startToEnd) {
+          // Soldan sağa: Favorilere ekle/çıkar
+          _onFavoriteToggle(article.id);
+          return false; // Kartı silme, sadece aksiyon yap
+        }
+        return false;
+      },
+      background: _buildSwipeBackground(
+        context,
+        alignment: Alignment.centerLeft,
+        color: Colors.red,
+        icon: Icons.favorite_rounded,
+        label: 'Favorilere Ekle',
+      ),
+      secondaryBackground: _buildSwipeBackground(
+        context,
+        alignment: Alignment.centerRight,
+        color: Colors.blue,
+        icon: Icons.bookmark_rounded,
+        label: 'Okuma Listesi',
+      ),
+      child: ArticleCard(
+        article: article,
+        onTap: () => _onArticleTap(article),
+        onFavoriteToggle: () => _onFavoriteToggle(article.id),
+        onShare: () => _onShareArticle(article),
+        showCategoryBadge: widget.category == 'genel',
+      ),
+    );
+  }
+
+  /// Swipe arka plan widget'ı
+  Widget _buildSwipeBackground(
+    BuildContext context, {
+    required Alignment alignment,
+    required Color color,
+    required IconData icon,
+    required String label,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
+      ),
+      alignment: alignment,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: alignment == Alignment.centerLeft
+            ? [
+                Icon(icon, color: color, size: 28),
+                const SizedBox(width: 12),
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ]
+            : [
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Icon(icon, color: color, size: 28),
+              ],
+      ),
+    );
+  }
+
+  /// Okuma listesine ekle/çıkar
+  void _onToggleReadingList(Article article) {
+    // Haptic feedback
+    if (widget.enableHapticFeedback) {
+      HapticFeedback.mediumImpact();
+    }
+    
+    // Okuma listesi provider'ını kullan
+    ref.read(readingListProvider.notifier).toggleReadingList(article);
+    
+    // Feedback göster
+    final isInList = ref.read(isInReadingListProvider(article.id));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              isInList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+              color: Theme.of(context).colorScheme.onInverseSurface,
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Text(isInList ? 'Okuma listesine eklendi' : 'Okuma listesinden çıkarıldı'),
+          ],
+        ),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        margin: const EdgeInsets.all(16),
+        action: SnackBarAction(
+          label: 'Geri Al',
+          onPressed: () {
+            ref.read(readingListProvider.notifier).toggleReadingList(article);
+          },
+        ),
+      ),
     );
   }
 
@@ -358,50 +534,83 @@ class NewsListState extends ConsumerState<NewsList>
 
   /// Makaleye tıklama olayı
   void _onArticleTap(Article article) {
+    // Haptic feedback
+    if (widget.enableHapticFeedback) {
+      HapticFeedback.lightImpact();
+    }
+    
     // Makaleyi okundu olarak işaretle
     ref.read(newsProvider.notifier).markAsRead(article.id);
     
-    // Detay sayfasına git
+    // Detay sayfasına git - Hero animation için tag ekle
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ArticleDetailPage(article: article),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            ArticleDetailPage(article: article),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+          
+          var tween = Tween(begin: begin, end: end).chain(
+            CurveTween(curve: curve),
+          );
+          
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 300),
       ),
     );
   }
 
   /// Favori toggle olayı
   void _onFavoriteToggle(String articleId) {
+    // Haptic feedback
+    if (widget.enableHapticFeedback) {
+      HapticFeedback.mediumImpact();
+    }
+    
     // Makaleyi bul
     final article = ref.read(newsProvider).articles
-        .firstWhere((a) => a.id == articleId);
+        .firstWhere((a) => a.id == articleId, orElse: () => throw Exception('Article not found'));
     
     // Favoriler provider'ını kullan
     ref.read(favoritesProvider.notifier).toggleFavorite(article);
-    
-    // Haptic feedback
-    // HapticFeedback.lightImpact();
   }
 
   /// Makaleyi paylaş
   void _onShareArticle(Article article) {
+    // Haptic feedback
+    if (widget.enableHapticFeedback) {
+      HapticFeedback.lightImpact();
+    }
+    
     final text = '${article.title}\n\n${article.link}';
     Share.share(text, subject: article.title);
     
     // Feedback göster
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Row(
+        content: Row(
           children: [
-            Icon(Icons.share, color: Colors.white, size: 18),
-            SizedBox(width: 8),
-            Text('Haber paylaşıldı'),
+            Icon(
+              Icons.share_rounded,
+              color: Theme.of(context).colorScheme.onInverseSurface,
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            const Text('Haber paylaşıldı'),
           ],
         ),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
         ),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }

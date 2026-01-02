@@ -7,9 +7,11 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../domain/entities/article.dart';
 import '../../../core/services/article_content_service.dart';
+import '../../../core/services/article_popularity_service.dart';
 import '../../providers/providers.dart';
 import '../../providers/analytics_provider.dart';
 import '../../providers/reading_list_provider.dart';
+import '../../providers/popular_articles_provider.dart';
 import '../../themes/app_theme.dart';
 import 'widgets/image_gallery.dart';
 import 'widgets/related_articles_section.dart';
@@ -54,6 +56,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         widget.article.sourceName,
         timeSpent: 0, // Başlangıçta 0, gerçek süre daha sonra hesaplanabilir
       );
+      
+      // Popülerlik kaydı - makale görüntülendi
+      ref.read(popularArticlesProvider.notifier).recordArticleView(widget.article);
     });
   }
 
@@ -930,6 +935,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     
     // Analytics kaydı - paylaşım yapıldı
     ref.read(analyticsProvider.notifier).recordSharePerformed();
+    
+    // Popülerlik kaydı - paylaşım yapıldı
+    ref.read(popularArticlesProvider.notifier).recordArticleShare(widget.article.id);
   }
 
   /// Favori durumunu toggle et
@@ -951,6 +959,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     // Analytics kaydı - sadece favori eklendiğinde
     if (!wasAlreadyFavorite && isFavorite) {
       ref.read(analyticsProvider.notifier).recordFavoriteAdded();
+      
+      // Popülerlik kaydı - favori eklendi
+      ref.read(popularArticlesProvider.notifier).recordArticleFavorite(widget.article.id);
     }
     
     ScaffoldMessenger.of(context).showSnackBar(
