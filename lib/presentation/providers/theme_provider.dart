@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/hive_service.dart';
-import '../themes/app_theme.dart' show AppTheme, ColorTheme;
+import '../themes/app_theme.dart' show ColorTheme;
 
 /// Dynamic color için global state
 /// Android 12+ cihazlarda duvar kağıdından alınan renk şeması

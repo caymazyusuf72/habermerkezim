@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
 
 import '../../domain/entities/category.dart';
 import '../../core/services/hive_service.dart';

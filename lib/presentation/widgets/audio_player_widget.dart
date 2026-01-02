@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haber_merkezi/presentation/providers/audio_player_provider.dart';
-import 'package:haber_merkezi/core/services/podcast_service.dart';
 
 /// Mini Audio Player Widget (bottom player)
 class MiniAudioPlayer extends ConsumerWidget {

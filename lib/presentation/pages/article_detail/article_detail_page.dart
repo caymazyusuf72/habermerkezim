@@ -473,6 +473,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     
     return Stack(
       children: [
+        // Görsel - Hero kaldırıldı (çakışma sorunu)
         GestureDetector(
           onTap: () {
             if (imageUrls.length > 1) {
@@ -490,22 +491,19 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               _toggleImageExpansion();
             }
           },
-          child: Hero(
-            tag: 'article_image_${widget.article.id}',
-            child: SizedBox(
-              width: double.infinity,
-              height: 300,
-              child: CachedNetworkImage(
-                imageUrl: widget.article.imageUrl!,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: const Icon(Icons.image_not_supported, size: 48),
-                ),
+          child: SizedBox(
+            width: double.infinity,
+            height: 300,
+            child: CachedNetworkImage(
+              imageUrl: widget.article.imageUrl!,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+              errorWidget: (context, url, error) => Container(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                child: const Icon(Icons.image_not_supported, size: 48),
               ),
             ),
           ),

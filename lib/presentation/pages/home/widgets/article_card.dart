@@ -394,48 +394,41 @@ class ArticleCard extends ConsumerWidget {
     );
   }
 
-  /// Görsel bölümü
+  /// Görsel bölümü - Hero kaldırıldı (çakışma sorunu)
   Widget _buildImageSection(BuildContext context, WidgetRef ref, Color categoryColor) {
-    final heroTag = heroTagSuffix != null
-        ? 'article_image_${article.id}_$heroTagSuffix'
-        : 'article_image_${article.id}';
-    
     return Stack(
       children: [
-        // Ana görsel - Sabit yükseklik ile - Hero animation
-        Hero(
-          tag: heroTag,
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              height: 200,
-              child: CachedNetworkImage(
-                imageUrl: ArticleCardUtils.optimizeImageUrl(
-                  article.imageUrl,
-                  width: MediaQuery.of(context).size.width.toInt(),
-                ) ?? article.imageUrl!,
-                fit: BoxFit.cover,
-                memCacheWidth: 400, // RAM kullanımı için düşürüldü
-                memCacheHeight: 150,
-                maxWidthDiskCache: 600,
-                maxHeightDiskCache: 150,
-                placeholder: (context, url) => Container(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
+        // Ana görsel - Sabit yükseklik ile
+        ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(8),
+            topRight: Radius.circular(8),
+          ),
+          child: SizedBox(
+            width: double.infinity,
+            height: 200,
+            child: CachedNetworkImage(
+              imageUrl: ArticleCardUtils.optimizeImageUrl(
+                article.imageUrl,
+                width: MediaQuery.of(context).size.width.toInt(),
+              ) ?? article.imageUrl!,
+              fit: BoxFit.cover,
+              memCacheWidth: 400, // RAM kullanımı için düşürüldü
+              memCacheHeight: 150,
+              maxWidthDiskCache: 600,
+              maxHeightDiskCache: 150,
+              placeholder: (context, url) => Container(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                child: const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 ),
-                errorWidget: (context, url, error) => Container(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: Icon(
-                    Icons.image_not_supported_rounded,
-                    size: 40,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+              ),
+              errorWidget: (context, url, error) => Container(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                child: Icon(
+                  Icons.image_not_supported_rounded,
+                  size: 40,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ),

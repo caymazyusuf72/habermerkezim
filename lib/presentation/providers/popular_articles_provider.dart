@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/services/article_popularity_service.dart';
 import '../../domain/entities/article.dart';
-import 'providers.dart';
 
 /// Popüler makaleler state
 class PopularArticlesState {

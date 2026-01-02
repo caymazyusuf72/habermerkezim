@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,7 +10,6 @@ import '../../domain/entities/article.dart';
 import '../../domain/repositories/news_repository.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 import 'news_provider.dart';
-import 'user_profile_provider.dart';
 
 // Export specific providers only
 export 'news_provider.dart';
