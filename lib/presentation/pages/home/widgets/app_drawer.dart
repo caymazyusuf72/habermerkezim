@@ -13,7 +13,6 @@ import '../../profile/profile_page.dart';
 import '../../custom_categories/custom_categories_page.dart';
 import '../../trending/trending_page.dart';
 import '../../discover/discover_page.dart';
-import '../../archive/archive_page.dart';
 import '../../performance/performance_monitor_page.dart';
 import '../../popular/popular_articles_page.dart';
 
@@ -139,21 +138,6 @@ class AppDrawer extends ConsumerWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const ReadingListPage(),
-                      ),
-                    );
-                  },
-                ),
-                
-                // Arşiv
-                _buildMenuTile(
-                  context,
-                  icon: Icons.archive_rounded,
-                  title: 'Arşiv',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const ArchivePage(),
                       ),
                     );
                   },
