@@ -545,41 +545,8 @@ class ArticleCard extends ConsumerWidget {
     );
   }
 
-  /// Kompakt görsel
-  Widget _buildCompactImage(BuildContext context) {
-    return Container(
-      width: 60,
-      height: 60,
-      margin: const EdgeInsets.only(right: 12),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: CachedNetworkImage(
-          imageUrl: ArticleCardUtils.optimizeImageUrl(
-            article.imageUrl,
-            width: 60,
-            height: 60,
-          ) ?? article.imageUrl!,
-          fit: BoxFit.cover,
-          memCacheWidth: 50, // RAM için optimize edildi
-          memCacheHeight: 50,
-          maxWidthDiskCache: 100,
-          maxHeightDiskCache: 100,
-          placeholder: (context, url) => Container(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            child: const Icon(Icons.image_rounded, size: 20),
-          ),
-          errorWidget: (context, url, error) => Container(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            child: const Icon(Icons.image_not_supported_rounded, size: 20),
-          ),
-        ),
-      ),
-    );
-  }
-
   /// Kategori badge'i - Normal tasarım (görsel olmayan kartlar için)
   Widget _buildCategoryBadge(BuildContext context, Color categoryColor) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -600,7 +567,7 @@ class ArticleCard extends ConsumerWidget {
 
   /// Glassmorphism kategori badge'i - Görsel üzerindeki badge'ler için
   Widget _buildGlassmorphismCategoryBadge(BuildContext context, Color categoryColor) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: BackdropFilter(
@@ -608,12 +575,12 @@ class ArticleCard extends ConsumerWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: isDark
+            color: isDarkMode
                 ? Colors.black.withOpacity(0.4)
                 : Colors.white.withOpacity(0.25),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark
+              color: isDarkMode
                   ? categoryColor.withOpacity(0.6)
                   : categoryColor.withOpacity(0.4),
               width: 1.2,
@@ -629,12 +596,12 @@ class ArticleCard extends ConsumerWidget {
           child: Text(
             article.sourceName,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: isDark
+              color: isDarkMode
                   ? categoryColor.withOpacity(0.95)
                   : categoryColor,
               fontWeight: FontWeight.w700,
               fontSize: 10,
-              shadows: isDark
+              shadows: isDarkMode
                   ? null
                   : [
                       Shadow(
@@ -646,31 +613,6 @@ class ArticleCard extends ConsumerWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  /// Okuma listesi butonu
-  Widget _buildReadingListButton(BuildContext context, WidgetRef ref) {
-    // Okuma listesi durumunu provider'dan al
-    final isInReadingList = ref.watch(isInReadingListProvider(article.id));
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
-        shape: BoxShape.circle,
-      ),
-      child: IconButton(
-        onPressed: () {
-          ref.read(readingListProvider.notifier).toggleReadingList(article);
-        },
-        icon: Icon(
-          isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-          color: isInReadingList ? AppTheme.sageGreen : Theme.of(context).colorScheme.onSurface,
-          size: 20,
-        ),
-        constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-        padding: EdgeInsets.zero,
-        tooltip: isInReadingList ? 'Okuma listesinden çıkar' : 'Okuma listesine ekle',
       ),
     );
   }
@@ -817,37 +759,6 @@ class ArticleCard extends ConsumerWidget {
     );
   }
 
-  /// Alt bilgiler (kompakt kart için)
-  Widget _buildCompactFooter(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Flexible(
-          child: Text(
-            article.shortDateTime,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
-            ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
-        ),
-        if (article.isRead) ...[
-          const SizedBox(width: 8),
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary,
-              shape: BoxShape.circle,
-            ),
-          ),
-        ],
-      ],
-    );
-  }
 }
 
 /// Article Card için utility sınıfı

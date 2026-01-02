@@ -80,9 +80,6 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
     final bannerState = ref.watch(notificationBannerProvider);
     final items = bannerState.allItems;
     
-    // News provider'dan haberleri de dinle
-    final newsState = ref.watch(newsProvider);
-    
     // News provider'dan haberler yüklendiğinde banner'ı otomatik güncelle
     // ref.listen ile değişiklikleri yakala
     ref.listen<NewsState>(newsProvider, (previous, next) {

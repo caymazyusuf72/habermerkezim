@@ -37,15 +37,14 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
 
   @override
   Widget build(BuildContext context) {
-    final isDark = ref.watch(isDarkModeProvider);
-    final fontSize = ref.watch(fontScaleProvider) * 16;
     final analyticsState = ref.watch(analyticsProvider);
+    final baseFontSize = ref.watch(fontScaleProvider) * 16;
     
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'İstatistikler',
-          style: TextStyle(fontSize: fontSize + 4),
+          style: TextStyle(fontSize: baseFontSize + 4),
         ),
         elevation: 0,
         actions: [
@@ -251,7 +250,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
   Widget _buildChartsTab() {
     final weeklyAnalytics = ref.watch(analyticsProvider).weeklyAnalytics;
     final monthlyAnalytics = ref.watch(analyticsProvider).monthlyAnalytics;
-    final weeklySummary = ref.watch(weeklySummaryProvider);
+    final categoryBreakdown = ref.watch(weeklySummaryProvider).categoriesBreakdown;
     final fontSize = ref.watch(fontScaleProvider) * 16;
 
     return SingleChildScrollView(
@@ -286,7 +285,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
           const SizedBox(height: 16),
 
           // Kategori dağılımı
-          if (weeklySummary.categoriesBreakdown.isNotEmpty) ...[
+          if (categoryBreakdown.isNotEmpty) ...[
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -303,7 +302,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
                     const SizedBox(height: 16),
                     SizedBox(
                       height: 200,
-                      child: _buildCategoryPieChart(weeklySummary.categoriesBreakdown),
+                      child: _buildCategoryPieChart(categoryBreakdown),
                     ),
                   ],
                 ),
@@ -343,7 +342,6 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
   Widget _buildDetailsTab() {
     final weeklySummary = ref.watch(weeklySummaryProvider);
     final monthlySummary = ref.watch(monthlySummaryProvider);
-    final fontSize = ref.watch(fontScaleProvider) * 16;
     final readingTrend = ref.watch(readingTrendProvider);
     final productiveTime = ref.watch(productiveReadingTimeProvider);
 

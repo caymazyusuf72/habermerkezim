@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/hive_service.dart';
-import '../../themes/app_theme.dart';
 
 /// Bildirim tercihleri sayfası - kategori bazlı, zaman bazlı bildirim ayarları
 class NotificationPreferencesPage extends ConsumerStatefulWidget {

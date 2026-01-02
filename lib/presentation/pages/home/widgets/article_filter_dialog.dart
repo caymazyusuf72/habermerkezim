@@ -229,9 +229,7 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
             ),
           ),
           onChanged: (value) {
-            setState(() {
-              _searchQuery = value.isEmpty ? null : value;
-            });
+            setState(() {});
           },
         ),
       ],

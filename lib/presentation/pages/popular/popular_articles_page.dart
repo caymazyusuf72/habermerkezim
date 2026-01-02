@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/services/article_popularity_service.dart';
 import '../../../domain/entities/article.dart';
@@ -41,7 +40,6 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final state = ref.watch(popularArticlesProvider);
     final newsState = ref.watch(newsProvider);
 
@@ -187,7 +185,6 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
     int rank,
   ) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),

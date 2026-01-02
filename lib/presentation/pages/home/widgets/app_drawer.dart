@@ -24,7 +24,6 @@ class AppDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final isDarkMode = ref.watch(isDarkModeProvider);
     final connectivityState = ref.watch(connectivityProvider);
     final isConnected = connectivityState.isConnected;
@@ -244,8 +243,6 @@ class AppDrawer extends ConsumerWidget {
     bool isConnected,
     String connectionType,
   ) {
-    final theme = Theme.of(context);
-    
     return DrawerHeader(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -459,7 +456,7 @@ class AppDrawer extends ConsumerWidget {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    final theme = Theme.of(context);
+    final themeData = Theme.of(context);
     
     return Expanded(
       child: GestureDetector(
@@ -468,12 +465,12 @@ class AppDrawer extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
-                ? theme.colorScheme.primary.withOpacity(0.1)
+                ? themeData.colorScheme.primary.withOpacity(0.1)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             border: isSelected
-                ? Border.all(color: theme.colorScheme.primary)
-                : Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+                ? Border.all(color: themeData.colorScheme.primary)
+                : Border.all(color: themeData.colorScheme.outline.withOpacity(0.3)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -481,17 +478,17 @@ class AppDrawer extends ConsumerWidget {
               Icon(
                 icon,
                 color: isSelected
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withOpacity(0.6),
+                    ? themeData.colorScheme.primary
+                    : themeData.colorScheme.onSurface.withOpacity(0.6),
                 size: 20,
               ),
               const SizedBox(height: 4),
               Text(
                 label,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: themeData.textTheme.bodySmall?.copyWith(
                   color: isSelected
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurface.withOpacity(0.6),
+                      ? themeData.colorScheme.primary
+                      : themeData.colorScheme.onSurface.withOpacity(0.6),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),

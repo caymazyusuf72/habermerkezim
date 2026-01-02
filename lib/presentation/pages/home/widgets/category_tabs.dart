@@ -132,7 +132,6 @@ class _AnimatedCategoryTabState extends State<AnimatedCategoryTab>
   
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  late Animation<Color?> _colorAnimation;
 
   @override
   void initState() {

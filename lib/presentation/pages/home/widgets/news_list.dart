@@ -44,9 +44,6 @@ class NewsListState extends ConsumerState<NewsList>
   late RefreshController _refreshController;
   final ScrollController _scrollController = ScrollController();
   
-  /// Scroll pozisyonunu cache'le - tab değişimlerinde korumak için
-  double _lastScrollPosition = 0.0;
-  
   /// Yükleme durumu - çift yüklemeyi önlemek için
   bool _isLoadingMore = false;
 
@@ -64,7 +61,6 @@ class NewsListState extends ConsumerState<NewsList>
 
   @override
   void dispose() {
-    _lastScrollPosition = _scrollController.hasClients ? _scrollController.offset : 0.0;
     _refreshController.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
@@ -91,8 +87,6 @@ class NewsListState extends ConsumerState<NewsList>
       }
     }
     
-    // Scroll pozisyonunu kaydet
-    _lastScrollPosition = currentScroll;
   }
 
   /// Listeyi en üste kaydırır

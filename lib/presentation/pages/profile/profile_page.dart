@@ -562,7 +562,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     ThemeData theme,
   ) {
     final isDark = theme.brightness == Brightness.dark;
-    
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
       duration: const Duration(milliseconds: 600),

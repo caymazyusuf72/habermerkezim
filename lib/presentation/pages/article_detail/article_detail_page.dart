@@ -7,7 +7,6 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../domain/entities/article.dart';
 import '../../../core/services/article_content_service.dart';
-import '../../../core/services/article_popularity_service.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../../providers/providers.dart';
 import '../../providers/analytics_provider.dart';
@@ -17,7 +16,6 @@ import '../../themes/app_theme.dart';
 import 'widgets/image_gallery.dart';
 import 'widgets/related_articles_section.dart';
 import 'widgets/tts_controls.dart';
-import '../reading_mode/reading_mode_page.dart';
 
 /// Haber detay sayfası - tek bir haberin ayrıntılı görünümü
 /// Görsel, başlık, içerik, tarih, paylaşma ve kaynak görme özellikleri

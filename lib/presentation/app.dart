@@ -63,7 +63,6 @@ class HaberMerkeziApp extends ConsumerWidget {
           // Ana sayfa - initialization durumuna göre
           home: appInitialization.when(
             data: (_) {
-              print('✅ App initialization tamamlandi, onboarding kontrolü yapılıyor...');
               // Onboarding kontrolü yap
               return _OnboardingCheckWrapper(
                 child: _UpdateCheckWrapper(
@@ -71,12 +70,9 @@ class HaberMerkeziApp extends ConsumerWidget {
                 ),
               );
             },
-            loading: () {
-              print('⏳ App initialization devam ediyor, SplashPage gosteriliyor');
-              return const SplashPage();
-            },
+            loading: () => const SplashPage(),
             error: (error, stackTrace) {
-              print('❌ App initialization hatasi: $error');
+              debugPrint('❌ App initialization hatasi: $error');
               return ErrorPage(
                 error: error,
                 onRetry: () {
@@ -291,34 +287,56 @@ class _UpdateCheckWrapperState extends ConsumerState<_UpdateCheckWrapper> {
 
 /// Onboarding kontrolü wrapper widget'ı
 /// İlk giriş kontrolü yapar, onboarding tamamlanmamışsa OnboardingPage gösterir
-class _OnboardingCheckWrapper extends ConsumerWidget {
+class _OnboardingCheckWrapper extends ConsumerStatefulWidget {
   final Widget child;
 
   const _OnboardingCheckWrapper({required this.child});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final hasCompletedOnboarding = ref.watch(hasCompletedOnboardingProvider);
+  ConsumerState<_OnboardingCheckWrapper> createState() => _OnboardingCheckWrapperState();
+}
 
-    return hasCompletedOnboarding.when(
-      data: (completed) {
-        if (completed) {
-          // Onboarding tamamlanmış, ana sayfaya geç
-          return child;
-        } else {
-          // Onboarding tamamlanmamış, onboarding sayfasını göster
-          return const OnboardingPage();
-        }
-      },
-      loading: () {
-        // Loading sırasında splash göster
-        return const SplashPage();
-      },
-      error: (error, stackTrace) {
-        // Hata durumunda ana sayfaya geç (onboarding'i atla)
-        print('⚠️ Onboarding kontrolü hatası: $error');
-        return child;
-      },
-    );
+class _OnboardingCheckWrapperState extends ConsumerState<_OnboardingCheckWrapper> {
+  bool? _hasCompletedOnboarding;
+  bool _isLoading = true;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboarding();
+  }
+
+  Future<void> _checkOnboarding() async {
+    try {
+      final result = await ref.read(hasCompletedOnboardingProvider.future);
+      if (mounted) {
+        setState(() {
+          _hasCompletedOnboarding = result;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('⚠️ Onboarding kontrolü hatası: $e');
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const SplashPage();
+    }
+
+    if (_hasError || _hasCompletedOnboarding == true) {
+      return widget.child;
+    }
+
+    return const OnboardingPage();
   }
 }
