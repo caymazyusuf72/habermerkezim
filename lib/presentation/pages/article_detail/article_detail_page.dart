@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../domain/entities/article.dart';
 import '../../../core/services/article_content_service.dart';
 import '../../../core/services/article_popularity_service.dart';
+import '../../../core/utils/responsive_helper.dart';
 import '../../providers/providers.dart';
 import '../../providers/analytics_provider.dart';
 import '../../providers/reading_list_provider.dart';
@@ -112,7 +113,15 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final categoryColor = AppTheme.getCategoryColor(widget.article.category);
+    final responsive = ResponsiveHelper(context);
+    final isTabletOrLarger = responsive.isTablet || responsive.isDesktop;
 
+    // Tablet ve desktop için yan panel layout
+    if (isTabletOrLarger) {
+      return _buildTabletLayout(context, theme, categoryColor, responsive);
+    }
+
+    // Mobil layout
     return Scaffold(
       body: CustomScrollView(
         controller: _scrollController,
@@ -127,6 +136,249 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         ],
       ),
       
+    );
+  }
+  
+  /// Tablet ve Desktop için yan panel layout
+  Widget _buildTabletLayout(
+    BuildContext context,
+    ThemeData theme,
+    Color categoryColor,
+    ResponsiveHelper responsive,
+  ) {
+    final contentWidth = responsive.isDesktop ? 0.65 : 0.6;
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          widget.article.sourceName,
+          style: theme.textTheme.titleMedium,
+        ),
+        actions: [
+          // Okuma listesi butonu
+          Consumer(
+            builder: (context, ref, child) {
+              final isInReadingList = ref.watch(isInReadingListProvider(widget.article.id));
+              return IconButton(
+                onPressed: () {
+                  ref.read(readingListProvider.notifier).toggleReadingList(widget.article);
+                },
+                icon: Icon(
+                  isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                ),
+                tooltip: isInReadingList ? 'Okuma listesinden çıkar' : 'Okuma listesine ekle',
+              );
+            },
+          ),
+          // Paylaş butonu
+          IconButton(
+            onPressed: () => _shareArticle(),
+            icon: const Icon(Icons.share),
+            tooltip: 'Paylaş',
+          ),
+          // Favori butonu
+          Consumer(
+            builder: (context, ref, child) {
+              final newsState = ref.watch(newsProvider);
+              final article = newsState.articles
+                  .where((a) => a.id == widget.article.id)
+                  .firstOrNull ?? widget.article;
+              
+              return IconButton(
+                onPressed: () => _toggleFavorite(),
+                icon: Icon(
+                  article.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: article.isFavorite ? Colors.red : null,
+                ),
+                tooltip: article.isFavorite ? 'Favorilerden Çıkar' : 'Favorilere Ekle',
+              );
+            },
+          ),
+          // Menü
+          PopupMenuButton<String>(
+            onSelected: _handleMenuSelection,
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'copy_link',
+                child: Row(
+                  children: [
+                    Icon(Icons.copy),
+                    SizedBox(width: 12),
+                    Text('Bağlantıyı Kopyala'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'open_browser',
+                child: Row(
+                  children: [
+                    Icon(Icons.open_in_browser),
+                    SizedBox(width: 12),
+                    Text('Tarayıcıda Aç'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Ana içerik alanı
+          Expanded(
+            flex: (contentWidth * 100).toInt(),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              padding: EdgeInsets.symmetric(
+                horizontal: responsive.horizontalPadding,
+                vertical: 24,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: responsive.maxContentWidth,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Görsel
+                      if (widget.article.imageUrl != null)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Hero(
+                            tag: 'article_image_${widget.article.id}',
+                            child: AspectRatio(
+                              aspectRatio: 16 / 9,
+                              child: CachedNetworkImage(
+                                imageUrl: widget.article.imageUrl!,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: theme.colorScheme.surfaceVariant,
+                                  child: const Center(child: CircularProgressIndicator()),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: theme.colorScheme.surfaceVariant,
+                                  child: const Icon(Icons.image_not_supported, size: 48),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // Kategori ve kaynak
+                      Row(
+                        children: [
+                          _buildCategoryBadge(context, categoryColor),
+                          const SizedBox(width: 12),
+                          Text(
+                            widget.article.formattedDateTime,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Başlık
+                      Text(
+                        widget.article.title,
+                        style: theme.textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          height: 1.3,
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // Kaynak atfı
+                      _buildSourceAttribution(context, theme, categoryColor),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // İçerik
+                      _buildArticleContent(context, theme),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // Disclaimer
+                      _buildContentDisclaimer(context, theme),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // Eylem butonları
+                      _buildActionButtons(context, theme),
+                      
+                      const SizedBox(height: 32),
+                      
+                      // TTS Kontrolleri
+                      TtsControls(article: widget.article),
+                      
+                      const SizedBox(height: 48),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          
+          // Yan panel - İlgili haberler
+          Container(
+            width: MediaQuery.of(context).size.width * (1 - contentWidth),
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                  color: theme.dividerColor,
+                  width: 1,
+                ),
+              ),
+              color: theme.colorScheme.surface,
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Başlık
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.article_outlined,
+                        size: 20,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'İlgili Haberler',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // İlgili haberler listesi
+                  RelatedArticlesSection(
+                    currentArticle: widget.article,
+                    isCompact: true,
+                  ),
+                  
+                  const SizedBox(height: 32),
+                  
+                  // Kaynak butonu
+                  _buildSourceButton(context, theme),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

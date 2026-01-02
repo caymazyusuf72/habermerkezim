@@ -10,10 +10,12 @@ import '../article_detail_page.dart';
 /// İlgili haberler bölümü - makale detay sayfasında gösterilir
 class RelatedArticlesSection extends ConsumerStatefulWidget {
   final Article currentArticle;
+  final bool isCompact;
 
   const RelatedArticlesSection({
     super.key,
     required this.currentArticle,
+    this.isCompact = false,
   });
 
   @override
@@ -68,6 +70,12 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
 
     final theme = Theme.of(context);
 
+    // Compact mod için dikey liste
+    if (widget.isCompact) {
+      return _buildCompactList(theme);
+    }
+
+    // Normal mod için yatay liste
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -132,6 +140,120 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
         ),
         const SizedBox(height: 8),
       ],
+    );
+  }
+  
+  /// Compact mod için dikey liste (tablet yan panel için)
+  Widget _buildCompactList(ThemeData theme) {
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _relatedArticles!.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final article = _relatedArticles![index];
+        return _buildCompactArticleCard(article, theme);
+      },
+    );
+  }
+  
+  /// Compact makale kartı
+  Widget _buildCompactArticleCard(Article article, ThemeData theme) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => _getArticleDetailPage(article),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.outline.withOpacity(0.2),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Görsel
+            if (article.imageUrl != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: Image.network(
+                    article.imageUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: theme.colorScheme.surfaceVariant,
+                      child: Icon(
+                        Icons.article_rounded,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            
+            if (article.imageUrl != null) const SizedBox(width: 12),
+            
+            // İçerik
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Başlık
+                  Text(
+                    article.title,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  
+                  const SizedBox(height: 8),
+                  
+                  // Kaynak ve tarih
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.source_rounded,
+                        size: 12,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          article.sourceName,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Text(
+                        article.timeAgo,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

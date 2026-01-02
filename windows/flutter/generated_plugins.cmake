@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
+  dynamic_color
   flutter_inappwebview_windows
   flutter_tts
   share_plus

@@ -9,6 +9,7 @@ import '../../../providers/connectivity_provider.dart';
 import '../../../providers/article_filter_provider.dart';
 import '../../../providers/reading_list_provider.dart';
 import '../../../../domain/entities/article.dart';
+import '../../../../core/utils/responsive_helper.dart';
 import '../../../widgets/loading/shimmer_loading.dart';
 import '../../article_detail/article_detail_page.dart';
 import 'article_card.dart';
@@ -277,7 +278,16 @@ class NewsListState extends ConsumerState<NewsList>
       return _buildEmptyState(context, isConnected);
     }
     
-    // Haber listesi - Gelişmiş lazy loading optimizasyonları
+    // Responsive layout için helper
+    final responsive = ResponsiveHelper(context);
+    final isTabletOrLarger = responsive.isTablet || responsive.isDesktop;
+    
+    // Tablet ve desktop için grid layout, mobil için liste
+    if (isTabletOrLarger) {
+      return _buildResponsiveGrid(context, newsState, articles, responsive);
+    }
+    
+    // Haber listesi - Gelişmiş lazy loading optimizasyonları (Mobil)
     return ListView.builder(
       controller: _scrollController,
       physics: const BouncingScrollPhysics(
@@ -312,6 +322,286 @@ class NewsListState extends ConsumerState<NewsList>
     );
   }
   
+  /// Tablet/Desktop için responsive grid layout
+  Widget _buildResponsiveGrid(
+    BuildContext context,
+    NewsState newsState,
+    List<Article> articles,
+    ResponsiveHelper responsive,
+  ) {
+    final crossAxisCount = responsive.gridColumns;
+    final padding = responsive.horizontalPadding;
+    
+    return CustomScrollView(
+      controller: _scrollController,
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      slivers: [
+        // Grid içeriği
+        SliverPadding(
+          padding: EdgeInsets.symmetric(
+            horizontal: padding,
+            vertical: 8,
+          ),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: responsive.isDesktop ? 1.2 : 0.85,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final article = articles[index];
+                
+                return RepaintBoundary(
+                  key: ValueKey('grid_article_${article.id}'),
+                  child: _buildGridArticleCard(article, index),
+                );
+              },
+              childCount: articles.length,
+            ),
+          ),
+        ),
+        
+        // Loading indicator
+        if (newsState.isLoadingMore)
+          SliverToBoxAdapter(
+            child: _buildLoadingIndicator(),
+          ),
+        
+        // Bottom padding
+        const SliverToBoxAdapter(
+          child: SizedBox(height: 100),
+        ),
+      ],
+    );
+  }
+  
+  /// Grid için optimize edilmiş article card
+  Widget _buildGridArticleCard(Article article, int index) {
+    return Dismissible(
+      key: Key('grid_dismissible_${article.id}'),
+      direction: DismissDirection.horizontal,
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.endToStart) {
+          _onToggleReadingList(article);
+          return false;
+        } else if (direction == DismissDirection.startToEnd) {
+          _onFavoriteToggle(article.id);
+          return false;
+        }
+        return false;
+      },
+      background: _buildSwipeBackground(
+        context,
+        alignment: Alignment.centerLeft,
+        color: Colors.red,
+        icon: Icons.favorite_rounded,
+        label: 'Favorilere Ekle',
+      ),
+      secondaryBackground: _buildSwipeBackground(
+        context,
+        alignment: Alignment.centerRight,
+        color: Colors.blue,
+        icon: Icons.bookmark_rounded,
+        label: 'Okuma Listesi',
+      ),
+      child: Card(
+        elevation: 2,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: InkWell(
+          onTap: () => _onArticleTap(article),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Görsel
+              Expanded(
+                flex: 3,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Hero animation ile görsel
+                    Hero(
+                      tag: 'article_image_${article.id}',
+                      child: article.imageUrl != null
+                          ? Image.network(
+                              article.imageUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                color: Theme.of(context).colorScheme.surfaceVariant,
+                                child: Icon(
+                                  Icons.article_rounded,
+                                  size: 48,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              color: Theme.of(context).colorScheme.surfaceVariant,
+                              child: Icon(
+                                Icons.article_rounded,
+                                size: 48,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                    ),
+                    
+                    // Kategori badge
+                    if (widget.category == 'genel')
+                      Positioned(
+                        top: 8,
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            article.category,
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimaryContainer,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    
+                    // Favori ve paylaş butonları
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildGridIconButton(
+                            icon: article.isFavorite
+                                ? Icons.favorite_rounded
+                                : Icons.favorite_border_rounded,
+                            color: article.isFavorite ? Colors.red : null,
+                            onTap: () => _onFavoriteToggle(article.id),
+                          ),
+                          const SizedBox(width: 4),
+                          _buildGridIconButton(
+                            icon: Icons.share_rounded,
+                            onTap: () => _onShareArticle(article),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // İçerik
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Başlık
+                      Expanded(
+                        child: Text(
+                          article.title,
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            height: 1.3,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 8),
+                      
+                      // Kaynak ve tarih
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.source_rounded,
+                            size: 14,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              article.sourceName,
+                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            _formatDate(article.publishedDate),
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  
+  /// Grid için icon button
+  Widget _buildGridIconButton({
+    required IconData icon,
+    Color? color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.black.withOpacity(0.3),
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: Icon(
+            icon,
+            size: 18,
+            color: color ?? Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+  
+  /// Tarih formatla
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    
+    if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}dk';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}sa';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}g';
+    } else {
+      return '${date.day}/${date.month}';
+    }
+  }
+
   /// Loading indicator widget'ı
   Widget _buildLoadingIndicator() {
     return Container(
