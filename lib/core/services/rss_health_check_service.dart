@@ -6,21 +6,45 @@ import 'hive_service.dart';
 
 /// RSS kaynaklarının sağlığını kontrol eden servis
 /// Periyodik olarak feed'leri test eder ve başarısız olanları takip eder
+///
+/// Özellikler:
+/// - Alternatif URL desteği ile fallback mekanizması
+/// - Adaptive timeout değerleri
+/// - Kaynak güvenilirlik puanlaması
+/// - Otomatik devre dışı bırakma ve yeniden etkinleştirme
 class RssHealthCheckService {
   static final RssHealthCheckService _instance = RssHealthCheckService._internal();
   factory RssHealthCheckService() => _instance;
   RssHealthCheckService._internal();
 
-  final Dio _dio = Dio(BaseOptions(
-    connectTimeout: const Duration(seconds: 10),
-    receiveTimeout: const Duration(seconds: 10),
+  /// Hızlı kontrol için Dio instance
+  final Dio _fastDio = Dio(BaseOptions(
+    connectTimeout: Duration(milliseconds: ApiEndpoints.fastConnectTimeoutMs),
+    receiveTimeout: Duration(milliseconds: ApiEndpoints.fastReceiveTimeoutMs),
     headers: {
-      'User-Agent': 'Haber Merkezi RSS Health Check',
+      'User-Agent': 'Haber Merkezi RSS Health Check/2.0',
+      'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+    },
+  ));
+
+  /// Yavaş bağlantılar için Dio instance
+  final Dio _slowDio = Dio(BaseOptions(
+    connectTimeout: Duration(milliseconds: ApiEndpoints.slowConnectTimeoutMs),
+    receiveTimeout: Duration(milliseconds: ApiEndpoints.slowReceiveTimeoutMs),
+    headers: {
+      'User-Agent': 'Haber Merkezi RSS Health Check/2.0',
+      'Accept': 'application/rss+xml, application/xml, text/xml, */*',
     },
   ));
 
   Timer? _healthCheckTimer;
   bool _isRunning = false;
+  
+  /// Çalışan URL'leri cache'le - performans için
+  final Map<String, String> _workingUrlCache = {};
+  
+  /// Son başarılı URL'leri döndürür
+  Map<String, String> get workingUrls => Map.unmodifiable(_workingUrlCache);
 
   /// Health check'i başlatır (periyodik kontrol)
   void startPeriodicHealthCheck({Duration interval = const Duration(hours: 6)}) {
@@ -100,65 +124,133 @@ class RssHealthCheckService {
     return report;
   }
 
-  /// Tek bir feed'i kontrol eder
+  /// Tek bir feed'i kontrol eder - alternatif URL'ler ile
   Future<FeedHealthStatus> _checkSingleFeed(String feedKey, String feedUrl) async {
-    try {
-      final startTime = DateTime.now();
+    // Önce alternatif URL'leri al
+    final alternativeUrls = ApiEndpoints.getAlternativeUrls(feedKey);
+    final urlsToTry = alternativeUrls.isNotEmpty ? alternativeUrls : [feedUrl];
+    
+    FeedHealthStatus? lastStatus;
+    String? workingUrl;
+    
+    // Her URL'yi sırayla dene
+    for (int i = 0; i < urlsToTry.length; i++) {
+      final currentUrl = urlsToTry[i];
+      final isLastAttempt = i == urlsToTry.length - 1;
       
-      final response = await _dio.get(feedUrl);
-      final responseTime = DateTime.now().difference(startTime);
+      // İlk deneme hızlı, sonrakiler yavaş timeout ile
+      final dio = i == 0 ? _fastDio : _slowDio;
       
-      if (response.statusCode == 200) {
-        // XML parse kontrolü
-        final xmlString = response.data as String;
-        if (xmlString.isEmpty || !xmlString.trim().startsWith('<')) {
-          return FeedHealthStatus(
+      try {
+        final startTime = DateTime.now();
+        
+        final response = await dio.get(currentUrl);
+        final responseTime = DateTime.now().difference(startTime);
+        
+        if (response.statusCode == 200) {
+          // XML parse kontrolü
+          final xmlString = response.data as String;
+          if (xmlString.isEmpty || !_isValidXml(xmlString)) {
+            lastStatus = FeedHealthStatus(
+              feedKey: feedKey,
+              feedUrl: currentUrl,
+              isHealthy: false,
+              statusCode: 200,
+              errorMessage: 'Invalid XML format',
+              responseTime: responseTime,
+              lastChecked: DateTime.now(),
+              alternativeUrlUsed: i > 0,
+            );
+            
+            // Son deneme değilse devam et
+            if (!isLastAttempt) continue;
+          } else {
+            // Başarılı - çalışan URL'yi cache'le
+            workingUrl = currentUrl;
+            _workingUrlCache[feedKey] = currentUrl;
+            
+            return FeedHealthStatus(
+              feedKey: feedKey,
+              feedUrl: currentUrl,
+              isHealthy: true,
+              statusCode: response.statusCode,
+              responseTime: responseTime,
+              lastChecked: DateTime.now(),
+              alternativeUrlUsed: i > 0,
+            );
+          }
+        } else {
+          lastStatus = FeedHealthStatus(
             feedKey: feedKey,
-            feedUrl: feedUrl,
+            feedUrl: currentUrl,
             isHealthy: false,
-            statusCode: 200,
-            errorMessage: 'Invalid XML format',
+            statusCode: response.statusCode,
+            errorMessage: 'HTTP ${response.statusCode}',
             responseTime: responseTime,
             lastChecked: DateTime.now(),
+            alternativeUrlUsed: i > 0,
           );
+          
+          if (!isLastAttempt) continue;
         }
-        
-        return FeedHealthStatus(
+      } on DioException catch (e) {
+        lastStatus = FeedHealthStatus(
           feedKey: feedKey,
-          feedUrl: feedUrl,
-          isHealthy: true,
-          statusCode: response.statusCode,
-          responseTime: responseTime,
-          lastChecked: DateTime.now(),
-        );
-      } else {
-        return FeedHealthStatus(
-          feedKey: feedKey,
-          feedUrl: feedUrl,
+          feedUrl: currentUrl,
           isHealthy: false,
-          statusCode: response.statusCode,
-          errorMessage: 'HTTP ${response.statusCode}',
-          responseTime: responseTime,
+          errorMessage: _getDioErrorMessage(e),
           lastChecked: DateTime.now(),
+          alternativeUrlUsed: i > 0,
         );
+        
+        if (!isLastAttempt) {
+          print('⚠️ $feedKey: $currentUrl başarısız, alternatif deneniyor...');
+          continue;
+        }
+      } catch (e) {
+        lastStatus = FeedHealthStatus(
+          feedKey: feedKey,
+          feedUrl: currentUrl,
+          isHealthy: false,
+          errorMessage: e.toString(),
+          lastChecked: DateTime.now(),
+          alternativeUrlUsed: i > 0,
+        );
+        
+        if (!isLastAttempt) continue;
       }
-    } on DioException catch (e) {
-      return FeedHealthStatus(
-        feedKey: feedKey,
-        feedUrl: feedUrl,
-        isHealthy: false,
-        errorMessage: _getDioErrorMessage(e),
-        lastChecked: DateTime.now(),
-      );
-    } catch (e) {
-      return FeedHealthStatus(
-        feedKey: feedKey,
-        feedUrl: feedUrl,
-        isHealthy: false,
-        errorMessage: e.toString(),
-        lastChecked: DateTime.now(),
-      );
     }
+    
+    // Tüm URL'ler başarısız olduysa son durumu döndür
+    return lastStatus ?? FeedHealthStatus(
+      feedKey: feedKey,
+      feedUrl: feedUrl,
+      isHealthy: false,
+      errorMessage: 'All alternative URLs failed',
+      lastChecked: DateTime.now(),
+    );
+  }
+  
+  /// XML formatını kontrol eder
+  bool _isValidXml(String content) {
+    final trimmed = content.trim();
+    // XML declaration veya root element ile başlamalı
+    return trimmed.startsWith('<?xml') ||
+           trimmed.startsWith('<rss') ||
+           trimmed.startsWith('<feed') ||
+           trimmed.startsWith('<channel') ||
+           (trimmed.startsWith('<') && trimmed.contains('</'));
+  }
+  
+  /// Belirli bir feed için çalışan URL'yi döndürür
+  String? getWorkingUrl(String feedKey) {
+    return _workingUrlCache[feedKey] ?? ApiEndpoints.getPrimaryUrl(feedKey);
+  }
+  
+  /// Tüm çalışan URL cache'ini temizler
+  void clearWorkingUrlCache() {
+    _workingUrlCache.clear();
+    print('✅ Working URL cache temizlendi');
   }
 
   /// DioException'dan anlamlı mesaj çıkarır
@@ -410,6 +502,8 @@ class FeedHealthStatus {
   final String? errorMessage;
   final Duration? responseTime;
   final DateTime lastChecked;
+  final bool alternativeUrlUsed;
+  final int reliabilityScore;
 
   FeedHealthStatus({
     required this.feedKey,
@@ -419,7 +513,19 @@ class FeedHealthStatus {
     this.errorMessage,
     this.responseTime,
     required this.lastChecked,
-  });
+    this.alternativeUrlUsed = false,
+    int? reliabilityScore,
+  }) : reliabilityScore = reliabilityScore ?? ApiEndpoints.getSourceReliabilityScore(feedKey);
+
+  /// Response time'a göre performans değerlendirmesi
+  String get performanceRating {
+    if (responseTime == null) return 'unknown';
+    final ms = responseTime!.inMilliseconds;
+    if (ms < 500) return 'excellent';
+    if (ms < 1000) return 'good';
+    if (ms < 2000) return 'fair';
+    return 'slow';
+  }
 
   Map<String, dynamic> toJson() => {
     'feedKey': feedKey,
@@ -429,6 +535,8 @@ class FeedHealthStatus {
     'errorMessage': errorMessage,
     'responseTimeMs': responseTime?.inMilliseconds,
     'lastChecked': lastChecked.toIso8601String(),
+    'alternativeUrlUsed': alternativeUrlUsed,
+    'reliabilityScore': reliabilityScore,
   };
 
   factory FeedHealthStatus.fromJson(Map<String, dynamic> json) {
@@ -438,10 +546,12 @@ class FeedHealthStatus {
       isHealthy: json['isHealthy'] as bool,
       statusCode: json['statusCode'] as int?,
       errorMessage: json['errorMessage'] as String?,
-      responseTime: json['responseTimeMs'] != null 
+      responseTime: json['responseTimeMs'] != null
           ? Duration(milliseconds: json['responseTimeMs'] as int)
           : null,
       lastChecked: DateTime.parse(json['lastChecked'] as String),
+      alternativeUrlUsed: json['alternativeUrlUsed'] as bool? ?? false,
+      reliabilityScore: json['reliabilityScore'] as int?,
     );
   }
 }

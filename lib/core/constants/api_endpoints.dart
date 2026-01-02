@@ -4,6 +4,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   /// RSS Feed URL'leri - Kategori bazlı (güvenilir kaynaklar)
+  /// Her feed için birincil ve alternatif URL'ler tanımlanmıştır
   static const Map<String, String> rssFeedUrls = {
     // Genel/Son Dakika
     'genel': 'https://www.hurriyet.com.tr/rss/anasayfa',
@@ -106,6 +107,145 @@ class ApiEndpoints {
     'otomobil_gazetevatan': 'https://www.gazetevatan.com/rss/otomobil.xml',
     'otomobil_otomobilturkiye': 'https://www.otomobilturkiye.com/rss.xml',
   };
+
+  /// Alternatif RSS Feed URL'leri - Birincil URL başarısız olduğunda kullanılır
+  /// Her feed key için alternatif URL listesi
+  static const Map<String, List<String>> alternativeFeedUrls = {
+    // Genel/Son Dakika alternatifleri
+    'genel': [
+      'https://www.hurriyet.com.tr/rss/anasayfa',
+      'https://www.ntv.com.tr/son-dakika.rss',
+      'https://www.sabah.com.tr/rss/sondakika.xml',
+    ],
+    'genel_ntv': [
+      'https://www.ntv.com.tr/son-dakika.rss',
+      'https://www.ntv.com.tr/gundem.rss',
+    ],
+    'genel_sabah': [
+      'https://www.sabah.com.tr/rss/sondakika.xml',
+      'https://www.sabah.com.tr/rss/gundem.xml',
+    ],
+    'genel_cumhuriyet': [
+      'https://www.cumhuriyet.com.tr/rss/son_dakika.xml',
+      'https://www.cumhuriyet.com.tr/rss/1.xml',
+    ],
+    'genel_haberturk': [
+      'https://www.haberturk.com/rss',
+      'https://www.haberturk.com/rss/kategori/gundem.xml',
+    ],
+    'genel_cnnturk': [
+      'https://www.cnnturk.com/feed/rss/all/news',
+      'https://www.cnnturk.com/feed/rss/turkiye/news',
+    ],
+    
+    // Ekonomi alternatifleri
+    'ekonomi': [
+      'https://www.hurriyet.com.tr/rss/ekonomi',
+      'https://www.ntv.com.tr/ekonomi.rss',
+      'https://www.sabah.com.tr/rss/ekonomi.xml',
+    ],
+    'ekonomi_bloomberght': [
+      'https://www.bloomberght.com/rss',
+      'https://www.ntv.com.tr/ekonomi.rss',
+    ],
+    
+    // Teknoloji alternatifleri
+    'teknoloji': [
+      'https://www.hurriyet.com.tr/rss/teknoloji',
+      'https://shiftdelete.net/rss',
+      'https://www.webtekno.com/rss.xml',
+    ],
+    'teknoloji_shiftdelete': [
+      'https://shiftdelete.net/rss',
+      'https://shiftdelete.net/feed',
+    ],
+    'teknoloji_webtekno': [
+      'https://www.webtekno.com/rss.xml',
+      'https://www.webtekno.com/feed',
+    ],
+    'teknoloji_donanimhaber': [
+      'https://www.donanimhaber.com/rss',
+      'https://www.donanimhaber.com/feed',
+    ],
+    
+    // Spor alternatifleri
+    'spor': [
+      'https://www.hurriyet.com.tr/rss/spor',
+      'https://www.sabah.com.tr/rss/spor.xml',
+      'https://www.fanatik.com.tr/rss',
+    ],
+    'spor_fanatik': [
+      'https://www.fanatik.com.tr/rss',
+      'https://www.fanatik.com.tr/feed',
+    ],
+    'spor_sporx': [
+      'https://www.sporx.com/rss',
+      'https://www.sporx.com/feed',
+    ],
+    
+    // Dünya alternatifleri
+    'dunya': [
+      'https://www.hurriyet.com.tr/rss/dunya',
+      'https://www.ntv.com.tr/dunya.rss',
+      'https://www.sabah.com.tr/rss/dunya.xml',
+    ],
+    'dunya_euronews': [
+      'https://tr.euronews.com/rss',
+      'https://tr.euronews.com/rss/news',
+    ],
+    
+    // Sağlık alternatifleri
+    'saglik': [
+      'https://www.sabah.com.tr/rss/saglik.xml',
+      'https://www.hurriyet.com.tr/rss/saglik',
+      'https://www.ntv.com.tr/saglik.rss',
+    ],
+    
+    // Kültür alternatifleri
+    'kultur': [
+      'https://www.hurriyet.com.tr/rss/kultur-sanat',
+      'https://www.sabah.com.tr/rss/kultur-sanat.xml',
+      'https://www.ntv.com.tr/yasam.rss',
+    ],
+    
+    // Magazin alternatifleri
+    'magazin': [
+      'https://www.hurriyet.com.tr/rss/magazin',
+      'https://www.sabah.com.tr/rss/magazin.xml',
+      'https://www.posta.com.tr/rss/magazin.xml',
+    ],
+    
+    // Bilim alternatifleri
+    'bilim': [
+      'https://shiftdelete.net/rss',
+      'https://www.webtekno.com/rss.xml',
+      'https://www.ntv.com.tr/bilim.rss',
+    ],
+    
+    // Eğitim alternatifleri
+    'egitim': [
+      'https://www.hurriyet.com.tr/rss/egitim',
+      'https://www.sabah.com.tr/rss/egitim.xml',
+      'https://www.ntv.com.tr/egitim.rss',
+    ],
+    
+    // Otomobil alternatifleri
+    'otomobil': [
+      'https://www.ntv.com.tr/otomobil.rss',
+      'https://www.haberturk.com/rss/kategori/otomobil.xml',
+      'https://www.milliyet.com.tr/rss/rssNew/otomotivRSS.xml',
+    ],
+  };
+
+  /// Feed için alternatif URL'leri döndürür
+  static List<String> getAlternativeUrls(String feedKey) {
+    return alternativeFeedUrls[feedKey] ?? [rssFeedUrls[feedKey] ?? ''];
+  }
+
+  /// Feed'in birincil URL'sini döndürür
+  static String? getPrimaryUrl(String feedKey) {
+    return rssFeedUrls[feedKey];
+  }
 
   /// RSS Feed isimler - UI'da gösterilecek
   static const Map<String, String> feedNames = {
@@ -314,13 +454,43 @@ class ApiEndpoints {
   };
 
   /// Network timeout değerleri - Android 11 performans optimizasyonu
-  static const int connectTimeoutMs = 8000; // 8 saniye (daha hızlı timeout)
-  static const int receiveTimeoutMs = 12000; // 12 saniye (optimize edilmiş)
-  static const int sendTimeoutMs = 6000; // 6 saniye (hızlandırılmış)
+  /// Adaptive timeout: Bağlantı kalitesine göre ayarlanabilir
+  static const int connectTimeoutMs = 10000; // 10 saniye (güvenilir bağlantı için artırıldı)
+  static const int receiveTimeoutMs = 15000; // 15 saniye (büyük feed'ler için artırıldı)
+  static const int sendTimeoutMs = 8000; // 8 saniye (güvenilir gönderim için artırıldı)
+  
+  /// Hızlı timeout değerleri - İlk deneme için
+  static const int fastConnectTimeoutMs = 5000; // 5 saniye
+  static const int fastReceiveTimeoutMs = 8000; // 8 saniye
+  
+  /// Yavaş bağlantı timeout değerleri - Retry için
+  static const int slowConnectTimeoutMs = 15000; // 15 saniye
+  static const int slowReceiveTimeoutMs = 25000; // 25 saniye
 
   /// Cache süreleri
   static const Duration cacheValidityDuration = Duration(minutes: 30);
   static const Duration offlineCacheDuration = Duration(days: 7);
+  
+  /// Feed öncelik sıralaması - Daha güvenilir kaynaklar önce denenir
+  static const List<String> reliableSources = [
+    'hurriyet',
+    'ntv',
+    'sabah',
+    'haberturk',
+    'trthaber',
+    'aa',
+    'cnnturk',
+  ];
+  
+  /// Kaynak güvenilirlik puanı (0-100)
+  static int getSourceReliabilityScore(String feedKey) {
+    final source = feedKey.split('_').first;
+    final index = reliableSources.indexOf(source);
+    if (index >= 0) {
+      return 100 - (index * 10); // İlk kaynak 100, sonrakiler 90, 80...
+    }
+    return 50; // Bilinmeyen kaynaklar için varsayılan
+  }
 
   /// Versiyon kontrol endpoint'i (opsiyonel - manuel kontrol için)
   /// Bu endpoint'ten JSON formatında versiyon bilgisi alınır
