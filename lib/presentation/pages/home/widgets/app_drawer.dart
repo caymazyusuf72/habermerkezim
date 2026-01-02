@@ -10,11 +10,8 @@ import '../../favorites/favorites_page.dart';
 import '../../reading_list/reading_list_page.dart';
 import '../../settings/settings_page.dart';
 import '../../profile/profile_page.dart';
-import '../../custom_categories/custom_categories_page.dart';
 import '../../trending/trending_page.dart';
-import '../../discover/discover_page.dart';
 import '../../performance/performance_monitor_page.dart';
-import '../../popular/popular_articles_page.dart';
 
 /// Ana drawer widget'ı - yan menü
 /// Kullanıcı profili, ayarlar, hakkında vs. bölümler içerir
@@ -81,36 +78,6 @@ class AppDrawer extends ConsumerWidget {
                   },
                 ),
                 
-                // Popüler Haberler
-                _buildMenuTile(
-                  context,
-                  icon: Icons.star_rounded,
-                  title: 'Popüler Haberler',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const PopularArticlesPage(),
-                      ),
-                    );
-                  },
-                ),
-                
-                // Discover
-                _buildMenuTile(
-                  context,
-                  icon: Icons.explore_rounded,
-                  title: 'Keşfet',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const DiscoverPage(),
-                      ),
-                    );
-                  },
-                ),
-                
                 // Favoriler
                 _buildMenuTile(
                   context,
@@ -149,21 +116,6 @@ class AppDrawer extends ConsumerWidget {
                 _buildThemeSection(context, ref, isDarkMode),
                 
                 const Divider(),
-                
-                // Özel Kategoriler
-                _buildMenuTile(
-                  context,
-                  icon: Icons.category_rounded,
-                  title: 'Özel Kategoriler',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const CustomCategoriesPage(),
-                      ),
-                    );
-                  },
-                ),
                 
                 // Ayarlar
                 _buildMenuTile(
