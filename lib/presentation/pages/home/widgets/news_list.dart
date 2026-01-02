@@ -425,23 +425,12 @@ class NewsListState extends ConsumerState<NewsList>
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Hero animation ile görsel
-                    Hero(
-                      tag: 'article_image_${article.id}',
-                      child: article.imageUrl != null
-                          ? Image.network(
-                              article.imageUrl!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
-                                color: Theme.of(context).colorScheme.surfaceVariant,
-                                child: Icon(
-                                  Icons.article_rounded,
-                                  size: 48,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            )
-                          : Container(
+                    // Görsel - Hero animation kaldırıldı (çakışma sorunu)
+                    article.imageUrl != null
+                        ? Image.network(
+                            article.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
                               color: Theme.of(context).colorScheme.surfaceVariant,
                               child: Icon(
                                 Icons.article_rounded,
@@ -449,7 +438,15 @@ class NewsListState extends ConsumerState<NewsList>
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
-                    ),
+                          )
+                        : Container(
+                            color: Theme.of(context).colorScheme.surfaceVariant,
+                            child: Icon(
+                              Icons.article_rounded,
+                              size: 48,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
                     
                     // Kategori badge
                     if (widget.category == 'genel')
@@ -670,6 +667,7 @@ class NewsListState extends ConsumerState<NewsList>
         onFavoriteToggle: () => _onFavoriteToggle(article.id),
         onShare: () => _onShareArticle(article),
         showCategoryBadge: widget.category == 'genel',
+        heroTagSuffix: 'list_${widget.category}_$index', // Hero çakışmasını önle
       ),
     );
   }

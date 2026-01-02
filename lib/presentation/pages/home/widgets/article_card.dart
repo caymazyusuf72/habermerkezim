@@ -19,6 +19,7 @@ class ArticleCard extends ConsumerWidget {
   final bool showCategoryBadge;
   final bool isCompact;
   final bool showRecommendationBadge;
+  final String? heroTagSuffix; // Hero tag çakışmasını önlemek için
 
   const ArticleCard({
     super.key,
@@ -29,6 +30,7 @@ class ArticleCard extends ConsumerWidget {
     this.showCategoryBadge = true,
     this.isCompact = false,
     this.showRecommendationBadge = false,
+    this.heroTagSuffix,
   });
 
   @override
@@ -252,11 +254,9 @@ class ArticleCard extends ConsumerWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Küçük görsel - daha modern - Hero animation eklendi
+                    // Küçük görsel - daha modern
                     if (article.imageUrl != null)
-                      Hero(
-                        tag: 'article_image_${article.id}',
-                        child: Container(
+                      Container(
                           width: 80,
                           height: 80,
                           margin: const EdgeInsets.only(right: 12),
@@ -298,7 +298,6 @@ class ArticleCard extends ConsumerWidget {
                             ),
                           ),
                         ),
-                      ),
                     
                     // İçerik
                     Expanded(
@@ -397,11 +396,15 @@ class ArticleCard extends ConsumerWidget {
 
   /// Görsel bölümü
   Widget _buildImageSection(BuildContext context, WidgetRef ref, Color categoryColor) {
+    final heroTag = heroTagSuffix != null
+        ? 'article_image_${article.id}_$heroTagSuffix'
+        : 'article_image_${article.id}';
+    
     return Stack(
       children: [
-        // Ana görsel - Sabit yükseklik ile - Hero animation eklendi
+        // Ana görsel - Sabit yükseklik ile - Hero animation
         Hero(
-          tag: 'article_image_${article.id}',
+          tag: heroTag,
           child: ClipRRect(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(8),

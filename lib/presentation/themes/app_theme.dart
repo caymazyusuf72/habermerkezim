@@ -25,7 +25,7 @@ class AppTheme {
   static const Color matBlackSurface = Color(0xFF1A1A1A);
   static const Color matBlackSurfaceVariant = Color(0xFF2A2A2A);
   
-  static const Color lightSurface = Color(0xFFFEF9);
+  static const Color lightSurface = Color(0xFFFFFEF9);
   static const Color lightBackground = Color(0xFFFAF9F4);
   static const Color lightSurfaceVariant = Color(0xFFF5F4EF);
   
@@ -258,6 +258,8 @@ class AppTheme {
         seedColor: pColor,
         brightness: Brightness.dark,
         surface: matBlackSurface,
+        onSurface: const Color(0xFFE8E8E8), // Açık gri metin rengi
+        surfaceContainerHighest: matBlackSurfaceVariant,
         error: errorRed,
         primary: pColor,
         secondary: pLight,
@@ -291,7 +293,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(color: epc.withOpacity(0.4), width: 1.5),
         ),
-        color: matBlackSurfaceVariant,
+        color: const Color(0xFF252525), // Daha açık koyu gri - kartlar için
         surfaceTintColor: epc.withOpacity(0.08),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(

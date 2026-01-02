@@ -242,25 +242,22 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Görsel
+                      // Görsel - Hero kaldırıldı (çakışma sorunu)
                       if (widget.article.imageUrl != null)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(16),
-                          child: Hero(
-                            tag: 'article_image_${widget.article.id}',
-                            child: AspectRatio(
-                              aspectRatio: 16 / 9,
-                              child: CachedNetworkImage(
-                                imageUrl: widget.article.imageUrl!,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Container(
-                                  color: theme.colorScheme.surfaceVariant,
-                                  child: const Center(child: CircularProgressIndicator()),
-                                ),
-                                errorWidget: (context, url, error) => Container(
-                                  color: theme.colorScheme.surfaceVariant,
-                                  child: const Icon(Icons.image_not_supported, size: 48),
-                                ),
+                          child: AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: CachedNetworkImage(
+                              imageUrl: widget.article.imageUrl!,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                color: theme.colorScheme.surfaceVariant,
+                                child: const Center(child: CircularProgressIndicator()),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                color: theme.colorScheme.surfaceVariant,
+                                child: const Icon(Icons.image_not_supported, size: 48),
                               ),
                             ),
                           ),
