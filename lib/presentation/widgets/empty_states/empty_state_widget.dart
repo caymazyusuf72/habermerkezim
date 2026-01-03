@@ -404,3 +404,211 @@ class NoSearchResultsEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyStateWidget(
       type: EmptyStateType.noSearchResults,
+      description: '"$searchQuery" için sonuç bulunamadı. Farklı anahtar kelimeler deneyin.',
+      onAction: onClear,
+    );
+  }
+}
+
+/// Çevrimdışı durumu için özel widget
+class OfflineEmptyState extends StatelessWidget {
+  final VoidCallback? onRetry;
+
+  const OfflineEmptyState({super.key, this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return EmptyStateWidget(
+      type: EmptyStateType.offline,
+      onAction: onRetry,
+      customIllustration: _buildOfflineIllustration(context),
+    );
+  }
+
+  Widget _buildOfflineIllustration(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return SizedBox(
+      width: 140,
+      height: 140,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Arka plan
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.orange.withOpacity(0.15),
+                  Colors.amber.withOpacity(0.1),
+                ],
+              ),
+              shape: BoxShape.circle,
+            ),
+          ),
+          // WiFi ikonu
+          Icon(
+            Icons.wifi_off_rounded,
+            size: 56,
+            color: Colors.orange.withOpacity(0.6),
+          ),
+          // Sinyal çizgileri
+          Positioned(
+            top: 25,
+            child: Container(
+              width: 40,
+              height: 3,
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Hata durumu için özel widget
+class ErrorEmptyState extends StatelessWidget {
+  final String? errorMessage;
+  final VoidCallback? onRetry;
+
+  const ErrorEmptyState({
+    super.key,
+    this.errorMessage,
+    this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return EmptyStateWidget(
+      type: EmptyStateType.error,
+      description: errorMessage ?? 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.',
+      onAction: onRetry,
+      customIllustration: _buildErrorIllustration(context),
+    );
+  }
+
+  Widget _buildErrorIllustration(BuildContext context) {
+    return SizedBox(
+      width: 140,
+      height: 140,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Arka plan
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppTheme.errorRed.withOpacity(0.15),
+                  Colors.red.withOpacity(0.1),
+                ],
+              ),
+              shape: BoxShape.circle,
+            ),
+          ),
+          // Hata ikonu
+          Icon(
+            Icons.error_outline_rounded,
+            size: 56,
+            color: AppTheme.errorRed.withOpacity(0.7),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Okuma listesi boş durumu için özel widget
+class NoBookmarksEmptyState extends StatelessWidget {
+  final VoidCallback? onExplore;
+
+  const NoBookmarksEmptyState({super.key, this.onExplore});
+
+  @override
+  Widget build(BuildContext context) {
+    return EmptyStateWidget(
+      type: EmptyStateType.noBookmarks,
+      onAction: onExplore,
+      customIllustration: _buildBookmarkIllustration(context),
+    );
+  }
+
+  Widget _buildBookmarkIllustration(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return SizedBox(
+      width: 140,
+      height: 140,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Arka plan
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  theme.colorScheme.primary.withOpacity(0.15),
+                  theme.colorScheme.secondary.withOpacity(0.1),
+                ],
+              ),
+              shape: BoxShape.circle,
+            ),
+          ),
+          // Bookmark ikonu
+          Icon(
+            Icons.bookmark_rounded,
+            size: 56,
+            color: theme.colorScheme.primary.withOpacity(0.5),
+          ),
+          // Küçük bookmark'lar
+          Positioned(
+            top: 25,
+            right: 25,
+            child: Icon(
+              Icons.bookmark_rounded,
+              size: 20,
+              color: theme.colorScheme.primary.withOpacity(0.3),
+            ),
+          ),
+          Positioned(
+            bottom: 30,
+            left: 20,
+            child: Icon(
+              Icons.bookmark_border_rounded,
+              size: 16,
+              color: theme.colorScheme.primary.withOpacity(0.4),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bildirim yok durumu için özel widget
+class NoNotificationsEmptyState extends StatelessWidget {
+  const NoNotificationsEmptyState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const EmptyStateWidget(
+      type: EmptyStateType.noNotifications,
+    );
+  }
+}
