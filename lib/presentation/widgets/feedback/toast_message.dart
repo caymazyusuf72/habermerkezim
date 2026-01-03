@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -402,3 +401,180 @@ class LoadingOverlayWidget extends StatelessWidget {
         if (isLoading)
           Positioned.fill(
             child: Container(
+              color: backgroundColor ?? Colors.black.withOpacity(0.5),
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          indicatorColor ?? theme.colorScheme.primary,
+                        ),
+                        strokeWidth: 3,
+                      ),
+                      if (message != null) ...[
+                        const SizedBox(height: 16),
+                        Text(
+                          message!,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Progress dialog
+class ProgressDialog {
+  static OverlayEntry? _overlayEntry;
+
+  /// Progress dialog göster
+  static void show(
+    BuildContext context, {
+    String? message,
+    bool dismissible = false,
+  }) {
+    dismiss();
+
+    final theme = Theme.of(context);
+    final overlay = Overlay.of(context);
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Material(
+        color: Colors.black.withOpacity(0.5),
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            margin: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    theme.colorScheme.primary,
+                  ),
+                  strokeWidth: 3,
+                ),
+                if (message != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    message,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(_overlayEntry!);
+  }
+
+  /// Progress dialog kapat
+  static void dismiss() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+}
+
+/// Confirmation dialog
+class ConfirmationDialog {
+  /// Onay dialogu göster
+  static Future<bool?> show(
+    BuildContext context, {
+    required String title,
+    required String message,
+    String confirmText = 'Onayla',
+    String cancelText = 'İptal',
+    Color? confirmColor,
+    bool isDangerous = false,
+  }) {
+    final theme = Theme.of(context);
+    final effectiveConfirmColor = confirmColor ?? 
+        (isDangerous ? Colors.red : theme.colorScheme.primary);
+
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          title,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        content: Text(
+          message,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              cancelText,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              HapticFeedback.mediumImpact();
+              Navigator.of(context).pop(true);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: effectiveConfirmColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(confirmText),
+          ),
+        ],
+      ),
+    );
+  }
+}
