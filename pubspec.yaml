@@ -108,6 +108,10 @@ dependencies:
   
   # Google Sign In
   google_sign_in: ^6.2.1
+  
+  # Image Picker & Cropper (Avatar Upload)
+  image_picker: ^1.1.2
+  image_cropper: ^8.0.2
 
 dev_dependencies:
   flutter_test:
