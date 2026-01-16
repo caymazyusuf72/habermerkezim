@@ -232,7 +232,7 @@ class _CupertinoPageTransition extends StatelessWidget {
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1 * animation.value),
+                color: Colors.black.withValues(alpha: 0.1 * animation.value),
                 blurRadius: 20,
                 offset: const Offset(-5, 0),
               ),
@@ -282,21 +282,25 @@ class ModalBottomSheetRoute<T> extends PageRouteBuilder<T> {
   final Widget page;
   final bool isDismissible;
   final bool enableDrag;
-  final Color? barrierColor;
+  final Color? _barrierColorValue;
   final double initialChildSize;
   final double minChildSize;
   final double maxChildSize;
+
+  @override
+  Color? get barrierColor => _barrierColorValue ?? Colors.black54;
 
   ModalBottomSheetRoute({
     required this.page,
     this.isDismissible = true,
     this.enableDrag = true,
-    this.barrierColor,
+    Color? barrierColor,
     this.initialChildSize = 0.9,
     this.minChildSize = 0.5,
     this.maxChildSize = 1.0,
     super.settings,
-  }) : super(
+  }) : _barrierColorValue = barrierColor,
+       super(
           opaque: false,
           barrierDismissible: isDismissible,
           barrierColor: barrierColor ?? Colors.black54,
@@ -363,7 +367,7 @@ class _ModalBottomSheetPage extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 20,
                   offset: const Offset(0, -5),
                 ),
@@ -377,7 +381,7 @@ class _ModalBottomSheetPage extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.4),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),

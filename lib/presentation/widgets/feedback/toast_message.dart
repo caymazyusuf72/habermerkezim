@@ -131,7 +131,7 @@ class _ToastMessageState extends State<ToastMessage>
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: _getBackgroundColor().withOpacity(0.3),
+                  color: _getBackgroundColor().withValues(alpha: 0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -179,7 +179,7 @@ class _ToastMessageState extends State<ToastMessage>
                 IconButton(
                   onPressed: _dismiss,
                   icon: const Icon(Icons.close_rounded),
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                   iconSize: 20,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(
@@ -401,7 +401,7 @@ class LoadingOverlayWidget extends StatelessWidget {
         if (isLoading)
           Positioned.fill(
             child: Container(
-              color: backgroundColor ?? Colors.black.withOpacity(0.5),
+              color: backgroundColor ?? Colors.black.withValues(alpha: 0.5),
               child: Center(
                 child: Container(
                   padding: const EdgeInsets.all(24),
@@ -410,7 +410,7 @@ class LoadingOverlayWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
@@ -463,7 +463,7 @@ class ProgressDialog {
 
     _overlayEntry = OverlayEntry(
       builder: (context) => Material(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withValues(alpha: 0.5),
         child: Center(
           child: Container(
             padding: const EdgeInsets.all(24),
@@ -473,7 +473,7 @@ class ProgressDialog {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -546,7 +546,7 @@ class ConfirmationDialog {
         content: Text(
           message,
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         actions: [
@@ -555,7 +555,7 @@ class ConfirmationDialog {
             child: Text(
               cancelText,
               style: TextStyle(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ),

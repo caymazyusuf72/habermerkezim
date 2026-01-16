@@ -105,7 +105,7 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 2,
-        backgroundColor: epc.withOpacity(0.15),
+        backgroundColor: epc.withValues(alpha: 0.15),
         foregroundColor: effectivePrimaryDark,
         titleTextStyle: TextStyle(
           color: effectivePrimaryDark,
@@ -120,16 +120,16 @@ class AppTheme {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: epc.withOpacity(0.3), width: 1.5),
+          side: BorderSide(color: epc.withValues(alpha: 0.3), width: 1.5),
         ),
         color: cs.surface,
-        surfaceTintColor: epc.withOpacity(0.05),
+        surfaceTintColor: epc.withValues(alpha: 0.05),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: epc.withOpacity(0.1),
+        backgroundColor: epc.withValues(alpha: 0.1),
         selectedItemColor: effectivePrimaryDark,
-        unselectedItemColor: cs.onSurface.withOpacity(0.5),
+        unselectedItemColor: cs.onSurface.withValues(alpha: 0.5),
         selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
         unselectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
         elevation: 8,
@@ -137,24 +137,24 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         elevation: 3,
         backgroundColor: cs.surface,
-        indicatorColor: epc.withOpacity(0.2),
+        indicatorColor: epc.withValues(alpha: 0.2),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: effectivePrimaryDark);
           }
-          return TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: cs.onSurface.withOpacity(0.6));
+          return TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: cs.onSurface.withValues(alpha: 0.6));
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return IconThemeData(color: effectivePrimaryDark, size: 24);
           }
-          return IconThemeData(color: cs.onSurface.withOpacity(0.6), size: 24);
+          return IconThemeData(color: cs.onSurface.withValues(alpha: 0.6), size: 24);
         }),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 3,
-          shadowColor: epc.withOpacity(0.3),
+          shadowColor: epc.withValues(alpha: 0.3),
           backgroundColor: epc,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -167,10 +167,10 @@ class AppTheme {
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed)) {
-              return Colors.white.withOpacity(0.1);
+              return Colors.white.withValues(alpha: 0.1);
             }
             if (states.contains(WidgetState.hovered)) {
-              return Colors.white.withOpacity(0.05);
+              return Colors.white.withValues(alpha: 0.05);
             }
             return null;
           }),
@@ -179,7 +179,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: epc,
-          side: BorderSide(color: epc.withOpacity(0.6), width: 1.5),
+          side: BorderSide(color: epc.withValues(alpha: 0.6), width: 1.5),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
           textStyle: const TextStyle(
@@ -190,10 +190,10 @@ class AppTheme {
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed)) {
-              return epc.withOpacity(0.1);
+              return epc.withValues(alpha: 0.1);
             }
             if (states.contains(WidgetState.hovered)) {
-              return epc.withOpacity(0.05);
+              return epc.withValues(alpha: 0.05);
             }
             return null;
           }),
@@ -201,7 +201,7 @@ class AppTheme {
             if (states.contains(WidgetState.hovered)) {
               return BorderSide(color: epc, width: 2);
             }
-            return BorderSide(color: epc.withOpacity(0.6), width: 1.5);
+            return BorderSide(color: epc.withValues(alpha: 0.6), width: 1.5);
           }),
         ),
       ),
@@ -218,10 +218,10 @@ class AppTheme {
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed)) {
-              return epc.withOpacity(0.12);
+              return epc.withValues(alpha: 0.12);
             }
             if (states.contains(WidgetState.hovered)) {
-              return epc.withOpacity(0.06);
+              return epc.withValues(alpha: 0.06);
             }
             return null;
           }),
@@ -234,10 +234,10 @@ class AppTheme {
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed)) {
-              return epc.withOpacity(0.15);
+              return epc.withValues(alpha: 0.15);
             }
             if (states.contains(WidgetState.hovered)) {
-              return epc.withOpacity(0.08);
+              return epc.withValues(alpha: 0.08);
             }
             return null;
           }),
@@ -256,10 +256,10 @@ class AppTheme {
           ),
         ),
       ),
-      dividerTheme: DividerThemeData(color: cs.outline.withOpacity(0.2), thickness: 1, space: 1),
+      dividerTheme: DividerThemeData(color: cs.outline.withValues(alpha: 0.2), thickness: 1, space: 1),
       tabBarTheme: TabBarThemeData(
         labelColor: effectivePrimaryDark,
-        unselectedLabelColor: cs.onSurface.withOpacity(0.5),
+        unselectedLabelColor: cs.onSurface.withValues(alpha: 0.5),
         indicatorColor: epc,
         indicatorSize: TabBarIndicatorSize.tab,
         labelStyle: const TextStyle(fontWeight: FontWeight.w700),
@@ -271,7 +271,7 @@ class AppTheme {
         labelStyle: TextStyle(color: cs.onSurfaceVariant),
         side: BorderSide.none,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        selectedColor: epc.withOpacity(0.2),
+        selectedColor: epc.withValues(alpha: 0.2),
         checkmarkColor: effectivePrimaryDark,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -289,15 +289,15 @@ class AppTheme {
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: cs.surface,
-        surfaceTintColor: epc.withOpacity(0.05),
+        surfaceTintColor: epc.withValues(alpha: 0.05),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         titleTextStyle: TextStyle(color: cs.onSurface, fontSize: 24 * fontScale, fontWeight: FontWeight.w600),
       ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: cs.surface,
-        surfaceTintColor: epc.withOpacity(0.05),
+        surfaceTintColor: epc.withValues(alpha: 0.05),
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
-        dragHandleColor: cs.onSurfaceVariant.withOpacity(0.4),
+        dragHandleColor: cs.onSurfaceVariant.withValues(alpha: 0.4),
         dragHandleSize: const Size(32, 4),
         showDragHandle: true,
       ),
@@ -307,20 +307,20 @@ class AppTheme {
           return cs.outline;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return epc.withOpacity(0.5);
+          if (states.contains(WidgetState.selected)) return epc.withValues(alpha: 0.5);
           return cs.surfaceContainerHighest;
         }),
       ),
       sliderTheme: SliderThemeData(
         activeTrackColor: epc,
-        inactiveTrackColor: epc.withOpacity(0.3),
+        inactiveTrackColor: epc.withValues(alpha: 0.3),
         thumbColor: epc,
-        overlayColor: epc.withOpacity(0.12),
+        overlayColor: epc.withValues(alpha: 0.12),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: epc,
-        linearTrackColor: epc.withOpacity(0.2),
-        circularTrackColor: epc.withOpacity(0.2),
+        linearTrackColor: epc.withValues(alpha: 0.2),
+        circularTrackColor: epc.withValues(alpha: 0.2),
       ),
       textTheme: _buildTextTheme(cs, fontScale),
     );
@@ -361,7 +361,7 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 2,
-        backgroundColor: epc.withOpacity(0.2),
+        backgroundColor: epc.withValues(alpha: 0.2),
         foregroundColor: epl,
         titleTextStyle: TextStyle(
           color: epl,
@@ -376,16 +376,16 @@ class AppTheme {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: epc.withOpacity(0.4), width: 1.5),
+          side: BorderSide(color: epc.withValues(alpha: 0.4), width: 1.5),
         ),
         color: const Color(0xFF252525), // Daha açık koyu gri - kartlar için
-        surfaceTintColor: epc.withOpacity(0.08),
+        surfaceTintColor: epc.withValues(alpha: 0.08),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: epc.withOpacity(0.15),
+        backgroundColor: epc.withValues(alpha: 0.15),
         selectedItemColor: epl,
-        unselectedItemColor: Colors.white.withOpacity(0.5),
+        unselectedItemColor: Colors.white.withValues(alpha: 0.5),
         selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
         unselectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
         elevation: 8,
@@ -393,24 +393,24 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         elevation: 3,
         backgroundColor: cs.surface,
-        indicatorColor: epc.withOpacity(0.3),
+        indicatorColor: epc.withValues(alpha: 0.3),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: epl);
           }
-          return TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white.withOpacity(0.6));
+          return TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white.withValues(alpha: 0.6));
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return IconThemeData(color: epl, size: 24);
           }
-          return IconThemeData(color: Colors.white.withOpacity(0.6), size: 24);
+          return IconThemeData(color: Colors.white.withValues(alpha: 0.6), size: 24);
         }),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 4,
-          shadowColor: epc.withOpacity(0.4),
+          shadowColor: epc.withValues(alpha: 0.4),
           backgroundColor: epc,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -423,10 +423,10 @@ class AppTheme {
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed)) {
-              return Colors.white.withOpacity(0.15);
+              return Colors.white.withValues(alpha: 0.15);
             }
             if (states.contains(WidgetState.hovered)) {
-              return Colors.white.withOpacity(0.08);
+              return Colors.white.withValues(alpha: 0.08);
             }
             return null;
           }),
@@ -435,7 +435,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: epl,
-          side: BorderSide(color: epl.withOpacity(0.6), width: 1.5),
+          side: BorderSide(color: epl.withValues(alpha: 0.6), width: 1.5),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
           textStyle: const TextStyle(
@@ -446,10 +446,10 @@ class AppTheme {
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed)) {
-              return epl.withOpacity(0.15);
+              return epl.withValues(alpha: 0.15);
             }
             if (states.contains(WidgetState.hovered)) {
-              return epl.withOpacity(0.08);
+              return epl.withValues(alpha: 0.08);
             }
             return null;
           }),
@@ -457,7 +457,7 @@ class AppTheme {
             if (states.contains(WidgetState.hovered)) {
               return BorderSide(color: epl, width: 2);
             }
-            return BorderSide(color: epl.withOpacity(0.6), width: 1.5);
+            return BorderSide(color: epl.withValues(alpha: 0.6), width: 1.5);
           }),
         ),
       ),
@@ -474,10 +474,10 @@ class AppTheme {
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed)) {
-              return epl.withOpacity(0.15);
+              return epl.withValues(alpha: 0.15);
             }
             if (states.contains(WidgetState.hovered)) {
-              return epl.withOpacity(0.08);
+              return epl.withValues(alpha: 0.08);
             }
             return null;
           }),
@@ -490,10 +490,10 @@ class AppTheme {
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed)) {
-              return epl.withOpacity(0.2);
+              return epl.withValues(alpha: 0.2);
             }
             if (states.contains(WidgetState.hovered)) {
-              return epl.withOpacity(0.1);
+              return epl.withValues(alpha: 0.1);
             }
             return null;
           }),
@@ -512,10 +512,10 @@ class AppTheme {
           ),
         ),
       ),
-      dividerTheme: DividerThemeData(color: cs.outline.withOpacity(0.2), thickness: 1, space: 1),
+      dividerTheme: DividerThemeData(color: cs.outline.withValues(alpha: 0.2), thickness: 1, space: 1),
       tabBarTheme: TabBarThemeData(
         labelColor: epl,
-        unselectedLabelColor: Colors.white.withOpacity(0.5),
+        unselectedLabelColor: Colors.white.withValues(alpha: 0.5),
         indicatorColor: epc,
         indicatorSize: TabBarIndicatorSize.tab,
         labelStyle: const TextStyle(fontWeight: FontWeight.w700),
@@ -527,7 +527,7 @@ class AppTheme {
         labelStyle: TextStyle(color: cs.onSurfaceVariant),
         side: BorderSide.none,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        selectedColor: epc.withOpacity(0.3),
+        selectedColor: epc.withValues(alpha: 0.3),
         checkmarkColor: epl,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -545,15 +545,15 @@ class AppTheme {
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: cs.surface,
-        surfaceTintColor: epc.withOpacity(0.08),
+        surfaceTintColor: epc.withValues(alpha: 0.08),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         titleTextStyle: TextStyle(color: cs.onSurface, fontSize: 24 * fontScale, fontWeight: FontWeight.w600),
       ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: cs.surface,
-        surfaceTintColor: epc.withOpacity(0.08),
+        surfaceTintColor: epc.withValues(alpha: 0.08),
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
-        dragHandleColor: cs.onSurfaceVariant.withOpacity(0.4),
+        dragHandleColor: cs.onSurfaceVariant.withValues(alpha: 0.4),
         dragHandleSize: const Size(32, 4),
         showDragHandle: true,
       ),
@@ -563,20 +563,20 @@ class AppTheme {
           return cs.outline;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return epc.withOpacity(0.5);
+          if (states.contains(WidgetState.selected)) return epc.withValues(alpha: 0.5);
           return cs.surfaceContainerHighest;
         }),
       ),
       sliderTheme: SliderThemeData(
         activeTrackColor: epc,
-        inactiveTrackColor: epc.withOpacity(0.3),
+        inactiveTrackColor: epc.withValues(alpha: 0.3),
         thumbColor: epc,
-        overlayColor: epc.withOpacity(0.12),
+        overlayColor: epc.withValues(alpha: 0.12),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: epc,
-        linearTrackColor: epc.withOpacity(0.2),
-        circularTrackColor: epc.withOpacity(0.2),
+        linearTrackColor: epc.withValues(alpha: 0.2),
+        circularTrackColor: epc.withValues(alpha: 0.2),
       ),
       textTheme: _buildTextTheme(cs, fontScale),
     );
@@ -590,11 +590,11 @@ class AppTheme {
       headlineMedium: mw.copyWith(fontSize: 18 * fontScale, fontWeight: FontWeight.w600, color: cs.onSurface, letterSpacing: -0.1, height: 1.3),
       headlineSmall: mw.copyWith(fontSize: 16 * fontScale, fontWeight: FontWeight.w600, color: cs.onSurface, height: 1.4),
       bodyLarge: mw.copyWith(fontSize: 16 * fontScale, fontWeight: FontWeight.w400, color: cs.onSurface, height: 1.6, letterSpacing: 0.2),
-      bodyMedium: mw.copyWith(fontSize: 14 * fontScale, fontWeight: FontWeight.w400, color: cs.onSurface.withOpacity(0.85), height: 1.5, letterSpacing: 0.15),
-      bodySmall: mw.copyWith(fontSize: 12 * fontScale, fontWeight: FontWeight.w400, color: cs.onSurface.withOpacity(0.7), height: 1.4, letterSpacing: 0.2),
+      bodyMedium: mw.copyWith(fontSize: 14 * fontScale, fontWeight: FontWeight.w400, color: cs.onSurface.withValues(alpha: 0.85), height: 1.5, letterSpacing: 0.15),
+      bodySmall: mw.copyWith(fontSize: 12 * fontScale, fontWeight: FontWeight.w400, color: cs.onSurface.withValues(alpha: 0.7), height: 1.4, letterSpacing: 0.2),
       labelLarge: mw.copyWith(fontSize: 14 * fontScale, fontWeight: FontWeight.w600, color: cs.onSurface, letterSpacing: 0.3),
       labelMedium: mw.copyWith(fontSize: 12 * fontScale, fontWeight: FontWeight.w500, color: cs.onSurface, letterSpacing: 0.4),
-      labelSmall: mw.copyWith(fontSize: 10 * fontScale, fontWeight: FontWeight.w500, color: cs.onSurface.withOpacity(0.8), letterSpacing: 0.5),
+      labelSmall: mw.copyWith(fontSize: 10 * fontScale, fontWeight: FontWeight.w500, color: cs.onSurface.withValues(alpha: 0.8), letterSpacing: 0.5),
     );
   }
 

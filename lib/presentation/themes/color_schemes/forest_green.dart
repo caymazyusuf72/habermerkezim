@@ -7,7 +7,7 @@ class ForestGreenTheme {
   // Ana renkler
   static const Color primary = Color(0xFF2E7D32);
   static const Color primaryLight = Color(0xFF60AD5E);
-  static const Color primaryDark = Color(0xFF005);
+  static const Color primaryDark = Color(0xFF005005);
   static const Color accent = Color(0xFF43A047);
 
   // Yüzey renkleri - Light

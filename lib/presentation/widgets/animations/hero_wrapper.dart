@@ -137,7 +137,7 @@ class ImageHeroWrapper extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2 * (1 - curvedAnimation.value)),
+                    color: Colors.black.withValues(alpha: 0.2 * (1 - curvedAnimation.value)),
                     blurRadius: 20 * (1 - curvedAnimation.value),
                     offset: Offset(0, 10 * (1 - curvedAnimation.value)),
                   ),

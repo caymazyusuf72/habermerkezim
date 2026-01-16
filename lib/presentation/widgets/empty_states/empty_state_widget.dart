@@ -210,7 +210,7 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
                 Text(
                   effectiveDescription,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -253,20 +253,20 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            theme.colorScheme.primary.withOpacity(isDark ? 0.2 : 0.1),
-            theme.colorScheme.primary.withOpacity(isDark ? 0.1 : 0.05),
+            theme.colorScheme.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+            theme.colorScheme.primary.withValues(alpha: isDark ? 0.1 : 0.05),
           ],
         ),
         shape: BoxShape.circle,
         border: Border.all(
-          color: theme.colorScheme.primary.withOpacity(0.2),
+          color: theme.colorScheme.primary.withValues(alpha: 0.2),
           width: 2,
         ),
       ),
       child: Icon(
         icon,
         size: 56,
-        color: theme.colorScheme.primary.withOpacity(0.7),
+        color: theme.colorScheme.primary.withValues(alpha: 0.7),
       ),
     );
   }
@@ -348,8 +348,8 @@ class NoFavoritesEmptyState extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.red.withOpacity(0.15),
-                  Colors.pink.withOpacity(0.1),
+                  Colors.red.withValues(alpha: 0.15),
+                  Colors.pink.withValues(alpha: 0.1),
                 ],
               ),
               shape: BoxShape.circle,
@@ -359,7 +359,7 @@ class NoFavoritesEmptyState extends StatelessWidget {
           Icon(
             Icons.favorite_rounded,
             size: 64,
-            color: Colors.red.withOpacity(0.3),
+            color: Colors.red.withValues(alpha: 0.3),
           ),
           // Üst kalp
           Positioned(
@@ -368,7 +368,7 @@ class NoFavoritesEmptyState extends StatelessWidget {
             child: Icon(
               Icons.favorite_rounded,
               size: 24,
-              color: Colors.red.withOpacity(0.5),
+              color: Colors.red.withValues(alpha: 0.5),
             ),
           ),
           // Alt kalp
@@ -378,7 +378,7 @@ class NoFavoritesEmptyState extends StatelessWidget {
             child: Icon(
               Icons.favorite_rounded,
               size: 18,
-              color: Colors.pink.withOpacity(0.4),
+              color: Colors.pink.withValues(alpha: 0.4),
             ),
           ),
         ],
@@ -439,8 +439,8 @@ class OfflineEmptyState extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.orange.withOpacity(0.15),
-                  Colors.amber.withOpacity(0.1),
+                  Colors.orange.withValues(alpha: 0.15),
+                  Colors.amber.withValues(alpha: 0.1),
                 ],
               ),
               shape: BoxShape.circle,
@@ -450,7 +450,7 @@ class OfflineEmptyState extends StatelessWidget {
           Icon(
             Icons.wifi_off_rounded,
             size: 56,
-            color: Colors.orange.withOpacity(0.6),
+            color: Colors.orange.withValues(alpha: 0.6),
           ),
           // Sinyal çizgileri
           Positioned(
@@ -459,7 +459,7 @@ class OfflineEmptyState extends StatelessWidget {
               width: 40,
               height: 3,
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.3),
+                color: Colors.orange.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -507,8 +507,8 @@ class ErrorEmptyState extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppTheme.errorRed.withOpacity(0.15),
-                  Colors.red.withOpacity(0.1),
+                  AppTheme.errorRed.withValues(alpha: 0.15),
+                  Colors.red.withValues(alpha: 0.1),
                 ],
               ),
               shape: BoxShape.circle,
@@ -518,7 +518,7 @@ class ErrorEmptyState extends StatelessWidget {
           Icon(
             Icons.error_outline_rounded,
             size: 56,
-            color: AppTheme.errorRed.withOpacity(0.7),
+            color: AppTheme.errorRed.withValues(alpha: 0.7),
           ),
         ],
       ),
@@ -559,8 +559,8 @@ class NoBookmarksEmptyState extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  theme.colorScheme.primary.withOpacity(0.15),
-                  theme.colorScheme.secondary.withOpacity(0.1),
+                  theme.colorScheme.primary.withValues(alpha: 0.15),
+                  theme.colorScheme.secondary.withValues(alpha: 0.1),
                 ],
               ),
               shape: BoxShape.circle,
@@ -570,7 +570,7 @@ class NoBookmarksEmptyState extends StatelessWidget {
           Icon(
             Icons.bookmark_rounded,
             size: 56,
-            color: theme.colorScheme.primary.withOpacity(0.5),
+            color: theme.colorScheme.primary.withValues(alpha: 0.5),
           ),
           // Küçük bookmark'lar
           Positioned(
@@ -579,7 +579,7 @@ class NoBookmarksEmptyState extends StatelessWidget {
             child: Icon(
               Icons.bookmark_rounded,
               size: 20,
-              color: theme.colorScheme.primary.withOpacity(0.3),
+              color: theme.colorScheme.primary.withValues(alpha: 0.3),
             ),
           ),
           Positioned(
@@ -588,7 +588,7 @@ class NoBookmarksEmptyState extends StatelessWidget {
             child: Icon(
               Icons.bookmark_border_rounded,
               size: 16,
-              color: theme.colorScheme.primary.withOpacity(0.4),
+              color: theme.colorScheme.primary.withValues(alpha: 0.4),
             ),
           ),
         ],
