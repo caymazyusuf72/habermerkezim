@@ -4,11 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'providers/providers.dart';
 import 'providers/onboarding_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/auth_provider.dart';
+import 'providers/locale_provider.dart';
 import 'themes/app_theme.dart';
 import 'pages/home/home_page.dart';
 import 'pages/splash/splash_page.dart';
@@ -16,6 +18,7 @@ import 'pages/onboarding/onboarding_page.dart';
 import 'pages/auth/login_page.dart';
 import 'pages/update/update_dialog.dart';
 import '../../core/services/update_service.dart';
+import '../l10n/generated/app_localizations.dart';
 
 /// Ana uygulama widget'ı - Haber Merkezi
 /// Riverpod ile state management ve theme management
@@ -30,6 +33,10 @@ class HaberMerkeziApp extends ConsumerWidget {
     final themeMode = themeState.themeMode;
     final fontScale = themeState.fontScale;
     final colorTheme = themeState.colorTheme;
+    
+    // Locale durumunu izle
+    final localeState = ref.watch(localeProvider);
+    final currentLocale = localeState.locale;
     
     // App initialization durumunu izle
     final appInitialization = ref.watch(appInitializationProvider);
@@ -62,7 +69,17 @@ class HaberMerkeziApp extends ConsumerWidget {
           themeMode: themeMode,
       
           // Localization ayarları
-          locale: const Locale('tr', 'TR'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('tr', 'TR'), // Türkçe
+            Locale('en', 'US'), // İngilizce
+          ],
+          locale: currentLocale,
           
           // Ana sayfa - initialization ve authentication durumuna göre
           home: appInitialization.when(

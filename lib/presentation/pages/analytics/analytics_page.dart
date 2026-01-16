@@ -208,7 +208,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
               _StatItem('Okunan Makale', '${todayAnalytics.articlesRead}', Icons.article_rounded),
               _StatItem('Geçirilen Süre', '${todayAnalytics.timeSpentMinutes} dk', Icons.access_time_rounded),
               _StatItem('Favoriler', '${todayAnalytics.favoriteCount}', Icons.favorite_rounded),
-              _StatItem('Aramalar', '${todayAnalytics.searchCount}', Icons.search_rounded),
+              _StatItem('Paylaşımlar', '${todayAnalytics.shareCount}', Icons.share_rounded),
             ],
           ),
 
@@ -220,8 +220,8 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
             [
               _StatItem('Toplam Makale', '${weeklySummary.totalArticlesRead}', Icons.article_rounded),
               _StatItem('Toplam Süre', '${weeklySummary.totalTimeSpent} dk', Icons.access_time_rounded),
+              _StatItem('Paylaşımlar', '${weeklySummary.totalShares}', Icons.share_rounded),
               _StatItem('Okuma Serisi', '$streakDays gün', Icons.local_fire_department_rounded),
-              _StatItem('Tutarlılık', '${ref.watch(consistencyScoreProvider).toInt()}%', Icons.trending_up_rounded),
             ],
           ),
 
@@ -371,6 +371,18 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
             ),
             const SizedBox(height: 16),
           ],
+
+          // Sosyal istatistikler
+          _buildDetailCard(
+            'Sosyal Aktivite',
+            [
+              _DetailItem('Toplam Paylaşım', '${weeklySummary.totalShares}'),
+              _DetailItem('Toplam Arama', '${weeklySummary.totalSearches}'),
+              _DetailItem('Toplam Favori', '${weeklySummary.totalFavorites}'),
+            ],
+          ),
+
+          const SizedBox(height: 16),
 
           // Okuma alışkanlıkları
           _buildDetailCard(

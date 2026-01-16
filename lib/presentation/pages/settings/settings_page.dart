@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/providers.dart';
+import '../../providers/locale_provider.dart';
 import '../../themes/app_theme.dart' show AppTheme, ColorTheme;
 import '../../widgets/dialogs/modern_alert_dialog.dart';
 import '../rss_sources/rss_sources_page.dart';
@@ -9,6 +10,7 @@ import '../analytics/analytics_page.dart';
 import '../notifications/notification_settings_page.dart';
 import '../notifications/notification_preferences_page.dart';
 import '../../../core/services/rss_sources_service.dart';
+import 'export_import_page.dart';
 
 /// Ayarlar sayfası - uygulama ayarları
 class SettingsPage extends ConsumerWidget {
@@ -29,6 +31,11 @@ class SettingsPage extends ConsumerWidget {
           // Görünüm Ayarları
           _buildSectionHeader(context, 'Görünüm', Icons.palette_rounded),
           _buildThemeSection(context, ref, isDarkMode),
+          const SizedBox(height: 24),
+
+          // Dil Ayarları
+          _buildSectionHeader(context, 'Dil', Icons.language_rounded),
+          _buildLanguageSection(context, ref),
           const SizedBox(height: 24),
 
           // Haber Kaynakları
@@ -324,6 +331,110 @@ class SettingsPage extends ConsumerWidget {
     return 'Maksimum';
   }
 
+  /// Dil seçimi bölümü
+  Widget _buildLanguageSection(BuildContext context, WidgetRef ref) {
+    final localeState = ref.watch(localeProvider);
+    final currentLanguage = localeState.language;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        children: [
+          _buildLanguageOption(
+            context,
+            ref,
+            AppLanguage.turkish,
+            currentLanguage == AppLanguage.turkish,
+          ),
+          const Divider(height: 1),
+          _buildLanguageOption(
+            context,
+            ref,
+            AppLanguage.english,
+            currentLanguage == AppLanguage.english,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Dil seçeneği widget'ı
+  Widget _buildLanguageOption(
+    BuildContext context,
+    WidgetRef ref,
+    AppLanguage language,
+    bool isSelected,
+  ) {
+    return ListTile(
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.primaryBlue.withValues(alpha: 0.1)
+              : Colors.grey.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: Text(
+            language.flag,
+            style: const TextStyle(fontSize: 24),
+          ),
+        ),
+      ),
+      title: Text(
+        language.displayName,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+        ),
+      ),
+      subtitle: Text(
+        language == AppLanguage.turkish
+            ? 'Türkçe dil desteği'
+            : 'English language support',
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+        ),
+      ),
+      trailing: isSelected
+          ? Icon(
+              Icons.check_circle,
+              color: AppTheme.primaryBlue,
+              size: 24,
+            )
+          : const Icon(Icons.circle_outlined, size: 24),
+      onTap: () {
+        ref.read(localeProvider.notifier).setLanguage(language);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Text(language.flag, style: const TextStyle(fontSize: 18)),
+                const SizedBox(width: 8),
+                Text(
+                  language == AppLanguage.turkish
+                      ? 'Dil Türkçe olarak değiştirildi'
+                      : 'Language changed to English',
+                ),
+              ],
+            ),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   /// Veri yönetimi bölümü
   Widget _buildDataManagementSection(BuildContext context, WidgetRef ref) {
     return Container(
@@ -358,6 +469,32 @@ class SettingsPage extends ConsumerWidget {
             subtitle: const Text('Tüm arama geçmişini temizle'),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () => _showClearSearchHistoryDialog(context, ref),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.teal.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.download_rounded,
+                color: Colors.teal,
+                size: 20,
+              ),
+            ),
+            title: const Text('Verileri Dışa Aktar'),
+            subtitle: const Text('Favoriler, okuma geçmişi ve istatistikler'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ExportImportPage(),
+                ),
+              );
+            },
           ),
         ],
       ),
