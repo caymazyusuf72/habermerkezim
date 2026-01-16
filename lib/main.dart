@@ -15,6 +15,7 @@ import 'core/services/custom_categories_service.dart';
 import 'core/services/rss_health_check_service.dart';
 import 'core/services/image_cache_service.dart';
 import 'core/services/article_popularity_service.dart';
+import 'core/services/gamification_service.dart';
 import 'presentation/app.dart';
 
 /// Haber Merkezi uygulamasının giriş noktası
@@ -78,6 +79,11 @@ Future<void> main() async {
     debugPrint('🔄 Article Popularity service initialize ediliyor...');
     await ArticlePopularityService.init();
     debugPrint('✅ Article Popularity service başarıyla initialize edildi');
+    
+    // Gamification servisini initialize et
+    debugPrint('🔄 Gamification service initialize ediliyor...');
+    await GamificationService.instance.init();
+    debugPrint('✅ Gamification service başarıyla initialize edildi');
     
     // Notification servisini initialize et
     debugPrint('🔄 Notification service initialize ediliyor...');

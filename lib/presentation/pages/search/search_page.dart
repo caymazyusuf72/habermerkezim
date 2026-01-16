@@ -6,8 +6,11 @@ import '../../providers/search_provider.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/analytics_provider.dart';
 import '../../providers/article_filter_provider.dart';
+import '../../providers/gamification_provider.dart';
 import '../../themes/app_theme.dart';
+import '../../widgets/badge_unlock_dialog.dart';
 import '../../../domain/entities/article.dart';
+import '../../../domain/entities/badge.dart';
 import '../../../core/services/search_service.dart';
 import '../home/widgets/article_card.dart';
 import '../home/widgets/article_filter_dialog.dart';
@@ -59,14 +62,57 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 
   /// Arama işlemi
-  void _performSearch(String query) {
+  void _performSearch(String query) async {
     if (query.trim().isNotEmpty) {
       _removeOverlay();
       ref.read(searchProvider.notifier).searchArticles(query.trim());
       
       // Analytics kaydı - arama yapıldı
       ref.read(analyticsProvider.notifier).recordSearchPerformed();
+      
+      // Gamification kaydı - arama yapıldı
+      _recordGamificationSearch();
     }
+  }
+
+  /// Gamification için arama kaydı
+  Future<void> _recordGamificationSearch() async {
+    try {
+      final analyticsState = ref.read(analyticsProvider);
+      final totalSearches = analyticsState.totalSearches;
+      
+      final unlockedBadges = await ref.read(gamificationProvider.notifier).recordSearch(totalSearches);
+      
+      if (unlockedBadges.isNotEmpty && mounted) {
+        _showUnlockedBadges(unlockedBadges);
+      }
+      
+      // XP ekle
+      final xpResult = await ref.read(gamificationProvider.notifier).addXP(5, 'Arama yapma');
+      if (xpResult != null && xpResult.leveledUp && mounted) {
+        _showLevelUpDialog(xpResult.newLevel);
+      }
+    } catch (e) {
+      debugPrint('❌ Gamification search error: $e');
+    }
+  }
+
+  /// Açılan rozetleri göster
+  void _showUnlockedBadges(List<Badge> badges) {
+    for (final badge in badges) {
+      showDialog(
+        context: context,
+        builder: (context) => BadgeUnlockDialog(badge: badge),
+      );
+    }
+  }
+
+  /// Seviye atlama dialogu göster
+  void _showLevelUpDialog(UserLevel newLevel) {
+    showDialog(
+      context: context,
+      builder: (context) => LevelUpDialog(newLevel: newLevel),
+    );
   }
 
   /// Autocomplete önerileri güncelle

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/providers.dart';
 import '../../providers/locale_provider.dart';
+import '../../providers/gamification_provider.dart';
 import '../../themes/app_theme.dart' show AppTheme, ColorTheme;
 import '../../widgets/dialogs/modern_alert_dialog.dart';
 import '../rss_sources/rss_sources_page.dart';
@@ -11,6 +12,7 @@ import '../notifications/notification_settings_page.dart';
 import '../notifications/notification_preferences_page.dart';
 import '../../../core/services/rss_sources_service.dart';
 import 'export_import_page.dart';
+import '../badges/badges_page.dart';
 
 /// Ayarlar sayfası - uygulama ayarları
 class SettingsPage extends ConsumerWidget {
@@ -51,6 +53,11 @@ class SettingsPage extends ConsumerWidget {
           // İstatistikler
           _buildSectionHeader(context, 'İstatistikler', Icons.analytics_rounded),
           _buildAnalyticsSection(context, ref),
+          const SizedBox(height: 24),
+
+          // Rozetler ve Başarılar
+          _buildSectionHeader(context, 'Rozetler ve Başarılar', Icons.emoji_events_rounded),
+          _buildGamificationSection(context, ref),
           const SizedBox(height: 24),
 
           // Bildirimler
@@ -592,6 +599,200 @@ class SettingsPage extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// Gamification bölümü - Rozetler ve Başarılar
+  Widget _buildGamificationSection(BuildContext context, WidgetRef ref) {
+    final userLevel = ref.watch(userLevelProvider);
+    final totalPoints = ref.watch(totalPointsProvider);
+    final dailyStreak = ref.watch(dailyStreakProvider);
+    final unlockedBadgesCount = ref.watch(unlockedBadgesCountProvider);
+    final allBadges = ref.watch(allBadgesProvider);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Seviye ve XP özeti
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.amber.withValues(alpha: 0.1),
+                  Colors.orange.withValues(alpha: 0.1),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: Row(
+              children: [
+                // Seviye rozeti
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.amber, Colors.orange],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.amber.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${userLevel.level}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Seviye bilgileri
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        userLevel.title,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      // XP progress bar
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: userLevel.progressToNextLevel,
+                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+                          minHeight: 6,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${userLevel.currentXP} / ${userLevel.xpForNextLevel} XP',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          // İstatistik satırı
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildGamificationStat(
+                  context,
+                  Icons.emoji_events_rounded,
+                  '$unlockedBadgesCount/${allBadges.length}',
+                  'Rozet',
+                  Colors.amber,
+                ),
+                _buildGamificationStat(
+                  context,
+                  Icons.stars_rounded,
+                  '$totalPoints',
+                  'Puan',
+                  Colors.purple,
+                ),
+                _buildGamificationStat(
+                  context,
+                  Icons.local_fire_department_rounded,
+                  '$dailyStreak',
+                  'Gün Serisi',
+                  Colors.orange,
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          // Rozetler sayfasına git
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.amber.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.emoji_events_rounded,
+                color: Colors.amber,
+                size: 20,
+              ),
+            ),
+            title: const Text('Tüm Rozetler'),
+            subtitle: Text('$unlockedBadgesCount rozet açıldı'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const BadgesPage(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Gamification istatistik widget'ı
+  Widget _buildGamificationStat(
+    BuildContext context,
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 24),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
+        ),
+      ],
     );
   }
 

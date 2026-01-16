@@ -6,13 +6,16 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../domain/entities/article.dart';
+import '../../../domain/entities/badge.dart';
 import '../../../core/services/article_content_service.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../../providers/providers.dart';
 import '../../providers/analytics_provider.dart';
 import '../../providers/reading_list_provider.dart';
 import '../../providers/popular_articles_provider.dart';
+import '../../providers/gamification_provider.dart';
 import '../../themes/app_theme.dart';
+import '../../widgets/badge_unlock_dialog.dart';
 import 'widgets/image_gallery.dart';
 import 'widgets/related_articles_section.dart';
 import 'widgets/tts_controls.dart';
@@ -58,7 +61,56 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
       
       // Popülerlik kaydı - makale görüntülendi
       ref.read(popularArticlesProvider.notifier).recordArticleView(widget.article);
+      
+      // Gamification kaydı - makale okundu
+      _recordGamificationArticleRead();
     });
+  }
+
+  /// Gamification için makale okuma kaydı
+  Future<void> _recordGamificationArticleRead() async {
+    try {
+      // Toplam okunan makale sayısını al
+      final analyticsState = ref.read(analyticsProvider);
+      final totalArticlesRead = analyticsState.totalArticlesRead;
+      
+      // Gamification kaydı
+      final unlockedBadges = await ref.read(gamificationProvider.notifier).recordArticleRead(
+        category: widget.article.category,
+        totalArticlesRead: totalArticlesRead,
+      );
+      
+      // Açılan rozetleri göster
+      if (unlockedBadges.isNotEmpty && mounted) {
+        _showUnlockedBadges(unlockedBadges);
+      }
+      
+      // XP ekle
+      final xpResult = await ref.read(gamificationProvider.notifier).addXP(10, 'Makale okuma');
+      if (xpResult != null && xpResult.leveledUp && mounted) {
+        _showLevelUpDialog(xpResult.newLevel);
+      }
+    } catch (e) {
+      debugPrint('❌ Gamification article read error: $e');
+    }
+  }
+
+  /// Açılan rozetleri göster
+  void _showUnlockedBadges(List<Badge> badges) {
+    for (final badge in badges) {
+      showDialog(
+        context: context,
+        builder: (context) => BadgeUnlockDialog(badge: badge),
+      );
+    }
+  }
+
+  /// Seviye atlama dialogu göster
+  void _showLevelUpDialog(UserLevel newLevel) {
+    showDialog(
+      context: context,
+      builder: (context) => LevelUpDialog(newLevel: newLevel),
+    );
   }
 
   @override
@@ -1151,7 +1203,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   }
 
   /// Makaleyi paylaş
-  void _shareArticle() {
+  void _shareArticle() async {
     final text = '${widget.article.title}\n\n${widget.article.link}';
     Share.share(text, subject: widget.article.title);
     
@@ -1160,10 +1212,30 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     
     // Popülerlik kaydı - paylaşım yapıldı
     ref.read(popularArticlesProvider.notifier).recordArticleShare(widget.article.id);
+    
+    // Gamification kaydı - paylaşım yapıldı
+    try {
+      final analyticsState = ref.read(analyticsProvider);
+      final totalShares = analyticsState.totalShares;
+      
+      final unlockedBadges = await ref.read(gamificationProvider.notifier).recordShare(totalShares);
+      
+      if (unlockedBadges.isNotEmpty && mounted) {
+        _showUnlockedBadges(unlockedBadges);
+      }
+      
+      // XP ekle
+      final xpResult = await ref.read(gamificationProvider.notifier).addXP(15, 'Makale paylaşma');
+      if (xpResult != null && xpResult.leveledUp && mounted) {
+        _showLevelUpDialog(xpResult.newLevel);
+      }
+    } catch (e) {
+      debugPrint('❌ Gamification share error: $e');
+    }
   }
 
   /// Favori durumunu toggle et
-  void _toggleFavorite() {
+  void _toggleFavorite() async {
     final wasAlreadyFavorite = ref.read(newsProvider).articles
         .where((a) => a.id == widget.article.id)
         .firstOrNull?.isFavorite ?? false;
@@ -1184,6 +1256,26 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
       
       // Popülerlik kaydı - favori eklendi
       ref.read(popularArticlesProvider.notifier).recordArticleFavorite(widget.article.id);
+      
+      // Gamification kaydı - favori eklendi
+      try {
+        final newsState = ref.read(newsProvider);
+        final totalFavorites = newsState.articles.where((a) => a.isFavorite).length;
+        
+        final unlockedBadges = await ref.read(gamificationProvider.notifier).recordFavoriteAdded(totalFavorites);
+        
+        if (unlockedBadges.isNotEmpty && mounted) {
+          _showUnlockedBadges(unlockedBadges);
+        }
+        
+        // XP ekle
+        final xpResult = await ref.read(gamificationProvider.notifier).addXP(5, 'Favori ekleme');
+        if (xpResult != null && xpResult.leveledUp && mounted) {
+          _showLevelUpDialog(xpResult.newLevel);
+        }
+      } catch (e) {
+        debugPrint('❌ Gamification favorite error: $e');
+      }
     }
     
     ScaffoldMessenger.of(context).showSnackBar(
