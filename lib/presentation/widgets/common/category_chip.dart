@@ -129,23 +129,23 @@ class _CategoryChipState extends State<CategoryChip>
             ),
             decoration: BoxDecoration(
               color: widget.isSelected
-                  ? chipColor.withOpacity(isDark ? 0.25 : 0.15)
+                  ? chipColor.withValues(alpha: isDark ? 0.25 : 0.15)
                   : _isHovered
-                      ? theme.colorScheme.surfaceVariant.withOpacity(0.8)
+                      ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8)
                       : Colors.transparent,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: widget.isSelected
                     ? chipColor
                     : _isHovered
-                        ? theme.colorScheme.outline.withOpacity(0.5)
-                        : theme.colorScheme.outline.withOpacity(0.3),
+                        ? theme.colorScheme.outline.withValues(alpha: 0.5)
+                        : theme.colorScheme.outline.withValues(alpha: 0.3),
                 width: widget.isSelected ? 2 : 1.5,
               ),
               boxShadow: widget.isSelected
                   ? [
                       BoxShadow(
-                        color: chipColor.withOpacity(0.2),
+                        color: chipColor.withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -162,7 +162,7 @@ class _CategoryChipState extends State<CategoryChip>
                     size: 16,
                     color: widget.isSelected
                         ? chipColor
-                        : theme.colorScheme.onSurface.withOpacity(0.7),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                   const SizedBox(width: 6),
                 ],
@@ -175,7 +175,7 @@ class _CategoryChipState extends State<CategoryChip>
                     fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: widget.isSelected
                         ? chipColor
-                        : theme.colorScheme.onSurface.withOpacity(0.8),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     letterSpacing: 0.2,
                   ),
                 ),
@@ -329,15 +329,15 @@ class _FilterChipState extends State<FilterChip> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: widget.isSelected
-                ? selectedColor.withOpacity(0.15)
+                ? selectedColor.withValues(alpha: 0.15)
                 : _isHovered
-                    ? theme.colorScheme.surfaceVariant
+                    ? theme.colorScheme.surfaceContainerHighest
                     : theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: widget.isSelected
                   ? selectedColor
-                  : theme.colorScheme.outline.withOpacity(0.3),
+                  : theme.colorScheme.outline.withValues(alpha: 0.3),
               width: widget.isSelected ? 1.5 : 1,
             ),
           ),
@@ -350,7 +350,7 @@ class _FilterChipState extends State<FilterChip> {
                   size: 16,
                   color: widget.isSelected
                       ? selectedColor
-                      : theme.colorScheme.onSurface.withOpacity(0.7),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 6),
               ],
@@ -361,7 +361,7 @@ class _FilterChipState extends State<FilterChip> {
                   fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: widget.isSelected
                       ? selectedColor
-                      : theme.colorScheme.onSurface.withOpacity(0.8),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.8),
                 ),
               ),
               if (widget.showRemoveButton && widget.isSelected) ...[
@@ -410,10 +410,10 @@ class TagChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: tagColor.withOpacity(0.1),
+          color: tagColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: tagColor.withOpacity(0.3),
+            color: tagColor.withValues(alpha: 0.3),
             width: 1,
           ),
         ),

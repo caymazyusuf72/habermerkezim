@@ -29,7 +29,7 @@ class InterestTagChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? _getColorFromHex(tag.color).withOpacity(0.2)
+              ? _getColorFromHex(tag.color).withValues(alpha: 0.2)
               : isDark
                   ? Colors.grey[800]
                   : Colors.grey[200],

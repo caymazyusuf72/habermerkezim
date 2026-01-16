@@ -84,7 +84,7 @@ class _AnimatedFavoriteIconState extends State<AnimatedFavoriteIcon>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final activeColor = widget.activeColor ?? Colors.red;
-    final inactiveColor = widget.inactiveColor ?? theme.colorScheme.onSurface.withOpacity(0.6);
+    final inactiveColor = widget.inactiveColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.6);
 
     return GestureDetector(
       onTap: () {
@@ -193,7 +193,7 @@ class _AnimatedBookmarkIconState extends State<AnimatedBookmarkIcon>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final activeColor = widget.activeColor ?? theme.colorScheme.primary;
-    final inactiveColor = widget.inactiveColor ?? theme.colorScheme.onSurface.withOpacity(0.6);
+    final inactiveColor = widget.inactiveColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.6);
 
     return GestureDetector(
       onTap: () {
@@ -283,7 +283,7 @@ class _AnimatedShareIconState extends State<AnimatedShareIcon>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final iconColor = widget.color ?? theme.colorScheme.onSurface.withOpacity(0.7);
+    final iconColor = widget.color ?? theme.colorScheme.onSurface.withValues(alpha: 0.7);
 
     return GestureDetector(
       onTap: _handleTap,
@@ -380,7 +380,7 @@ class _LoadingPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(0.2)
+      ..color = color.withValues(alpha: 0.2)
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -502,7 +502,7 @@ class _AnimatedCheckIconState extends State<AnimatedCheckIcon>
                   ? BoxDecoration(
                       color: Color.lerp(
                         Colors.transparent,
-                        activeColor.withOpacity(0.15),
+                        activeColor.withValues(alpha: 0.15),
                         _checkAnimation.value,
                       ),
                       shape: BoxShape.circle,

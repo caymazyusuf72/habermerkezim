@@ -43,7 +43,7 @@ class CustomErrorWidget extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: errorInfo.color.withOpacity(0.1),
+                color: errorInfo.color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -71,7 +71,7 @@ class CustomErrorWidget extends StatelessWidget {
             Text(
               customMessage ?? _getErrorMessage(),
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -82,7 +82,7 @@ class CustomErrorWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -98,7 +98,7 @@ class CustomErrorWidget extends StatelessWidget {
                       child: Text(
                         _getSuggestedAction()!,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.8),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -114,9 +114,9 @@ class CustomErrorWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
+                  color: Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -174,9 +174,9 @@ class CustomErrorWidget extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: errorInfo.color.withOpacity(0.1),
+        color: errorInfo.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: errorInfo.color.withOpacity(0.3)),
+        border: Border.all(color: errorInfo.color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -202,7 +202,7 @@ class CustomErrorWidget extends StatelessWidget {
                 Text(
                   _getErrorMessage(),
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: errorInfo.color.withOpacity(0.8),
+                    color: errorInfo.color.withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -390,7 +390,7 @@ class EmptyStateWidget extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant,
+                color: theme.colorScheme.surfaceContainerHighest,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -418,7 +418,7 @@ class EmptyStateWidget extends StatelessWidget {
             Text(
               message,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),

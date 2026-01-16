@@ -177,7 +177,7 @@ class _CarouselCard extends StatelessWidget {
                   imageUrl: article.imageUrl!,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     child: Center(
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
@@ -186,7 +186,7 @@ class _CarouselCard extends StatelessWidget {
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.image_not_supported_rounded,
                       size: 48,
@@ -201,8 +201,8 @@ class _CarouselCard extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        categoryColor.withOpacity(0.8),
-                        categoryColor.withOpacity(0.6),
+                        categoryColor.withValues(alpha: 0.8),
+                        categoryColor.withValues(alpha: 0.6),
                       ],
                     ),
                   ),
@@ -217,8 +217,8 @@ class _CarouselCard extends StatelessWidget {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.3),
-                        Colors.black.withOpacity(0.8),
+                        Colors.black.withValues(alpha: 0.3),
+                        Colors.black.withValues(alpha: 0.8),
                       ],
                       stops: const [0.0, 0.5, 1.0],
                     ),
@@ -241,7 +241,7 @@ class _CarouselCard extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: categoryColor.withOpacity(0.9),
+                        color: categoryColor.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -265,7 +265,7 @@ class _CarouselCard extends StatelessWidget {
                         height: 1.3,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha: 0.5),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -283,13 +283,13 @@ class _CarouselCard extends StatelessWidget {
                         Icon(
                           Icons.access_time_rounded,
                           size: 14,
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           article.shortDateTime,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 12,
                           ),
                         ),
@@ -318,7 +318,7 @@ class _CarouselCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.amber.withOpacity(0.4),
+                        color: Colors.amber.withValues(alpha: 0.4),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -385,7 +385,7 @@ class _CarouselIndicators extends StatelessWidget {
             decoration: BoxDecoration(
               color: isActive
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.primary.withOpacity(0.3),
+                  : theme.colorScheme.primary.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -480,10 +480,10 @@ class _MiniCarouselCard extends StatelessWidget {
                   imageUrl: article.imageUrl!,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
                   ),
                   errorWidget: (context, url, error) => Container(
-                    color: categoryColor.withOpacity(0.3),
+                    color: categoryColor.withValues(alpha: 0.3),
                     child: Icon(
                       Icons.article_rounded,
                       color: categoryColor,
@@ -492,7 +492,7 @@ class _MiniCarouselCard extends StatelessWidget {
                 )
               else
                 Container(
-                  color: categoryColor.withOpacity(0.3),
+                  color: categoryColor.withValues(alpha: 0.3),
                   child: Icon(
                     Icons.article_rounded,
                     color: categoryColor,
@@ -508,7 +508,7 @@ class _MiniCarouselCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withOpacity(0.7),
+                      Colors.black.withValues(alpha: 0.7),
                     ],
                   ),
                 ),
@@ -538,7 +538,7 @@ class _MiniCarouselCard extends StatelessWidget {
                     Text(
                       article.sourceName,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 11,
                       ),
                     ),

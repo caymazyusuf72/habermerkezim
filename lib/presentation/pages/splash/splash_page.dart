@@ -108,9 +108,9 @@ class _SplashPageState extends State<SplashPage>
                       ]
                     : [
                         // SpringRed teması ile pastel kırmızımsı gradyan
-                        AppTheme.springRed.withOpacity(0.1),
-                        AppTheme.springRedLight.withOpacity(0.15),
-                        AppTheme.springRed.withOpacity(0.08),
+                        AppTheme.springRed.withValues(alpha: 0.1),
+                        AppTheme.springRedLight.withValues(alpha: 0.15),
+                        AppTheme.springRed.withValues(alpha: 0.08),
                         AppTheme.lightBackground,
                       ],
               ),
@@ -162,16 +162,16 @@ class _SplashPageState extends State<SplashPage>
                                     boxShadow: [
                                       BoxShadow(
                                         color: isDark
-                                            ? AppTheme.sageGreen.withOpacity(0.4)
-                                            : AppTheme.springRed.withOpacity(0.4),
+                                            ? AppTheme.sageGreen.withValues(alpha: 0.4)
+                                            : AppTheme.springRed.withValues(alpha: 0.4),
                                         blurRadius: 30,
                                         spreadRadius: 5,
                                         offset: const Offset(0, 15),
                                       ),
                                       BoxShadow(
                                         color: isDark
-                                            ? AppTheme.matBlack.withOpacity(0.5)
-                                            : Colors.black.withOpacity(0.1),
+                                            ? AppTheme.matBlack.withValues(alpha: 0.5)
+                                            : Colors.black.withValues(alpha: 0.1),
                                         blurRadius: 20,
                                         offset: const Offset(0, 10),
                                       ),
@@ -185,7 +185,7 @@ class _SplashPageState extends State<SplashPage>
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                            color: Colors.white.withOpacity(0.2),
+                                            color: Colors.white.withValues(alpha: 0.2),
                                             width: 2,
                                           ),
                                         ),
@@ -225,8 +225,8 @@ class _SplashPageState extends State<SplashPage>
                                       textAlign: TextAlign.center,
                                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                         color: isDark
-                                            ? Colors.white.withOpacity(0.8)
-                                            : AppTheme.springRedDark.withOpacity(0.7),
+                                            ? Colors.white.withValues(alpha: 0.8)
+                                            : AppTheme.springRedDark.withValues(alpha: 0.7),
                                         fontWeight: FontWeight.w400,
                                         letterSpacing: 0.5,
                                       ),
@@ -265,8 +265,8 @@ class _SplashPageState extends State<SplashPage>
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                 color: isDark
-                                    ? Colors.white.withOpacity(0.7)
-                                    : AppTheme.springRedDark.withOpacity(0.6),
+                                    ? Colors.white.withValues(alpha: 0.7)
+                                    : AppTheme.springRedDark.withValues(alpha: 0.6),
                                 letterSpacing: 0.5,
                               ),
                             ),
