@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,6 +11,7 @@ import '../../themes/app_theme.dart';
 import '../../widgets/loading/shimmer_loading.dart';
 import '../onboarding/edit_interests_page.dart';
 import '../../../core/constants/interest_tags.dart';
+import '../../../core/services/avatar_service.dart';
 
 /// Profesyonel Profil Sayfası - Modern UI/UX
 class ProfilePage extends ConsumerStatefulWidget {
@@ -314,12 +316,19 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             ),
             child: profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty
                 ? ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: profile.avatarUrl!,
-                      fit: BoxFit.cover,
-                      errorWidget: (context, url, error) => 
-                        const Icon(Icons.person_rounded, size: 50, color: Colors.white),
-                    ),
+                    child: profile.avatarUrl!.startsWith('http')
+                        ? CachedNetworkImage(
+                            imageUrl: profile.avatarUrl!,
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) =>
+                              const Icon(Icons.person_rounded, size: 50, color: Colors.white),
+                          )
+                        : Image.file(
+                            File(profile.avatarUrl!),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.person_rounded, size: 50, color: Colors.white),
+                          ),
                   )
                 : const Icon(Icons.person_rounded, size: 50, color: Colors.white),
           ),
@@ -1312,19 +1321,276 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
   }
 
   void _showAvatarEditDialog(BuildContext context, UserProfile profile) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Profil Fotoğrafı',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildAvatarOption(
+                    context,
+                    icon: Icons.camera_alt_rounded,
+                    label: 'Kamera',
+                    color: Colors.blue,
+                    onTap: () => _pickAndCropAvatar(context, profile, fromCamera: true),
+                  ),
+                  _buildAvatarOption(
+                    context,
+                    icon: Icons.photo_library_rounded,
+                    label: 'Galeri',
+                    color: Colors.green,
+                    onTap: () => _pickAndCropAvatar(context, profile, fromCamera: false),
+                  ),
+                  if (profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty)
+                    _buildAvatarOption(
+                      context,
+                      icon: Icons.delete_rounded,
+                      label: 'Sil',
+                      color: Colors.red,
+                      onTap: () => _deleteAvatar(context, profile),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvatarOption(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: Colors.white, size: 28),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickAndCropAvatar(
+    BuildContext context,
+    UserProfile profile, {
+    required bool fromCamera,
+  }) async {
+    Navigator.pop(context); // Bottom sheet'i kapat
+    
+    // Loading göster
     showDialog(
       context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      final avatarService = AvatarService();
+      
+      // Fotoğraf seç
+      File? imageFile;
+      if (fromCamera) {
+        imageFile = await avatarService.pickImageFromCamera();
+      } else {
+        imageFile = await avatarService.pickImageFromGallery();
+      }
+
+      if (imageFile == null) {
+        if (context.mounted) Navigator.pop(context); // Loading'i kapat
+        return;
+      }
+
+      // Fotoğrafı kırp
+      final croppedFile = await avatarService.cropImage(imageFile);
+      
+      if (croppedFile == null) {
+        if (context.mounted) Navigator.pop(context); // Loading'i kapat
+        return;
+      }
+
+      // Avatar'ı kaydet
+      final savedPath = await avatarService.saveAvatar(croppedFile, profile.id);
+      
+      if (savedPath == null) {
+        if (context.mounted) {
+          Navigator.pop(context); // Loading'i kapat
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Avatar kaydedilemedi'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      // User profile'ı güncelle
+      final success = await avatarService.updateUserAvatar(profile.id, savedPath);
+      
+      if (context.mounted) {
+        Navigator.pop(context); // Loading'i kapat
+        
+        if (success) {
+          // Profili yeniden yükle
+          ref.read(userProfileProvider.notifier).loadProfile();
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Avatar başarıyla güncellendi! 🎉'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Avatar güncellenemedi'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context); // Loading'i kapat
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Hata: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteAvatar(BuildContext context, UserProfile profile) async {
+    Navigator.pop(context); // Bottom sheet'i kapat
+    
+    final confirmed = await showDialog<bool>(
+      context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Avatar Değiştir'),
-        content: const Text('Avatar değiştirme özelliği yakında eklenecek.'),
+        title: const Text('Avatar Sil'),
+        content: const Text('Profil fotoğrafınızı silmek istediğinize emin misiniz?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Tamam'),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('İptal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Sil'),
           ),
         ],
       ),
     );
+
+    if (confirmed != true || !context.mounted) return;
+
+    // Loading göster
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      final avatarService = AvatarService();
+      final success = await avatarService.deleteAvatar(profile.id);
+      
+      if (context.mounted) {
+        Navigator.pop(context); // Loading'i kapat
+        
+        if (success) {
+          // Profili yeniden yükle
+          ref.read(userProfileProvider.notifier).loadProfile();
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Avatar başarıyla silindi'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Avatar silinemedi'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context); // Loading'i kapat
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Hata: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   String _formatDate(DateTime date) {
