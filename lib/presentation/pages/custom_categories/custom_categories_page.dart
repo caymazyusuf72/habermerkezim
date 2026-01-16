@@ -115,7 +115,7 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: AppTheme.primaryBlue.withOpacity(0.1),
+              backgroundColor: AppTheme.primaryBlue.withValues(alpha: 0.1),
               child: Icon(
                 _getIconData(category.iconName),
                 color: AppTheme.primaryBlue,

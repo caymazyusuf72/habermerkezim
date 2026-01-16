@@ -101,7 +101,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -151,7 +151,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.primaryBlue.withOpacity(0.25),
+                            color: AppTheme.primaryBlue.withValues(alpha: 0.25),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -181,13 +181,13 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                       height: 40,
                       decoration: BoxDecoration(
                         color: _isPlaying 
-                            ? Colors.red.withOpacity(0.1)
-                            : Colors.grey.withOpacity(0.1),
+                            ? Colors.red.withValues(alpha: 0.1)
+                            : Colors.grey.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: _isPlaying 
-                              ? Colors.red.withOpacity(0.3)
-                              : Colors.grey.withOpacity(0.2),
+                              ? Colors.red.withValues(alpha: 0.3)
+                              : Colors.grey.withValues(alpha: 0.2),
                           width: 1.5,
                         ),
                       ),
@@ -278,7 +278,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                 Icon(
                   icon,
                   size: 14,
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 4),
                 Text(
@@ -286,7 +286,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -294,7 +294,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
+                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -315,7 +315,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: AppTheme.primaryBlue,
-            inactiveTrackColor: AppTheme.primaryBlue.withOpacity(0.2),
+            inactiveTrackColor: AppTheme.primaryBlue.withValues(alpha: 0.2),
             thumbColor: AppTheme.primaryBlue,
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),

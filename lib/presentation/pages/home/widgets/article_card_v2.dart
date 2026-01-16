@@ -148,19 +148,19 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
         color: isDark ? theme.colorScheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _isHovered 
-              ? categoryColor.withOpacity(0.4)
-              : isDark 
-                  ? theme.colorScheme.outline.withOpacity(0.15)
-                  : Colors.grey.withOpacity(0.08),
+          color: _isHovered
+              ? categoryColor.withValues(alpha: 0.4)
+              : isDark
+                  ? theme.colorScheme.outline.withValues(alpha: 0.15)
+                  : Colors.grey.withValues(alpha: 0.08),
           width: _isHovered ? 1.5 : 1,
         ),
         boxShadow: [
           // Ana gölge - yumuşak ve dağınık
           BoxShadow(
-            color: isDark 
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(_isHovered ? 0.12 : 0.06),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: _isHovered ? 0.12 : 0.06),
             blurRadius: _isHovered ? 24 : 16,
             offset: Offset(0, _isHovered ? 8 : 4),
             spreadRadius: _isHovered ? 2 : 0,
@@ -168,7 +168,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
           // Accent gölge - renk vurgusu
           if (_isHovered)
             BoxShadow(
-              color: categoryColor.withOpacity(0.15),
+              color: categoryColor.withValues(alpha: 0.15),
               blurRadius: 20,
               offset: const Offset(0, 6),
               spreadRadius: 0,
@@ -206,7 +206,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                       height: 1.35,
                       fontSize: 17,
                       color: widget.article.isRead
-                          ? theme.colorScheme.onSurface.withOpacity(0.55)
+                          ? theme.colorScheme.onSurface.withValues(alpha: 0.55)
                           : theme.colorScheme.onSurface,
                       letterSpacing: -0.3,
                     ),
@@ -220,7 +220,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                   Text(
                     widget.article.truncatedDescription,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       height: 1.5,
                       fontSize: 14,
                       letterSpacing: 0.1,
@@ -256,17 +256,17 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _isHovered 
-              ? categoryColor.withOpacity(0.3)
+              ? categoryColor.withValues(alpha: 0.3)
               : isDark 
-                  ? theme.colorScheme.outline.withOpacity(0.15)
-                  : Colors.grey.withOpacity(0.08),
+                  ? theme.colorScheme.outline.withValues(alpha: 0.15)
+                  : Colors.grey.withValues(alpha: 0.08),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: isDark 
-                ? Colors.black.withOpacity(0.2)
-                : Colors.black.withOpacity(_isHovered ? 0.08 : 0.04),
+                ? Colors.black.withValues(alpha: 0.2)
+                : Colors.black.withValues(alpha: _isHovered ? 0.08 : 0.04),
             blurRadius: _isHovered ? 16 : 10,
             offset: Offset(0, _isHovered ? 4 : 2),
           ),
@@ -293,10 +293,10 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: categoryColor.withOpacity(0.12),
+                              color: categoryColor.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: categoryColor.withOpacity(0.3),
+                                color: categoryColor.withValues(alpha: 0.3),
                                 width: 1,
                               ),
                             ),
@@ -363,7 +363,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -377,17 +377,17 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                         memCacheWidth: 160,
                         memCacheHeight: 160,
                         placeholder: (context, url) => Container(
-                          color: theme.colorScheme.surfaceVariant,
+                          color: theme.colorScheme.surfaceContainerHighest,
                           child: const Center(
                             child: CircularProgressIndicator(strokeWidth: 2),
                           ),
                         ),
                         errorWidget: (context, url, error) => Container(
-                          color: theme.colorScheme.surfaceVariant,
+                          color: theme.colorScheme.surfaceContainerHighest,
                           child: Icon(
                             Icons.image_not_supported_rounded,
                             size: 24,
-                            color: theme.colorScheme.onSurfaceVariant,
+                            color: theme.colorScheme.onsurfaceContainerHighest,
                           ),
                         ),
                       ),
@@ -407,7 +407,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                           height: 1.4,
                           fontSize: 15,
                           color: widget.article.isRead
-                              ? theme.colorScheme.onSurface.withOpacity(0.6)
+                              ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
                               : theme.colorScheme.onSurface,
                         ),
                         maxLines: 3,
@@ -422,13 +422,13 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                           Icon(
                             Icons.access_time_rounded,
                             size: 12,
-                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                           const SizedBox(width: 4),
                           Text(
                             widget.article.shortDateTime,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.5),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                               fontSize: 11,
                             ),
                           ),
@@ -471,15 +471,15 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
         boxShadow: [
           BoxShadow(
             color: isDark 
-                ? Colors.black.withOpacity(0.4)
-                : Colors.black.withOpacity(_isHovered ? 0.18 : 0.1),
+                ? Colors.black.withValues(alpha: 0.4)
+                : Colors.black.withValues(alpha: _isHovered ? 0.18 : 0.1),
             blurRadius: _isHovered ? 28 : 20,
             offset: Offset(0, _isHovered ? 12 : 8),
             spreadRadius: _isHovered ? 2 : 0,
           ),
           if (_isHovered)
             BoxShadow(
-              color: categoryColor.withOpacity(0.2),
+              color: categoryColor.withValues(alpha: 0.2),
               blurRadius: 24,
               offset: const Offset(0, 8),
             ),
@@ -498,17 +498,17 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                 memCacheWidth: 600,
                 memCacheHeight: 400,
                 placeholder: (context, url) => Container(
-                  color: theme.colorScheme.surfaceVariant,
+                  color: theme.colorScheme.surfaceContainerHighest,
                   child: const Center(
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 ),
                 errorWidget: (context, url, error) => Container(
-                  color: theme.colorScheme.surfaceVariant,
+                  color: theme.colorScheme.surfaceContainerHighest,
                   child: Icon(
                     Icons.image_not_supported_rounded,
                     size: 48,
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: theme.colorScheme.onsurfaceContainerHighest,
                   ),
                 ),
               )
@@ -519,8 +519,8 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      categoryColor.withOpacity(0.8),
-                      categoryColor.withOpacity(0.4),
+                      categoryColor.withValues(alpha: 0.8),
+                      categoryColor.withValues(alpha: 0.4),
                     ],
                   ),
                 ),
@@ -534,8 +534,8 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withOpacity(0.3),
-                    Colors.black.withOpacity(0.85),
+                    Colors.black.withValues(alpha: 0.3),
+                    Colors.black.withValues(alpha: 0.85),
                   ],
                   stops: const [0.0, 0.5, 1.0],
                 ),
@@ -569,7 +569,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                         Shadow(
                           offset: const Offset(0, 2),
                           blurRadius: 4,
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withValues(alpha: 0.5),
                         ),
                       ],
                     ),
@@ -585,13 +585,13 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                       Icon(
                         Icons.access_time_rounded,
                         size: 14,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         widget.article.shortDateTime,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           fontSize: 12,
                         ),
                       ),
@@ -599,14 +599,14 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                       Icon(
                         Icons.source_rounded,
                         size: 14,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                       const SizedBox(width: 4),
                       Flexible(
                         child: Text(
                           widget.article.sourceName,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 12,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -653,7 +653,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: AppTheme.sageGreen.withOpacity(0.9),
+                    color: AppTheme.sageGreen.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -698,17 +698,17 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _isHovered 
-              ? categoryColor.withOpacity(0.3)
+              ? categoryColor.withValues(alpha: 0.3)
               : isDark 
-                  ? theme.colorScheme.outline.withOpacity(0.1)
-                  : Colors.grey.withOpacity(0.08),
+                  ? theme.colorScheme.outline.withValues(alpha: 0.1)
+                  : Colors.grey.withValues(alpha: 0.08),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: isDark 
-                ? Colors.black.withOpacity(0.2)
-                : Colors.black.withOpacity(_isHovered ? 0.08 : 0.04),
+                ? Colors.black.withValues(alpha: 0.2)
+                : Colors.black.withValues(alpha: _isHovered ? 0.08 : 0.04),
             blurRadius: _isHovered ? 12 : 8,
             offset: Offset(0, _isHovered ? 4 : 2),
           ),
@@ -739,7 +739,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                     color: widget.article.isRead
-                        ? theme.colorScheme.onSurface.withOpacity(0.55)
+                        ? theme.colorScheme.onSurface.withValues(alpha: 0.55)
                         : theme.colorScheme.onSurface,
                     height: 1.3,
                   ),
@@ -761,14 +761,14 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                     Text(
                       '•',
                       style: TextStyle(
-                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       widget.article.shortDateTime,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.5),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         fontSize: 11,
                       ),
                     ),
@@ -788,7 +788,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
               size: 20,
               color: ref.watch(isFavoriteProvider(widget.article.id))
                   ? Colors.red
-                  : theme.colorScheme.onSurface.withOpacity(0.5),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
             constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
             padding: EdgeInsets.zero,
@@ -811,17 +811,17 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _isHovered 
-              ? categoryColor.withOpacity(0.3)
+              ? categoryColor.withValues(alpha: 0.3)
               : isDark 
-                  ? theme.colorScheme.outline.withOpacity(0.1)
-                  : Colors.grey.withOpacity(0.08),
+                  ? theme.colorScheme.outline.withValues(alpha: 0.1)
+                  : Colors.grey.withValues(alpha: 0.08),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: isDark 
-                ? Colors.black.withOpacity(0.25)
-                : Colors.black.withOpacity(_isHovered ? 0.1 : 0.05),
+                ? Colors.black.withValues(alpha: 0.25)
+                : Colors.black.withValues(alpha: _isHovered ? 0.1 : 0.05),
             blurRadius: _isHovered ? 16 : 10,
             offset: Offset(0, _isHovered ? 6 : 3),
           ),
@@ -845,17 +845,17 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                       memCacheWidth: 300,
                       memCacheHeight: 300,
                       placeholder: (context, url) => Container(
-                        color: theme.colorScheme.surfaceVariant,
+                        color: theme.colorScheme.surfaceContainerHighest,
                         child: const Center(
                           child: CircularProgressIndicator(strokeWidth: 2),
                         ),
                       ),
                       errorWidget: (context, url, error) => Container(
-                        color: theme.colorScheme.surfaceVariant,
+                        color: theme.colorScheme.surfaceContainerHighest,
                         child: Icon(
                           Icons.image_not_supported_rounded,
                           size: 32,
-                          color: theme.colorScheme.onSurfaceVariant,
+                          color: theme.colorScheme.onsurfaceContainerHighest,
                         ),
                       ),
                     )
@@ -866,8 +866,8 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            categoryColor.withOpacity(0.6),
-                            categoryColor.withOpacity(0.3),
+                            categoryColor.withValues(alpha: 0.6),
+                            categoryColor.withValues(alpha: 0.3),
                           ],
                         ),
                       ),
@@ -875,7 +875,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                         child: Icon(
                           Icons.article_rounded,
                           size: 40,
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                         ),
                       ),
                     ),
@@ -893,7 +893,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Colors.black.withOpacity(0.5),
+                            Colors.black.withValues(alpha: 0.5),
                           ],
                         ),
                       ),
@@ -908,7 +908,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: categoryColor.withOpacity(0.9),
+                          color: categoryColor.withValues(alpha: 0.9),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -932,7 +932,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.4),
+                        color: Colors.black.withValues(alpha: 0.4),
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
@@ -967,7 +967,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                       fontSize: 13,
                       height: 1.3,
                       color: widget.article.isRead
-                          ? theme.colorScheme.onSurface.withOpacity(0.55)
+                          ? theme.colorScheme.onSurface.withValues(alpha: 0.55)
                           : theme.colorScheme.onSurface,
                     ),
                     maxLines: 2,
@@ -977,7 +977,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                   Text(
                     widget.article.shortDateTime,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 11,
                     ),
                   ),
@@ -1011,17 +1011,17 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
               memCacheWidth: 600,
               memCacheHeight: 300,
               placeholder: (context, url) => Container(
-                color: theme.colorScheme.surfaceVariant,
+                color: theme.colorScheme.surfaceContainerHighest,
                 child: const Center(
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
               ),
               errorWidget: (context, url, error) => Container(
-                color: theme.colorScheme.surfaceVariant,
+                color: theme.colorScheme.surfaceContainerHighest,
                 child: Icon(
                   Icons.image_not_supported_rounded,
                   size: 40,
-                  color: theme.colorScheme.onSurfaceVariant,
+                  color: theme.colorScheme.onsurfaceContainerHighest,
                 ),
               ),
             ),
@@ -1045,7 +1045,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(0.4),
+                  Colors.black.withValues(alpha: 0.4),
                 ],
               ),
             ),
@@ -1109,7 +1109,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                 gradient: LinearGradient(
                   colors: [
                     Colors.transparent,
-                    AppTheme.sageGreen.withOpacity(0.8),
+                    AppTheme.sageGreen.withValues(alpha: 0.8),
                   ],
                 ),
               ),
@@ -1124,8 +1124,8 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: categoryColor.withOpacity(0.1),
-        border: Border.all(color: categoryColor.withOpacity(0.3), width: 1),
+        color: categoryColor.withValues(alpha: 0.1),
+        border: Border.all(color: categoryColor.withValues(alpha: 0.3), width: 1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -1150,13 +1150,13 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
             color: isDarkMode
-                ? Colors.black.withOpacity(0.5)
-                : Colors.white.withOpacity(0.3),
+                ? Colors.black.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isDarkMode
-                  ? categoryColor.withOpacity(0.5)
-                  : categoryColor.withOpacity(0.4),
+                  ? categoryColor.withValues(alpha: 0.5)
+                  : categoryColor.withValues(alpha: 0.4),
               width: 1.2,
             ),
           ),
@@ -1172,7 +1172,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                       Shadow(
                         offset: const Offset(0.5, 0.5),
                         blurRadius: 2.0,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ],
             ),
@@ -1193,13 +1193,13 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.purple.shade400.withOpacity(0.85),
-                Colors.blue.shade400.withOpacity(0.85),
+                Colors.purple.shade400.withValues(alpha: 0.85),
+                Colors.blue.shade400.withValues(alpha: 0.85),
               ],
             ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -1239,7 +1239,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
         child: Material(
-          color: Colors.black.withOpacity(0.3),
+          color: Colors.black.withValues(alpha: 0.3),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(20),
@@ -1249,7 +1249,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -1282,13 +1282,13 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             shape: BoxShape.circle,
           ),
           child: Icon(
             icon,
             size: 16,
-            color: color ?? theme.colorScheme.onSurface.withOpacity(0.7),
+            color: color ?? theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
       ),
@@ -1306,13 +1306,13 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
         Icon(
           Icons.access_time_rounded,
           size: 14,
-          color: theme.colorScheme.onSurface.withOpacity(0.5),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
         ),
         const SizedBox(width: 4),
         Text(
           widget.article.shortDateTime,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             fontSize: 12,
           ),
         ),
@@ -1322,14 +1322,14 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
         Icon(
           Icons.source_rounded,
           size: 14,
-          color: theme.colorScheme.onSurface.withOpacity(0.5),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
         ),
         const SizedBox(width: 4),
         Flexible(
           child: Text(
             widget.article.sourceName,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
               fontSize: 12,
             ),
             overflow: TextOverflow.ellipsis,
@@ -1343,10 +1343,10 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              color: AppTheme.sageGreen.withOpacity(0.15),
+              color: AppTheme.sageGreen.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: AppTheme.sageGreen.withOpacity(0.3),
+                color: AppTheme.sageGreen.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),

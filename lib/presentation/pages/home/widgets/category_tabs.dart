@@ -36,7 +36,7 @@ class _CategoryTabsState extends ConsumerState<CategoryTabs> {
         color: theme.colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: AppTheme.getPrimaryColor(ref.watch(colorThemeProvider)).withOpacity(0.2),
+            color: AppTheme.getPrimaryColor(ref.watch(colorThemeProvider)).withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -68,7 +68,7 @@ class _CategoryTabsState extends ConsumerState<CategoryTabs> {
       
       // Renkler - Seçili renk teması
       labelColor: primaryColor,
-      unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
+      unselectedLabelColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
       
       // Indicator - Seçili renk teması
       indicatorColor: primaryColor,
@@ -193,7 +193,7 @@ class _AnimatedCategoryTabState extends State<AnimatedCategoryTab>
               ),
               decoration: BoxDecoration(
                 color: widget.isSelected
-                    ? categoryColor.withOpacity(0.1)
+                    ? categoryColor.withValues(alpha: 0.1)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 border: widget.isSelected
@@ -210,7 +210,7 @@ class _AnimatedCategoryTabState extends State<AnimatedCategoryTab>
                     decoration: BoxDecoration(
                       color: widget.isSelected
                           ? categoryColor
-                          : categoryColor.withOpacity(0.5),
+                          : categoryColor.withValues(alpha: 0.5),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -222,7 +222,7 @@ class _AnimatedCategoryTabState extends State<AnimatedCategoryTab>
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: widget.isSelected
                           ? AppTheme.getPrimaryColor(ColorTheme.defaultTheme)
-                          : theme.colorScheme.onSurface.withOpacity(0.7),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       fontWeight: widget.isSelected
                           ? FontWeight.w600
                           : FontWeight.w400,

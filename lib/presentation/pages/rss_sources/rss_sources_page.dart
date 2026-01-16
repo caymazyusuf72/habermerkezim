@@ -156,10 +156,10 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -178,7 +178,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
           Container(
             width: 1,
             height: 40,
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
           ),
           
           // Aktif kaynak
@@ -195,7 +195,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
           Container(
             width: 1,
             height: 40,
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
           ),
           
           // Filtrelenmiş
@@ -241,7 +241,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
       ],
@@ -260,7 +260,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
             Icon(
               Icons.rss_feed_outlined,
               size: 64,
-              color: theme.colorScheme.onSurface.withOpacity(0.3),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -276,7 +276,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
                       : 'Henüz RSS kaynağı eklenmemiş',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 24),
@@ -350,7 +350,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: categoryColor.withOpacity(0.1),
+                  color: categoryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: categoryColor, width: 1),
                 ),
@@ -369,7 +369,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
               Text(
                 source.domain,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -385,7 +385,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
                     child: Text(
                       source.lastFetchStatus,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ),
@@ -395,7 +395,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryBlue.withOpacity(0.1),
+                        color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(

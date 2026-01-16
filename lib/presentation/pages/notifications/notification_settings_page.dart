@@ -129,7 +129,7 @@ class _NotificationSettingsPageState
                             : 'Bildirimler için izin gerekli',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -215,7 +215,7 @@ class _NotificationSettingsPageState
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                          .withOpacity(0.3),
+                          .withValues(alpha: 0.3),
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -347,7 +347,7 @@ class _NotificationSettingsPageState
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -405,7 +405,7 @@ class _NotificationSettingsPageState
                         'Önemli haberler için anında bildirim',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         ),
                       ),
                     ],

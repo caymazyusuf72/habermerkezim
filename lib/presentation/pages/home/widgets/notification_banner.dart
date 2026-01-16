@@ -101,10 +101,10 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.dark 
               ? AppTheme.matBlackSurfaceVariant 
-              : primaryColor.withOpacity(0.1),
+              : primaryColor.withValues(alpha: 0.1),
           border: Border(
             bottom: BorderSide(
-              color: primaryColor.withOpacity(0.2),
+              color: primaryColor.withValues(alpha: 0.2),
               width: 1,
             ),
           ),
@@ -129,7 +129,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                 child: Text(
                   'Haberler yükleniyor...',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: primaryColor.withOpacity(0.7),
+                    color: primaryColor.withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -162,31 +162,31 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
             gradient: LinearGradient(
               colors: isDark
                   ? [
-                      AppTheme.matBlackSurface.withOpacity(0.85),
-                      AppTheme.matBlackSurfaceVariant.withOpacity(0.85),
-                      AppTheme.matBlackSurface.withOpacity(0.85),
+                      AppTheme.matBlackSurface.withValues(alpha: 0.85),
+                      AppTheme.matBlackSurfaceVariant.withValues(alpha: 0.85),
+                      AppTheme.matBlackSurface.withValues(alpha: 0.85),
                     ]
                   : [
-                      primaryColor.withOpacity(0.20),
-                      primaryColor.withOpacity(0.12),
-                      primaryColor.withOpacity(0.20),
+                      primaryColor.withValues(alpha: 0.20),
+                      primaryColor.withValues(alpha: 0.12),
+                      primaryColor.withValues(alpha: 0.20),
                     ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             border: Border(
               top: BorderSide(
-                color: primaryColor.withOpacity(0.3),
+                color: primaryColor.withValues(alpha: 0.3),
                 width: 2,
               ),
               bottom: BorderSide(
-                color: primaryColor.withOpacity(0.2),
+                color: primaryColor.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
             boxShadow: [
               BoxShadow(
-                color: primaryColor.withOpacity(0.15),
+                color: primaryColor.withValues(alpha: 0.15),
                 blurRadius: 12,
                 offset: const Offset(0, 2),
               ),
@@ -211,7 +211,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                           height: 32 + (_marqueeController.value * 8),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: primaryColor.withOpacity(0.2 - (_marqueeController.value * 0.2)),
+                            color: primaryColor.withValues(alpha: 0.2 - (_marqueeController.value * 0.2)),
                           ),
                         );
                       },
@@ -272,8 +272,8 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 fontWeight: FontWeight.w800, // Daha bold için okunabilirlik
                                 color: isDark
-                                    ? Colors.white.withOpacity(0.95)
-                                    : AppTheme.getPrimaryDarkColor(colorTheme).withOpacity(0.9),
+                                    ? Colors.white.withValues(alpha: 0.95)
+                                    : AppTheme.getPrimaryDarkColor(colorTheme).withValues(alpha: 0.9),
                                 letterSpacing: 0.3,
                                 height: 1.3,
                                 shadows: isDark
@@ -282,7 +282,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                                         Shadow(
                                           offset: const Offset(0.5, 0.5),
                                           blurRadius: 1.0,
-                                          color: Colors.white.withOpacity(0.5),
+                                          color: Colors.white.withValues(alpha: 0.5),
                                         ),
                                       ],
                               ),
@@ -298,7 +298,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                             margin: const EdgeInsets.only(left: 12),
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: primaryColor.withOpacity(0.15),
+                              color: primaryColor.withValues(alpha: 0.15),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -330,7 +330,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                       }
                     });
                   },
-                  color: primaryColor.withOpacity(0.8),
+                  color: primaryColor.withValues(alpha: 0.8),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   tooltip: _isPaused ? 'Devam Et' : 'Duraklat',

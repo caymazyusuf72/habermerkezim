@@ -191,7 +191,7 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
             
             // Güncelleme bilgisi
             Card(
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.blue.withValues(alpha: 0.1),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -213,7 +213,7 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
             
             // Uyarı
             Card(
-              color: Colors.orange.withOpacity(0.1),
+              color: Colors.orange.withValues(alpha: 0.1),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -283,7 +283,7 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 32),
@@ -296,7 +296,7 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
                   Text(
                     title,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -341,7 +341,7 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.2),
+                    color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, color: color, size: 24),
@@ -359,7 +359,7 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.2),
+                    color: Colors.green.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.green, width: 1),
                   ),
@@ -420,7 +420,7 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
                   Text(
                     item.description,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],

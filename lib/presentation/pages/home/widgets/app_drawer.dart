@@ -224,7 +224,7 @@ class AppDrawer extends ConsumerWidget {
                   Text(
                     'v1.0.0',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 14,
                     ),
                   ),
@@ -240,8 +240,8 @@ class AppDrawer extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: isConnected
-                  ? Colors.green.withOpacity(0.2)
-                  : Colors.orange.withOpacity(0.2),
+                  ? Colors.green.withValues(alpha: 0.2)
+                  : Colors.orange.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isConnected ? Colors.green : Colors.orange,
@@ -401,12 +401,12 @@ class AppDrawer extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
-                ? themeData.colorScheme.primary.withOpacity(0.1)
+                ? themeData.colorScheme.primary.withValues(alpha: 0.1)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             border: isSelected
                 ? Border.all(color: themeData.colorScheme.primary)
-                : Border.all(color: themeData.colorScheme.outline.withOpacity(0.3)),
+                : Border.all(color: themeData.colorScheme.outline.withValues(alpha: 0.3)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -415,7 +415,7 @@ class AppDrawer extends ConsumerWidget {
                 icon,
                 color: isSelected
                     ? themeData.colorScheme.primary
-                    : themeData.colorScheme.onSurface.withOpacity(0.6),
+                    : themeData.colorScheme.onSurface.withValues(alpha: 0.6),
                 size: 20,
               ),
               const SizedBox(height: 4),
@@ -424,7 +424,7 @@ class AppDrawer extends ConsumerWidget {
                 style: themeData.textTheme.bodySmall?.copyWith(
                   color: isSelected
                       ? themeData.colorScheme.primary
-                      : themeData.colorScheme.onSurface.withOpacity(0.6),
+                      : themeData.colorScheme.onSurface.withValues(alpha: 0.6),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
@@ -474,7 +474,7 @@ class AppDrawer extends ConsumerWidget {
         '© 2025 Haber Merkezi\nFlutter ile geliştirildi',
         textAlign: TextAlign.center,
         style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.5),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
         ),
       ),
     );

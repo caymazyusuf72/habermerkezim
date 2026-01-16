@@ -75,7 +75,7 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
             colors: [
               AppTheme.primaryBlue,
               AppTheme.secondaryBlue,
-              AppTheme.primaryBlue.withOpacity(0.8),
+              AppTheme.primaryBlue.withValues(alpha: 0.8),
             ],
           ),
         ),
@@ -130,7 +130,7 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -151,11 +151,11 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -202,7 +202,7 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppTheme.primaryBlue.withOpacity(0.1),
+        color: AppTheme.primaryBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -234,7 +234,7 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             elevation: 8,
-            shadowColor: Colors.black.withOpacity(0.2),
+            shadowColor: Colors.black.withValues(alpha: 0.2),
             child: InkWell(
               onTap: isLoading ? null : _handleGoogleSignIn,
               borderRadius: BorderRadius.circular(16),
@@ -284,7 +284,7 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
       textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 14,
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withValues(alpha: 0.9),
         height: 1.5,
       ),
     );

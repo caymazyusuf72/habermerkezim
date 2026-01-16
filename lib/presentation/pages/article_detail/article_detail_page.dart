@@ -250,11 +250,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                               imageUrl: widget.article.imageUrl!,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Container(
-                                color: theme.colorScheme.surfaceVariant,
+                                color: theme.colorScheme.surfaceContainerHighest,
                                 child: const Center(child: CircularProgressIndicator()),
                               ),
                               errorWidget: (context, url, error) => Container(
-                                color: theme.colorScheme.surfaceVariant,
+                                color: theme.colorScheme.surfaceContainerHighest,
                                 child: const Icon(Icons.image_not_supported, size: 48),
                               ),
                             ),
@@ -271,7 +271,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                           Text(
                             widget.article.formattedDateTime,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],
@@ -496,11 +496,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               imageUrl: widget.article.imageUrl!,
               fit: BoxFit.cover,
               placeholder: (context, url) => Container(
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: const Center(child: CircularProgressIndicator()),
               ),
               errorWidget: (context, url, error) => Container(
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: const Icon(Icons.image_not_supported, size: 48),
               ),
             ),
@@ -553,8 +553,8 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            categoryColor.withOpacity(0.8),
-            categoryColor.withOpacity(0.4),
+            categoryColor.withValues(alpha: 0.8),
+            categoryColor.withValues(alpha: 0.4),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -642,7 +642,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: categoryColor.withOpacity(0.1),
+        color: categoryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: categoryColor, width: 1.5),
       ),
@@ -663,15 +663,15 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            categoryColor.withOpacity(0.15),
-            categoryColor.withOpacity(0.05),
+            categoryColor.withValues(alpha: 0.15),
+            categoryColor.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: categoryColor.withOpacity(0.3),
+          color: categoryColor.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -680,7 +680,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: categoryColor.withOpacity(0.2),
+              color: categoryColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -697,7 +697,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                 Text(
                   'Kaynak',
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -727,10 +727,10 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.3),
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -758,7 +758,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                 Text(
                   'Bu içerik ${widget.article.sourceName} tarafından yayınlanmıştır. RSS feed üzerinden alınmış özet gösterilmektedir. Tam içerik için lütfen orijinal kaynağa gidiniz.',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     height: 1.5,
                   ),
                 ),
@@ -780,14 +780,14 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
             Icon(
               Icons.access_time,
               size: 16,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             const SizedBox(width: 6),
             Expanded(
               child: Text(
                 widget.article.formattedDateTime,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -799,26 +799,26 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
             Icon(
               Icons.visibility,
               size: 16,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             const SizedBox(width: 6),
             Text(
               'Okundu',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(width: 16),
             Icon(
               Icons.schedule,
               size: 16,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             const SizedBox(width: 6),
             Text(
               widget.article.timeAgo,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -838,10 +838,10 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: theme.colorScheme.outline.withOpacity(0.2),
+                color: theme.colorScheme.outline.withValues(alpha: 0.2),
               ),
             ),
             child: Text(
@@ -884,7 +884,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: theme.colorScheme.primary, width: 1),
                 ),
@@ -925,7 +925,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                   margin: const EdgeInsets.only(top: 16),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                    color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -933,14 +933,14 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                       Icon(
                         Icons.info_outline,
                         size: 16,
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'Web scraping ile çıkarıldı • ${_fullContent!.wordCount ?? 0} kelime • ${_fullContent!.readingTimeMinutes ?? 1} dk okuma',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ),
@@ -960,13 +960,13 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
             margin: const EdgeInsets.only(top: 16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.1),
+              color: Colors.red.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.red.withOpacity(0.3)),
+              border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.error_outline,
                   color: Colors.red,
                   size: 20,
@@ -987,7 +987,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                       Text(
                         _fullContentError!,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.red.withOpacity(0.8),
+                          color: Colors.red.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -1080,10 +1080,10 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Row(

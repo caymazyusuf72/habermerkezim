@@ -85,7 +85,7 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -170,10 +170,10 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
           ),
         ),
         child: Row(
@@ -190,7 +190,7 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
                     article.imageUrl!,
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => Container(
-                      color: theme.colorScheme.surfaceVariant,
+                      color: theme.colorScheme.surfaceContainerHighest,
                       child: Icon(
                         Icons.article_rounded,
                         color: theme.colorScheme.onSurfaceVariant,

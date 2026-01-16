@@ -324,7 +324,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.2),
+                          color: Colors.orange.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -376,7 +376,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
         icon = Icons.emoji_events_rounded;
         break;
       default:
-        badgeColor = AppTheme.primaryBlue.withOpacity(0.2);
+        badgeColor = AppTheme.primaryBlue.withValues(alpha: 0.2);
         icon = null;
     }
 

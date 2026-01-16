@@ -465,7 +465,7 @@ class NewsListState extends ConsumerState<NewsList>
                             article.imageUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => Container(
-                              color: Theme.of(context).colorScheme.surfaceVariant,
+                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
                               child: Icon(
                                 Icons.article_rounded,
                                 size: 48,
@@ -474,7 +474,7 @@ class NewsListState extends ConsumerState<NewsList>
                             ),
                           )
                         : Container(
-                            color: Theme.of(context).colorScheme.surfaceVariant,
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
                             child: Icon(
                               Icons.article_rounded,
                               size: 48,
@@ -600,7 +600,7 @@ class NewsListState extends ConsumerState<NewsList>
     required VoidCallback onTap,
   }) {
     return Material(
-      color: Colors.black.withOpacity(0.3),
+      color: Colors.black.withValues(alpha: 0.3),
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         onTap: onTap,
@@ -717,9 +717,9 @@ class NewsListState extends ConsumerState<NewsList>
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       alignment: alignment,
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -806,7 +806,7 @@ class NewsListState extends ConsumerState<NewsList>
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -835,7 +835,7 @@ class NewsListState extends ConsumerState<NewsList>
                   ? 'Bu kategoride henüz haber bulunmuyor.'
                   : 'Offline moddasınız. Önbelleğe alınmış haberler gösteriliyor.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),

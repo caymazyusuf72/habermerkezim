@@ -215,7 +215,7 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
+              color: theme.colorScheme.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -240,7 +240,7 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
                 Text(
                   'Okuma alışkanlıklarınıza göre seçildi',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8),
+                    color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -248,7 +248,7 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
           ),
           Icon(
             Icons.psychology_rounded,
-            color: theme.colorScheme.primary.withOpacity(0.5),
+            color: theme.colorScheme.primary.withValues(alpha: 0.5),
             size: 40,
           ),
         ],
@@ -268,7 +268,7 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
             Icon(
               Icons.auto_awesome_outlined,
               size: 80,
-              color: theme.colorScheme.primary.withOpacity(0.3),
+              color: theme.colorScheme.primary.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 24),
             Text(
@@ -282,7 +282,7 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
               'Daha fazla haber okudukça, size özel öneriler burada görünecek.',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 24),

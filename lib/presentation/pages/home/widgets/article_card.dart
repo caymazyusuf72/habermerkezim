@@ -53,8 +53,8 @@ class ArticleCard extends ConsumerWidget {
           // Ana gölge - yumuşak ve modern
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(0.08),
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 0,
@@ -62,8 +62,8 @@ class ArticleCard extends ConsumerWidget {
           // İkincil gölge - derinlik için
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.2)
-                : Colors.black.withOpacity(0.04),
+                ? Colors.black.withValues(alpha: 0.2)
+                : Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 2),
             spreadRadius: 0,
@@ -80,8 +80,8 @@ class ArticleCard extends ConsumerWidget {
             onTap();
           },
           borderRadius: BorderRadius.circular(16),
-          splashColor: categoryColor.withOpacity(0.1),
-          highlightColor: categoryColor.withOpacity(0.05),
+          splashColor: categoryColor.withValues(alpha: 0.1),
+          highlightColor: categoryColor.withValues(alpha: 0.05),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -110,7 +110,7 @@ class ArticleCard extends ConsumerWidget {
                         height: 1.35,
                         fontSize: 17,
                         color: article.isRead
-                            ? theme.colorScheme.onSurface.withOpacity(0.55)
+                            ? theme.colorScheme.onSurface.withValues(alpha: 0.55)
                             : theme.colorScheme.onSurface,
                         letterSpacing: -0.3,
                       ),
@@ -124,7 +124,7 @@ class ArticleCard extends ConsumerWidget {
                     Text(
                       article.truncatedDescription,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         height: 1.5,
                         fontSize: 14,
                         letterSpacing: 0.1,
@@ -161,8 +161,8 @@ class ArticleCard extends ConsumerWidget {
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.2)
-                : Colors.black.withOpacity(0.06),
+                ? Colors.black.withValues(alpha: 0.2)
+                : Colors.black.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, 2),
             spreadRadius: 0,
@@ -170,8 +170,8 @@ class ArticleCard extends ConsumerWidget {
         ],
         border: Border.all(
           color: isDark
-              ? theme.colorScheme.outline.withOpacity(0.15)
-              : Colors.grey.withOpacity(0.08),
+              ? theme.colorScheme.outline.withValues(alpha: 0.15)
+              : Colors.grey.withValues(alpha: 0.08),
           width: 1,
         ),
       ),
@@ -185,8 +185,8 @@ class ArticleCard extends ConsumerWidget {
             onTap();
           },
           borderRadius: BorderRadius.circular(16),
-          splashColor: categoryColor.withOpacity(0.1),
-          highlightColor: categoryColor.withOpacity(0.05),
+          splashColor: categoryColor.withValues(alpha: 0.1),
+          highlightColor: categoryColor.withValues(alpha: 0.05),
           child: Padding(
             padding: const EdgeInsets.all(14),
             child: Column(
@@ -209,10 +209,10 @@ class ArticleCard extends ConsumerWidget {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                 decoration: BoxDecoration(
-                                  color: categoryColor.withOpacity(0.12),
+                                  color: categoryColor.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: categoryColor.withOpacity(0.3),
+                                    color: categoryColor.withValues(alpha: 0.3),
                                     width: 1,
                                   ),
                                 ),
@@ -310,7 +310,7 @@ class ArticleCard extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
+                                color: Colors.black.withValues(alpha: 0.08),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -328,13 +328,13 @@ class ArticleCard extends ConsumerWidget {
                               memCacheWidth: 60, // RAM için optimize edildi
                               memCacheHeight: 60,
                               placeholder: (context, url) => Container(
-                                color: theme.colorScheme.surfaceVariant,
+                                color: theme.colorScheme.surfaceContainerHighest,
                                 child: const Center(
                                   child: CircularProgressIndicator(strokeWidth: 2),
                                 ),
                               ),
                               errorWidget: (context, url, error) => Container(
-                                color: theme.colorScheme.surfaceVariant,
+                                color: theme.colorScheme.surfaceContainerHighest,
                                 child: Icon(
                                   Icons.image_not_supported_rounded,
                                   size: 24,
@@ -359,7 +359,7 @@ class ArticleCard extends ConsumerWidget {
                               height: 1.4,
                               fontSize: 15,
                               color: article.isRead
-                                  ? theme.colorScheme.onSurface.withOpacity(0.6)
+                                  ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
                                   : theme.colorScheme.onSurface,
                             ),
                             maxLines: 3,
@@ -374,13 +374,13 @@ class ArticleCard extends ConsumerWidget {
                               Icon(
                                 Icons.access_time_rounded,
                                 size: 12,
-                                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 article.shortDateTime,
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                                   fontSize: 11,
                                 ),
                               ),
@@ -427,13 +427,13 @@ class ArticleCard extends ConsumerWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             shape: BoxShape.circle,
           ),
           child: Icon(
             icon,
             size: 16,
-            color: color ?? theme.colorScheme.onSurface.withOpacity(0.7),
+            color: color ?? theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
       ),
@@ -466,7 +466,7 @@ class ArticleCard extends ConsumerWidget {
               maxWidthDiskCache: 600,
               maxHeightDiskCache: 150,
               placeholder: (context, url) => Container(
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Center(
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
@@ -475,7 +475,7 @@ class ArticleCard extends ConsumerWidget {
                 ),
               ),
               errorWidget: (context, url, error) => Container(
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -514,7 +514,7 @@ class ArticleCard extends ConsumerWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(isDark ? 0.5 : 0.3),
+                  Colors.black.withValues(alpha: isDark ? 0.5 : 0.3),
                   Colors.transparent,
                 ],
               ),
@@ -545,18 +545,18 @@ class ArticleCard extends ConsumerWidget {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.purple.shade400.withOpacity(0.85),
-                            Colors.blue.shade400.withOpacity(0.85),
+                            Colors.purple.shade400.withValues(alpha: 0.85),
+                            Colors.blue.shade400.withValues(alpha: 0.85),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.purple.withOpacity(0.25),
+                            color: Colors.purple.withValues(alpha: 0.25),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -581,7 +581,7 @@ class ArticleCard extends ConsumerWidget {
                                 Shadow(
                                   offset: const Offset(0.5, 0.5),
                                   blurRadius: 1.0,
-                                  color: Colors.black.withOpacity(0.3),
+                                  color: Colors.black.withValues(alpha: 0.3),
                                 ),
                               ],
                             ),
@@ -621,9 +621,9 @@ class ArticleCard extends ConsumerWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppTheme.sageGreen.withOpacity(0.3),
-                    AppTheme.sageGreen.withOpacity(0.8),
-                    AppTheme.sageGreen.withOpacity(0.3),
+                    AppTheme.sageGreen.withValues(alpha: 0.3),
+                    AppTheme.sageGreen.withValues(alpha: 0.8),
+                    AppTheme.sageGreen.withValues(alpha: 0.3),
                   ],
                 ),
               ),
@@ -640,9 +640,9 @@ class ArticleCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: categoryColor.withOpacity(isDark ? 0.2 : 0.1),
+        color: categoryColor.withValues(alpha: isDark ? 0.2 : 0.1),
         border: Border.all(
-          color: categoryColor.withOpacity(isDark ? 0.5 : 0.3),
+          color: categoryColor.withValues(alpha: isDark ? 0.5 : 0.3),
           width: 1.5,
         ),
         borderRadius: BorderRadius.circular(20),
@@ -670,18 +670,18 @@ class ArticleCard extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: isDarkMode
-                ? Colors.black.withOpacity(0.4)
-                : Colors.white.withOpacity(0.25),
+                ? Colors.black.withValues(alpha: 0.4)
+                : Colors.white.withValues(alpha: 0.25),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isDarkMode
-                  ? categoryColor.withOpacity(0.6)
-                  : categoryColor.withOpacity(0.4),
+                  ? categoryColor.withValues(alpha: 0.6)
+                  : categoryColor.withValues(alpha: 0.4),
               width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -691,7 +691,7 @@ class ArticleCard extends ConsumerWidget {
             article.sourceName,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: isDarkMode
-                  ? categoryColor.withOpacity(0.95)
+                  ? categoryColor.withValues(alpha: 0.95)
                   : categoryColor,
               fontWeight: FontWeight.w700,
               fontSize: 10,
@@ -701,7 +701,7 @@ class ArticleCard extends ConsumerWidget {
                       Shadow(
                         offset: const Offset(0.5, 0.5),
                         blurRadius: 1.0,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ],
             ),
@@ -720,12 +720,12 @@ class ArticleCard extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withOpacity(0.5)
-            : Colors.white.withOpacity(0.9),
+            ? Colors.black.withValues(alpha: 0.5)
+            : Colors.white.withValues(alpha: 0.9),
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -770,12 +770,12 @@ class ArticleCard extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withOpacity(0.5)
-            : Colors.white.withOpacity(0.9),
+            ? Colors.black.withValues(alpha: 0.5)
+            : Colors.white.withValues(alpha: 0.9),
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -848,7 +848,7 @@ class ArticleCard extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -857,13 +857,13 @@ class ArticleCard extends ConsumerWidget {
               Icon(
                 Icons.access_time_rounded,
                 size: 12,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               const SizedBox(width: 4),
               Text(
                 article.shortDateTime,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                 ),
@@ -878,7 +878,7 @@ class ArticleCard extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -887,7 +887,7 @@ class ArticleCard extends ConsumerWidget {
               Icon(
                 Icons.rss_feed_rounded,
                 size: 12,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               const SizedBox(width: 4),
               ConstrainedBox(
@@ -895,7 +895,7 @@ class ArticleCard extends ConsumerWidget {
                 child: Text(
                   article.sourceName,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                   ),
@@ -916,13 +916,13 @@ class ArticleCard extends ConsumerWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppTheme.sageGreen.withOpacity(isDark ? 0.3 : 0.15),
-                  AppTheme.sageGreenLight.withOpacity(isDark ? 0.2 : 0.1),
+                  AppTheme.sageGreen.withValues(alpha: isDark ? 0.3 : 0.15),
+                  AppTheme.sageGreenLight.withValues(alpha: isDark ? 0.2 : 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppTheme.sageGreen.withOpacity(0.4),
+                color: AppTheme.sageGreen.withValues(alpha: 0.4),
                 width: 1,
               ),
             ),

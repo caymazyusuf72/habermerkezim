@@ -28,7 +28,7 @@ class ReadingProgressBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final progressColor = color ?? theme.colorScheme.primary;
-    final bgColor = backgroundColor ?? progressColor.withOpacity(0.2);
+    final bgColor = backgroundColor ?? progressColor.withValues(alpha: 0.2);
     final radius = borderRadius ?? BorderRadius.circular(height / 2);
 
     return Column(
@@ -66,7 +66,7 @@ class ReadingProgressBar extends StatelessWidget {
                       borderRadius: radius,
                       boxShadow: [
                         BoxShadow(
-                          color: progressColor.withOpacity(0.3),
+                          color: progressColor.withValues(alpha: 0.3),
                           blurRadius: 4,
                           offset: const Offset(0, 1),
                         ),
@@ -111,7 +111,7 @@ class GradientReadingProgressBar extends StatelessWidget {
       AppTheme.sageGreen,
       AppTheme.sageGreenLight,
     ];
-    final bgColor = backgroundColor ?? colors.first.withOpacity(0.2);
+    final bgColor = backgroundColor ?? colors.first.withValues(alpha: 0.2);
     final radius = BorderRadius.circular(height / 2);
 
     return Column(
@@ -153,7 +153,7 @@ class GradientReadingProgressBar extends StatelessWidget {
                       borderRadius: radius,
                       boxShadow: [
                         BoxShadow(
-                          color: colors.first.withOpacity(0.3),
+                          color: colors.first.withValues(alpha: 0.3),
                           blurRadius: 4,
                           offset: const Offset(0, 1),
                         ),
@@ -199,7 +199,7 @@ class CircularReadingProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final progressColor = color ?? theme.colorScheme.primary;
-    final bgColor = backgroundColor ?? progressColor.withOpacity(0.2);
+    final bgColor = backgroundColor ?? progressColor.withValues(alpha: 0.2);
 
     return SizedBox(
       width: size,
@@ -350,7 +350,7 @@ class SegmentedProgressBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final active = activeColor ?? theme.colorScheme.primary;
-    final inactive = inactiveColor ?? active.withOpacity(0.2);
+    final inactive = inactiveColor ?? active.withValues(alpha: 0.2);
 
     return Row(
       children: List.generate(totalSegments, (index) {
@@ -370,7 +370,7 @@ class SegmentedProgressBar extends StatelessWidget {
               boxShadow: isCompleted
                   ? [
                       BoxShadow(
-                        color: active.withOpacity(0.3),
+                        color: active.withValues(alpha: 0.3),
                         blurRadius: 4,
                         offset: const Offset(0, 1),
                       ),
@@ -413,7 +413,7 @@ class StepProgressIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final active = activeColor ?? theme.colorScheme.primary;
-    final inactive = inactiveColor ?? theme.colorScheme.outline.withOpacity(0.3);
+    final inactive = inactiveColor ?? theme.colorScheme.outline.withValues(alpha: 0.3);
     final completed = completedColor ?? active;
 
     return Column(
@@ -465,7 +465,7 @@ class StepProgressIndicator extends StatelessWidget {
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: isActive
                           ? theme.colorScheme.onSurface
-                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                       fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                     ),
                   ),
@@ -527,7 +527,7 @@ class _StepCircle extends StatelessWidget {
         boxShadow: isActive
             ? [
                 BoxShadow(
-                  color: activeColor.withOpacity(0.3),
+                  color: activeColor.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),

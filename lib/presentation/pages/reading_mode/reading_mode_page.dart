@@ -94,7 +94,7 @@ class _ReadingModePageState extends ConsumerState<ReadingModePage> {
                     widget.article.sourceName,
                     style: TextStyle(
                       fontSize: _fontSize * 0.8,
-                      color: _textColor.withOpacity(0.6),
+                      color: _textColor.withValues(alpha: 0.6),
                       fontFamily: _fontFamily,
                     ),
                   ),
@@ -103,7 +103,7 @@ class _ReadingModePageState extends ConsumerState<ReadingModePage> {
                     widget.article.formattedDateTime,
                     style: TextStyle(
                       fontSize: _fontSize * 0.8,
-                      color: _textColor.withOpacity(0.6),
+                      color: _textColor.withValues(alpha: 0.6),
                       fontFamily: _fontFamily,
                     ),
                   ),

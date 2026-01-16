@@ -200,7 +200,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
             Icon(
               Icons.favorite_border,
               size: 64,
-              color: theme.colorScheme.onSurface.withOpacity(0.3),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -212,7 +212,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
               'Beğendiğiniz haberleri favorilere ekleyerek burada görebilirsiniz',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 24),

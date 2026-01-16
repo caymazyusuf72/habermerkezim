@@ -361,7 +361,7 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
     return ActionChip(
       label: Text(label),
       onPressed: onTap,
-      backgroundColor: AppTheme.primaryBlue.withOpacity(0.1),
+      backgroundColor: AppTheme.primaryBlue.withValues(alpha: 0.1),
       labelStyle: TextStyle(
         color: AppTheme.primaryBlue,
         fontWeight: FontWeight.w500,

@@ -183,7 +183,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
               gradient: LinearGradient(
                 colors: [
                   Theme.of(context).primaryColor,
-                  Theme.of(context).primaryColor.withOpacity(0.8),
+                  Theme.of(context).primaryColor.withValues(alpha: 0.8),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -436,7 +436,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Row(
@@ -529,7 +529,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: achieved ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+        color: achieved ? Colors.green.withValues(alpha: 0.1) : Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: achieved ? Colors.green : Colors.orange,
@@ -705,7 +705,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
           horizontalInterval: 1,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               strokeWidth: 1,
             );
           },
@@ -744,7 +744,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
           horizontalInterval: 5,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               strokeWidth: 1,
             );
           },
@@ -791,7 +791,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
         ),
         borderData: FlBorderData(
           show: true,
-          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
         ),
         minX: 0,
         maxX: 5,
@@ -804,7 +804,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
             }).toList(),
             isCurved: true,
             gradient: LinearGradient(
-              colors: [primaryColor, primaryColor.withOpacity(0.5)],
+              colors: [primaryColor, primaryColor.withValues(alpha: 0.5)],
             ),
             barWidth: 3,
             isStrokeCapRound: true,
@@ -823,8 +823,8 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
               show: true,
               gradient: LinearGradient(
                 colors: [
-                  primaryColor.withOpacity(0.1),
-                  primaryColor.withOpacity(0.0),
+                  primaryColor.withValues(alpha: 0.1),
+                  primaryColor.withValues(alpha: 0.0),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,

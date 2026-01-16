@@ -178,20 +178,20 @@ class _ReadingListPageState extends ConsumerState<ReadingListPage> {
                   Icon(
                     Icons.bookmark_border_rounded,
                     size: 80,
-                    color: theme.colorScheme.onSurface.withOpacity(0.3),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                   ),
                   const SizedBox(height: 24),
                   Text(
                     'Okuma listesi boş',
                     style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Daha sonra okumak istediğiniz haberleri\nokuma listesine ekleyebilirsiniz',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -310,7 +310,7 @@ class _ReadingListPageState extends ConsumerState<ReadingListPage> {
     return ListTile(
       leading: Icon(
         icon,
-        color: isSelected ? AppTheme.primaryBlue : theme.colorScheme.onSurface.withOpacity(0.6),
+        color: isSelected ? AppTheme.primaryBlue : theme.colorScheme.onSurface.withValues(alpha: 0.6),
       ),
       title: Text(title),
       subtitle: Text(subtitle),
