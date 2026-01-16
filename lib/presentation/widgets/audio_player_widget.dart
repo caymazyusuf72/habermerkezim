@@ -357,7 +357,7 @@ class FullAudioPlayer extends ConsumerWidget {
                             .toList(),
                         onChanged: (speed) {
                           if (speed != null) {
-                            print('🔊 DEBUG: UI Speed değiştiriliyor: $speed');
+                            debugPrint('🔊 DEBUG: UI Speed değiştiriliyor: $speed');
                             notifier.setSpeed(speed);
                           }
                         },
@@ -392,7 +392,7 @@ class FullAudioPlayer extends ConsumerWidget {
                             max: 1.0,
                             divisions: 20,
                             onChanged: (volume) {
-                              print('🔊 DEBUG: UI Volume değiştiriliyor: $volume');
+                              debugPrint('🔊 DEBUG: UI Volume değiştiriliyor: $volume');
                               notifier.setVolume(volume);
                             },
                           ),

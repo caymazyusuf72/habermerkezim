@@ -36,7 +36,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     dio.interceptors.add(LogInterceptor(
       requestBody: false,
       responseBody: false,
-      logPrint: (object) => print('[RSS HTTP] $object'),
+      logPrint: (object) => debugPrint('[RSS HTTP] $object'),
     ));
     
     return dio;
@@ -45,7 +45,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   @override
   Future<List<ArticleModel>> getArticlesByCategory(String category) async {
     try {
-      print('🌐 RSS Request: $category');
+      debugPrint('🌐 RSS Request: $category');
       
       // Disabled feed'leri al
       final healthCheckService = RssHealthCheckService();
@@ -61,11 +61,11 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
           .toList();
       
       if (disabledFeeds.isNotEmpty) {
-        print('⚠️ Devre dışı feed\'ler: ${disabledFeeds.join(", ")}');
+        debugPrint('⚠️ Devre dışı feed\'ler: ${disabledFeeds.join(", ")}');
       }
       
       if (categoryFeeds.isEmpty) {
-        print('❌ Kategori bulunamadı: $category');
+        debugPrint('❌ Kategori bulunamadı: $category');
         throw RssParseException('Kategori bulunamadı: $category');
       }
       
@@ -77,9 +77,9 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
           operation: () async {
             final feedUrl = feedEntry.value;
             final feedKey = feedEntry.key;
-            print('📡 URL [$feedKey]: $feedUrl');
+            debugPrint('📡 URL [$feedKey]: $feedUrl');
             final response = await _dio.get(feedUrl);
-            print('📊 Response [$feedKey]: ${response.statusCode}');
+            debugPrint('📊 Response [$feedKey]: ${response.statusCode}');
             
             if (response.statusCode != 200) {
               throw ServerException(
@@ -89,21 +89,21 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
             }
             
             final xmlString = response.data as String;
-            print('📝 Parsing XML [$feedKey]...');
+            debugPrint('📝 Parsing XML [$feedKey]...');
             final parsedArticles = await _parseRssXml(xmlString, category, feedEntry.key);
-            print('✅ ${feedEntry.key}: ${parsedArticles.length} makale');
+            debugPrint('✅ ${feedEntry.key}: ${parsedArticles.length} makale');
             return parsedArticles;
           },
           maxAttempts: 3,
           initialDelay: const Duration(seconds: 1),
           maxDelay: const Duration(seconds: 5),
         ).catchError((e) {
-          print('⚠️ Feed hatası [${feedEntry.key}]: $e');
+          debugPrint('⚠️ Feed hatası [${feedEntry.key}]: $e');
           return null;
         });
       }).toList();
       
-      print('⚡ ${feedFutures.length} feed paralel olarak yükleniyor...');
+      debugPrint('⚡ ${feedFutures.length} feed paralel olarak yükleniyor...');
       final feedResults = await Future.wait(feedFutures);
       
       for (final articles in feedResults) {
@@ -131,14 +131,14 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         return b.publishedDate.compareTo(a.publishedDate);
       });
       
-      print('✅ $category: Toplam ${uniqueArticles.length} makale (${allArticles.length} feed\'den)');
+      debugPrint('✅ $category: Toplam ${uniqueArticles.length} makale (${allArticles.length} feed\'den)');
       return uniqueArticles;
       
     } on DioException catch (e) {
-      print('💥 DioException [$category]: ${e.type} - ${e.message}');
+      debugPrint('💥 DioException [$category]: ${e.type} - ${e.message}');
       throw _handleDioError(e);
     } catch (e) {
-      print('💥 Parse Error [$category]: $e');
+      debugPrint('💥 Parse Error [$category]: $e');
       throw ServerException('RSS feed parse hatası: ${e.toString()}');
     }
   }
@@ -184,17 +184,17 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     // Sadece ana kategorileri al (alt feed'leri değil)
     final mainCategories = _getMainCategories();
     
-    print('🔄 Toplam ${mainCategories.length} kategori PARALEL yüklenecek...');
+    debugPrint('🔄 Toplam ${mainCategories.length} kategori PARALEL yüklenecek...');
     
     // Tüm kategorileri PARALEL olarak yükle (performans optimizasyonu)
     final futures = mainCategories.map((category) {
       return getArticlesByCategory(category).catchError((e) {
-        print('⚠️ [$category] RSS feed hatası: $e');
+        debugPrint('⚠️ [$category] RSS feed hatası: $e');
         return <ArticleModel>[];
       });
     }).toList();
     
-    print('⚡ ${futures.length} kategori paralel olarak yükleniyor...');
+    debugPrint('⚡ ${futures.length} kategori paralel olarak yükleniyor...');
     final results = await Future.wait(futures);
     
     // Sonuçları birleştir
@@ -204,11 +204,11 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       if (articles.isNotEmpty) {
         loadedCount++;
         allArticles.addAll(articles);
-        print('✅ ${mainCategories[i]}: ${articles.length} makale eklendi (Toplam: ${allArticles.length})');
+        debugPrint('✅ ${mainCategories[i]}: ${articles.length} makale eklendi (Toplam: ${allArticles.length})');
       }
     }
     
-    print('🎉 Paralel yükleme tamamlandı: ${allArticles.length} makale (${loadedCount}/${mainCategories.length} kategori başarılı)');
+    debugPrint('🎉 Paralel yükleme tamamlandı: ${allArticles.length} makale (${loadedCount}/${mainCategories.length} kategori başarılı)');
     
     if (allArticles.isEmpty) {
       throw const RssParseException('Hiç haber alınamadı');
@@ -229,7 +229,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       return b.publishedDate.compareTo(a.publishedDate);
     });
     
-    print('✅ Tüm kategoriler: Toplam ${uniqueArticles.length} makale');
+    debugPrint('✅ Tüm kategoriler: Toplam ${uniqueArticles.length} makale');
     return uniqueArticles;
   }
 
@@ -266,7 +266,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         maxDelay: const Duration(seconds: 5),
         shouldRetry: RetryHelper.shouldRetryError,
         onRetry: (attempt, error) {
-          print('🔄 Refresh retry [$category]: Deneme $attempt - $error');
+          debugPrint('🔄 Refresh retry [$category]: Deneme $attempt - $error');
         },
       );
     } on DioException catch (e) {
@@ -333,7 +333,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         articles.add(article);
         
       } catch (e) {
-        print('RSS item parse hatası: $e');
+        debugPrint('RSS item parse hatası: $e');
         // Tek item başarısız olursa devam et
         continue;
       }
@@ -384,7 +384,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         articles.add(article);
         
       } catch (e) {
-        print('Atom entry parse hatası: $e');
+        debugPrint('Atom entry parse hatası: $e');
         continue;
       }
     }

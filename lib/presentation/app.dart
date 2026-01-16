@@ -279,7 +279,7 @@ class _UpdateCheckWrapperState extends ConsumerState<_UpdateCheckWrapper> {
         );
       }
     } catch (e) {
-      print('⚠️ Güncelleme kontrolü hatası: $e');
+      debugPrint('⚠️ Güncelleme kontrolü hatası: $e');
       // Hata durumunda sessizce devam et
     }
   }

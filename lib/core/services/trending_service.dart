@@ -94,7 +94,7 @@ class TrendingService {
           .map((scored) => scored.article)
           .toList();
     } catch (e) {
-      print('💥 Trend haber hesaplama hatası: $e');
+      debugPrint('💥 Trend haber hesaplama hatası: $e');
       return [];
     }
   }

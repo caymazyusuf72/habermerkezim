@@ -21,32 +21,32 @@ class HiveService {
   /// main.dart'dan çağrılmalı
   static Future<void> initialize() async {
     if (_initialized) {
-      print('⚠️ Hive zaten initialize edilmiş');
+      debugPrint('⚠️ Hive zaten initialize edilmiş');
       return;
     }
 
     try {
-      print('🔧 Hive initialization başlıyor...');
+      debugPrint('🔧 Hive initialization başlıyor...');
       // Hive Flutter'ı initialize et
       await Hive.initFlutter();
-      print('✅ Hive.initFlutter() tamamlandı');
+      debugPrint('✅ Hive.initFlutter() tamamlandı');
 
       // Type adapter'ları register et
-      print("📝 Type adapter'lar register ediliyor...");
+      debugPrint("📝 Type adapter'lar register ediliyor...");
       _registerAdapters();
-      print("✅ Type adapter'lar register edildi");
+      debugPrint("✅ Type adapter'lar register edildi");
 
       // Temel box'ları aç
-      print("📦 Box'lar açılıyor...");
+      debugPrint("📦 Box'lar açılıyor...");
       await _openBoxes();
-      print("✅ Box'lar açıldı");
+      debugPrint("✅ Box'lar açıldı");
 
       _initialized = true;
-      print('✅ Hive başarıyla initialize edildi');
+      debugPrint('✅ Hive başarıyla initialize edildi');
 
     } catch (e) {
-      print('❌ Hive initialization hatası: $e');
-      print('🔍 Hata detayı: ${e.toString()}');
+      debugPrint('❌ Hive initialization hatası: $e');
+      debugPrint('🔍 Hata detayı: ${e.toString()}');
       rethrow;
     }
   }
@@ -82,18 +82,18 @@ class HiveService {
         _openUserProfileBoxSafely(),
       ]);
     } catch (e) {
-      print('❌ Box açma hatası: $e');
+      debugPrint('❌ Box açma hatası: $e');
       // User profile box'ında hata varsa, box'ı temizle ve yeniden aç
       if (e.toString().contains('interestTags') || e.toString().contains('UserPreferencesModel')) {
-        print('🔧 User profile box eski format, temizleniyor...');
+        debugPrint('🔧 User profile box eski format, temizleniyor...');
         try {
           if (Hive.isBoxOpen(_userProfileBoxName)) {
             await Hive.box(_userProfileBoxName).deleteFromDisk();
           }
           await Hive.openBox<UserProfileModel>(_userProfileBoxName);
-          print('✅ User profile box temizlendi ve yeniden açıldı');
+          debugPrint('✅ User profile box temizlendi ve yeniden açıldı');
         } catch (e2) {
-          print('❌ User profile box temizleme hatası: $e2');
+          debugPrint('❌ User profile box temizleme hatası: $e2');
           rethrow;
         }
       } else {
@@ -112,7 +112,7 @@ class HiveService {
           e.toString().contains('type cast') ||
           e.toString().contains('Null') ||
           e.toString().contains('List')) {
-        print('⚠️ User profile box eski format, temizleniyor...');
+        debugPrint('⚠️ User profile box eski format, temizleniyor...');
         try {
           if (Hive.isBoxOpen(_userProfileBoxName)) {
             await Hive.box(_userProfileBoxName).deleteFromDisk();
@@ -197,9 +197,9 @@ class HiveService {
     try {
       await Hive.close();
       _initialized = false;
-      print('✅ Hive başarıyla kapatıldı');
+      debugPrint('✅ Hive başarıyla kapatıldı');
     } catch (e) {
-      print('❌ Hive kapatma hatası: $e');
+      debugPrint('❌ Hive kapatma hatası: $e');
     }
   }
 
@@ -215,9 +215,9 @@ class HiveService {
         settingsBox.clear(),
       ]);
 
-      print('✅ Tüm Hive verileri temizlendi');
+      debugPrint('✅ Tüm Hive verileri temizlendi');
     } catch (e) {
-      print('❌ Hive veri temizleme hatası: $e');
+      debugPrint('❌ Hive veri temizleme hatası: $e');
       rethrow;
     }
   }
@@ -283,25 +283,25 @@ class HiveService {
   /// Debug için box içeriklerini yazdırır
   static void printDebugInfo() {
     if (!_initialized) {
-      print('❌ Hive initialize edilmemiş');
+      debugPrint('❌ Hive initialize edilmemiş');
       return;
     }
 
-    print('=== HIVE DEBUG INFO ===');
-    print('Articles: ${articlesBox.length}');
-    print('Favorites: ${favoritesBox.length}');
-    print('Read Articles: ${readArticlesBox.length}');
-    print('Settings: ${settingsBox.length}');
+    debugPrint('=== HIVE DEBUG INFO ===');
+    debugPrint('Articles: ${articlesBox.length}');
+    debugPrint('Favorites: ${favoritesBox.length}');
+    debugPrint('Read Articles: ${readArticlesBox.length}');
+    debugPrint('Settings: ${settingsBox.length}');
     
     // Son 5 makaleyi göster
     if (articlesBox.isNotEmpty) {
-      print('\n📰 Son Makaleler:');
+      debugPrint('\n📰 Son Makaleler:');
       final articles = articlesBox.values.take(5).toList();
       for (final article in articles) {
-        print('  - ${article.title} (${article.category})');
+        debugPrint('  - ${article.title} (${article.category})');
       }
     }
     
-    print('======================');
+    debugPrint('======================');
   }
 }

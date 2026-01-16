@@ -312,7 +312,7 @@ class ArticleModel extends HiveObject {
   /// Tarih parse eder - RSS feed'lerindeki farklı tarih formatlarını destekler
   static DateTime _parseDate(String? dateString) {
     if (dateString == null || dateString.isEmpty) {
-      print('⚠️ Tarih string boş, şu anki zaman kullanılıyor');
+      debugPrint('⚠️ Tarih string boş, şu anki zaman kullanılıyor');
       return DateTime.now();
     }
     
@@ -375,14 +375,14 @@ class ArticleModel extends HiveObject {
         }
       }
     } catch (e) {
-      print('⚠️ RFC 2822 parse hatası: $e');
+      debugPrint('⚠️ RFC 2822 parse hatası: $e');
     }
     
     // ISO 8601 formatı (2025-09-14T09:00:00Z veya 2025-09-14T09:00:00+03:00)
     try {
       return DateTime.parse(cleaned);
     } catch (e) {
-      print('⚠️ ISO 8601 parse hatası: $e');
+      debugPrint('⚠️ ISO 8601 parse hatası: $e');
     }
     
     // Unix timestamp (milliseconds)
@@ -397,11 +397,11 @@ class ArticleModel extends HiveObject {
         }
       }
     } catch (e) {
-      print('⚠️ Timestamp parse hatası: $e');
+      debugPrint('⚠️ Timestamp parse hatası: $e');
     }
     
     // Parse edilemezse şu anki zamanı kullan ama logla
-    print('⚠️ Tarih parse edilemedi: "$dateString", şu anki zaman kullanılıyor');
+    debugPrint('⚠️ Tarih parse edilemedi: "$dateString", şu anki zaman kullanılıyor');
     return DateTime.now();
   }
 

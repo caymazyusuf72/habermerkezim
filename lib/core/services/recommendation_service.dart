@@ -74,7 +74,7 @@ class RecommendationService {
           .map((scored) => scored.article)
           .toList();
     } catch (e) {
-      print('💥 Öneri hesaplama hatası: $e');
+      debugPrint('💥 Öneri hesaplama hatası: $e');
       return [];
     }
   }

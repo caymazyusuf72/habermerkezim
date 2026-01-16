@@ -87,7 +87,7 @@ final checkForUpdatesProvider = FutureProvider<UpdateCheckResult?>((ref) async {
     
     return result;
   } catch (e) {
-    print('⚠️ Güncelleme kontrolü hatası: $e');
+    debugPrint('⚠️ Güncelleme kontrolü hatası: $e');
     return null;
   }
 });

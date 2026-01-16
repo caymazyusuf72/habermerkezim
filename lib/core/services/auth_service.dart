@@ -15,22 +15,22 @@ class AuthService {
   /// Google ile giriş yap
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      print('🔐 Google Sign In başlatılıyor...');
+      debugPrint('🔐 Google Sign In başlatılıyor...');
       
       // Google Sign In akışını başlat
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       
       if (googleUser == null) {
-        print('❌ Google Sign In iptal edildi');
+        debugPrint('❌ Google Sign In iptal edildi');
         return null;
       }
 
-      print('✅ Google hesabı seçildi: ${googleUser.email}');
+      debugPrint('✅ Google hesabı seçildi: ${googleUser.email}');
 
       // Google kimlik bilgilerini al
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-      print('🔑 Google authentication token alındı');
+      debugPrint('🔑 Google authentication token alındı');
 
       // Firebase credential oluştur
       final credential = GoogleAuthProvider.credential(
@@ -38,18 +38,18 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      print('🔐 Firebase credential oluşturuldu');
+      debugPrint('🔐 Firebase credential oluşturuldu');
 
       // Firebase ile giriş yap
       final UserCredential userCredential = await _auth.signInWithCredential(credential);
       
-      print('✅ Firebase Authentication başarılı');
-      print('👤 Kullanıcı: ${userCredential.user?.displayName}');
-      print('📧 Email: ${userCredential.user?.email}');
+      debugPrint('✅ Firebase Authentication başarılı');
+      debugPrint('👤 Kullanıcı: ${userCredential.user?.displayName}');
+      debugPrint('📧 Email: ${userCredential.user?.email}');
 
       return userCredential;
     } catch (e) {
-      print('❌ Google Sign In hatası: $e');
+      debugPrint('❌ Google Sign In hatası: $e');
       rethrow;
     }
   }
@@ -57,16 +57,16 @@ class AuthService {
   /// Çıkış yap
   Future<void> signOut() async {
     try {
-      print('🔐 Çıkış yapılıyor...');
+      debugPrint('🔐 Çıkış yapılıyor...');
       
       await Future.wait([
         _auth.signOut(),
         _googleSignIn.signOut(),
       ]);
       
-      print('✅ Çıkış başarılı');
+      debugPrint('✅ Çıkış başarılı');
     } catch (e) {
-      print('❌ Çıkış hatası: $e');
+      debugPrint('❌ Çıkış hatası: $e');
       rethrow;
     }
   }
@@ -74,17 +74,17 @@ class AuthService {
   /// Email ile giriş yap
   Future<UserCredential?> signInWithEmail(String email, String password) async {
     try {
-      print('🔐 Email ile giriş yapılıyor: $email');
+      debugPrint('🔐 Email ile giriş yapılıyor: $email');
       
       final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       
-      print('✅ Email ile giriş başarılı');
+      debugPrint('✅ Email ile giriş başarılı');
       return userCredential;
     } catch (e) {
-      print('❌ Email ile giriş hatası: $e');
+      debugPrint('❌ Email ile giriş hatası: $e');
       rethrow;
     }
   }
@@ -92,17 +92,17 @@ class AuthService {
   /// Email ile kayıt ol
   Future<UserCredential?> registerWithEmail(String email, String password) async {
     try {
-      print('🔐 Email ile kayıt olunuyor: $email');
+      debugPrint('🔐 Email ile kayıt olunuyor: $email');
       
       final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
       
-      print('✅ Email ile kayıt başarılı');
+      debugPrint('✅ Email ile kayıt başarılı');
       return userCredential;
     } catch (e) {
-      print('❌ Email ile kayıt hatası: $e');
+      debugPrint('❌ Email ile kayıt hatası: $e');
       rethrow;
     }
   }
@@ -110,13 +110,13 @@ class AuthService {
   /// Şifre sıfırlama emaili gönder
   Future<void> sendPasswordResetEmail(String email) async {
     try {
-      print('📧 Şifre sıfırlama emaili gönderiliyor: $email');
+      debugPrint('📧 Şifre sıfırlama emaili gönderiliyor: $email');
       
       await _auth.sendPasswordResetEmail(email: email);
       
-      print('✅ Şifre sıfırlama emaili gönderildi');
+      debugPrint('✅ Şifre sıfırlama emaili gönderildi');
     } catch (e) {
-      print('❌ Şifre sıfırlama emaili gönderme hatası: $e');
+      debugPrint('❌ Şifre sıfırlama emaili gönderme hatası: $e');
       rethrow;
     }
   }
@@ -131,12 +131,12 @@ class AuthService {
   Future<void> sendEmailVerification() async {
     try {
       if (currentUser != null && !isEmailVerified) {
-        print('📧 Email doğrulama emaili gönderiliyor...');
+        debugPrint('📧 Email doğrulama emaili gönderiliyor...');
         await currentUser!.sendEmailVerification();
-        print('✅ Email doğrulama emaili gönderildi');
+        debugPrint('✅ Email doğrulama emaili gönderildi');
       }
     } catch (e) {
-      print('❌ Email doğrulama emaili gönderme hatası: $e');
+      debugPrint('❌ Email doğrulama emaili gönderme hatası: $e');
       rethrow;
     }
   }
@@ -145,14 +145,14 @@ class AuthService {
   Future<void> updateProfile({String? displayName, String? photoURL}) async {
     try {
       if (currentUser != null) {
-        print('👤 Profil güncelleniyor...');
+        debugPrint('👤 Profil güncelleniyor...');
         await currentUser!.updateDisplayName(displayName);
         await currentUser!.updatePhotoURL(photoURL);
         await currentUser!.reload();
-        print('✅ Profil güncellendi');
+        debugPrint('✅ Profil güncellendi');
       }
     } catch (e) {
-      print('❌ Profil güncelleme hatası: $e');
+      debugPrint('❌ Profil güncelleme hatası: $e');
       rethrow;
     }
   }

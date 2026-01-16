@@ -34,7 +34,7 @@ class AudioPlayerService {
       
       _isInitialized = true;
     } catch (e) {
-      print('Audio player initialization error: $e');
+      debugPrint('Audio player initialization error: $e');
       rethrow;
     }
   }
@@ -58,7 +58,7 @@ class AudioPlayerService {
       
       return duration;
     } catch (e) {
-      print('Audio load error: $e');
+      debugPrint('Audio load error: $e');
       return null;
     }
   }
@@ -83,7 +83,7 @@ class AudioPlayerService {
       
       await _audioPlayer.setAudioSource(playlist);
     } catch (e) {
-      print('Playlist load error: $e');
+      debugPrint('Playlist load error: $e');
     }
   }
 
@@ -92,7 +92,7 @@ class AudioPlayerService {
     try {
       await _audioPlayer.play();
     } catch (e) {
-      print('Play error: $e');
+      debugPrint('Play error: $e');
     }
   }
 
@@ -101,7 +101,7 @@ class AudioPlayerService {
     try {
       await _audioPlayer.pause();
     } catch (e) {
-      print('Pause error: $e');
+      debugPrint('Pause error: $e');
     }
   }
 
@@ -110,7 +110,7 @@ class AudioPlayerService {
     try {
       await _audioPlayer.stop();
     } catch (e) {
-      print('Stop error: $e');
+      debugPrint('Stop error: $e');
     }
   }
 
@@ -119,29 +119,29 @@ class AudioPlayerService {
     try {
       await _audioPlayer.seek(position);
     } catch (e) {
-      print('Seek error: $e');
+      debugPrint('Seek error: $e');
     }
   }
 
   /// Oynatma hızını ayarla
   Future<void> setSpeed(double speed) async {
     try {
-      print('⚡ AudioService: Setting speed to $speed');
+      debugPrint('⚡ AudioService: Setting speed to $speed');
       await _audioPlayer.setSpeed(speed);
-      print('⚡ AudioService: Speed set successfully');
+      debugPrint('⚡ AudioService: Speed set successfully');
     } catch (e) {
-      print('⚡ AudioService: Set speed error: $e');
+      debugPrint('⚡ AudioService: Set speed error: $e');
     }
   }
 
   /// Ses seviyesini ayarla (0.0 - 1.0)
   Future<void> setVolume(double volume) async {
     try {
-      print('🎚️ AudioService: Setting volume to $volume');
+      debugPrint('🎚️ AudioService: Setting volume to $volume');
       await _audioPlayer.setVolume(volume);
-      print('🎚️ AudioService: Volume set successfully');
+      debugPrint('🎚️ AudioService: Volume set successfully');
     } catch (e) {
-      print('🎚️ AudioService: Set volume error: $e');
+      debugPrint('🎚️ AudioService: Set volume error: $e');
     }
   }
 
@@ -150,7 +150,7 @@ class AudioPlayerService {
     try {
       await _audioPlayer.seekToNext();
     } catch (e) {
-      print('Seek to next error: $e');
+      debugPrint('Seek to next error: $e');
     }
   }
 
@@ -159,7 +159,7 @@ class AudioPlayerService {
     try {
       await _audioPlayer.seekToPrevious();
     } catch (e) {
-      print('Seek to previous error: $e');
+      debugPrint('Seek to previous error: $e');
     }
   }
 
@@ -168,7 +168,7 @@ class AudioPlayerService {
     try {
       await _audioPlayer.setLoopMode(loopMode);
     } catch (e) {
-      print('Set loop mode error: $e');
+      debugPrint('Set loop mode error: $e');
     }
   }
 
@@ -177,7 +177,7 @@ class AudioPlayerService {
     try {
       await _audioPlayer.setShuffleModeEnabled(enabled);
     } catch (e) {
-      print('Set shuffle mode error: $e');
+      debugPrint('Set shuffle mode error: $e');
     }
   }
 
@@ -200,7 +200,7 @@ class AudioPlayerService {
       await _audioPlayer.dispose();
       _isInitialized = false;
     } catch (e) {
-      print('Dispose error: $e');
+      debugPrint('Dispose error: $e');
     }
   }
 

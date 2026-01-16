@@ -49,11 +49,11 @@ class RssHealthCheckService {
   /// Health check'i başlatır (periyodik kontrol)
   void startPeriodicHealthCheck({Duration interval = const Duration(hours: 6)}) {
     if (_isRunning) {
-      print('⚕️ Health check zaten çalışıyor');
+      debugPrint('⚕️ Health check zaten çalışıyor');
       return;
     }
 
-    print('⚕️ RSS Health Check başlatılıyor (${interval.inHours} saatte bir)');
+    debugPrint('⚕️ RSS Health Check başlatılıyor (${interval.inHours} saatte bir)');
     _isRunning = true;
 
     // İlk kontrolü hemen yap
@@ -70,12 +70,12 @@ class RssHealthCheckService {
     _healthCheckTimer?.cancel();
     _healthCheckTimer = null;
     _isRunning = false;
-    print('⚕️ RSS Health Check durduruldu');
+    debugPrint('⚕️ RSS Health Check durduruldu');
   }
 
   /// Tüm RSS feed'lerini kontrol eder
   Future<RssHealthReport> checkAllFeeds() async {
-    print('⚕️ Tüm RSS kaynakları kontrol ediliyor...');
+    debugPrint('⚕️ Tüm RSS kaynakları kontrol ediliyor...');
     
     final startTime = DateTime.now();
     final results = <String, FeedHealthStatus>{};
@@ -111,10 +111,10 @@ class RssHealthCheckService {
     await _saveHealthReport(report);
     
     // Sonuçları logla
-    print('⚕️ Health Check Tamamlandı:');
-    print('   ✅ Sağlıklı: $healthy/$total (${(healthy/total*100).toStringAsFixed(1)}%)');
-    print('   ❌ Sorunlu: $unhealthy/$total');
-    print('   ⏱️ Süre: ${duration.inSeconds}s');
+    debugPrint('⚕️ Health Check Tamamlandı:');
+    debugPrint('   ✅ Sağlıklı: $healthy/$total (${(healthy/total*100).toStringAsFixed(1)}%)');
+    debugPrint('   ❌ Sorunlu: $unhealthy/$total');
+    debugPrint('   ⏱️ Süre: ${duration.inSeconds}s');
     
     // Sorunlu feed'leri devre dışı bırak
     if (unhealthy > 0) {
@@ -202,7 +202,7 @@ class RssHealthCheckService {
         );
         
         if (!isLastAttempt) {
-          print('⚠️ $feedKey: $currentUrl başarısız, alternatif deneniyor...');
+          debugPrint('⚠️ $feedKey: $currentUrl başarısız, alternatif deneniyor...');
           continue;
         }
       } catch (e) {
@@ -248,7 +248,7 @@ class RssHealthCheckService {
   /// Tüm çalışan URL cache'ini temizler
   void clearWorkingUrlCache() {
     _workingUrlCache.clear();
-    print('✅ Working URL cache temizlendi');
+    debugPrint('✅ Working URL cache temizlendi');
   }
 
   /// DioException'dan anlamlı mesaj çıkarır
@@ -288,7 +288,7 @@ class RssHealthCheckService {
       // En son raporu da ayrıca kaydet
       await box.put('last_health_report', report.toJson());
     } catch (e) {
-      print('⚠️ Health report kaydedilemedi: $e');
+      debugPrint('⚠️ Health report kaydedilemedi: $e');
     }
   }
 
@@ -316,7 +316,7 @@ class RssHealthCheckService {
           // 3 kez üst üste başarısız olursa devre dışı bırak
           if (countMap[feedKey]! >= 3 && !disabledList.contains(feedKey)) {
             disabledList.add(feedKey);
-            print('⚠️ Feed devre dışı bırakıldı: $feedKey (${countMap[feedKey]} başarısızlık)');
+            debugPrint('⚠️ Feed devre dışı bırakıldı: $feedKey (${countMap[feedKey]} başarısızlık)');
           }
         } else {
           // Başarılı ise count'u sıfırla
@@ -325,7 +325,7 @@ class RssHealthCheckService {
           // Eğer disabled ise tekrar etkinleştir
           if (disabledList.contains(feedKey)) {
             disabledList.remove(feedKey);
-            print('✅ Feed tekrar etkinleştirildi: $feedKey');
+            debugPrint('✅ Feed tekrar etkinleştirildi: $feedKey');
           }
         }
       }
@@ -335,7 +335,7 @@ class RssHealthCheckService {
       await box.put('feed_failure_counts', countMap);
       
     } catch (e) {
-      print('⚠️ Unhealthy feedler işlenemedi: $e');
+      debugPrint('⚠️ Unhealthy feedler işlenemedi: $e');
     }
   }
 
@@ -349,7 +349,7 @@ class RssHealthCheckService {
         return RssHealthReport.fromJson(reportData);
       }
     } catch (e) {
-      print('⚠️ Last health report alınamadı: $e');
+      debugPrint('⚠️ Last health report alınamadı: $e');
     }
     return null;
   }
@@ -364,7 +364,7 @@ class RssHealthCheckService {
           .map((r) => RssHealthReport.fromJson(r as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      print('⚠️ Health reports alınamadı: $e');
+      debugPrint('⚠️ Health reports alınamadı: $e');
       return [];
     }
   }
@@ -376,7 +376,7 @@ class RssHealthCheckService {
       final disabled = box.get('disabled_feeds', defaultValue: <String>[]) as List;
       return List<String>.from(disabled);
     } catch (e) {
-      print('⚠️ Disabled feeds alınamadı: $e');
+      debugPrint('⚠️ Disabled feeds alınamadı: $e');
       return [];
     }
   }
@@ -391,10 +391,10 @@ class RssHealthCheckService {
       if (!disabledList.contains(feedKey)) {
         disabledList.add(feedKey);
         await box.put('disabled_feeds', disabledList);
-        print('⚠️ Feed manuel olarak devre dışı bırakıldı: $feedKey');
+        debugPrint('⚠️ Feed manuel olarak devre dışı bırakıldı: $feedKey');
       }
     } catch (e) {
-      print('⚠️ Feed devre dışı bırakılamadı: $e');
+      debugPrint('⚠️ Feed devre dışı bırakılamadı: $e');
     }
   }
 
@@ -415,10 +415,10 @@ class RssHealthCheckService {
         countMap[feedKey] = 0;
         await box.put('feed_failure_counts', countMap);
         
-        print('✅ Feed manuel olarak etkinleştirildi: $feedKey');
+        debugPrint('✅ Feed manuel olarak etkinleştirildi: $feedKey');
       }
     } catch (e) {
-      print('⚠️ Feed etkinleştirilemedi: $e');
+      debugPrint('⚠️ Feed etkinleştirilemedi: $e');
     }
   }
 
@@ -427,9 +427,9 @@ class RssHealthCheckService {
     try {
       final box = HiveService.settingsBox;
       await box.put('feed_failure_counts', <String, int>{});
-      print('✅ Tüm failure countlar sıfırlandı');
+      debugPrint('✅ Tüm failure countlar sıfırlandı');
     } catch (e) {
-      print('⚠️ Failure countlar sıfırlanamadı: $e');
+      debugPrint('⚠️ Failure countlar sıfırlanamadı: $e');
     }
   }
 
@@ -439,9 +439,9 @@ class RssHealthCheckService {
       final box = HiveService.settingsBox;
       await box.put('disabled_feeds', <String>[]);
       await resetFailureCounts();
-      print('✅ Tüm feedler etkinleştirildi');
+      debugPrint('✅ Tüm feedler etkinleştirildi');
     } catch (e) {
-      print('⚠️ Feedler etkinleştirilemedi: $e');
+      debugPrint('⚠️ Feedler etkinleştirilemedi: $e');
     }
   }
 }

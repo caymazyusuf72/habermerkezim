@@ -47,7 +47,7 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
         _isLoading = false;
       });
     } catch (e) {
-      print('💥 İlgili haberler yükleme hatası: $e');
+      debugPrint('💥 İlgili haberler yükleme hatası: $e');
       setState(() {
         _isLoading = false;
       });

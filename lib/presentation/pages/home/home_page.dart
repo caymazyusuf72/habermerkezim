@@ -78,7 +78,7 @@ class _HomePageState extends ConsumerState<HomePage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && _tabController != null) {
         final selectedCategory = categories[_tabController!.index];
-        print('📱 İlk kategori yükleniyor: ${selectedCategory.id}');
+        debugPrint('📱 İlk kategori yükleniyor: ${selectedCategory.id}');
         ref.read(newsProvider.notifier).loadArticlesByCategory(
           selectedCategory.id,
           refresh: false // Cache'den al, arka planda yenile

@@ -33,7 +33,7 @@ class AvatarService {
       if (photo == null) return null;
       return File(photo.path);
     } catch (e) {
-      print('❌ Kameradan fotoğraf çekme hatası: $e');
+      debugPrint('❌ Kameradan fotoğraf çekme hatası: $e');
       return null;
     }
   }
@@ -51,7 +51,7 @@ class AvatarService {
       if (image == null) return null;
       return File(image.path);
     } catch (e) {
-      print('❌ Galeriden fotoğraf seçme hatası: $e');
+      debugPrint('❌ Galeriden fotoğraf seçme hatası: $e');
       return null;
     }
   }
@@ -91,7 +91,7 @@ class AvatarService {
       if (croppedFile == null) return null;
       return File(croppedFile.path);
     } catch (e) {
-      print('❌ Fotoğraf kırpma hatası: $e');
+      debugPrint('❌ Fotoğraf kırpma hatası: $e');
       return null;
     }
   }
@@ -119,10 +119,10 @@ class AvatarService {
       // Eski avatar'ı sil (varsa)
       await _deleteOldAvatar(userId);
 
-      print('✅ Avatar kaydedildi: $newPath');
+      debugPrint('✅ Avatar kaydedildi: $newPath');
       return savedFile.path;
     } catch (e) {
-      print('❌ Avatar kaydetme hatası: $e');
+      debugPrint('❌ Avatar kaydetme hatası: $e');
       return null;
     }
   }
@@ -158,10 +158,10 @@ class AvatarService {
       }
 
       await userBox.put(userId, currentProfile);
-      print('✅ User avatar güncellendi: $userId');
+      debugPrint('✅ User avatar güncellendi: $userId');
       return true;
     } catch (e) {
-      print('❌ User avatar güncelleme hatası: $e');
+      debugPrint('❌ User avatar güncelleme hatası: $e');
       return false;
     }
   }
@@ -190,10 +190,10 @@ class AvatarService {
         await userBox.put(userId, updatedProfile);
       }
 
-      print('✅ Avatar silindi: $userId');
+      debugPrint('✅ Avatar silindi: $userId');
       return true;
     } catch (e) {
-      print('❌ Avatar silme hatası: $e');
+      debugPrint('❌ Avatar silme hatası: $e');
       return false;
     }
   }
@@ -208,11 +208,11 @@ class AvatarService {
         final File oldFile = File(currentProfile!.avatarUrl!);
         if (await oldFile.exists()) {
           await oldFile.delete();
-          print('🗑️ Eski avatar silindi: ${currentProfile.avatarUrl}');
+          debugPrint('🗑️ Eski avatar silindi: ${currentProfile.avatarUrl}');
         }
       }
     } catch (e) {
-      print('⚠️ Eski avatar silme hatası: $e');
+      debugPrint('⚠️ Eski avatar silme hatası: $e');
     }
   }
 
@@ -230,7 +230,7 @@ class AvatarService {
       }
       return null;
     } catch (e) {
-      print('❌ Avatar dosyası alma hatası: $e');
+      debugPrint('❌ Avatar dosyası alma hatası: $e');
       return null;
     }
   }
@@ -244,7 +244,7 @@ class AvatarService {
       }
       return null;
     } catch (e) {
-      print('❌ Avatar bytes alma hatası: $e');
+      debugPrint('❌ Avatar bytes alma hatası: $e');
       return null;
     }
   }
@@ -267,10 +267,10 @@ class AvatarService {
       
       if (await avatarDir.exists()) {
         await avatarDir.delete(recursive: true);
-        print('🗑️ Tüm avatar dosyaları silindi');
+        debugPrint('🗑️ Tüm avatar dosyaları silindi');
       }
     } catch (e) {
-      print('❌ Avatar temizleme hatası: $e');
+      debugPrint('❌ Avatar temizleme hatası: $e');
     }
   }
 
@@ -284,7 +284,7 @@ class AvatarService {
       }
       return null;
     } catch (e) {
-      print('❌ Avatar dosya boyutu alma hatası: $e');
+      debugPrint('❌ Avatar dosya boyutu alma hatası: $e');
       return null;
     }
   }

@@ -20,24 +20,24 @@ class WidgetService {
     try {
       await HomeWidget.setAppGroupId('group.com.habermerkezi.widget');
     } catch (e) {
-      print('⚠️ Widget initialize hatası: $e');
+      debugPrint('⚠️ Widget initialize hatası: $e');
     }
   }
 
   /// Widget'ı son haberlerle güncelle
   static Future<void> updateWidget(List<Article> articles) async {
     try {
-      print('🔄 Widget güncelleniyor: ${articles.length} haber');
+      debugPrint('🔄 Widget güncelleniyor: ${articles.length} haber');
       
       if (articles.isEmpty) {
-        print('⚠️ Widget: Haber listesi boş, widget temizleniyor');
+        debugPrint('⚠️ Widget: Haber listesi boş, widget temizleniyor');
         await _clearWidget();
         return;
       }
 
       // Son 10 haberi al (kaydırma için)
       final topArticles = articles.take(10).toList();
-      print('📰 Widget: ${topArticles.length} haber kaydediliyor');
+      debugPrint('📰 Widget: ${topArticles.length} haber kaydediliyor');
 
       // SharedPreferences instance (FlutterSharedPreferences)
       final prefs = await SharedPreferences.getInstance();
@@ -45,7 +45,7 @@ class WidgetService {
       // İlk haber (varsayılan gösterilecek)
       if (topArticles.isNotEmpty) {
         final firstArticle = topArticles[0];
-        print('📝 Widget: İlk haber - ${firstArticle.title.substring(0, firstArticle.title.length > 50 ? 50 : firstArticle.title.length)}...');
+        debugPrint('📝 Widget: İlk haber - ${firstArticle.title.substring(0, firstArticle.title.length > 50 ? 50 : firstArticle.title.length)}...');
         
         // HomeWidget üzerinden veri kaydet
         await HomeWidget.saveWidgetData<String>(_titleKey, firstArticle.title);
@@ -69,7 +69,7 @@ class WidgetService {
       if (firstArticle.imageUrl != null) {
         await prefs.setString(_imageUrlKey, firstArticle.imageUrl!);
       }
-      print('✅ Widget: İlk haber kaydedildi');
+      debugPrint('✅ Widget: İlk haber kaydedildi');
       }
 
       // Toplam haber sayısı ve mevcut index
@@ -90,13 +90,13 @@ class WidgetService {
       await HomeWidget.saveWidgetData<String>(_articlesKey, articlesJsonString);
       await prefs.setString('flutter.$_articlesKey', articlesJsonString);
       await prefs.setString(_articlesKey, articlesJsonString);
-      print('✅ Widget: Tüm haberler kaydedildi (${articlesJsonString.length} karakter)');
+      debugPrint('✅ Widget: Tüm haberler kaydedildi (${articlesJsonString.length} karakter)');
       
       // Debug: Kaydedilen verileri kontrol et
       final savedTitle = await HomeWidget.getWidgetData<String>(_titleKey, defaultValue: '');
       final savedArticles = await HomeWidget.getWidgetData<String>(_articlesKey, defaultValue: '');
-      print('🔍 Debug - Kaydedilen title: ${savedTitle?.substring(0, savedTitle.length > 30 ? 30 : savedTitle.length)}');
-      print('🔍 Debug - Kaydedilen articles length: ${savedArticles?.length ?? 0}');
+      debugPrint('🔍 Debug - Kaydedilen title: ${savedTitle?.substring(0, savedTitle.length > 30 ? 30 : savedTitle.length)}');
+      debugPrint('🔍 Debug - Kaydedilen articles length: ${savedArticles?.length ?? 0}');
 
       // Widget'ları yeniden yükle (banner + liste)
       try {
@@ -108,13 +108,13 @@ class WidgetService {
           androidName: 'NewsListWidgetProvider',
         );
       } catch (e) {
-        print('⚠️ Widget updateWidget hatası: $e');
+        debugPrint('⚠️ Widget updateWidget hatası: $e');
       }
 
-      print('✅ Widget güncellendi: ${topArticles.length} haber');
+      debugPrint('✅ Widget güncellendi: ${topArticles.length} haber');
     } catch (e, stackTrace) {
-      print('⚠️ Widget güncelleme hatası: $e');
-      print('Stack trace: $stackTrace');
+      debugPrint('⚠️ Widget güncelleme hatası: $e');
+      debugPrint('Stack trace: $stackTrace');
     }
   }
 
@@ -152,7 +152,7 @@ class WidgetService {
         androidName: 'NewsWidgetProvider',
       );
     } catch (e) {
-      print('⚠️ Widget temizleme hatası: $e');
+      debugPrint('⚠️ Widget temizleme hatası: $e');
     }
   }
 }

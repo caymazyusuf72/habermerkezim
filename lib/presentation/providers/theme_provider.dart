@@ -126,7 +126,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
       );
     } catch (e) {
       // Storage error durumunda default kullan
-      print('Theme yükleme hatası: $e');
+      debugPrint('Theme yükleme hatası: $e');
     }
   }
 
@@ -156,7 +156,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     try {
       await HiveService.settingsBox.put(_colorThemeKey, _colorThemeToString(colorTheme));
     } catch (e) {
-      print('Color theme kaydetme hatası: $e');
+      debugPrint('Color theme kaydetme hatası: $e');
     }
   }
   
@@ -219,7 +219,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     try {
       await HiveService.settingsBox.put(_fontScaleKey, clampedScale);
     } catch (e) {
-      print('Font scale kaydetme hatası: $e');
+      debugPrint('Font scale kaydetme hatası: $e');
     }
   }
 
@@ -253,7 +253,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     try {
       await HiveService.settingsBox.put(_themeKey, _themeModeToString(themeMode));
     } catch (e) {
-      print('Theme kaydetme hatası: $e');
+      debugPrint('Theme kaydetme hatası: $e');
     }
   }
 

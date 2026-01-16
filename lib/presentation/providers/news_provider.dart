@@ -91,15 +91,15 @@ class NewsNotifier extends StateNotifier<NewsState> {
       
       // Widget'ı güncelle (NON-BLOCKING - await kullanma)
       WidgetService.updateWidget(allArticles).catchError((e) {
-        print('⚠️ Widget update hatası (sessizce başarısız): $e');
+        debugPrint('⚠️ Widget update hatası (sessizce başarısız): $e');
       });
       
       // Breaking news kontrolü (NON-BLOCKING - arka planda)
       _checkAndNotifyBreakingNews(allArticles).catchError((e) {
-        print('⚠️ Breaking news kontrolü hatası (sessizce başarısız): $e');
+        debugPrint('⚠️ Breaking news kontrolü hatası (sessizce başarısız): $e');
       });
     } catch (e, stackTrace) {
-      print('❌ Haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+      debugPrint('❌ Haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoading: false,
         errorMessage: ErrorMessageHelper.getErrorMessage(e),
@@ -126,7 +126,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
         currentPage: nextPage,
       );
     } catch (e, stackTrace) {
-      print('❌ Daha fazla haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+      debugPrint('❌ Daha fazla haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoadingMore: false,
         errorMessage: ErrorMessageHelper.getErrorMessage(e),
@@ -161,7 +161,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
         currentPage: 1,
       );
     } catch (e, stackTrace) {
-      print('❌ Kategori yükleme hatası [$category]: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+      debugPrint('❌ Kategori yükleme hatası [$category]: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoading: false,
         errorMessage: ErrorMessageHelper.getErrorMessage(e),
@@ -199,7 +199,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
       state = state.copyWith(articles: updatedArticles);
     } catch (e) {
       // Silently handle error for UX
-      print('Failed to mark as read: $e');
+      debugPrint('Failed to mark as read: $e');
     }
   }
 
@@ -219,7 +219,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
       state = state.copyWith(articles: updatedArticles);
     } catch (e) {
       // Silently handle error for UX
-      print('Failed to toggle favorite: $e');
+      debugPrint('Failed to toggle favorite: $e');
     }
   }
 
@@ -234,7 +234,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
       await _repository.clearCache();
       state = const NewsState();
     } catch (e) {
-      print('Failed to clear cache: $e');
+      debugPrint('Failed to clear cache: $e');
     }
   }
 
@@ -277,7 +277,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
         }
       }
     } catch (e) {
-      print('⚠️ Breaking news kontrolü hatası: $e');
+      debugPrint('⚠️ Breaking news kontrolü hatası: $e');
     }
   }
   
@@ -302,7 +302,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
       // Saatte max 3 bildirim
       return recentNotifications.length < 3;
     } catch (e) {
-      print('⚠️ Bildirim sıklığı kontrolü hatası: $e');
+      debugPrint('⚠️ Bildirim sıklığı kontrolü hatası: $e');
       return true; // Hata durumunda bildirim gönder
     }
   }
@@ -323,7 +323,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
       
       await box.put('lastNotificationTimes', filteredTimes);
     } catch (e) {
-      print('⚠️ Bildirim zamanı kaydetme hatası: $e');
+      debugPrint('⚠️ Bildirim zamanı kaydetme hatası: $e');
     }
   }
 

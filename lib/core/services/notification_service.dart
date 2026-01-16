@@ -53,14 +53,14 @@ class NotificationService {
 
     _initialized = true;
     if (kDebugMode) {
-      print('📱 NotificationService initialized successfully');
+      debugPrint('📱 NotificationService initialized successfully');
     }
   }
 
   /// Handle notification tap
   void _onNotificationTap(NotificationResponse response) {
     if (kDebugMode) {
-      print('📱 Notification tapped: ${response.payload}');
+      debugPrint('📱 Notification tapped: ${response.payload}');
     }
     // TODO: Handle navigation based on payload
   }
@@ -179,7 +179,7 @@ class NotificationService {
     );
 
     if (kDebugMode) {
-      print('📱 Daily news reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
+      debugPrint('📱 Daily news reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
     }
   }
 
@@ -226,7 +226,7 @@ class NotificationService {
     );
 
     if (kDebugMode) {
-      print('📱 Reading goal reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
+      debugPrint('📱 Reading goal reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
     }
   }
 
@@ -256,7 +256,7 @@ class NotificationService {
     );
 
     if (kDebugMode) {
-      print('📱 Reading goal achievement notification shown');
+      debugPrint('📱 Reading goal achievement notification shown');
     }
   }
 
@@ -290,7 +290,7 @@ class NotificationService {
     );
 
     if (kDebugMode) {
-      print('📱 Breaking news notification shown: $title');
+      debugPrint('📱 Breaking news notification shown: $title');
     }
   }
 
@@ -298,7 +298,7 @@ class NotificationService {
   Future<void> cancelAllNotifications() async {
     await _notifications.cancelAll();
     if (kDebugMode) {
-      print('📱 All notifications cancelled');
+      debugPrint('📱 All notifications cancelled');
     }
   }
 
@@ -306,7 +306,7 @@ class NotificationService {
   Future<void> cancelNotification(int id) async {
     await _notifications.cancel(id);
     if (kDebugMode) {
-      print('📱 Notification $id cancelled');
+      debugPrint('📱 Notification $id cancelled');
     }
   }
 

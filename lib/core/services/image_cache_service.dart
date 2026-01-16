@@ -45,7 +45,7 @@ class ImageCacheService {
     );
     
     _isInitialized = true;
-    print('📷 Image Cache Service başlatıldı (maxObjects: $maxObjects)');
+    debugPrint('📷 Image Cache Service başlatıldı (maxObjects: $maxObjects)');
   }
 
   /// Görsel URL'ini optimize eder (CDN veya resize parametreleri ekler)
@@ -159,7 +159,7 @@ class ImageCacheService {
       return file;
     } catch (e) {
       _cacheMisses++;
-      print('💥 Görsel önbellekleme hatası: $e');
+      debugPrint('💥 Görsel önbellekleme hatası: $e');
       return null;
     }
   }
@@ -202,9 +202,9 @@ class ImageCacheService {
       await _cacheManager.emptyCache();
       _cacheHits = 0;
       _cacheMisses = 0;
-      print('✅ Görsel önbelleği temizlendi');
+      debugPrint('✅ Görsel önbelleği temizlendi');
     } catch (e) {
-      print('💥 Önbellek temizleme hatası: $e');
+      debugPrint('💥 Önbellek temizleme hatası: $e');
     }
   }
 
@@ -244,9 +244,9 @@ class ImageCacheService {
     try {
       // CacheManager'ın removeFile metodunu kullanarak eski dosyaları temizle
       // Not: flutter_cache_manager otomatik olarak stalePeriod'a göre temizler
-      print('✅ Eski önbellekler temizlendi (maxAge: ${maxAge.inDays} gün)');
+      debugPrint('✅ Eski önbellekler temizlendi (maxAge: ${maxAge.inDays} gün)');
     } catch (e) {
-      print('💥 Eski önbellek temizleme hatası: $e');
+      debugPrint('💥 Eski önbellek temizleme hatası: $e');
     }
   }
   
@@ -270,7 +270,7 @@ class ImageCacheService {
     try {
       await _cacheManager.removeFile(imageUrl);
     } catch (e) {
-      print('💥 Cache silme hatası: $e');
+      debugPrint('💥 Cache silme hatası: $e');
     }
   }
 }

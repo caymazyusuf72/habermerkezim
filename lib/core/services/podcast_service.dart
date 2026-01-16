@@ -28,13 +28,13 @@ class PodcastService {
             episodes.add(episode);
           }
         } catch (e) {
-          print('Episode parse error: $e');
+          debugPrint('Episode parse error: $e');
         }
       }
       
       return episodes;
     } catch (e) {
-      print('Podcast feed fetch error: $e');
+      debugPrint('Podcast feed fetch error: $e');
       return [];
     }
   }
@@ -66,7 +66,7 @@ class PodcastService {
         imageUrl: itunesImage,
       );
     } catch (e) {
-      print('Parse episode error: $e');
+      debugPrint('Parse episode error: $e');
       return null;
     }
   }
@@ -81,7 +81,7 @@ class PodcastService {
       );
       await _audioPlayer.play();
     } catch (e) {
-      print('Play podcast error: $e');
+      debugPrint('Play podcast error: $e');
     }
   }
 
@@ -97,7 +97,7 @@ class PodcastService {
       await _audioPlayer.loadPlaylist(items);
       await _audioPlayer.play();
     } catch (e) {
-      print('Play playlist error: $e');
+      debugPrint('Play playlist error: $e');
     }
   }
 

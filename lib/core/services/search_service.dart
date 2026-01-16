@@ -271,7 +271,7 @@ class SearchService {
           .map((e) => e.key as String)
           .toList();
     } catch (e) {
-      print('❌ Popüler aramalar alınamadı: $e');
+      debugPrint('❌ Popüler aramalar alınamadı: $e');
       return [];
     }
   }
@@ -291,7 +291,7 @@ class SearchService {
       
       await box.put(_searchCountsKey, searchCounts);
     } catch (e) {
-      print('❌ Arama sayacı güncellenemedi: $e');
+      debugPrint('❌ Arama sayacı güncellenemedi: $e');
     }
   }
 
@@ -314,7 +314,7 @@ class SearchService {
       
       return trending.take(limit).toList();
     } catch (e) {
-      print('❌ Trend aramalar alınamadı: $e');
+      debugPrint('❌ Trend aramalar alınamadı: $e');
       return [];
     }
   }
@@ -360,7 +360,7 @@ class SearchService {
       // Arama sayacını da artır
       await incrementSearchCount(query);
     } catch (e) {
-      print('❌ Arama geçmişine eklenemedi: $e');
+      debugPrint('❌ Arama geçmişine eklenemedi: $e');
     }
   }
 
@@ -370,7 +370,7 @@ class SearchService {
       final box = HiveService.settingsBox;
       await box.put('search_history', <String>[]);
     } catch (e) {
-      print('❌ Arama geçmişi temizlenemedi: $e');
+      debugPrint('❌ Arama geçmişi temizlenemedi: $e');
     }
   }
 
@@ -385,7 +385,7 @@ class SearchService {
       history.remove(query);
       await box.put('search_history', history);
     } catch (e) {
-      print('❌ Arama geçmişinden silinemedi: $e');
+      debugPrint('❌ Arama geçmişinden silinemedi: $e');
     }
   }
 

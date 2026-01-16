@@ -37,11 +37,11 @@ class ArticleContentService {
       // Geçici olarak cache'i devre dışı bırak
       // final cachedContent = await _getCachedContent(url);
       // if (cachedContent != null) {
-      //   print('📋 Cache\'den içerik alındı: ${url.substring(0, 50)}...');
+      //   debugPrint('📋 Cache\'den içerik alındı: ${url.substring(0, 50)}...');
       //   return cachedContent;
       // }
 
-      print('🌐 Web scraping başlatılıyor: ${url.substring(0, 50)}...');
+      debugPrint('🌐 Web scraping başlatılıyor: ${url.substring(0, 50)}...');
 
       // Retry ile web scraping yap
       final content = await RetryHelper.retryOrNull(
@@ -66,16 +66,16 @@ class ArticleContentService {
       if (content != null) {
         // İçeriği cache'le
         await _cacheContent(url, content);
-        print('✅ İçerik başarıyla çekildi ve cache\'lendi');
+        debugPrint('✅ İçerik başarıyla çekildi ve cache\'lendi');
       }
 
       return content;
 
     } on DioException catch (e) {
-      print('🚫 Web scraping DIO hatası: ${e.type} - ${e.message}');
+      debugPrint('🚫 Web scraping DIO hatası: ${e.type} - ${e.message}');
       return null;
     } catch (e) {
-      print('🚫 Web scraping hatası: $e');
+      debugPrint('🚫 Web scraping hatası: $e');
       return null;
     }
   }
@@ -445,7 +445,7 @@ class ArticleContentService {
         }
       }
     } catch (e) {
-      print('⚠️ Cache okuma hatası: $e');
+      debugPrint('⚠️ Cache okuma hatası: $e');
     }
     
     return null;
@@ -462,7 +462,7 @@ class ArticleContentService {
       // Cache boyutunu kontrol et (en fazla 100 makale)
       await _cleanUpCache();
     } catch (e) {
-      print('⚠️ Cache yazma hatası: $e');
+      debugPrint('⚠️ Cache yazma hatası: $e');
     }
   }
 
@@ -493,7 +493,7 @@ class ArticleContentService {
         }
       }
     } catch (e) {
-      print('⚠️ Cache temizleme hatası: $e');
+      debugPrint('⚠️ Cache temizleme hatası: $e');
     }
   }
 
@@ -531,9 +531,9 @@ class ArticleContentService {
         await box.delete(key);
       }
       
-      print('🗑️ Tüm makale cache\'i temizlendi (${keys.length} öğe)');
+      debugPrint('🗑️ Tüm makale cache\'i temizlendi (${keys.length} öğe)');
     } catch (e) {
-      print('⚠️ Cache temizleme hatası: $e');
+      debugPrint('⚠️ Cache temizleme hatası: $e');
     }
   }
 }

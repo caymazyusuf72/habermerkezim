@@ -31,68 +31,68 @@ Future<void> main() async {
   
   try {
     // Firebase'i initialize et (sadece bir kez)
-    print('🔄 Firebase initialize ediliyor...');
+    debugPrint('🔄 Firebase initialize ediliyor...');
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      print('✅ Firebase başarıyla initialize edildi');
+      debugPrint('✅ Firebase başarıyla initialize edildi');
     } else {
-      print('ℹ️ Firebase zaten initialize edilmiş');
+      debugPrint('ℹ️ Firebase zaten initialize edilmiş');
     }
     
     // Memory cache boyutunu optimize et (RAM tasarrufu için)
-    print('🔄 Memory cache optimize ediliyor...');
+    debugPrint('🔄 Memory cache optimize ediliyor...');
     PaintingBinding.instance.imageCache.maximumSize = 50; // Varsayılan 1000'den 50'ye düşürüldü
     PaintingBinding.instance.imageCache.maximumSizeBytes = 25 * 1024 * 1024; // 25 MB (varsayılan 100 MB)
-    print('✅ Memory cache optimize edildi');
+    debugPrint('✅ Memory cache optimize edildi');
     
     // Hive database'i initialize et
-    print('🔄 Hive database initialize ediliyor...');
+    debugPrint('🔄 Hive database initialize ediliyor...');
     await HiveService.initialize();
-    print('✅ Hive başarıyla initialize edildi');
+    debugPrint('✅ Hive başarıyla initialize edildi');
     
     // Image Cache servisini initialize et
-    print('🔄 Image Cache service initialize ediliyor...');
+    debugPrint('🔄 Image Cache service initialize ediliyor...');
     await ImageCacheService().init();
-    print('✅ Image Cache service başarıyla initialize edildi');
+    debugPrint('✅ Image Cache service başarıyla initialize edildi');
     
     // RSS Sources servisini initialize et
-    print('🔄 RSS Sources service initialize ediliyor...');
+    debugPrint('🔄 RSS Sources service initialize ediliyor...');
     await RssSourcesService.init();
-    print('✅ RSS Sources service başarıyla initialize edildi');
+    debugPrint('✅ RSS Sources service başarıyla initialize edildi');
     
     // Custom Categories servisini initialize et
-    print('🔄 Custom Categories service initialize ediliyor...');
+    debugPrint('🔄 Custom Categories service initialize ediliyor...');
     await CustomCategoriesService.init();
-    print('✅ Custom Categories service başarıyla initialize edildi');
+    debugPrint('✅ Custom Categories service başarıyla initialize edildi');
     
     // Analytics servisini initialize et
-    print('🔄 Analytics service initialize ediliyor...');
+    debugPrint('🔄 Analytics service initialize ediliyor...');
     await AnalyticsService.init();
-    print('✅ Analytics service başarıyla initialize edildi');
+    debugPrint('✅ Analytics service başarıyla initialize edildi');
     
     // Article Popularity servisini initialize et
-    print('🔄 Article Popularity service initialize ediliyor...');
+    debugPrint('🔄 Article Popularity service initialize ediliyor...');
     await ArticlePopularityService.init();
-    print('✅ Article Popularity service başarıyla initialize edildi');
+    debugPrint('✅ Article Popularity service başarıyla initialize edildi');
     
     // Notification servisini initialize et
-    print('🔄 Notification service initialize ediliyor...');
+    debugPrint('🔄 Notification service initialize ediliyor...');
     await NotificationService().initialize();
-    print('✅ Notification service başarıyla initialize edildi');
+    debugPrint('✅ Notification service başarıyla initialize edildi');
     
     // Widget servisini initialize et
-    print('🔄 Widget service initialize ediliyor...');
+    debugPrint('🔄 Widget service initialize ediliyor...');
     await WidgetService.initialize();
-    print('✅ Widget service başarıyla initialize edildi');
+    debugPrint('✅ Widget service başarıyla initialize edildi');
     
     // RSS Health Check servisini başlat (6 saatte bir kontrol)
-    print('🔄 RSS Health Check service başlatılıyor...');
+    debugPrint('🔄 RSS Health Check service başlatılıyor...');
     RssHealthCheckService().startPeriodicHealthCheck(
       interval: const Duration(hours: 6),
     );
-    print('✅ RSS Health Check service başarıyla başlatıldı');
+    debugPrint('✅ RSS Health Check service başarıyla başlatıldı');
     
     // Uygulamayı başlat
     runApp(
@@ -102,7 +102,7 @@ Future<void> main() async {
     );
     
   } catch (e) {
-    print('❌ Uygulama başlatma hatası: $e');
+    debugPrint('❌ Uygulama başlatma hatası: $e');
     
     // Hata durumunda basit hata ekranıyla uygulamayı başlat
     runApp(

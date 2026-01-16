@@ -49,14 +49,14 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
   @override
   Future<void> cacheArticles(List<ArticleModel> articles) async {
     try {
-      print('💾 Cache\'e ${articles.length} makale kaydediliyor...');
+      debugPrint('💾 Cache\'e ${articles.length} makale kaydediliyor...');
       await _ensureBoxesOpen();
       
       final articlesBox = _articlesBox!;
       final readArticlesBox = _readArticlesBox!;
       final favoritesBox = _favoritesBox!;
       
-      print('📊 Mevcut cache durumu: ${articlesBox.length} makale');
+      debugPrint('📊 Mevcut cache durumu: ${articlesBox.length} makale');
       
       // 7 günden eski makaleleri otomatik temizle (sadece favori/okunmuş olmayanlar)
       // Performans için sadece belirli aralıklarla çalıştır (her günde bir)
@@ -81,7 +81,7 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
         favoriteStatus[article.id] = existingArticle?.isFavorite ?? favoritesBox.containsKey(article.id);
       }
       
-      print('🔄 Makale durumları kontrol edildi');
+      debugPrint('🔄 Makale durumları kontrol edildi');
       
       // Yeni makaleleri kaydet veya mevcut olanları güncelle
       // Eski makaleleri silme, sadece güncelle
@@ -103,10 +103,10 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
         await articlesBox.put(article.id, updatedArticle);
       }
       
-      print('✅ Cache\'e ${articles.length} makale kaydedildi (Toplam: ${articlesBox.length})');
+      debugPrint('✅ Cache\'e ${articles.length} makale kaydedildi (Toplam: ${articlesBox.length})');
       
     } catch (e) {
-      print('💥 Cache kaydetme hatası: $e');
+      debugPrint('💥 Cache kaydetme hatası: $e');
       throw DatabaseException('Makaleler cache\'e kaydedilemedi: ${e.toString()}');
     }
   }
@@ -114,28 +114,28 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
   @override
   Future<List<ArticleModel>> getCachedArticles() async {
     try {
-      print('💾 Cache\'den makale okunuyor...');
+      debugPrint('💾 Cache\'den makale okunuyor...');
       await _ensureBoxesOpen();
       
       final articlesBox = _articlesBox!;
-      print('📊 Cache durumu: ${articlesBox.length} makale');
+      debugPrint('📊 Cache durumu: ${articlesBox.length} makale');
       
       if (articlesBox.isEmpty) {
-        print('❌ Cache boş - hiç makale yok!');
+        debugPrint('❌ Cache boş - hiç makale yok!');
         throw const DataNotFoundException('Cache\'de makale bulunamadı');
       }
       
       final articles = articlesBox.values.toList();
-      print('📋 Cache\'den ${articles.length} makale alındı');
+      debugPrint('📋 Cache\'den ${articles.length} makale alındı');
       
       // Tarihe göre sırala (yeniden eskiye)
       articles.sort((a, b) => b.publishedDate.compareTo(a.publishedDate));
       
-      print('✅ Cache makaleleri başarıyla sıralandı');
+      debugPrint('✅ Cache makaleleri başarıyla sıralandı');
       return articles;
       
     } catch (e) {
-      print('💥 Cache okuma hatası: $e');
+      debugPrint('💥 Cache okuma hatası: $e');
       if (e is DataNotFoundException) rethrow;
       throw DatabaseException('Cache\'den veri okunamadı: ${e.toString()}');
     }
@@ -144,16 +144,16 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
   @override
   Future<List<ArticleModel>> getCachedArticlesByCategory(String category) async {
     try {
-      print('📂 Cache\'den $category kategorisi isteniyor...');
+      debugPrint('📂 Cache\'den $category kategorisi isteniyor...');
       await _ensureBoxesOpen();
       
       final articlesBox = _articlesBox!;
       if (articlesBox.isEmpty) {
-        print('❌ Cache boş');
+        debugPrint('❌ Cache boş');
         throw const DataNotFoundException('Cache\'de makale bulunamadı');
       }
       
-      print('📊 Cache\'de toplam ${articlesBox.length} makale var');
+      debugPrint('📊 Cache\'de toplam ${articlesBox.length} makale var');
       
       // Ana kategori ve alt feed'leri dahil et (örn: turkiye için turkiye, turkiye_ntv, turkiye_milliyet)
       // Ayrıca kategori isminin tam eşleşmesini de kontrol et
@@ -174,12 +174,12 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
           })
           .toList();
       
-      print('✅ $category kategorisinde ${articles.length} makale bulundu');
+      debugPrint('✅ $category kategorisinde ${articles.length} makale bulundu');
       
       if (articles.isEmpty) {
         // Debug için kategorileri listele
         final allCategories = articlesBox.values.map((a) => a.category).toSet().toList();
-        print('⚠️ Mevcut kategoriler: ${allCategories.join(", ")}');
+        debugPrint('⚠️ Mevcut kategoriler: ${allCategories.join(", ")}');
         throw DataNotFoundException('$category kategorisinde cache\'de makale bulunamadı');
       }
       
@@ -189,7 +189,7 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
       return articles;
       
     } catch (e) {
-      print('❌ getCachedArticlesByCategory hatası: $e');
+      debugPrint('❌ getCachedArticlesByCategory hatası: $e');
       if (e is DataNotFoundException) rethrow;
       throw DatabaseException('Kategori verileri okunamadı: ${e.toString()}');
     }
@@ -316,7 +316,7 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
       await _favoritesBox!.clear();
       await _readArticlesBox!.clear();
       
-      print('Tüm cache temizlendi');
+      debugPrint('Tüm cache temizlendi');
       
     } catch (e) {
       throw DatabaseException('Cache temizlenemedi: ${e.toString()}');
@@ -355,7 +355,7 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
       }
       
       if (keysToDelete.isNotEmpty) {
-        print('${keysToDelete.length} eski makale cache\'den temizlendi (favori/okunmuş makaleler korundu)');
+        debugPrint('${keysToDelete.length} eski makale cache\'den temizlendi (favori/okunmuş makaleler korundu)');
       }
       
     } catch (e) {

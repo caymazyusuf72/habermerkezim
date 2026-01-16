@@ -169,7 +169,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       );
 
       if (kDebugMode) {
-        print('📱 NotificationProvider initialized: $savedSettings');
+        debugPrint('📱 NotificationProvider initialized: $savedSettings');
       }
     } catch (e) {
       state = state.copyWith(
@@ -177,7 +177,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
         error: 'Bildirim servisi başlatılamadı: $e',
       );
       if (kDebugMode) {
-        print('❌ NotificationProvider initialization error: $e');
+        debugPrint('❌ NotificationProvider initialization error: $e');
       }
     }
   }
@@ -193,7 +193,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error loading notification settings: $e');
+        debugPrint('❌ Error loading notification settings: $e');
       }
     }
     return const NotificationSettings();
@@ -206,7 +206,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       await settingsBox.put(_settingsKey, settings.toMap());
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error saving notification settings: $e');
+        debugPrint('❌ Error saving notification settings: $e');
       }
     }
   }
@@ -263,7 +263,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       state = state.copyWith(settings: newSettings);
 
       if (kDebugMode) {
-        print('📱 Daily news settings updated: $newSettings');
+        debugPrint('📱 Daily news settings updated: $newSettings');
       }
     } catch (e) {
       state = state.copyWith(error: 'Günlük haber ayarları güncellenemedi: $e');
@@ -302,7 +302,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       state = state.copyWith(settings: newSettings);
 
       if (kDebugMode) {
-        print('📱 Reading goal settings updated: $newSettings');
+        debugPrint('📱 Reading goal settings updated: $newSettings');
       }
     } catch (e) {
       state = state.copyWith(error: 'Okuma hedefi ayarları güncellenemedi: $e');
@@ -320,7 +320,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       state = state.copyWith(settings: newSettings);
 
       if (kDebugMode) {
-        print('📱 Breaking news settings updated: enabled=$enabled');
+        debugPrint('📱 Breaking news settings updated: enabled=$enabled');
       }
     } catch (e) {
       state = state.copyWith(error: 'Son dakika ayarları güncellenemedi: $e');
@@ -354,7 +354,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       return todayAnalytics.articlesRead;
     } catch (e) {
       if (kDebugMode) {
-        print('⚠️ Analytics progress alma hatası: $e');
+        debugPrint('⚠️ Analytics progress alma hatası: $e');
       }
       return 0; // Default to 0 if analytics not available
     }

@@ -1,17 +1,14 @@
-# Fix withOpacity and surfaceVariant deprecations in all Dart files
+# Fix print -> debugPrint in all Dart files
 $files = Get-ChildItem -Path "lib" -Recurse -Filter "*.dart"
 
 foreach ($file in $files) {
     $content = Get-Content $file.FullName -Raw
     $modified = $false
     
-    if ($content -match '\.withOpacity\(') {
-        $content = $content -replace '\.withOpacity\(', '.withValues(alpha: '
-        $modified = $true
-    }
-    
-    if ($content -match 'colorScheme\.surfaceVariant') {
-        $content = $content -replace 'colorScheme\.surfaceVariant', 'colorScheme.surfaceContainerHighest'
+    # Fix print( -> debugPrint( (only standalone print, not debugPrint, blueprint, etc.)
+    # Use word boundary to match only 'print(' not 'debugPrint(' or 'blueprint'
+    if ($content -match '(?<![a-zA-Z])print\(') {
+        $content = $content -replace '(?<![a-zA-Z])print\(', 'debugPrint('
         $modified = $true
     }
     

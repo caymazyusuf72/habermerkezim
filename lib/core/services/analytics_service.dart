@@ -14,7 +14,7 @@ class AnalyticsService {
         _box = await Hive.openBox<Map>(_boxName);
       }
     } catch (e) {
-      print('Analytics Service başlatma hatası: $e');
+      debugPrint('Analytics Service başlatma hatası: $e');
       rethrow;
     }
   }
@@ -33,7 +33,7 @@ class AnalyticsService {
       // Bugün için analytics yoksa boş oluştur
       return ReadingAnalytics.empty();
     } catch (e) {
-      print('Bugün analytics alma hatası: $e');
+      debugPrint('Bugün analytics alma hatası: $e');
       return ReadingAnalytics.empty();
     }
   }
@@ -44,7 +44,7 @@ class AnalyticsService {
       await _box!.put(analytics.id, analytics.toMap());
       return true;
     } catch (e) {
-      print('Analytics kaydetme hatası: $e');
+      debugPrint('Analytics kaydetme hatası: $e');
       return false;
     }
   }
@@ -56,7 +56,7 @@ class AnalyticsService {
       final updated = today.incrementArticleRead(category, source, timeSpent: timeSpent);
       return await saveAnalytics(updated);
     } catch (e) {
-      print('Makale okuma kaydı hatası: $e');
+      debugPrint('Makale okuma kaydı hatası: $e');
       return false;
     }
   }
@@ -68,7 +68,7 @@ class AnalyticsService {
       final updated = today.incrementFavorite();
       return await saveAnalytics(updated);
     } catch (e) {
-      print('Favori ekleme kaydı hatası: $e');
+      debugPrint('Favori ekleme kaydı hatası: $e');
       return false;
     }
   }
@@ -80,7 +80,7 @@ class AnalyticsService {
       final updated = today.incrementSearch();
       return await saveAnalytics(updated);
     } catch (e) {
-      print('Arama kaydı hatası: $e');
+      debugPrint('Arama kaydı hatası: $e');
       return false;
     }
   }
@@ -92,7 +92,7 @@ class AnalyticsService {
       final updated = today.incrementShare();
       return await saveAnalytics(updated);
     } catch (e) {
-      print('Paylaşım kaydı hatası: $e');
+      debugPrint('Paylaşım kaydı hatası: $e');
       return false;
     }
   }
@@ -118,7 +118,7 @@ class AnalyticsService {
       analytics.sort((a, b) => a.date.compareTo(b.date));
       return analytics;
     } catch (e) {
-      print('Analytics aralık alma hatası: $e');
+      debugPrint('Analytics aralık alma hatası: $e');
       return [];
     }
   }
@@ -137,7 +137,7 @@ class AnalyticsService {
       analytics.sort((a, b) => a.date.compareTo(b.date));
       return analytics;
     } catch (e) {
-      print('Tüm analytics alma hatası: $e');
+      debugPrint('Tüm analytics alma hatası: $e');
       return [];
     }
   }
@@ -193,7 +193,7 @@ class AnalyticsService {
         streakDays: streakDays,
       );
     } catch (e) {
-      print('Analytics özeti oluşturma hatası: $e');
+      debugPrint('Analytics özeti oluşturma hatası: $e');
       return AnalyticsSummary.empty;
     }
   }
@@ -303,7 +303,7 @@ class AnalyticsService {
       await _box!.delete(id);
       return true;
     } catch (e) {
-      print('Analytics silme hatası: $e');
+      debugPrint('Analytics silme hatası: $e');
       return false;
     }
   }
@@ -314,7 +314,7 @@ class AnalyticsService {
       await _box!.clear();
       return true;
     } catch (e) {
-      print('Analytics temizleme hatası: $e');
+      debugPrint('Analytics temizleme hatası: $e');
       return false;
     }
   }
@@ -340,7 +340,7 @@ class AnalyticsService {
       
       return exportData;
     } catch (e) {
-      print('Analytics export hatası: $e');
+      debugPrint('Analytics export hatası: $e');
       return {};
     }
   }
@@ -360,7 +360,7 @@ class AnalyticsService {
       
       return true;
     } catch (e) {
-      print('Analytics import hatası: $e');
+      debugPrint('Analytics import hatası: $e');
       return false;
     }
   }

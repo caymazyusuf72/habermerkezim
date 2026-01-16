@@ -98,13 +98,13 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
       // Speed değişikliklerini dinle
       _audioService.speedStream.listen((speed) {
-        print('🔊 DEBUG: Speed stream değişti: $speed');
+        debugPrint('🔊 DEBUG: Speed stream değişti: $speed');
         state = state.copyWith(speed: speed);
       });
 
       // Volume değişikliklerini dinle
       _audioService.volumeStream.listen((volume) {
-        print('🔊 DEBUG: Volume stream değişti: $volume');
+        debugPrint('🔊 DEBUG: Volume stream değişti: $volume');
         state = state.copyWith(volume: volume);
       });
     } catch (e) {
@@ -201,13 +201,13 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   /// Oynatma hızını değiştir
   Future<void> setSpeed(double speed) async {
     try {
-      print('🔊 DEBUG: Speed değiştiriliyor: $speed');
+      debugPrint('🔊 DEBUG: Speed değiştiriliyor: $speed');
       await _audioService.setSpeed(speed);
-      print('🔊 DEBUG: Service setSpeed tamamlandı');
+      debugPrint('🔊 DEBUG: Service setSpeed tamamlandı');
       state = state.copyWith(speed: speed);
-      print('🔊 DEBUG: State güncellendi, yeni speed: ${state.speed}');
+      debugPrint('🔊 DEBUG: State güncellendi, yeni speed: ${state.speed}');
     } catch (e) {
-      print('🔊 DEBUG: Speed ayarlama hatası: $e');
+      debugPrint('🔊 DEBUG: Speed ayarlama hatası: $e');
       state = state.copyWith(error: 'Hız ayarlama hatası: $e');
     }
   }
@@ -215,13 +215,13 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   /// Ses seviyesini ayarla
   Future<void> setVolume(double volume) async {
     try {
-      print('🔊 DEBUG: Volume değiştiriliyor: $volume');
+      debugPrint('🔊 DEBUG: Volume değiştiriliyor: $volume');
       await _audioService.setVolume(volume);
-      print('🔊 DEBUG: Service setVolume tamamlandı');
+      debugPrint('🔊 DEBUG: Service setVolume tamamlandı');
       state = state.copyWith(volume: volume);
-      print('🔊 DEBUG: State güncellendi, yeni volume: ${state.volume}');
+      debugPrint('🔊 DEBUG: State güncellendi, yeni volume: ${state.volume}');
     } catch (e) {
-      print('🔊 DEBUG: Volume ayarlama hatası: $e');
+      debugPrint('🔊 DEBUG: Volume ayarlama hatası: $e');
       state = state.copyWith(error: 'Ses seviyesi ayarlama hatası: $e');
     }
   }

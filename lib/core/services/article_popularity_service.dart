@@ -124,7 +124,7 @@ class ArticlePopularityService {
         _box = await Hive.openBox<Map>(_boxName);
       }
     } catch (e) {
-      print('ArticlePopularityService başlatma hatası: $e');
+      debugPrint('ArticlePopularityService başlatma hatası: $e');
       rethrow;
     }
   }
@@ -167,7 +167,7 @@ class ArticlePopularityService {
       }
       return true;
     } catch (e) {
-      print('Görüntüleme kaydetme hatası: $e');
+      debugPrint('Görüntüleme kaydetme hatası: $e');
       return false;
     }
   }
@@ -187,7 +187,7 @@ class ArticlePopularityService {
       }
       return false;
     } catch (e) {
-      print('Paylaşım kaydetme hatası: $e');
+      debugPrint('Paylaşım kaydetme hatası: $e');
       return false;
     }
   }
@@ -207,7 +207,7 @@ class ArticlePopularityService {
       }
       return false;
     } catch (e) {
-      print('Favori kaydetme hatası: $e');
+      debugPrint('Favori kaydetme hatası: $e');
       return false;
     }
   }
@@ -221,7 +221,7 @@ class ArticlePopularityService {
       }
       return null;
     } catch (e) {
-      print('Popülerlik alma hatası: $e');
+      debugPrint('Popülerlik alma hatası: $e');
       return null;
     }
   }
@@ -260,7 +260,7 @@ class ArticlePopularityService {
 
       return allPopularity.take(limit).toList();
     } catch (e) {
-      print('Popüler makaleler alma hatası: $e');
+      debugPrint('Popüler makaleler alma hatası: $e');
       return [];
     }
   }
@@ -285,7 +285,7 @@ class ArticlePopularityService {
 
       return allPopularity.take(limit).toList();
     } catch (e) {
-      print('Trend makaleler alma hatası: $e');
+      debugPrint('Trend makaleler alma hatası: $e');
       return [];
     }
   }
@@ -352,7 +352,7 @@ class ArticlePopularityService {
 
       return keysToDelete.length;
     } catch (e) {
-      print('Eski veri temizleme hatası: $e');
+      debugPrint('Eski veri temizleme hatası: $e');
       return 0;
     }
   }
@@ -363,7 +363,7 @@ class ArticlePopularityService {
       await _box!.clear();
       return true;
     } catch (e) {
-      print('Veri temizleme hatası: $e');
+      debugPrint('Veri temizleme hatası: $e');
       return false;
     }
   }

@@ -71,7 +71,7 @@ class CategoryOrderNotifier extends StateNotifier<CategoryOrderState> {
         state = CategoryOrderState.initial;
       }
     } catch (e) {
-      print('⚠️ Kategori sıralaması yüklenirken hata: $e');
+      debugPrint('⚠️ Kategori sıralaması yüklenirken hata: $e');
       state = CategoryOrderState.initial;
     }
   }
@@ -82,7 +82,7 @@ class CategoryOrderNotifier extends StateNotifier<CategoryOrderState> {
       final box = HiveService.categoryOrderBox;
       await box.put('categoryOrder', state.categoryIds);
     } catch (e) {
-      print('⚠️ Kategori sıralaması kaydedilirken hata: $e');
+      debugPrint('⚠️ Kategori sıralaması kaydedilirken hata: $e');
     }
   }
 

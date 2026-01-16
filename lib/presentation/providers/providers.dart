@@ -60,48 +60,48 @@ final userProfileRepositoryProvider = Provider<UserProfileRepository>((ref) {
 /// Uygulama başlangıcında çağrılacak initialization provider
 /// Cache'den hızlı göster, arka planda güncelle
 final appInitializationProvider = FutureProvider<void>((ref) async {
-  print('🔄 App initialization basliyor...');
+  debugPrint('🔄 App initialization basliyor...');
   
   // Minimum splash süresi (0.3 saniye) - çok hızlı açılış
   final minSplashDuration = Future.delayed(const Duration(milliseconds: 300));
   
   try {
     // ÖNCE: Cache'den hızlıca yükle (refresh: false)
-    print('⚡ Cache\'den hızlı yükleme...');
+    debugPrint('⚡ Cache\'den hızlı yükleme...');
     try {
       await ref.read(newsProvider.notifier).loadAllArticles(refresh: false);
-      print('✅ Cache\'den haberler yüklendi');
+      debugPrint('✅ Cache\'den haberler yüklendi');
     } catch (e) {
-      print('⚠️ Cache yükleme hatası: $e');
+      debugPrint('⚠️ Cache yükleme hatası: $e');
     }
     
     // Minimum splash süresini bekle
     await minSplashDuration;
     
     // SONRA: Arka planda güncelle (refresh: true) - timeout ile
-    print('🔄 Arka planda güncelleme başlatılıyor...');
+    debugPrint('🔄 Arka planda güncelleme başlatılıyor...');
     Future.microtask(() async {
       try {
         await ref.read(newsProvider.notifier)
             .loadAllArticles(refresh: true)
             .timeout(const Duration(seconds: 15));
-        print('✅ Arka plan güncelleme tamamlandı');
+        debugPrint('✅ Arka plan güncelleme tamamlandı');
       } catch (e) {
         if (e.toString().contains('timeout') || e.toString().contains('Timeout')) {
-          print('⚠️ Arka plan güncelleme timeout (15 saniye)');
+          debugPrint('⚠️ Arka plan güncelleme timeout (15 saniye)');
         } else {
-          print('⚠️ Arka plan güncelleme hatası: $e');
+          debugPrint('⚠️ Arka plan güncelleme hatası: $e');
         }
       }
     });
     
   } catch (e) {
-    print('⚠️ App initialization hatasi: $e');
+    debugPrint('⚠️ App initialization hatasi: $e');
     // Hata durumunda minimum splash süresini bekle
     await minSplashDuration;
   }
   
-  print('✅ App initialization tamamlandi');
+  debugPrint('✅ App initialization tamamlandi');
 });
 
 /// App lifecycle provider - uygulama yaşam döngüsünü izler

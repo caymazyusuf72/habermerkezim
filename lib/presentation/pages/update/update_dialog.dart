@@ -233,7 +233,7 @@ class UpdateDialog extends StatelessWidget {
           break;
       }
     } catch (e) {
-      print('⚠️ Güncelleme hatası: $e');
+      debugPrint('⚠️ Güncelleme hatası: $e');
       _showError(context, 'Güncelleme sırasında bir hata oluştu.');
     }
   }

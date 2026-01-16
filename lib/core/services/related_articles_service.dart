@@ -88,7 +88,7 @@ class RelatedArticlesService {
           .map((scored) => scored.article)
           .toList();
     } catch (e) {
-      print('💥 İlgili haber bulma hatası: $e');
+      debugPrint('💥 İlgili haber bulma hatası: $e');
       return [];
     }
   }

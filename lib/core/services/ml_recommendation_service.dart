@@ -53,7 +53,7 @@ class MLRecommendationService {
 
       return diversifiedArticles.take(limit).map((sa) => sa.article).toList();
     } catch (e) {
-      print('💥 ML öneri hesaplama hatası: $e');
+      debugPrint('💥 ML öneri hesaplama hatası: $e');
       // Fallback to basic recommendations
       return await RecommendationService.getRecommendedArticles(limit: limit);
     }
