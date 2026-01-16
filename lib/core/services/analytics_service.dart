@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../domain/entities/reading_analytics.dart';
 
+import 'package:flutter/foundation.dart';
 /// Okuma analytics servisi
 class AnalyticsService {
   static const String _boxName = 'reading_analytics';

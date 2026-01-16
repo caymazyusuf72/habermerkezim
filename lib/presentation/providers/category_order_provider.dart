@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart' hide Category;
 
 import '../../domain/entities/category.dart';
 import '../../core/services/hive_service.dart';

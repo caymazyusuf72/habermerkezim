@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/error/exceptions.dart';
 import '../../models/article_model.dart';
 
+import 'package:flutter/foundation.dart';
 /// Haber verilerini yerel olarak saklayan data source
 /// Hive database kullanır, offline mode desteği sağlar
 abstract class NewsLocalDataSource {

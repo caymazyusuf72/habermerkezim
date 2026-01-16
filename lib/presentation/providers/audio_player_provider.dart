@@ -3,6 +3,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:haber_merkezi/core/services/audio_player_service.dart';
 import 'package:haber_merkezi/core/services/podcast_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// Audio Player State
 class AudioPlayerState {
   final bool isPlaying;

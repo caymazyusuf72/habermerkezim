@@ -4,6 +4,7 @@ import '../../core/services/hive_service.dart';
 import '../../core/services/analytics_service.dart';
 import 'recommendation_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// ML tabanlı gelişmiş öneri servisi
 /// Kullanıcı davranış analizi, içerik bazlı filtreleme ve hibrit öneri sistemi
 class MLRecommendationService {

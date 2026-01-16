@@ -11,6 +11,7 @@ import '../../domain/repositories/news_repository.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 import 'news_provider.dart';
 
+import 'package:flutter/foundation.dart';
 // Export specific providers only
 export 'news_provider.dart';
 export 'theme_provider.dart';

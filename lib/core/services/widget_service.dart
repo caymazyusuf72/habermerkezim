@@ -2,6 +2,7 @@ import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/article.dart';
 
+import 'package:flutter/foundation.dart';
 /// Android widget servisi - widget verilerini günceller
 class WidgetService {
   static const String _widgetName = 'NewsWidget';

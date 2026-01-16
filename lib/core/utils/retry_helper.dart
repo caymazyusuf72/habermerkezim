@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 /// Retry helper - işlemleri otomatik olarak tekrar dener
 class RetryHelper {
   /// Exponential backoff ile retry yapar

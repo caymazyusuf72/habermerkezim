@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/analytics_service.dart';
 import '../../domain/entities/reading_analytics.dart';
 
+import 'package:flutter/foundation.dart';
 /// Analytics state
 class AnalyticsState {
   final ReadingAnalytics todayAnalytics;

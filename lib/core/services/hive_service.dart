@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../data/models/article_model.dart';
 import '../../data/models/user_profile_model.dart';
 
+import 'package:flutter/foundation.dart';
 /// Hive database servis sınıfı
 /// Uygulama başlangıcında Hive'ı initialize eder ve box'ları açar
 class HiveService {

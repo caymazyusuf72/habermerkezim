@@ -9,6 +9,7 @@ import '../../core/services/hive_service.dart';
 import '../../core/utils/error_message_helper.dart';
 import 'providers.dart';
 
+import 'package:flutter/foundation.dart';
 /// News State - haber listesinin durumunu tutar
 class NewsState {
   final List<Article> articles;

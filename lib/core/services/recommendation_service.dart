@@ -2,6 +2,7 @@ import '../../domain/entities/article.dart';
 import '../../core/services/hive_service.dart';
 import '../../core/services/analytics_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// Öneri servisi - kullanıcı davranış analizi, öneri algoritması
 class RecommendationService {
   /// Kullanıcı için önerilen haberleri getir

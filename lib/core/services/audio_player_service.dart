@@ -1,6 +1,7 @@
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// Audio Player Service - Podcast ve ses haberleri için
 class AudioPlayerService {
   static final AudioPlayerService _instance = AudioPlayerService._internal();

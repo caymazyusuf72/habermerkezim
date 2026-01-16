@@ -7,6 +7,7 @@ import 'hive_service.dart';
 import '../error/exceptions.dart';
 import '../utils/retry_helper.dart';
 
+import 'package:flutter/foundation.dart';
 /// Web scraping ile tam makale içeriği çeken servis
 /// HTML parse ederek ana içeriği çıkarır ve cache'ler
 class ArticleContentService {

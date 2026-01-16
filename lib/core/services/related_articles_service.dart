@@ -1,6 +1,7 @@
 import '../../domain/entities/article.dart';
 import '../../core/services/hive_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// İlgili haberler servisi
 /// Benzer başlık/kelime bazlı öneriler, aynı kategori/kaynak haberler
 class RelatedArticlesService {

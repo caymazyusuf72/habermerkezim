@@ -1,5 +1,6 @@
 import 'package:flutter_tts/flutter_tts.dart';
 
+import 'package:flutter/foundation.dart';
 /// Text-to-Speech servisi
 class TextToSpeechService {
   static final TextToSpeechService _instance = TextToSpeechService._internal();

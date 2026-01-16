@@ -2,6 +2,7 @@ import '../../domain/entities/article.dart';
 import '../../core/services/hive_service.dart';
 import '../../core/services/analytics_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// Trending servisi - trend hesaplama (okunma/paylaşım sayısı, zaman bazlı)
 class TrendingService {
   /// Trend haberleri hesapla

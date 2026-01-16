@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import '../constants/api_endpoints.dart';
 import 'hive_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// RSS kaynaklarının sağlığını kontrol eden servis
 /// Periyodik olarak feed'leri test eder ve başarısız olanları takip eder
 ///

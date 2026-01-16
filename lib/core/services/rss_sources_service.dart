@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../domain/entities/rss_source.dart';
 
+import 'package:flutter/foundation.dart';
 /// RSS kaynakları yönetim servisi
 class RssSourcesService {
   static const String _boxName = 'rss_sources';

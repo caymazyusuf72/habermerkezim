@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'package:flutter/foundation.dart';
 /// Görsel önbellek ve optimizasyon servisi
 ///
 /// Özellikler:

@@ -3,6 +3,7 @@ import 'package:xml/xml.dart';
 import 'package:haber_merkezi/domain/entities/article.dart';
 import 'package:haber_merkezi/core/services/audio_player_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// Podcast RSS feed'lerini yönetmek için servis
 class PodcastService {
   static final PodcastService _instance = PodcastService._internal();

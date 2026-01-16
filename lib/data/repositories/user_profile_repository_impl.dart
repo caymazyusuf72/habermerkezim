@@ -5,6 +5,7 @@ import '../../domain/entities/reading_analytics.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 import '../datasources/local/user_profile_local_data_source.dart';
 
+import 'package:flutter/foundation.dart';
 /// UserProfileRepository interface'inin implementasyonu
 /// Analytics service'ten veri çekerek istatistikleri hesaplar
 class UserProfileRepositoryImpl implements UserProfileRepository {

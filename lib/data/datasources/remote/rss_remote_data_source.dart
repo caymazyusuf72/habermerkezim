@@ -7,6 +7,7 @@ import '../../../core/utils/retry_helper.dart';
 import '../../../core/services/rss_health_check_service.dart';
 import '../../models/article_model.dart';
 
+import 'package:flutter/foundation.dart';
 /// RSS feed'lerini çeken remote data source
 /// HTTP client ile RSS XML'lerini alır ve ArticleModel'lere parse eder
 abstract class RssRemoteDataSource {

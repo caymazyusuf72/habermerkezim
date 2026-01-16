@@ -4,6 +4,7 @@ import '../../../core/services/hive_service.dart';
 import '../../../domain/entities/user_profile.dart';
 import '../../models/user_profile_model.dart';
 
+import 'package:flutter/foundation.dart';
 /// Kullanıcı profil verilerini yerel olarak saklayan data source
 /// Hive database kullanır
 abstract class UserProfileLocalDataSource {

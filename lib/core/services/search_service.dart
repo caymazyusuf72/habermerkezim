@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import '../../domain/entities/article.dart';
 import 'hive_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// Gelişmiş arama servisi
 /// Tam metin arama, autocomplete, popüler aramalar ve arama skorlama sistemi
 class SearchService {

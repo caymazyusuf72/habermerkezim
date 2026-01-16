@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import '../../domain/entities/article.dart';
 
+import 'package:flutter/foundation.dart';
 part 'article_model.g.dart';
 
 /// Article entity'sinin data layer implementasyonu
