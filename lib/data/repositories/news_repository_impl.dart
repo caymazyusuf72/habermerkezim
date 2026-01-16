@@ -22,34 +22,46 @@ class NewsRepositoryImpl implements NewsRepository {
   @override
   Future<List<Article>> getArticlesByCategory(String category) async {
     try {
-      print('🔄 getArticlesByCategory başladı: $category');
+      print('🔄 getArticlesByCategory başladı: $category (Cache-First)');
+      
+      // 1. ÖNCE CACHE'DEN AL (Hızlı başlangıç)
+      try {
+        final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
+        if (cachedArticles.isNotEmpty) {
+          print('✅ Cache\'den $category kategorisi için ${cachedArticles.length} haber alındı (HIZLI YÜKLEME)');
+          final entities = cachedArticles.map((model) => model.toEntity()).toList();
+          final sortedEntities = _sortArticlesByImage(entities);
+          
+          // 2. ARKA PLANDA YENİLE (non-blocking)
+          final connectivityResult = await connectivity.checkConnectivity();
+          final hasConnection = connectivityResult != ConnectivityResult.none;
+          
+          if (hasConnection) {
+            print('🔄 [$category] Arka planda yenileme başlatılıyor...');
+            _refreshCategoryInBackground(category);
+          }
+          
+          return sortedEntities;
+        }
+      } catch (cacheError) {
+        print('⚠️ Cache okuma hatası: $cacheError');
+      }
+      
+      // 3. CACHE YOKSA NETWORK'TEN ÇEK
+      print('📡 [$category] Cache boş, network\'ten çekiliyor...');
       final connectivityResult = await connectivity.checkConnectivity();
       final hasConnection = connectivityResult != ConnectivityResult.none;
       print('🌐 Network durumu: $hasConnection');
 
       if (hasConnection) {
         try {
-          // Önce remote'dan çekmeyi dene
           print('🔄 Remote\'dan $category kategorisi için haberler çekiliyor...');
           final articles = await remoteDataSource.getArticlesByCategory(category);
           print('✅ Remote\'dan ${articles.length} makale alındı');
           
           if (articles.isEmpty) {
-            print('⚠️ Remote\'dan haber gelmedi, cache deneniyor...');
-            // Remote boş ise cache'den dene
-            try {
-              final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
-              if (cachedArticles.isEmpty) {
-                print('⚠️ Cache de boş, demo data döndürülüyor');
-                return _createDemoArticlesByCategory(category);
-              }
-              final entities = cachedArticles.map((model) => model.toEntity()).toList();
-              print('✅ Cache\'den $category kategorisi için ${entities.length} haber alındı');
-              return _sortArticlesByImage(entities);
-            } catch (cacheError) {
-              print('❌ Cache hatası: $cacheError');
-              return _createDemoArticlesByCategory(category);
-            }
+            print('⚠️ Remote\'dan haber gelmedi, demo data döndürülüyor');
+            return _createDemoArticlesByCategory(category);
           }
           
           // Cache articles locally
@@ -61,51 +73,62 @@ class NewsRepositoryImpl implements NewsRepository {
           print('✅ $category kategorisi için ${entities.length} haber alındı');
           return _sortArticlesByImage(entities);
         } catch (e) {
-          print('⚠️ Remote request hatası: $e');
-          print('🔄 Cache\'den veri deneniyor...');
-          // Fall back to cached data if network fails
-          try {
-            final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
-            if (cachedArticles.isEmpty) {
-              print('⚠️ Cache de boş, demo data döndürülüyor');
-              return _createDemoArticlesByCategory(category);
-            }
-            final entities = cachedArticles.map((model) => model.toEntity()).toList();
-            print('✅ Cache\'den $category kategorisi için ${entities.length} haber alındı');
-            return _sortArticlesByImage(entities);
-          } catch (cacheError) {
-            print('❌ Cache hatası: $cacheError, demo data döndürülüyor');
-            return _createDemoArticlesByCategory(category);
-          }
-        }
-      } else {
-        // Offline - get from cache
-        print('📱 Offline mod - cache\'den veri alınıyor');
-        try {
-          final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
-          if (cachedArticles.isEmpty) {
-            print('⚠️ Cache boş, demo data döndürülüyor');
-            return _createDemoArticlesByCategory(category);
-          }
-          final entities = cachedArticles.map((model) => model.toEntity()).toList();
-          print('✅ Cache\'den $category kategorisi için ${entities.length} haber alındı');
-          return _sortArticlesByImage(entities);
-        } catch (cacheError) {
-          print('❌ Offline ve cache hatası: $cacheError, demo data döndürülüyor');
+          print('⚠️ Remote request hatası: $e, demo data döndürülüyor');
           return _createDemoArticlesByCategory(category);
         }
+      } else {
+        // Offline - demo data
+        print('📱 Offline mod - demo data döndürülüyor');
+        return _createDemoArticlesByCategory(category);
       }
     } catch (e) {
       print('💥 getArticlesByCategory HATA: $e');
-      // Son çare olarak demo data döndür
       return _createDemoArticlesByCategory(category);
+    }
+  }
+  
+  /// Kategori için arka planda yenileme (non-blocking)
+  void _refreshCategoryInBackground(String category) async {
+    try {
+      print('🔄 [Background] $category kategorisini yeniliyorum...');
+      final articles = await remoteDataSource.getArticlesByCategory(category);
+      await localDataSource.cacheArticles(articles);
+      print('✅ [Background] $category: ${articles.length} makale cache\'e kaydedildi');
+    } catch (e) {
+      print('⚠️ [Background] $category yenileme hatası (sessizce başarısız): $e');
     }
   }
 
   @override
   Future<List<Article>> getAllArticles() async {
     try {
-      print('🔄 getAllArticles başladı');
+      print('🔄 getAllArticles başladı (Cache-First stratejisi)');
+      
+      // 1. ÖNCE CACHE'DEN AL (Hızlı başlangıç)
+      try {
+        final cachedArticles = await localDataSource.getCachedArticles();
+        if (cachedArticles.isNotEmpty) {
+          print('✅ Cache\'den ${cachedArticles.length} makale alındı (HIZLI YÜKLEME)');
+          final entities = cachedArticles.map((model) => model.toEntity()).toList();
+          final sortedEntities = _sortArticlesByImage(entities);
+          
+          // 2. ARKA PLANDA YENİLE (non-blocking)
+          final connectivityResult = await connectivity.checkConnectivity();
+          final hasConnection = connectivityResult != ConnectivityResult.none;
+          
+          if (hasConnection) {
+            print('🔄 Arka planda yenileme başlatılıyor...');
+            _refreshInBackground();
+          }
+          
+          return sortedEntities;
+        }
+      } catch (cacheError) {
+        print('⚠️ Cache okuma hatası: $cacheError');
+      }
+      
+      // 3. CACHE YOKSA NETWORK'TEN ÇEK
+      print('📡 Cache boş, network\'ten çekiliyor...');
       final connectivityResult = await connectivity.checkConnectivity();
       final hasConnection = connectivityResult != ConnectivityResult.none;
       print('🌐 Network durumu: $hasConnection ($connectivityResult)');
@@ -128,36 +151,28 @@ class NewsRepositoryImpl implements NewsRepository {
           return sortedEntities;
         } catch (e) {
           print('❌ Remote request hatası: $e');
-          print('🔄 Cache\'den veri deneniyor...');
-          // Fall back to cached data if network fails
-          try {
-            final cachedArticles = await localDataSource.getCachedArticles();
-            print('✅ Cache\'den ${cachedArticles.length} makale alındı');
-            final entities = cachedArticles.map((model) => model.toEntity()).toList();
-            return _sortArticlesByImage(entities);
-          } catch (cacheError) {
-            print('❌ Cache de boş, demo data döndürülüyor');
-            // Cache de boş ise demo data döndür
-            return _createDemoArticles();
-          }
-        }
-      } else {
-        print('📱 Offline mod - cache\'den veri alınıyor');
-        // Offline - get from cache
-        try {
-          final cachedArticles = await localDataSource.getCachedArticles();
-          print('✅ Cache\'den ${cachedArticles.length} makale alındı');
-          final entities = cachedArticles.map((model) => model.toEntity()).toList();
-          return _sortArticlesByImage(entities);
-        } catch (cacheError) {
-          print('❌ Offline ve cache boş, demo data döndürülüyor');
-          // Cache boş ise demo data döndür
+          print('❌ Cache de boş, demo data döndürülüyor');
           return _createDemoArticles();
         }
+      } else {
+        print('📱 Offline mod - demo data döndürülüyor');
+        return _createDemoArticles();
       }
     } catch (e) {
       print('💥 getAllArticles HATA: $e');
       throw Exception('Failed to get all articles: $e');
+    }
+  }
+  
+  /// Arka planda yenileme (non-blocking)
+  void _refreshInBackground() async {
+    try {
+      print('🔄 [Background] Haberleri yeniliyorum...');
+      final articles = await remoteDataSource.getAllArticles();
+      await localDataSource.cacheArticles(articles);
+      print('✅ [Background] ${articles.length} makale cache\'e kaydedildi');
+    } catch (e) {
+      print('⚠️ [Background] Yenileme hatası (sessizce başarısız): $e');
     }
   }
 

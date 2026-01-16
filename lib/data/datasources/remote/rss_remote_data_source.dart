@@ -71,43 +71,44 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       
       final List<ArticleModel> allArticles = [];
       
-      // Kategoriye ait tüm feed'leri SIRALI olarak çek (performans için)
-      for (final feedEntry in categoryFeeds) {
-        try {
-          final feedUrl = feedEntry.value;
-          final feedKey = feedEntry.key;
-          
-          // Retry mekanizması ile feed çek
-          final articles = await RetryHelper.retryOrNull(
-            operation: () async {
-              print('📡 URL [$feedKey]: $feedUrl');
-              final response = await _dio.get(feedUrl);
-              print('📊 Response [$feedKey]: ${response.statusCode}');
-              
-              if (response.statusCode != 200) {
-                throw ServerException(
-                  'HTTP Hatası: ${response.statusCode}',
-                  statusCode: response.statusCode,
-                );
-              }
-              
-              final xmlString = response.data as String;
-              print('📝 Parsing XML [$feedKey]...');
-              final parsedArticles = await _parseRssXml(xmlString, category, feedKey);
-              print('✅ $feedKey: ${parsedArticles.length} makale');
-              return parsedArticles;
-            },
-            maxAttempts: 3,
-            initialDelay: const Duration(seconds: 1),
-            maxDelay: const Duration(seconds: 5),
-          );
-          
-          if (articles != null && articles.isNotEmpty) {
-            allArticles.addAll(articles);
-          }
-        } catch (e) {
-          // Bir feed başarısız olursa diğerlerine devam et
+      // Kategoriye ait tüm feed'leri PARALEL olarak çek (performans optimizasyonu)
+      final feedFutures = categoryFeeds.map((feedEntry) {
+        return RetryHelper.retryOrNull(
+          operation: () async {
+            final feedUrl = feedEntry.value;
+            final feedKey = feedEntry.key;
+            print('📡 URL [$feedKey]: $feedUrl');
+            final response = await _dio.get(feedUrl);
+            print('📊 Response [$feedKey]: ${response.statusCode}');
+            
+            if (response.statusCode != 200) {
+              throw ServerException(
+                'HTTP Hatası: ${response.statusCode}',
+                statusCode: response.statusCode,
+              );
+            }
+            
+            final xmlString = response.data as String;
+            print('📝 Parsing XML [$feedKey]...');
+            final parsedArticles = await _parseRssXml(xmlString, category, feedEntry.key);
+            print('✅ ${feedEntry.key}: ${parsedArticles.length} makale');
+            return parsedArticles;
+          },
+          maxAttempts: 3,
+          initialDelay: const Duration(seconds: 1),
+          maxDelay: const Duration(seconds: 5),
+        ).catchError((e) {
           print('⚠️ Feed hatası [${feedEntry.key}]: $e');
+          return null;
+        });
+      }).toList();
+      
+      print('⚡ ${feedFutures.length} feed paralel olarak yükleniyor...');
+      final feedResults = await Future.wait(feedFutures);
+      
+      for (final articles in feedResults) {
+        if (articles != null && articles.isNotEmpty) {
+          allArticles.addAll(articles);
         }
       }
       
@@ -183,24 +184,31 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     // Sadece ana kategorileri al (alt feed'leri değil)
     final mainCategories = _getMainCategories();
     
-    print('🔄 Toplam ${mainCategories.length} kategori yüklenecek...');
+    print('🔄 Toplam ${mainCategories.length} kategori PARALEL yüklenecek...');
     
-    // Tüm kategorileri SIRALI olarak yükle (performans için)
-    int loadedCount = 0;
-    for (final category in mainCategories) {
-      try {
-        loadedCount++;
-        print('📂 [$loadedCount/${mainCategories.length}] Kategori yükleniyor: $category');
-        final articles = await getArticlesByCategory(category);
-        allArticles.addAll(articles);
-        print('✅ $category: ${articles.length} makale eklendi (Toplam: ${allArticles.length})');
-      } catch (e) {
-        // Tek kategori başarısız olursa devam et
+    // Tüm kategorileri PARALEL olarak yükle (performans optimizasyonu)
+    final futures = mainCategories.map((category) {
+      return getArticlesByCategory(category).catchError((e) {
         print('⚠️ [$category] RSS feed hatası: $e');
+        return <ArticleModel>[];
+      });
+    }).toList();
+    
+    print('⚡ ${futures.length} kategori paralel olarak yükleniyor...');
+    final results = await Future.wait(futures);
+    
+    // Sonuçları birleştir
+    int loadedCount = 0;
+    for (int i = 0; i < results.length; i++) {
+      final articles = results[i];
+      if (articles.isNotEmpty) {
+        loadedCount++;
+        allArticles.addAll(articles);
+        print('✅ ${mainCategories[i]}: ${articles.length} makale eklendi (Toplam: ${allArticles.length})');
       }
     }
     
-    print('🎉 Yükleme tamamlandı: ${allArticles.length} makale');
+    print('🎉 Paralel yükleme tamamlandı: ${allArticles.length} makale (${loadedCount}/${mainCategories.length} kategori başarılı)');
     
     if (allArticles.isEmpty) {
       throw const RssParseException('Hiç haber alınamadı');

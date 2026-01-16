@@ -89,11 +89,15 @@ class NewsNotifier extends StateNotifier<NewsState> {
         currentPage: 1,
       );
       
-      // Widget'ı güncelle (await ile bekliyoruz)
-      await WidgetService.updateWidget(allArticles);
+      // Widget'ı güncelle (NON-BLOCKING - await kullanma)
+      WidgetService.updateWidget(allArticles).catchError((e) {
+        print('⚠️ Widget update hatası (sessizce başarısız): $e');
+      });
       
-      // Breaking news kontrolü ve bildirim gönderimi
-      _checkAndNotifyBreakingNews(allArticles);
+      // Breaking news kontrolü (NON-BLOCKING - arka planda)
+      _checkAndNotifyBreakingNews(allArticles).catchError((e) {
+        print('⚠️ Breaking news kontrolü hatası (sessizce başarısız): $e');
+      });
     } catch (e, stackTrace) {
       print('❌ Haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(

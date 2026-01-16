@@ -74,13 +74,14 @@ class _HomePageState extends ConsumerState<HomePage>
     // Tab değişikliklerini dinle
     _tabController!.addListener(_onTabChanged);
     
-    // İlk kategoriyi yükle
+    // İlk kategoriyi yükle (LAZY LOADING - sadece aktif kategori)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && _tabController != null) {
         final selectedCategory = categories[_tabController!.index];
+        print('📱 İlk kategori yükleniyor: ${selectedCategory.id}');
         ref.read(newsProvider.notifier).loadArticlesByCategory(
           selectedCategory.id,
-          refresh: true
+          refresh: false // Cache'den al, arka planda yenile
         );
       }
     });

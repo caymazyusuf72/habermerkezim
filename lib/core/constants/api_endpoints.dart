@@ -453,11 +453,11 @@ class ApiEndpoints {
     'otomobil_arabam': 'directions_car',
   };
 
-  /// Network timeout değerleri - Android 11 performans optimizasyonu
+  /// Network timeout değerleri - Performans optimizasyonu (paralel yükleme için kısaltıldı)
   /// Adaptive timeout: Bağlantı kalitesine göre ayarlanabilir
-  static const int connectTimeoutMs = 10000; // 10 saniye (güvenilir bağlantı için artırıldı)
-  static const int receiveTimeoutMs = 15000; // 15 saniye (büyük feed'ler için artırıldı)
-  static const int sendTimeoutMs = 8000; // 8 saniye (güvenilir gönderim için artırıldı)
+  static const int connectTimeoutMs = 5000; // 5 saniye (paralel yükleme için optimize edildi)
+  static const int receiveTimeoutMs = 8000; // 8 saniye (paralel yükleme için optimize edildi)
+  static const int sendTimeoutMs = 5000; // 5 saniye (paralel yükleme için optimize edildi)
   
   /// Hızlı timeout değerleri - İlk deneme için
   static const int fastConnectTimeoutMs = 5000; // 5 saniye
