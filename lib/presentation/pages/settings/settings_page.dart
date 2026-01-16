@@ -101,7 +101,7 @@ class SettingsPage extends ConsumerWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -131,7 +131,7 @@ class SettingsPage extends ConsumerWidget {
               'Renk teması seçin',
               style: TextStyle(
                 fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             initiallyExpanded: false,
@@ -216,7 +216,7 @@ class SettingsPage extends ConsumerWidget {
                   data: SliderTheme.of(context).copyWith(
                     activeTrackColor: AppTheme.primaryBlue,
                     thumbColor: AppTheme.primaryBlue,
-                    overlayColor: AppTheme.primaryBlue.withOpacity(0.2),
+                    overlayColor: AppTheme.primaryBlue.withValues(alpha: 0.2),
                     valueIndicatorColor: AppTheme.primaryBlue,
                     valueIndicatorTextStyle: const TextStyle(
                       color: Colors.white,
@@ -293,12 +293,12 @@ class SettingsPage extends ConsumerWidget {
         decoration: BoxDecoration(
           color: isSelected
             ? AppTheme.primaryBlue
-            : Theme.of(context).colorScheme.surfaceVariant,
+            : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
               ? AppTheme.primaryBlue
-              : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+              : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           ),
         ),
         child: Text(
@@ -331,7 +331,7 @@ class SettingsPage extends ConsumerWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -371,7 +371,7 @@ class SettingsPage extends ConsumerWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -381,7 +381,7 @@ class SettingsPage extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
+                color: Colors.purple.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
@@ -407,7 +407,7 @@ class SettingsPage extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
+                color: Colors.blue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
@@ -433,7 +433,7 @@ class SettingsPage extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
@@ -465,7 +465,7 @@ class SettingsPage extends ConsumerWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -475,7 +475,7 @@ class SettingsPage extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
+                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
@@ -501,7 +501,7 @@ class SettingsPage extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
@@ -530,7 +530,7 @@ class SettingsPage extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
+                color: Colors.orange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
@@ -559,7 +559,7 @@ class SettingsPage extends ConsumerWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -569,7 +569,7 @@ class SettingsPage extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
+                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -595,8 +595,8 @@ class SettingsPage extends ConsumerWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: notificationState.permissionsGranted
-                    ? Colors.blue.withOpacity(0.1)
-                    : Colors.orange.withOpacity(0.1),
+                    ? Colors.blue.withValues(alpha: 0.1)
+                    : Colors.orange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -631,8 +631,8 @@ class SettingsPage extends ConsumerWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: settings.dailyNewsEnabled
-                    ? AppTheme.primaryBlue.withOpacity(0.1)
-                    : Colors.grey.withOpacity(0.1),
+                    ? AppTheme.primaryBlue.withValues(alpha: 0.1)
+                    : Colors.grey.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -664,8 +664,8 @@ class SettingsPage extends ConsumerWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: settings.readingGoalEnabled
-                    ? Colors.green.withOpacity(0.1)
-                    : Colors.grey.withOpacity(0.1),
+                    ? Colors.green.withValues(alpha: 0.1)
+                    : Colors.grey.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -697,8 +697,8 @@ class SettingsPage extends ConsumerWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: settings.breakingNewsEnabled
-                    ? Colors.red.withOpacity(0.1)
-                    : Colors.grey.withOpacity(0.1),
+                    ? Colors.red.withValues(alpha: 0.1)
+                    : Colors.grey.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -735,7 +735,7 @@ class SettingsPage extends ConsumerWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -772,10 +772,10 @@ class SettingsPage extends ConsumerWidget {
   Widget _buildDebugSection(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
+        color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.orange.withOpacity(0.3),
+          color: Colors.orange.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -957,7 +957,7 @@ class SettingsPage extends ConsumerWidget {
                       Text(
                         'Versiyon 1.0.0',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -1065,7 +1065,7 @@ class SettingsPage extends ConsumerWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: themeColor.withOpacity(0.2),
+          color: themeColor.withValues(alpha: 0.2),
           shape: BoxShape.circle,
           border: Border.all(
             color: isSelected ? themeColor : Colors.transparent,

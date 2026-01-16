@@ -157,16 +157,16 @@ class _PrimaryButtonState extends State<PrimaryButton>
                     end: Alignment.bottomRight,
                     colors: [
                       primaryColor,
-                      primaryColor.withOpacity(0.8),
+                      primaryColor.withValues(alpha: 0.8),
                     ],
                   ),
-            color: isDisabled ? theme.colorScheme.onSurface.withOpacity(0.12) : null,
+            color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.12) : null,
             borderRadius: BorderRadius.circular(12),
             boxShadow: isDisabled
                 ? null
                 : [
                     BoxShadow(
-                      color: primaryColor.withOpacity(_isPressed ? 0.4 : 0.3),
+                      color: primaryColor.withValues(alpha: _isPressed ? 0.4 : 0.3),
                       blurRadius: _isPressed ? 12 : 8,
                       offset: Offset(0, _isPressed ? 6 : 4),
                       spreadRadius: _isPressed ? 1 : 0,
@@ -184,7 +184,7 @@ class _PrimaryButtonState extends State<PrimaryButton>
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isDisabled ? theme.colorScheme.onSurface.withOpacity(0.38) : Colors.white,
+                      isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : Colors.white,
                     ),
                   ),
                 )
@@ -192,7 +192,7 @@ class _PrimaryButtonState extends State<PrimaryButton>
                 Icon(
                   widget.icon,
                   size: _getIconSize(),
-                  color: isDisabled ? theme.colorScheme.onSurface.withOpacity(0.38) : Colors.white,
+                  color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : Colors.white,
                 ),
               if ((widget.icon != null || widget.isLoading) && widget.text.isNotEmpty)
                 const SizedBox(width: 8),
@@ -201,7 +201,7 @@ class _PrimaryButtonState extends State<PrimaryButton>
                 style: TextStyle(
                   fontSize: _getFontSize(),
                   fontWeight: FontWeight.w600,
-                  color: isDisabled ? theme.colorScheme.onSurface.withOpacity(0.38) : Colors.white,
+                  color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : Colors.white,
                   letterSpacing: 0.3,
                 ),
               ),
@@ -341,13 +341,13 @@ class _SecondaryButtonState extends State<SecondaryButton>
             padding: _getPadding(),
             decoration: BoxDecoration(
               color: _isHovered || _isPressed
-                  ? primaryColor.withOpacity(0.08)
+                  ? primaryColor.withValues(alpha: 0.08)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isDisabled
-                    ? theme.colorScheme.onSurface.withOpacity(0.12)
-                    : primaryColor.withOpacity(_isHovered ? 1.0 : 0.6),
+                    ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
+                    : primaryColor.withValues(alpha: _isHovered ? 1.0 : 0.6),
                 width: _isHovered || _isPressed ? 2 : 1.5,
               ),
             ),
@@ -362,7 +362,7 @@ class _SecondaryButtonState extends State<SecondaryButton>
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        isDisabled ? theme.colorScheme.onSurface.withOpacity(0.38) : primaryColor,
+                        isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
                       ),
                     ),
                   )
@@ -370,7 +370,7 @@ class _SecondaryButtonState extends State<SecondaryButton>
                   Icon(
                     widget.icon,
                     size: _getIconSize(),
-                    color: isDisabled ? theme.colorScheme.onSurface.withOpacity(0.38) : primaryColor,
+                    color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
                   ),
                 if ((widget.icon != null || widget.isLoading) && widget.text.isNotEmpty)
                   const SizedBox(width: 8),
@@ -379,7 +379,7 @@ class _SecondaryButtonState extends State<SecondaryButton>
                   style: TextStyle(
                     fontSize: _getFontSize(),
                     fontWeight: FontWeight.w600,
-                    color: isDisabled ? theme.colorScheme.onSurface.withOpacity(0.38) : primaryColor,
+                    color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
                     letterSpacing: 0.3,
                   ),
                 ),
@@ -476,7 +476,7 @@ class _TertiaryButtonState extends State<TertiaryButton> {
           padding: _getPadding(),
           decoration: BoxDecoration(
             color: _isHovered || _isPressed
-                ? primaryColor.withOpacity(0.08)
+                ? primaryColor.withValues(alpha: 0.08)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
@@ -490,7 +490,7 @@ class _TertiaryButtonState extends State<TertiaryButton> {
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isDisabled ? theme.colorScheme.onSurface.withOpacity(0.38) : primaryColor,
+                      isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
                     ),
                   ),
                 )
@@ -498,7 +498,7 @@ class _TertiaryButtonState extends State<TertiaryButton> {
                 Icon(
                   widget.icon,
                   size: _getIconSize(),
-                  color: isDisabled ? theme.colorScheme.onSurface.withOpacity(0.38) : primaryColor,
+                  color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
                 ),
               if ((widget.icon != null || widget.isLoading) && widget.text.isNotEmpty)
                 const SizedBox(width: 6),
@@ -507,7 +507,7 @@ class _TertiaryButtonState extends State<TertiaryButton> {
                 style: TextStyle(
                   fontSize: _getFontSize(),
                   fontWeight: FontWeight.w600,
-                  color: isDisabled ? theme.colorScheme.onSurface.withOpacity(0.38) : primaryColor,
+                  color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
                   letterSpacing: 0.2,
                 ),
               ),
@@ -649,19 +649,19 @@ class _DangerButtonState extends State<DangerButton>
                     end: Alignment.bottomRight,
                     colors: [
                       dangerColor,
-                      dangerColor.withOpacity(0.85),
+                      dangerColor.withValues(alpha: 0.85),
                     ],
                   ),
             color: isDisabled
-                ? theme.colorScheme.onSurface.withOpacity(0.12)
+                ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
                 : widget.outlined
-                    ? (_isPressed ? dangerColor.withOpacity(0.08) : Colors.transparent)
+                    ? (_isPressed ? dangerColor.withValues(alpha: 0.08) : Colors.transparent)
                     : null,
             borderRadius: BorderRadius.circular(12),
             border: widget.outlined
                 ? Border.all(
                     color: isDisabled
-                        ? theme.colorScheme.onSurface.withOpacity(0.12)
+                        ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
                         : dangerColor,
                     width: 1.5,
                   )
@@ -670,7 +670,7 @@ class _DangerButtonState extends State<DangerButton>
                 ? null
                 : [
                     BoxShadow(
-                      color: dangerColor.withOpacity(_isPressed ? 0.4 : 0.3),
+                      color: dangerColor.withValues(alpha: _isPressed ? 0.4 : 0.3),
                       blurRadius: _isPressed ? 12 : 8,
                       offset: Offset(0, _isPressed ? 6 : 4),
                     ),
@@ -696,7 +696,7 @@ class _DangerButtonState extends State<DangerButton>
                   widget.icon,
                   size: _getIconSize(),
                   color: isDisabled
-                      ? theme.colorScheme.onSurface.withOpacity(0.38)
+                      ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
                       : widget.outlined
                           ? dangerColor
                           : Colors.white,
@@ -709,7 +709,7 @@ class _DangerButtonState extends State<DangerButton>
                   fontSize: _getFontSize(),
                   fontWeight: FontWeight.w600,
                   color: isDisabled
-                      ? theme.colorScheme.onSurface.withOpacity(0.38)
+                      ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
                       : widget.outlined
                           ? dangerColor
                           : Colors.white,
@@ -777,7 +777,7 @@ class _ModernIconButtonState extends State<ModernIconButton>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final iconColor = widget.color ?? theme.colorScheme.onSurface;
-    final bgColor = widget.backgroundColor ?? theme.colorScheme.surfaceVariant.withOpacity(0.5);
+    final bgColor = widget.backgroundColor ?? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
     final isDisabled = widget.onPressed == null;
 
     Widget button = AnimatedBuilder(
@@ -806,18 +806,18 @@ class _ModernIconButtonState extends State<ModernIconButton>
             width: widget.size,
             height: widget.size,
             decoration: BoxDecoration(
-              color: _isHovered ? bgColor.withOpacity(0.8) : bgColor,
+              color: _isHovered ? bgColor.withValues(alpha: 0.8) : bgColor,
               shape: BoxShape.circle,
               border: widget.showBorder
                   ? Border.all(
-                      color: theme.colorScheme.outline.withOpacity(0.2),
+                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
                       width: 1,
                     )
                   : null,
               boxShadow: _isHovered
                   ? [
                       BoxShadow(
-                        color: iconColor.withOpacity(0.15),
+                        color: iconColor.withValues(alpha: 0.15),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -827,7 +827,7 @@ class _ModernIconButtonState extends State<ModernIconButton>
             child: Icon(
               widget.icon,
               size: widget.size * 0.5,
-              color: isDisabled ? iconColor.withOpacity(0.38) : iconColor,
+              color: isDisabled ? iconColor.withValues(alpha: 0.38) : iconColor,
             ),
           ),
         ),
@@ -928,13 +928,13 @@ class _ModernFABState extends State<ModernFAB>
                 end: Alignment.bottomRight,
                 colors: [
                   bgColor,
-                  bgColor.withOpacity(0.85),
+                  bgColor.withValues(alpha: 0.85),
                 ],
               ),
               borderRadius: BorderRadius.circular(widget.extended ? 28 : 16),
               boxShadow: [
                 BoxShadow(
-                  color: bgColor.withOpacity(_isHovered ? 0.5 : 0.35),
+                  color: bgColor.withValues(alpha: _isHovered ? 0.5 : 0.35),
                   blurRadius: _isHovered ? 20 : 12,
                   offset: Offset(0, _isHovered ? 8 : 6),
                   spreadRadius: _isHovered ? 2 : 0,
@@ -1012,15 +1012,15 @@ class _ChipButtonState extends State<ChipButton> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: widget.isSelected
-                ? selectedColor.withOpacity(0.15)
+                ? selectedColor.withValues(alpha: 0.15)
                 : _isHovered
-                    ? theme.colorScheme.surfaceVariant
+                    ? theme.colorScheme.surfaceContainerHighest
                     : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: widget.isSelected
                   ? selectedColor
-                  : theme.colorScheme.outline.withOpacity(0.3),
+                  : theme.colorScheme.outline.withValues(alpha: 0.3),
               width: widget.isSelected ? 1.5 : 1,
             ),
           ),
@@ -1033,7 +1033,7 @@ class _ChipButtonState extends State<ChipButton> {
                   size: 16,
                   color: widget.isSelected
                       ? selectedColor
-                      : theme.colorScheme.onSurface.withOpacity(0.7),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 6),
               ],
@@ -1044,7 +1044,7 @@ class _ChipButtonState extends State<ChipButton> {
                   fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: widget.isSelected
                       ? selectedColor
-                      : theme.colorScheme.onSurface.withOpacity(0.8),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.8),
                 ),
               ),
               if (widget.isSelected) ...[
@@ -1152,13 +1152,13 @@ class _GradientButtonState extends State<GradientButton>
                     end: Alignment.bottomRight,
                     colors: widget.gradientColors,
                   ),
-            color: isDisabled ? theme.colorScheme.onSurface.withOpacity(0.12) : null,
+            color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.12) : null,
             borderRadius: BorderRadius.circular(14),
             boxShadow: isDisabled
                 ? null
                 : [
                     BoxShadow(
-                      color: widget.gradientColors.first.withOpacity(_isPressed ? 0.5 : 0.35),
+                      color: widget.gradientColors.first.withValues(alpha: _isPressed ? 0.5 : 0.35),
                       blurRadius: _isPressed ? 16 : 10,
                       offset: Offset(0, _isPressed ? 8 : 5),
                       spreadRadius: _isPressed ? 2 : 0,
@@ -1192,7 +1192,7 @@ class _GradientButtonState extends State<GradientButton>
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: isDisabled
-                      ? theme.colorScheme.onSurface.withOpacity(0.38)
+                      ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
                       : Colors.white,
                   letterSpacing: 0.3,
                 ),

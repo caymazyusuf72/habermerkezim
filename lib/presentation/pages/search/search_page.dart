@@ -178,7 +178,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: ListView.builder(
@@ -282,11 +282,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.shadow.withOpacity(0.05),
+            color: theme.colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -457,7 +457,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -483,8 +483,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           avatar: const Icon(Icons.trending_up, size: 16),
           label: Text(item.query),
           onPressed: () => _selectFromHistory(item.query),
-          backgroundColor: Colors.orange.withOpacity(0.1),
-          side: BorderSide(color: Colors.orange.withOpacity(0.3)),
+          backgroundColor: Colors.orange.withValues(alpha: 0.1),
+          side: BorderSide(color: Colors.orange.withValues(alpha: 0.3)),
         );
       }).toList(),
     );
@@ -500,8 +500,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           avatar: const Icon(Icons.local_fire_department, size: 16, color: Colors.red),
           label: Text(query),
           onPressed: () => _selectFromHistory(query),
-          backgroundColor: Colors.red.withOpacity(0.1),
-          side: BorderSide(color: Colors.red.withOpacity(0.3)),
+          backgroundColor: Colors.red.withValues(alpha: 0.1),
+          side: BorderSide(color: Colors.red.withValues(alpha: 0.3)),
         );
       }).toList(),
     );
@@ -541,7 +541,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             Icon(
               Icons.search,
               size: 64,
-              color: theme.colorScheme.onSurface.withOpacity(0.3),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -553,7 +553,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               'Haber başlıkları, açıklamalar, içerikler\nveya kaynaklarda arama yapabilirsiniz',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -573,7 +573,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             border: Border(
               bottom: BorderSide(
                 color: theme.dividerColor,
@@ -697,11 +697,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: badgeColor.withOpacity(0.9),
+        color: badgeColor.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: badgeColor.withOpacity(0.3),
+            color: badgeColor.withValues(alpha: 0.3),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -734,7 +734,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           Icon(
             Icons.search_off,
             size: 64,
-            color: theme.colorScheme.onSurface.withOpacity(0.3),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text(
@@ -746,7 +746,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             '"${_searchController.text}" için sonuç bulunamadı',
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 24),
@@ -764,7 +764,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             '• Daha genel terimler kullanın\n'
             '• Yazım hatalarını kontrol edin',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 24),

@@ -157,7 +157,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isDark
-                ? [theme.colorScheme.surface, theme.colorScheme.surfaceVariant]
+                ? [theme.colorScheme.surface, theme.colorScheme.surfaceContainerHighest]
                 : [AppTheme.primaryBlue, AppTheme.secondaryBlue],
           ),
         ),
@@ -219,7 +219,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
       transform: Matrix4.translationValues(0, -30, 0),
       child: Card(
         elevation: 8,
-        shadowColor: AppTheme.primaryBlue.withOpacity(0.3),
+        shadowColor: AppTheme.primaryBlue.withValues(alpha: 0.3),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Container(
           decoration: BoxDecoration(
@@ -229,7 +229,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               end: Alignment.bottomRight,
               colors: [
                 theme.colorScheme.surface,
-                theme.colorScheme.surface.withOpacity(0.95),
+                theme.colorScheme.surface.withValues(alpha: 0.95),
               ],
             ),
           ),
@@ -251,13 +251,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.email_rounded, size: 14, 
-                        color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                      Icon(Icons.email_rounded, size: 14,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                       const SizedBox(width: 6),
                       Text(
                         profile.email!,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -287,7 +287,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             child: CircularProgressIndicator(
               value: completionPercent / 100,
               strokeWidth: 4,
-              backgroundColor: theme.colorScheme.surfaceVariant,
+              backgroundColor: theme.colorScheme.surfaceContainerHighest,
               valueColor: AlwaysStoppedAnimation<Color>(
                 _getLevelColor(profile.stats.totalArticlesRead),
               ),
@@ -303,12 +303,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                 end: Alignment.bottomRight,
                 colors: [
                   _getLevelColor(profile.stats.totalArticlesRead),
-                  _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.7),
+                  _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.7),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.4),
+                  color: _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.4),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -343,7 +343,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                 border: Border.all(color: theme.colorScheme.surface, width: 3),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -400,7 +400,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -418,13 +418,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.1),
-            _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.05),
+            _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.1),
+            _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.3),
+          color: _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -438,7 +438,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: _getLevelColor(profile.stats.totalArticlesRead).withOpacity(0.3),
+                      color: _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -479,7 +479,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   Text(
                     'Bir sonraki seviyeye',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                   Text(
@@ -497,7 +497,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                 child: LinearProgressIndicator(
                   value: progress.clamp(0.0, 1.0),
                   minHeight: 8,
-                  backgroundColor: theme.colorScheme.surfaceVariant,
+                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     _getLevelColor(profile.stats.totalArticlesRead),
                   ),
@@ -521,7 +521,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryBlue.withOpacity(0.1),
+                  color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.analytics_rounded, color: AppTheme.primaryBlue, size: 20),
@@ -603,10 +603,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             decoration: BoxDecoration(
               color: isDark ? theme.colorScheme.surface : Colors.white,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: color.withOpacity(0.3), width: 2),
+              border: Border.all(color: color.withValues(alpha: 0.3), width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -621,7 +621,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(icon, color: color, size: 20),
@@ -639,7 +639,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   Text(
                     label,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       fontWeight: FontWeight.w600,
                       fontSize: 10,
                     ),
@@ -651,7 +651,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   Text(
                     subtitle,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: color.withOpacity(0.7),
+                      color: color.withValues(alpha: 0.7),
                       fontSize: 8,
                     ),
                     textAlign: TextAlign.center,
@@ -680,7 +680,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.amber.withOpacity(0.1),
+                  color: Colors.amber.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.emoji_events_rounded, color: Colors.amber, size: 20),
@@ -731,10 +731,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
       width: 120,
       margin: const EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
-        color: isUnlocked ? color.withOpacity(0.1) : theme.colorScheme.surfaceVariant,
+        color: isUnlocked ? color.withValues(alpha: 0.1) : theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isUnlocked ? color.withOpacity(0.3) : theme.dividerColor,
+          color: isUnlocked ? color.withValues(alpha: 0.3) : theme.dividerColor,
           width: 2,
         ),
       ),
@@ -747,12 +747,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isUnlocked ? color.withOpacity(0.2) : theme.colorScheme.surface,
+                color: isUnlocked ? color.withValues(alpha: 0.2) : theme.colorScheme.surface,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
-                color: isUnlocked ? color : theme.colorScheme.onSurface.withOpacity(0.3),
+                color: isUnlocked ? color : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                 size: 28,
               ),
             ),
@@ -763,7 +763,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   fontSize: 11,
-                  color: isUnlocked ? color : theme.colorScheme.onSurface.withOpacity(0.5),
+                  color: isUnlocked ? color : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -776,7 +776,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                 description,
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 9,
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -800,7 +800,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.calendar_month_rounded, color: Colors.green, size: 20),
@@ -865,8 +865,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
 
   Widget _buildHeatmapDay(String day, int intensity, ThemeData theme) {
     final color = intensity == 0
-        ? theme.colorScheme.surfaceVariant
-        : Colors.green.withOpacity(0.2 + (intensity * 0.2));
+        ? theme.colorScheme.surfaceContainerHighest
+        : Colors.green.withValues(alpha: 0.2 + (intensity * 0.2));
     
     return Column(
       children: [
@@ -877,7 +877,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             color: color,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: intensity > 0 ? Colors.green.withOpacity(0.3) : theme.dividerColor,
+              color: intensity > 0 ? Colors.green.withValues(alpha: 0.3) : theme.dividerColor,
             ),
           ),
           child: Center(
@@ -896,7 +896,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
           day,
           style: theme.textTheme.bodySmall?.copyWith(
             fontSize: 10,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -922,7 +922,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.purple.withOpacity(0.1),
+                  color: Colors.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.interests_rounded, color: Colors.purple, size: 20),
@@ -958,13 +958,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                     Icon(
                       Icons.interests_outlined,
                       size: 48,
-                      color: theme.colorScheme.onSurface.withOpacity(0.3),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
                     const SizedBox(height: 12),
                     Text(
                       'Henüz ilgi alanı seçilmemiş',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -986,13 +986,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                     gradient: LinearGradient(
                       colors: [
                         _getColorFromHex(tag.color),
-                        _getColorFromHex(tag.color).withOpacity(0.7),
+                        _getColorFromHex(tag.color).withValues(alpha: 0.7),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: _getColorFromHex(tag.color).withOpacity(0.3),
+                        color: _getColorFromHex(tag.color).withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -1043,7 +1043,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryBlue.withOpacity(0.1),
+                  color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.settings_rounded, color: AppTheme.primaryBlue, size: 20),
@@ -1109,7 +1109,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -1122,7 +1122,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               Text(
                 label,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 2),
@@ -1397,9 +1397,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
