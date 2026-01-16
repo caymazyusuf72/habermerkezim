@@ -111,8 +111,6 @@ class _SwipeActionWidgetState extends State<SwipeActionWidget>
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Stack(
       children: [
         // Sol aksiyon arka planı

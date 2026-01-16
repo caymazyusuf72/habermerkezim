@@ -333,8 +333,6 @@ class NoFavoritesEmptyState extends StatelessWidget {
   }
 
   Widget _buildFavoriteIllustration(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return SizedBox(
       width: 140,
       height: 140,
@@ -426,8 +424,6 @@ class OfflineEmptyState extends StatelessWidget {
   }
 
   Widget _buildOfflineIllustration(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return SizedBox(
       width: 140,
       height: 140,
