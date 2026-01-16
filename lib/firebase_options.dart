@@ -53,11 +53,11 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBNVZ8vLqGxKxQxKxQxKxQxKxQxKxQxKxQ',
-    appId: '1:123456789:android:abcdefabcdefabcd',
-    messagingSenderId: '123456789',
+    apiKey: 'AIzaSyCgyFT3nu36rpwwLhtN0KHT6R323Bbf2iQ',
+    appId: '1:661419486599:android:47d0b16613da7c3e49f722',
+    messagingSenderId: '661419486599',
     projectId: 'yusufusta-3db28',
-    storageBucket: 'yusufusta-3db28.appspot.com',
+    storageBucket: 'yusufusta-3db28.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

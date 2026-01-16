@@ -30,12 +30,16 @@ Future<void> main() async {
   );
   
   try {
-    // Firebase'i initialize et
+    // Firebase'i initialize et (sadece bir kez)
     print('🔄 Firebase initialize ediliyor...');
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    print('✅ Firebase başarıyla initialize edildi');
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      print('✅ Firebase başarıyla initialize edildi');
+    } else {
+      print('ℹ️ Firebase zaten initialize edilmiş');
+    }
     
     // Memory cache boyutunu optimize et (RAM tasarrufu için)
     print('🔄 Memory cache optimize ediliyor...');

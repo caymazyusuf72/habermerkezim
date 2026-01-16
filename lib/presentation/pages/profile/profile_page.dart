@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../domain/entities/user_profile.dart';
 import '../../providers/providers.dart';
+import '../../providers/auth_provider.dart';
 import '../../themes/app_theme.dart';
 import '../../widgets/loading/shimmer_loading.dart';
 import '../onboarding/edit_interests_page.dart';
@@ -184,6 +185,27 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             _animationController.forward();
           },
           tooltip: 'Yenile',
+        ),
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert_rounded, color: Colors.white),
+          tooltip: 'Daha Fazla',
+          onSelected: (value) async {
+            if (value == 'logout') {
+              await _handleLogout(context);
+            }
+          },
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'logout',
+              child: Row(
+                children: [
+                  Icon(Icons.logout_rounded, color: Colors.red),
+                  SizedBox(width: 12),
+                  Text('Çıkış Yap', style: TextStyle(color: Colors.red)),
+                ],
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -1248,5 +1270,53 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
   String _formatDate(DateTime date) {
     final months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Çıkış Yap'),
+        content: const Text('Hesabınızdan çıkış yapmak istediğinize emin misiniz?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('İptal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Çıkış Yap'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        // Çıkış işlemini gerçekleştir
+        await ref.read(authControllerProvider.notifier).signOut();
+        
+        // Başarılı mesajı göster
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Başarıyla çıkış yapıldı'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        // Hata durumunda mesaj göster
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Çıkış yapılırken hata: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
   }
 }

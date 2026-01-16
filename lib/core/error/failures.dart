@@ -1,5 +1,5 @@
-/// Clean Architecture'da use case'ler tarafından return edilen failure sınıfları
-/// Exception'lar presentation layer'a kadar çıkmaz, failure'lara dönüştürülür
+// Clean Architecture'da use case'ler tarafından return edilen failure sınıfları
+// Exception'lar presentation layer'a kadar çıkmaz, failure'lara dönüştürülür
 
 abstract class Failure {
   final String message;

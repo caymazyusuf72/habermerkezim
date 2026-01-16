@@ -47,7 +47,6 @@ class SwipeActionWidget extends StatefulWidget {
 class _SwipeActionWidgetState extends State<SwipeActionWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<Offset> _slideAnimation;
   double _dragExtent = 0;
   bool _isDragging = false;
 
@@ -58,13 +57,6 @@ class _SwipeActionWidgetState extends State<SwipeActionWidget>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _slideAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
   }
 
   @override
@@ -119,9 +111,7 @@ class _SwipeActionWidgetState extends State<SwipeActionWidget>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
-    final progress = (_dragExtent.abs() / screenWidth).clamp(0.0, 0.5);
 
     return Stack(
       children: [
@@ -340,7 +330,6 @@ class _LongPressWidgetState extends State<LongPressWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -362,7 +351,6 @@ class _LongPressWidgetState extends State<LongPressWidget>
   }
 
   void _handleLongPressStart(LongPressStartDetails details) {
-    setState(() => _isPressed = true);
     _controller.forward();
   }
 
@@ -376,7 +364,6 @@ class _LongPressWidgetState extends State<LongPressWidget>
   }
 
   void _handleLongPressEnd(LongPressEndDetails details) {
-    setState(() => _isPressed = false);
     _controller.reverse();
   }
 
@@ -577,7 +564,6 @@ class CustomPullToRefresh extends StatefulWidget {
 class _CustomPullToRefreshState extends State<CustomPullToRefresh>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  double _dragOffset = 0;
   bool _isRefreshing = false;
 
   @override
@@ -607,7 +593,6 @@ class _CustomPullToRefreshState extends State<CustomPullToRefresh>
 
     setState(() {
       _isRefreshing = false;
-      _dragOffset = 0;
     });
   }
 

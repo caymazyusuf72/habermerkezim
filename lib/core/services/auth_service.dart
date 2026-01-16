@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -128,3 +127,33 @@ class AuthService {
   /// Kullanıcı email doğrulaması yaptı mı?
   bool get isEmailVerified => currentUser?.emailVerified ?? false;
 
+  /// Email doğrulama emaili gönder
+  Future<void> sendEmailVerification() async {
+    try {
+      if (currentUser != null && !isEmailVerified) {
+        print('📧 Email doğrulama emaili gönderiliyor...');
+        await currentUser!.sendEmailVerification();
+        print('✅ Email doğrulama emaili gönderildi');
+      }
+    } catch (e) {
+      print('❌ Email doğrulama emaili gönderme hatası: $e');
+      rethrow;
+    }
+  }
+
+  /// Kullanıcı profili güncelle
+  Future<void> updateProfile({String? displayName, String? photoURL}) async {
+    try {
+      if (currentUser != null) {
+        print('👤 Profil güncelleniyor...');
+        await currentUser!.updateDisplayName(displayName);
+        await currentUser!.updatePhotoURL(photoURL);
+        await currentUser!.reload();
+        print('✅ Profil güncellendi');
+      }
+    } catch (e) {
+      print('❌ Profil güncelleme hatası: $e');
+      rethrow;
+    }
+  }
+}

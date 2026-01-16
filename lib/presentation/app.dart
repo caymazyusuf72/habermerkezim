@@ -6,10 +6,12 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'providers/providers.dart';
 import 'providers/onboarding_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/auth_provider.dart';
 import 'themes/app_theme.dart';
 import 'pages/home/home_page.dart';
 import 'pages/splash/splash_page.dart';
 import 'pages/onboarding/onboarding_page.dart';
+import 'pages/auth/login_page.dart';
 import 'pages/update/update_dialog.dart';
 import '../../core/services/update_service.dart';
 
@@ -60,13 +62,15 @@ class HaberMerkeziApp extends ConsumerWidget {
           // Localization ayarları
           locale: const Locale('tr', 'TR'),
           
-          // Ana sayfa - initialization durumuna göre
+          // Ana sayfa - initialization ve authentication durumuna göre
           home: appInitialization.when(
             data: (_) {
-              // Onboarding kontrolü yap
-              return _OnboardingCheckWrapper(
-                child: _UpdateCheckWrapper(
-                  child: const HomePage(),
+              // Authentication kontrolü yap
+              return _AuthCheckWrapper(
+                child: _OnboardingCheckWrapper(
+                  child: _UpdateCheckWrapper(
+                    child: const HomePage(),
+                  ),
                 ),
               );
             },
@@ -82,11 +86,12 @@ class HaberMerkeziApp extends ConsumerWidget {
             },
           ),
           
-          // Route ayarları (gelecekte navigation için)
+          // Route ayarları
           routes: {
             '/home': (context) => const HomePage(),
             '/splash': (context) => const SplashPage(),
             '/onboarding': (context) => const OnboardingPage(),
+            '/login': (context) => const LoginPage(),
           },
           
           // App boyut ve orientation ayarları
@@ -351,5 +356,35 @@ class _OnboardingCheckWrapperState extends ConsumerState<_OnboardingCheckWrapper
     }
 
     return const OnboardingPage();
+  }
+}
+
+/// Authentication kontrolü wrapper widget'ı
+/// Kullanıcı giriş yapmadıysa Login sayfasına yönlendirir
+class _AuthCheckWrapper extends ConsumerWidget {
+  final Widget child;
+
+  const _AuthCheckWrapper({required this.child});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+    
+    return authState.when(
+      data: (user) {
+        if (user == null) {
+          // Kullanıcı giriş yapmamış, Login sayfasına yönlendir
+          return const LoginPage();
+        }
+        // Kullanıcı giriş yapmış, ana sayfaya devam et
+        return child;
+      },
+      loading: () => const SplashPage(),
+      error: (error, stackTrace) {
+        debugPrint('❌ Auth kontrolü hatası: $error');
+        // Hata durumunda Login sayfasına yönlendir
+        return const LoginPage();
+      },
+    );
   }
 }
