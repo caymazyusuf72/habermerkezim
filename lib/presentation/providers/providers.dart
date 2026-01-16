@@ -62,8 +62,8 @@ final userProfileRepositoryProvider = Provider<UserProfileRepository>((ref) {
 final appInitializationProvider = FutureProvider<void>((ref) async {
   print('🔄 App initialization basliyor...');
   
-  // Minimum splash süresi (0.8 saniye) - daha hızlı açılış
-  final minSplashDuration = Future.delayed(const Duration(milliseconds: 800));
+  // Minimum splash süresi (0.3 saniye) - çok hızlı açılış
+  final minSplashDuration = Future.delayed(const Duration(milliseconds: 300));
   
   try {
     // ÖNCE: Cache'den hızlıca yükle (refresh: false)

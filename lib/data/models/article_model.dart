@@ -88,17 +88,21 @@ class ArticleModel extends HiveObject {
     required String category,
     required String sourceName,
   }) {
-    // Unique ID oluştur (link + publishDate bazlı)
-    final id = _generateId(rssItem['link'] ?? '', rssItem['pubDate'] ?? '');
+    final title = _cleanHtml(rssItem['title'] ?? '');
+    final link = rssItem['link'] ?? '';
+    final pubDate = rssItem['pubDate'] ?? '';
+    
+    // Unique ID oluştur (link + sourceName + title + publishDate bazlı)
+    final id = _generateId(link, sourceName, title, pubDate);
     
     return ArticleModel(
       id: id,
-      title: _cleanHtml(rssItem['title'] ?? ''),
+      title: title,
       description: _cleanHtml(rssItem['description'] ?? ''),
       content: _cleanHtml(rssItem['content'] ?? rssItem['description'] ?? ''),
-      link: rssItem['link'] ?? '',
+      link: link,
       imageUrl: _extractImageUrl(rssItem),
-      publishedDate: _parseDate(rssItem['pubDate']),
+      publishedDate: _parseDate(pubDate),
       category: category,
       sourceName: sourceName,
     );
@@ -401,10 +405,16 @@ class ArticleModel extends HiveObject {
     return DateTime.now();
   }
 
-  /// Unique ID oluşturur
-  static String _generateId(String link, String pubDate) {
-    final combined = '$link$pubDate';
-    return combined.hashCode.abs().toString();
+  /// Unique ID oluşturur - link, kaynak adı, başlık ve tarih bazlı
+  /// Bu sayede aynı linkli haberler farklı kaynaklardan geldiğinde karışmaz
+  static String _generateId(String link, String sourceName, String title, String pubDate) {
+    // Tüm bilgileri birleştir ve unique ID oluştur
+    final combined = '$link|$sourceName|$title|$pubDate';
+    // Hash'i string'e çevir - bu her zaman unique olacak
+    final hash = combined.hashCode.abs().toString();
+    // Daha güvenli olmak için link'in son 8 karakterini de ekle
+    final linkSuffix = link.length > 8 ? link.substring(link.length - 8) : link;
+    return '$hash-${linkSuffix.hashCode.abs()}';
   }
 
   @override

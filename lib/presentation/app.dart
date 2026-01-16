@@ -304,12 +304,15 @@ class _OnboardingCheckWrapperState extends ConsumerState<_OnboardingCheckWrapper
   @override
   void initState() {
     super.initState();
+    // Hemen kontrol et, gecikme olmadan
     _checkOnboarding();
   }
 
   Future<void> _checkOnboarding() async {
     try {
-      final result = await ref.read(hasCompletedOnboardingProvider.future);
+      // Timeout ekle - maksimum 500ms bekle
+      final result = await ref.read(hasCompletedOnboardingProvider.future)
+          .timeout(const Duration(milliseconds: 500), onTimeout: () => true);
       if (mounted) {
         setState(() {
           _hasCompletedOnboarding = result;
@@ -329,7 +332,17 @@ class _OnboardingCheckWrapperState extends ConsumerState<_OnboardingCheckWrapper
 
   @override
   Widget build(BuildContext context) {
+    // Loading durumunda kısa bir süre bekle, sonra child'ı göster
     if (_isLoading) {
+      // 100ms sonra otomatik olarak child'a geç
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted && _isLoading) {
+          setState(() {
+            _isLoading = false;
+            _hasCompletedOnboarding = true; // Varsayılan olarak tamamlanmış say
+          });
+        }
+      });
       return const SplashPage();
     }
 

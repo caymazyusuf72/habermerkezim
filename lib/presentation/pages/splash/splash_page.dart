@@ -27,15 +27,15 @@ class _SplashPageState extends State<SplashPage>
   void initState() {
     super.initState();
     
-    // Ana animasyon controller
+    // Ana animasyon controller - Hızlandırıldı
     _mainAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 2500),
+      duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
 
-    // Rotasyon animasyonu (logo için) - Yavaşlatıldı
+    // Rotasyon animasyonu (logo için) - Hızlandırıldı
     _rotationController = AnimationController(
-      duration: const Duration(milliseconds: 5500), // 5.5 saniye
+      duration: const Duration(milliseconds: 3000), // 3 saniye
       vsync: this,
     )..repeat();
 
@@ -338,8 +338,8 @@ class _SplashPageState extends State<SplashPage>
 class SplashUtils {
   SplashUtils._();
   
-  /// Minimum splash süresi
-  static const Duration minSplashDuration = Duration(seconds: 2);
+  /// Minimum splash süresi - Hızlandırıldı
+  static const Duration minSplashDuration = Duration(milliseconds: 500);
   
   /// Splash'i göster ve minimum süre bekle
   static Future<void> showSplashWithMinimumDuration(

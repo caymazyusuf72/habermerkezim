@@ -144,21 +144,42 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
   @override
   Future<List<ArticleModel>> getCachedArticlesByCategory(String category) async {
     try {
+      print('📂 Cache\'den $category kategorisi isteniyor...');
       await _ensureBoxesOpen();
       
       final articlesBox = _articlesBox!;
       if (articlesBox.isEmpty) {
+        print('❌ Cache boş');
         throw const DataNotFoundException('Cache\'de makale bulunamadı');
       }
       
+      print('📊 Cache\'de toplam ${articlesBox.length} makale var');
+      
       // Ana kategori ve alt feed'leri dahil et (örn: turkiye için turkiye, turkiye_ntv, turkiye_milliyet)
+      // Ayrıca kategori isminin tam eşleşmesini de kontrol et
       final articles = articlesBox.values
-          .where((article) => 
-              article.category == category || 
-              article.category.startsWith('${category}_'))
+          .where((article) {
+            // Tam kategori eşleşmesi
+            if (article.category == category) return true;
+            
+            // Alt feed kategorisi (örn: bilim_shiftdelete -> bilim)
+            if (article.category.startsWith('${category}_')) return true;
+            
+            // Kategorinin alt parçası olup olmadığını kontrol et
+            // Örneğin: article.category "bilim_shiftdelete" ise ve category "bilim" ise
+            final parts = article.category.split('_');
+            if (parts.isNotEmpty && parts.first == category) return true;
+            
+            return false;
+          })
           .toList();
       
+      print('✅ $category kategorisinde ${articles.length} makale bulundu');
+      
       if (articles.isEmpty) {
+        // Debug için kategorileri listele
+        final allCategories = articlesBox.values.map((a) => a.category).toSet().toList();
+        print('⚠️ Mevcut kategoriler: ${allCategories.join(", ")}');
         throw DataNotFoundException('$category kategorisinde cache\'de makale bulunamadı');
       }
       
@@ -168,6 +189,7 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
       return articles;
       
     } catch (e) {
+      print('❌ getCachedArticlesByCategory hatası: $e');
       if (e is DataNotFoundException) rethrow;
       throw DatabaseException('Kategori verileri okunamadı: ${e.toString()}');
     }
