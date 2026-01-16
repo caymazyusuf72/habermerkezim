@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'core/services/hive_service.dart';
 import 'core/services/rss_sources_service.dart';
@@ -28,6 +30,13 @@ Future<void> main() async {
   );
   
   try {
+    // Firebase'i initialize et
+    print('🔄 Firebase initialize ediliyor...');
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('✅ Firebase başarıyla initialize edildi');
+    
     // Memory cache boyutunu optimize et (RAM tasarrufu için)
     print('🔄 Memory cache optimize ediliyor...');
     PaintingBinding.instance.imageCache.maximumSize = 50; // Varsayılan 1000'den 50'ye düşürüldü

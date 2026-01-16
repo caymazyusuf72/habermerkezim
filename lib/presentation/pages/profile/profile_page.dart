@@ -582,44 +582,50 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(icon, color: color, size: 28),
+                    child: Icon(icon, color: color, size: 24),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   Text(
                     value,
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 22,
                       fontWeight: FontWeight.w700,
                       color: color,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Text(
                     label,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.7),
                       fontWeight: FontWeight.w600,
+                      fontSize: 11,
                     ),
                     textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Text(
                     subtitle,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: color.withOpacity(0.7),
-                      fontSize: 10,
+                      fontSize: 9,
                     ),
                     textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

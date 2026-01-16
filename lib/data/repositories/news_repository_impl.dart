@@ -22,17 +22,40 @@ class NewsRepositoryImpl implements NewsRepository {
   @override
   Future<List<Article>> getArticlesByCategory(String category) async {
     try {
+      print('🔄 getArticlesByCategory başladı: $category');
       final connectivityResult = await connectivity.checkConnectivity();
       final hasConnection = connectivityResult != ConnectivityResult.none;
+      print('🌐 Network durumu: $hasConnection');
 
       if (hasConnection) {
         try {
           // Önce remote'dan çekmeyi dene
           print('🔄 Remote\'dan $category kategorisi için haberler çekiliyor...');
           final articles = await remoteDataSource.getArticlesByCategory(category);
+          print('✅ Remote\'dan ${articles.length} makale alındı');
+          
+          if (articles.isEmpty) {
+            print('⚠️ Remote\'dan haber gelmedi, cache deneniyor...');
+            // Remote boş ise cache'den dene
+            try {
+              final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
+              if (cachedArticles.isEmpty) {
+                print('⚠️ Cache de boş, demo data döndürülüyor');
+                return _createDemoArticlesByCategory(category);
+              }
+              final entities = cachedArticles.map((model) => model.toEntity()).toList();
+              print('✅ Cache\'den $category kategorisi için ${entities.length} haber alındı');
+              return _sortArticlesByImage(entities);
+            } catch (cacheError) {
+              print('❌ Cache hatası: $cacheError');
+              return _createDemoArticlesByCategory(category);
+            }
+          }
           
           // Cache articles locally
+          print('💾 $category kategorisi cache\'e kaydediliyor...');
           await localDataSource.cacheArticles(articles);
+          
           // Convert ArticleModel to Article and sort by image
           final entities = articles.map((model) => model.toEntity()).toList();
           print('✅ $category kategorisi için ${entities.length} haber alındı');
@@ -43,12 +66,15 @@ class NewsRepositoryImpl implements NewsRepository {
           // Fall back to cached data if network fails
           try {
             final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
+            if (cachedArticles.isEmpty) {
+              print('⚠️ Cache de boş, demo data döndürülüyor');
+              return _createDemoArticlesByCategory(category);
+            }
             final entities = cachedArticles.map((model) => model.toEntity()).toList();
             print('✅ Cache\'den $category kategorisi için ${entities.length} haber alındı');
             return _sortArticlesByImage(entities);
           } catch (cacheError) {
-            print('❌ Cache de boş, demo data döndürülüyor');
-            // Cache de boş ise demo data döndür
+            print('❌ Cache hatası: $cacheError, demo data döndürülüyor');
             return _createDemoArticlesByCategory(category);
           }
         }
@@ -57,12 +83,15 @@ class NewsRepositoryImpl implements NewsRepository {
         print('📱 Offline mod - cache\'den veri alınıyor');
         try {
           final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
+          if (cachedArticles.isEmpty) {
+            print('⚠️ Cache boş, demo data döndürülüyor');
+            return _createDemoArticlesByCategory(category);
+          }
           final entities = cachedArticles.map((model) => model.toEntity()).toList();
           print('✅ Cache\'den $category kategorisi için ${entities.length} haber alındı');
           return _sortArticlesByImage(entities);
         } catch (cacheError) {
-          print('❌ Offline ve cache boş, demo data döndürülüyor');
-          // Cache boş ise demo data döndür
+          print('❌ Offline ve cache hatası: $cacheError, demo data döndürülüyor');
           return _createDemoArticlesByCategory(category);
         }
       }
