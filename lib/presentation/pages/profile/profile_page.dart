@@ -604,24 +604,24 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(icon, color: color, size: 24),
+                    child: Icon(icon, color: color, size: 20),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     value,
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: color,
                     ),
@@ -632,18 +632,18 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.7),
                       fontWeight: FontWeight.w600,
-                      fontSize: 11,
+                      fontSize: 10,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 1),
                   Text(
                     subtitle,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: color.withOpacity(0.7),
-                      fontSize: 9,
+                      fontSize: 8,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
@@ -730,12 +730,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: isUnlocked ? color.withOpacity(0.2) : theme.colorScheme.surface,
                 shape: BoxShape.circle,
@@ -743,30 +744,35 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               child: Icon(
                 icon,
                 color: isUnlocked ? color : theme.colorScheme.onSurface.withOpacity(0.3),
-                size: 32,
+                size: 28,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: isUnlocked ? color : theme.colorScheme.onSurface.withOpacity(0.5),
+            const SizedBox(height: 6),
+            Flexible(
+              child: Text(
+                title,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                  color: isUnlocked ? color : theme.colorScheme.onSurface.withOpacity(0.5),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 4),
-            Text(
-              description,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontSize: 10,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+            const SizedBox(height: 2),
+            Flexible(
+              child: Text(
+                description,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontSize: 9,
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -1236,15 +1242,69 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
   }
 
   void _showEditProfileDialog(BuildContext context, UserProfile profile) {
+    final nameController = TextEditingController(text: profile.name ?? '');
+    final emailController = TextEditingController(text: profile.email ?? '');
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Profili Düzenle'),
-        content: const Text('Profil düzenleme özelliği yakında eklenecek.'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: 'İsim',
+                  hintText: 'Adınızı girin',
+                  prefixIcon: Icon(Icons.person_rounded),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: 'E-posta',
+                  hintText: 'E-posta adresinizi girin',
+                  prefixIcon: Icon(Icons.email_rounded),
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+            ],
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Tamam'),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = nameController.text.trim();
+              final email = emailController.text.trim();
+
+              if (name.isNotEmpty) {
+                await ref.read(userProfileProvider.notifier).updateName(name);
+              }
+              
+              if (email.isNotEmpty) {
+                await ref.read(userProfileProvider.notifier).updateEmail(email);
+              }
+
+              if (context.mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Profil başarıyla güncellendi'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            },
+            child: const Text('Kaydet'),
           ),
         ],
       ),
