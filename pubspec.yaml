@@ -120,6 +120,10 @@ dependencies:
   # File System
   path_provider: ^2.1.2
   path: ^1.9.0
+  
+  # Security
+  flutter_dotenv: ^5.1.0
+  flutter_secure_storage: ^9.2.2
 
 dev_dependencies:
   flutter_test:
