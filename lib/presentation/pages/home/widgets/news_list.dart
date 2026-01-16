@@ -10,6 +10,7 @@ import '../../../providers/article_filter_provider.dart';
 import '../../../providers/reading_list_provider.dart';
 import '../../../../domain/entities/article.dart';
 import '../../../../core/utils/responsive_helper.dart';
+import '../../../../core/services/image_prefetch_service.dart';
 import '../../../widgets/loading/shimmer_loading.dart';
 import '../../article_detail/article_detail_page.dart';
 import 'article_card.dart';
@@ -46,6 +47,15 @@ class NewsListState extends ConsumerState<NewsList>
   
   /// Yükleme durumu - çift yüklemeyi önlemek için
   bool _isLoadingMore = false;
+  
+  /// Image prefetch servisi
+  final ImagePrefetchService _prefetchService = ImagePrefetchService();
+  
+  /// Son scroll pozisyonu (scroll yönü için)
+  double _lastScrollPosition = 0;
+  
+  /// Son scroll yönü (1: aşağı, -1: yukarı)
+  int _lastScrollDirection = 1;
 
   @override
   bool get wantKeepAlive => true;
@@ -74,6 +84,10 @@ class NewsListState extends ConsumerState<NewsList>
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
     
+    // Scroll yönünü belirle
+    _lastScrollDirection = currentScroll > _lastScrollPosition ? 1 : -1;
+    _lastScrollPosition = currentScroll;
+    
     // Daha erken yükleme başlat - %70'e ulaşıldığında
     final threshold = maxScroll * 0.7;
     
@@ -87,6 +101,32 @@ class NewsListState extends ConsumerState<NewsList>
       }
     }
     
+    // Görsel prefetch - scroll yönüne göre
+    _prefetchImages(currentScroll);
+  }
+  
+  /// Görselleri önceden yükle
+  void _prefetchImages(double currentScroll) {
+    final newsState = ref.read(newsProvider);
+    
+    // Kategoriye göre makaleleri filtrele
+    final categoryArticles = newsState.articles
+        .where((article) => widget.category == 'genel' || article.category == widget.category)
+        .toList();
+    
+    if (categoryArticles.isEmpty) return;
+    
+    // Görünür alan indeksini hesapla (yaklaşık kart yüksekliği: 120px)
+    const estimatedItemHeight = 120.0;
+    final visibleStartIndex = (currentScroll / estimatedItemHeight).floor().clamp(0, categoryArticles.length - 1);
+    
+    // Prefetch tetikle
+    _prefetchService.prefetchArticleImages(
+      articles: categoryArticles,
+      startIndex: visibleStartIndex,
+      prefetchCount: 5,
+      scrollDirection: _lastScrollDirection,
+    );
   }
 
   /// Listeyi en üste kaydırır
