@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/scheduler.dart';
+import 'dart:async';
 
 import '../../domain/entities/article.dart';
 import '../../domain/repositories/news_repository.dart';
@@ -64,8 +66,53 @@ class NewsState {
 /// News StateNotifier - haber işlemlerini yönetir
 class NewsNotifier extends StateNotifier<NewsState> {
   final NewsRepository _repository;
+  StreamSubscription<List<Article>>? _articlesSubscription;
 
-  NewsNotifier(this._repository) : super(const NewsState());
+  NewsNotifier(this._repository) : super(const NewsState()) {
+    _setupArticlesStream();
+  }
+
+  /// Stream'i dinlemeye başla
+  void _setupArticlesStream() {
+    _articlesSubscription = _repository.watchAllArticles().listen(
+      (articles) {
+        // Background refresh sonrası gelen verileri handle et
+        debugPrint('📡 [Provider] Stream\'den ${articles.length} makale alındı');
+        
+        // Build cycle dışında state güncellemesi için SchedulerBinding kullan
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            final paginatedArticles = _paginateArticles(articles, page: state.currentPage);
+            state = state.copyWith(
+              allArticles: articles,
+              articles: paginatedArticles,
+              isLoading: false,
+              errorMessage: null,
+              hasMore: articles.length > NewsState.pageSize * state.currentPage,
+            );
+            debugPrint('✅ [Provider] State güncellendi: ${paginatedArticles.length} makale gösteriliyor');
+          }
+        });
+      },
+      onError: (error) {
+        debugPrint('❌ [Provider] Stream hatası: $error');
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            state = state.copyWith(
+              isLoading: false,
+              errorMessage: ErrorMessageHelper.getErrorMessage(error),
+            );
+          }
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _articlesSubscription?.cancel();
+    super.dispose();
+  }
 
   /// Tüm haberleri yükler
   Future<void> loadAllArticles({bool refresh = false}) async {

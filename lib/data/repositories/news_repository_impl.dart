@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../../domain/entities/article.dart';
@@ -14,11 +15,20 @@ class NewsRepositoryImpl implements NewsRepository {
   final NewsLocalDataSource localDataSource;
   final Connectivity connectivity;
 
+  /// Stream controller for reactive updates
+  final StreamController<List<Article>> _articlesStreamController =
+      StreamController<List<Article>>.broadcast();
+
   NewsRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
     required this.connectivity,
   });
+
+  /// Dispose stream controller
+  void dispose() {
+    _articlesStreamController.close();
+  }
 
   @override
   Future<List<Article>> getArticlesByCategory(String category) async {
@@ -95,6 +105,14 @@ class NewsRepositoryImpl implements NewsRepository {
       final articles = await remoteDataSource.getArticlesByCategory(category);
       await localDataSource.cacheArticles(articles);
       debugPrint('✅ [Background] $category: ${articles.length} makale cache\'e kaydedildi');
+      
+      // ✅ Stream'e yeni verileri gönder (UI güncellemesi için)
+      final entities = articles.map((model) => model.toEntity()).toList();
+      final sortedEntities = _sortArticlesByImage(entities);
+      if (!_articlesStreamController.isClosed) {
+        _articlesStreamController.add(sortedEntities);
+        debugPrint('📡 [Stream] $category kategorisi için ${sortedEntities.length} makale stream\'e gönderildi');
+      }
     } catch (e) {
       debugPrint('⚠️ [Background] $category yenileme hatası (sessizce başarısız): $e');
     }
@@ -172,6 +190,14 @@ class NewsRepositoryImpl implements NewsRepository {
       final articles = await remoteDataSource.getAllArticles();
       await localDataSource.cacheArticles(articles);
       debugPrint('✅ [Background] ${articles.length} makale cache\'e kaydedildi');
+      
+      // ✅ Stream'e yeni verileri gönder (UI güncellemesi için)
+      final entities = articles.map((model) => model.toEntity()).toList();
+      final sortedEntities = _sortArticlesByImage(entities);
+      if (!_articlesStreamController.isClosed) {
+        _articlesStreamController.add(sortedEntities);
+        debugPrint('📡 [Stream] ${sortedEntities.length} makale stream\'e gönderildi');
+      }
     } catch (e) {
       debugPrint('⚠️ [Background] Yenileme hatası (sessizce başarısız): $e');
     }
@@ -346,5 +372,17 @@ class NewsRepositoryImpl implements NewsRepository {
     });
     
     return sorted;
+  }
+
+  @override
+  Stream<List<Article>> watchArticlesByCategory(String category) {
+    return _articlesStreamController.stream
+        .map((articles) => articles.where((a) =>
+            category == 'genel' || a.category == category).toList());
+  }
+
+  @override
+  Stream<List<Article>> watchAllArticles() {
+    return _articlesStreamController.stream;
   }
 }
