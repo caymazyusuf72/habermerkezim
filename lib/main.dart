@@ -16,6 +16,7 @@ import 'core/services/rss_health_check_service.dart';
 import 'core/services/image_cache_service.dart';
 import 'core/services/article_popularity_service.dart';
 import 'core/services/gamification_service.dart';
+import 'core/services/env_config_service.dart';
 import 'presentation/app.dart';
 
 /// Haber Merkezi uygulamasının giriş noktası
@@ -49,6 +50,11 @@ Future<void> main() async {
     PaintingBinding.instance.imageCache.maximumSize = 50; // Varsayılan 1000'den 50'ye düşürüldü
     PaintingBinding.instance.imageCache.maximumSizeBytes = 25 * 1024 * 1024; // 25 MB (varsayılan 100 MB)
     debugPrint('✅ Memory cache optimize edildi');
+    
+    // Environment Config servisini initialize et
+    debugPrint('🔄 Environment Config service initialize ediliyor...');
+    await EnvConfigService().init();
+    debugPrint('✅ Environment Config service başarıyla initialize edildi');
     
     // Hive database'i initialize et
     debugPrint('🔄 Hive database initialize ediliyor...');
