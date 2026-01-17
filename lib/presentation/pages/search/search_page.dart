@@ -10,7 +10,7 @@ import '../../providers/gamification_provider.dart';
 import '../../themes/app_theme.dart';
 import '../../widgets/badge_unlock_dialog.dart';
 import '../../../domain/entities/article.dart';
-import '../../../domain/entities/badge.dart';
+import '../../../domain/entities/badge.dart' as game_badge;
 import '../../../core/services/search_service.dart';
 import '../home/widgets/article_card.dart';
 import '../home/widgets/article_filter_dialog.dart';

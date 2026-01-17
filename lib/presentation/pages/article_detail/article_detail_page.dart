@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../domain/entities/article.dart';
-import '../../../domain/entities/badge.dart';
+import '../../../domain/entities/badge.dart' as game_badge;
 import '../../../core/services/article_content_service.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../../providers/providers.dart';

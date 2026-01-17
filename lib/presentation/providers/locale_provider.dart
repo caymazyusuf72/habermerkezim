@@ -14,6 +14,7 @@ enum AppLanguage {
   const AppLanguage(this.code, this.name, this.flag);
 
   Locale get locale => Locale(code);
+  String get displayName => '$flag $name';
 
   static AppLanguage fromCode(String code) {
     return AppLanguage.values.firstWhere(
@@ -98,6 +99,11 @@ class LocaleNotifier extends StateNotifier<LocaleState> {
         ? AppLanguage.english
         : AppLanguage.turkish;
     await setLocale(newLanguage);
+  }
+
+  /// Dili değiştir (alias for setLocale)
+  Future<void> setLanguage(AppLanguage language) async {
+    await setLocale(language);
   }
 }
 

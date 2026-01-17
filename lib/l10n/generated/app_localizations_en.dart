@@ -1,342 +1,78 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
 
 /// The translations for English (`en`).
 class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
-  // ==================== App General ====================
-  
   @override
-  String get appName => 'News Center';
+  String get appTitle => 'News Center';
 
   @override
-  String get appSlogan => 'Latest news, all in one place';
-
-  // ==================== Navigation ====================
-  
-  @override
-  String get navHome => 'Home';
+  String get home => 'Home';
 
   @override
-  String get navCategories => 'Categories';
+  String get favorites => 'Favorites';
 
   @override
-  String get navFavorites => 'Favorites';
+  String get search => 'Search';
 
   @override
-  String get navProfile => 'Profile';
-
-  // ==================== Home Page ====================
-  
-  @override
-  String get breakingNews => 'Breaking News';
+  String get settings => 'Settings';
 
   @override
-  String get latestNews => 'Latest News';
+  String get profile => 'Profile';
 
   @override
-  String get popularNews => 'Popular News';
+  String get categories => 'Categories';
 
   @override
-  String get allNews => 'All News';
+  String get general => 'General';
 
   @override
-  String get refresh => 'Refresh';
+  String get technology => 'Technology';
+
+  @override
+  String get sports => 'Sports';
+
+  @override
+  String get economy => 'Economy';
+
+  @override
+  String get health => 'Health';
+
+  @override
+  String get science => 'Science';
+
+  @override
+  String get culture => 'Culture';
+
+  @override
+  String get world => 'World';
+
+  @override
+  String get politics => 'Politics';
+
+  @override
+  String get entertainment => 'Entertainment';
 
   @override
   String get loading => 'Loading...';
 
   @override
-  String get noNewsFound => 'No news found';
-
-  @override
-  String get pullToRefresh => 'Pull to refresh';
-
-  // ==================== Categories ====================
-  
-  @override
-  String get allCategories => 'All Categories';
-
-  @override
-  String get categoryTechnology => 'Technology';
-
-  @override
-  String get categorySports => 'Sports';
-
-  @override
-  String get categoryEconomy => 'Economy';
-
-  @override
-  String get categoryMagazine => 'Entertainment';
-
-  @override
-  String get categoryHealth => 'Health';
-
-  @override
-  String get categoryScience => 'Science';
-
-  @override
-  String get categoryCulture => 'Culture & Arts';
-
-  @override
-  String get categoryWorld => 'World';
-
-  @override
-  String get categoryPolitics => 'Politics';
-
-  @override
-  String get categoryEducation => 'Education';
-
-  @override
-  String get categoryAutomotive => 'Automotive';
-
-  @override
-  String get categoryTravel => 'Travel';
-
-  @override
-  String get categoryFood => 'Food';
-
-  @override
-  String get categoryFashion => 'Fashion';
-
-  // ==================== Article ====================
-  
-  @override
-  String get readMore => 'Read More';
-
-  @override
-  String get share => 'Share';
-
-  @override
-  String get addToFavorites => 'Add to Favorites';
-
-  @override
-  String get removeFromFavorites => 'Remove from Favorites';
-
-  @override
-  String get addedToFavorites => 'Added to favorites';
-
-  @override
-  String get removedFromFavorites => 'Removed from favorites';
-
-  @override
-  String readTime(int minutes) => '$minutes min read';
-
-  @override
-  String get source => 'Source';
-
-  @override
-  String get publishedDate => 'Published Date';
-
-  @override
-  String get openInBrowser => 'Open in Browser';
-
-  @override
-  String get copyLink => 'Copy Link';
-
-  @override
-  String get linkCopied => 'Link copied';
-
-  // ==================== Favorites ====================
-  
-  @override
-  String get favorites => 'Favorites';
-
-  @override
-  String get noFavorites => 'No favorites yet';
-
-  @override
-  String get noFavoritesDescription => 'Add articles you like to favorites to read them later';
-
-  @override
-  String get clearAllFavorites => 'Clear All Favorites';
-
-  @override
-  String get clearFavoritesConfirmation => 'Are you sure you want to delete all favorites?';
-
-  // ==================== Profile ====================
-  
-  @override
-  String get profile => 'Profile';
-
-  @override
-  String get editProfile => 'Edit Profile';
-
-  @override
-  String get readingStatistics => 'Reading Statistics';
-
-  @override
-  String get articlesRead => 'Articles Read';
-
-  @override
-  String get timeSpentReading => 'Time Spent Reading';
-
-  @override
-  String get favoriteArticles => 'Favorite Articles';
-
-  @override
-  String get categoriesFollowed => 'Categories Followed';
-
-  @override
-  String get achievements => 'Achievements';
-
-  @override
-  String get level => 'Level';
-
-  @override
-  String get points => 'Points';
-
-  // ==================== Settings ====================
-  
-  @override
-  String get settings => 'Settings';
-
-  @override
-  String get generalSettings => 'General Settings';
-
-  @override
-  String get appearance => 'Appearance';
-
-  @override
-  String get notifications => 'Notifications';
-
-  @override
-  String get language => 'Language';
-
-  @override
-  String get theme => 'Theme';
-
-  @override
-  String get darkMode => 'Dark Mode';
-
-  @override
-  String get lightTheme => 'Light Theme';
-
-  @override
-  String get darkTheme => 'Dark Theme';
-
-  @override
-  String get systemTheme => 'System Theme';
-
-  @override
-  String get fontSize => 'Font Size';
-
-  @override
-  String get fontSizeSmall => 'Small';
-
-  @override
-  String get fontSizeNormal => 'Normal';
-
-  @override
-  String get fontSizeLarge => 'Large';
-
-  @override
-  String get fontSizeExtraLarge => 'Extra Large';
-
-  @override
-  String get pushNotifications => 'Push Notifications';
-
-  @override
-  String get breakingNewsNotifications => 'Breaking News Notifications';
-
-  @override
-  String get dailyDigestNotifications => 'Daily Digest';
-
-  @override
-  String get sound => 'Sound';
-
-  @override
-  String get vibration => 'Vibration';
-
-  @override
-  String get dataManagement => 'Data Management';
-
-  @override
-  String get clearCache => 'Clear Cache';
-
-  @override
-  String get cacheCleared => 'Cache cleared';
-
-  @override
-  String get exportData => 'Export Data';
-
-  @override
-  String get importData => 'Import Data';
-
-  @override
-  String get about => 'About';
-
-  @override
-  String get version => 'Version';
-
-  @override
-  String get privacyPolicy => 'Privacy Policy';
-
-  @override
-  String get termsOfService => 'Terms of Service';
-
-  @override
-  String get rateApp => 'Rate App';
-
-  @override
-  String get contactUs => 'Contact Us';
-
-  @override
-  String get logout => 'Logout';
-
-  @override
-  String get logoutConfirmation => 'Are you sure you want to logout?';
-
-  // ==================== Search ====================
-  
-  @override
-  String get searchHint => 'Search news...';
-
-  @override
-  String get searchResults => 'Search Results';
-
-  @override
-  String get noResultsFound => 'No results found';
-
-  @override
-  String get recentSearches => 'Recent Searches';
-
-  @override
-  String get clearSearchHistory => 'Clear Search History';
-
-  @override
-  String get popularSearches => 'Popular Searches';
-
-  // ==================== Errors ====================
-  
-  @override
-  String get errorGeneric => 'An error occurred';
-
-  @override
-  String get errorNetwork => 'Connection error';
-
-  @override
-  String get errorServer => 'Server error';
-
-  @override
-  String get errorTimeout => 'Timeout';
-
-  @override
-  String get errorNoInternet => 'No internet connection';
-
-  @override
-  String get tryAgain => 'Try Again';
+  String get error => 'Error';
 
   @override
   String get retry => 'Retry';
 
-  // ==================== Common Actions ====================
-  
-  @override
-  String get ok => 'OK';
-
   @override
   String get cancel => 'Cancel';
+
+  @override
+  String get ok => 'OK';
 
   @override
   String get save => 'Save';
@@ -351,45 +87,207 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
-  String get done => 'Done';
+  String get share => 'Share';
 
   @override
-  String get yes => 'Yes';
+  String get refresh => 'Refresh';
 
   @override
-  String get no => 'No';
+  String get noArticles => 'No articles yet';
 
   @override
-  String get confirm => 'Confirm';
+  String get noFavorites => 'No favorite articles yet';
 
   @override
-  String get back => 'Back';
+  String get noSearchResults => 'No search results found';
 
   @override
-  String get next => 'Next';
+  String get noReadingHistory => 'Reading history is empty';
 
   @override
-  String get skip => 'Skip';
+  String get addToFavorites => 'Add to Favorites';
 
   @override
-  String get continueButton => 'Continue';
-
-  // ==================== Time ====================
-  
-  @override
-  String get justNow => 'Just now';
+  String get removeFromFavorites => 'Remove from Favorites';
 
   @override
-  String minutesAgo(int minutes) => '$minutes minutes ago';
+  String get addedToFavorites => 'Added to favorites';
 
   @override
-  String hoursAgo(int hours) => '$hours hours ago';
+  String get removedFromFavorites => 'Removed from favorites';
 
   @override
-  String daysAgo(int days) => '$days days ago';
+  String get readMore => 'Read More';
 
   @override
-  String get yesterday => 'Yesterday';
+  String readingTime(int minutes) {
+    return '$minutes min read';
+  }
+
+  @override
+  String publishedAt(String date) {
+    return 'Published on $date';
+  }
+
+  @override
+  String get source => 'Source';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get searchHint => 'Search news...';
+
+  @override
+  String get searchHistory => 'Search History';
+
+  @override
+  String get clearSearchHistory => 'Clear Search History';
+
+  @override
+  String get popularSearches => 'Popular Searches';
+
+  @override
+  String get recentSearches => 'Recent Searches';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get lightMode => 'Light Mode';
+
+  @override
+  String get systemTheme => 'System Theme';
+
+  @override
+  String get themes => 'Themes';
+
+  @override
+  String get selectTheme => 'Select color theme';
+
+  @override
+  String get fontSize => 'Font Size';
+
+  @override
+  String get small => 'Small';
+
+  @override
+  String get normal => 'Normal';
+
+  @override
+  String get large => 'Large';
+
+  @override
+  String get extraLarge => 'Extra Large';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get notificationSettings => 'Notification Settings';
+
+  @override
+  String get notificationPreferences => 'Notification Preferences';
+
+  @override
+  String get dailyNewsReminder => 'Daily News Reminder';
+
+  @override
+  String get readingGoalReminder => 'Reading Goal Reminder';
+
+  @override
+  String get breakingNews => 'Breaking News';
+
+  @override
+  String get notificationsEnabled => 'Notifications enabled';
+
+  @override
+  String get notificationsDisabled => 'Notifications disabled';
+
+  @override
+  String get dataManagement => 'Data Management';
+
+  @override
+  String get clearCache => 'Clear Cache';
+
+  @override
+  String get clearCacheDescription => 'Delete all cached news';
+
+  @override
+  String get clearFavorites => 'Clear Favorites';
+
+  @override
+  String get clearFavoritesDescription => 'Delete all favorite news';
+
+  @override
+  String get clearSearchHistoryDescription => 'Clear all search history';
+
+  @override
+  String get exportData => 'Export Data';
+
+  @override
+  String get exportDataDescription =>
+      'Favorites, reading history and statistics';
+
+  @override
+  String get rssSources => 'News Sources';
+
+  @override
+  String get manageRssSources => 'Manage News Sources';
+
+  @override
+  String get addNewSource => 'Add New Source';
+
+  @override
+  String get resetSources => 'Reset Sources';
+
+  @override
+  String get resetSourcesDescription => 'Return to default sources';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get readingStatistics => 'Reading Statistics';
+
+  @override
+  String get readingGoals => 'Reading Goals';
+
+  @override
+  String get readingTrends => 'Reading Trends';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get aboutApp => 'About App';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get analyticsTitle => 'Statistics';
+
+  @override
+  String get overview => 'Overview';
+
+  @override
+  String get charts => 'Charts';
+
+  @override
+  String get details => 'Details';
 
   @override
   String get today => 'Today';
@@ -400,110 +298,239 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get thisMonth => 'This Month';
 
-  // ==================== Onboarding ====================
-  
   @override
-  String get onboardingTitle1 => 'Welcome to News';
+  String get articlesRead => 'Articles Read';
 
   @override
-  String get onboardingDescription1 => 'Follow the latest news from Turkey and the world';
+  String get timeSpent => 'Time Spent';
 
   @override
-  String get onboardingTitle2 => 'Personalized Content';
+  String get favoritesCount => 'Favorites';
 
   @override
-  String get onboardingDescription2 => 'Get news based on your interests';
+  String get sharesCount => 'Shares';
 
   @override
-  String get onboardingTitle3 => 'Offline Reading';
-
-  @override
-  String get onboardingDescription3 => 'Save articles and read them without internet';
-
-  @override
-  String get getStarted => 'Get Started';
-
-  // ==================== Auth ====================
-  
-  @override
-  String get login => 'Login';
-
-  @override
-  String get register => 'Register';
-
-  @override
-  String get email => 'Email';
-
-  @override
-  String get password => 'Password';
-
-  @override
-  String get confirmPassword => 'Confirm Password';
-
-  @override
-  String get forgotPassword => 'Forgot Password';
-
-  @override
-  String get dontHaveAccount => 'Don\'t have an account?';
-
-  @override
-  String get alreadyHaveAccount => 'Already have an account?';
-
-  @override
-  String get signInWithGoogle => 'Sign in with Google';
-
-  @override
-  String get signInWithApple => 'Sign in with Apple';
-
-  @override
-  String get continueAsGuest => 'Continue as Guest';
-
-  // ==================== Analytics ====================
-  
-  @override
-  String get analytics => 'Analytics';
-
-  @override
-  String get readingHistory => 'Reading History';
-
-  @override
-  String get weeklyReport => 'Weekly Report';
-
-  @override
-  String get monthlyReport => 'Monthly Report';
-
-  @override
-  String get mostReadCategories => 'Most Read Categories';
+  String get searchesCount => 'Searches';
 
   @override
   String get readingStreak => 'Reading Streak';
 
   @override
+  String get consistency => 'Consistency';
+
+  @override
+  String get goals => 'Goals';
+
+  @override
+  String get dailyGoal => 'Daily Goal';
+
+  @override
+  String get weeklyGoal => 'Weekly Goal';
+
+  @override
+  String get goalAchieved => 'Congratulations! You achieved the goal.';
+
+  @override
+  String get goalNotAchieved => 'Keep reading to reach your goal.';
+
+  @override
+  String get weeklyReadingChart => 'Last 7 Days Reading Chart';
+
+  @override
+  String get categoryDistribution => 'Category Distribution';
+
+  @override
+  String get monthlyTrend => 'Monthly Reading Trend';
+
+  @override
+  String get socialActivity => 'Social Activity';
+
+  @override
+  String get totalShares => 'Total Shares';
+
+  @override
+  String get totalSearches => 'Total Searches';
+
+  @override
+  String get totalFavorites => 'Total Favorites';
+
+  @override
+  String get readingHabits => 'Your Reading Habits';
+
+  @override
+  String get readingTrend => 'Reading Trend';
+
+  @override
+  String get productiveTime => 'Most Productive Time';
+
+  @override
+  String get consistencyScore => 'Consistency Score';
+
+  @override
+  String get dailyAverage => 'Daily Average';
+
+  @override
+  String get weeklyAverage => 'Weekly Average';
+
+  @override
+  String get trendIncreasing => 'Increasing trend';
+
+  @override
+  String get trendDecreasing => 'Decreasing trend';
+
+  @override
+  String get trendStable => 'Stable';
+
+  @override
+  String get exportTitle => 'Export';
+
+  @override
+  String get exportOptions => 'Export Options';
+
+  @override
+  String get exportDescription => 'Export your data in CSV or JSON format';
+
+  @override
+  String get exportFavorites => 'Favorites';
+
+  @override
+  String get exportFavoritesDescription => 'Export your favorite articles';
+
+  @override
+  String get exportReadingHistory => 'Reading History';
+
+  @override
+  String get exportReadingHistoryDescription => 'List of articles you\'ve read';
+
+  @override
+  String get exportReadingList => 'Reading List';
+
+  @override
+  String get exportReadingListDescription => 'Articles saved for later';
+
+  @override
+  String get exportStatistics => 'Statistics';
+
+  @override
+  String get exportStatisticsDescription => 'Your reading statistics and goals';
+
+  @override
+  String get exportAll => 'All Data';
+
+  @override
+  String get exportAllDescription => 'Export all your data in a single file';
+
+  @override
+  String get exportedFiles => 'Exported Files';
+
+  @override
+  String exportSuccess(int count) {
+    return 'Export successful! $count items saved.';
+  }
+
+  @override
+  String get exportError => 'Export error';
+
+  @override
+  String get selectFormat => 'Select export format';
+
+  @override
+  String get csvFormat => 'CSV';
+
+  @override
+  String get csvDescription => 'Excel compatible';
+
+  @override
+  String get jsonFormat => 'JSON';
+
+  @override
+  String get jsonDescription => 'Structured data';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get turkish => 'Türkçe';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get confirmDelete => 'Are you sure you want to delete?';
+
+  @override
+  String get confirmClear => 'Are you sure you want to clear?';
+
+  @override
+  String get actionCannotBeUndone => 'This action cannot be undone.';
+
+  @override
+  String get connectionError => 'Connection error';
+
+  @override
+  String get noInternet => 'No internet connection';
+
+  @override
+  String get serverError => 'Server error';
+
+  @override
+  String get unknownError => 'Unknown error';
+
+  @override
+  String get minutes => 'minutes';
+
+  @override
+  String get hours => 'hours';
+
+  @override
   String get days => 'days';
 
-  // ==================== Export/Import ====================
-  
   @override
-  String get exportFavorites => 'Export Favorites';
+  String get articles => 'articles';
 
   @override
-  String get exportReadingHistory => 'Export Reading History';
+  String get monday => 'Monday';
 
   @override
-  String get exportAllData => 'Export All Data';
+  String get tuesday => 'Tuesday';
 
   @override
-  String get exportSuccessful => 'Export successful';
+  String get wednesday => 'Wednesday';
 
   @override
-  String get importSuccessful => 'Import successful';
+  String get thursday => 'Thursday';
 
   @override
-  String get exportFormat => 'Export Format';
+  String get friday => 'Friday';
 
   @override
-  String get csvFormat => 'CSV Format';
+  String get saturday => 'Saturday';
 
   @override
-  String get jsonFormat => 'JSON Format';
+  String get sunday => 'Sunday';
+
+  @override
+  String get mondayShort => 'Mon';
+
+  @override
+  String get tuesdayShort => 'Tue';
+
+  @override
+  String get wednesdayShort => 'Wed';
+
+  @override
+  String get thursdayShort => 'Thu';
+
+  @override
+  String get fridayShort => 'Fri';
+
+  @override
+  String get saturdayShort => 'Sat';
+
+  @override
+  String get sundayShort => 'Sun';
 }

@@ -5,9 +5,10 @@ import 'package:intl/intl.dart';
 
 import '../../../core/services/export_service.dart';
 import '../../providers/favorites_provider.dart';
-import '../../providers/reading_history_provider.dart';
+// import '../../providers/reading_history_provider.dart';  // TODO: Create this provider
 import '../../providers/reading_list_provider.dart';
-import '../../providers/user_statistics_provider.dart';
+// import '../../providers/user_statistics_provider.dart';  // TODO: Create this provider
+import '../../providers/analytics_provider.dart';
 
 /// Export/Import sayfası
 class ExportImportPage extends ConsumerStatefulWidget {
@@ -45,43 +46,31 @@ class _ExportImportPageState extends ConsumerState<ExportImportPage> {
 
       switch (type) {
         case ExportType.favorites:
-          final favorites = ref.read(favoritesProvider);
+          final favState = ref.read(favoritesProvider);
           result = await _exportService.exportFavorites(
-            favorites: favorites,
+            favorites: favState.articles,
             format: format,
           );
           break;
 
         case ExportType.readingHistory:
-          final history = ref.read(readingHistoryProvider);
-          result = await _exportService.exportReadingHistory(
-            history: history,
-            format: format,
-          );
-          break;
+          // TODO: Implement after creating reading_history_provider
+          throw UnimplementedError('Reading history export not yet implemented');
 
         case ExportType.readingList:
-          final readingList = ref.read(readingListProvider);
+          final readingListState = ref.read(readingListProvider);
           result = await _exportService.exportReadingList(
-            readingList: readingList,
+            readingList: readingListState.articles,
             format: format,
           );
           break;
 
         case ExportType.statistics:
-          final stats = ref.read(userStatisticsProvider);
+          // TODO: Implement after creating user_statistics_provider
+          final analytics = ref.read(analyticsProvider);
           final statsMap = {
-            'total_articles_read': stats.totalArticlesRead,
-            'total_reading_time_minutes': stats.totalReadingTimeMinutes,
-            'favorite_count': stats.favoriteCount,
-            'reading_streak': stats.readingStreak,
-            'longest_streak': stats.longestStreak,
-            'category_stats': stats.categoryReadCount,
-            'daily_reading': stats.dailyReadingMinutes,
-            'weekly_goals': {
-              'articles_goal': stats.weeklyArticleGoal,
-              'time_goal_minutes': stats.weeklyTimeGoal,
-            },
+            'total_articles_read': analytics.readArticles.length,
+            'total_favorites': analytics.favoritedArticles.length,
           };
           result = await _exportService.exportStatistics(
             statistics: statsMap,
@@ -90,22 +79,17 @@ class _ExportImportPageState extends ConsumerState<ExportImportPage> {
           break;
 
         case ExportType.all:
-          final favorites = ref.read(favoritesProvider);
-          final history = ref.read(readingHistoryProvider);
-          final readingList = ref.read(readingListProvider);
-          final stats = ref.read(userStatisticsProvider);
+          final favState = ref.read(favoritesProvider);
+          final readingListState = ref.read(readingListProvider);
+          final analytics = ref.read(analyticsProvider);
           final statsMap = {
-            'total_articles_read': stats.totalArticlesRead,
-            'total_reading_time_minutes': stats.totalReadingTimeMinutes,
-            'favorite_count': stats.favoriteCount,
-            'reading_streak': stats.readingStreak,
-            'longest_streak': stats.longestStreak,
-            'category_stats': stats.categoryReadCount,
+            'total_articles_read': analytics.readArticles.length,
+            'total_favorites': analytics.favoritedArticles.length,
           };
           result = await _exportService.exportAll(
-            favorites: favorites,
-            readingHistory: history,
-            readingList: readingList,
+            favorites: favState.articles,
+            readingHistory: [], // TODO: Add after implementing provider
+            readingList: readingListState.articles,
             statistics: statsMap,
           );
           break;

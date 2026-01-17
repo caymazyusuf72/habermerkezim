@@ -32,6 +32,9 @@ class ReadingListState {
   bool get hasArticles => readingListArticles.isNotEmpty;
   bool get hasError => error != null;
   int get readingListCount => readingListArticles.length;
+  
+  // Export/Import için ek getter
+  List<Article> get articles => readingListArticles;
 
   /// Makale okuma listesinde mi kontrol et
   bool isInReadingList(String articleId) {

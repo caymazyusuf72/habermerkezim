@@ -14,6 +14,13 @@ class AnalyticsState {
   final bool isLoading;
   final String? error;
   final int streakDays;
+  
+  // Gamification için ek getter'lar
+  int get totalSearches => weeklySummary.totalSearches;
+  int get totalArticlesRead => weeklySummary.totalArticlesRead;
+  int get totalShares => weeklySummary.totalShares;
+  List<dynamic> get readArticles => weeklyAnalytics;
+  List<dynamic> get favoritedArticles => [];
 
   const AnalyticsState({
     required this.todayAnalytics,

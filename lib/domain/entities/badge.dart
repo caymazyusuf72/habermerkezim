@@ -146,6 +146,8 @@ class UserLevel {
   });
 
   double get progress => requiredXP > 0 ? currentXP / requiredXP : 0.0;
+  double get progressToNextLevel => progress;
+  int get xpForNextLevel => requiredXP - currentXP;
 
   factory UserLevel.initial() {
     return const UserLevel(
