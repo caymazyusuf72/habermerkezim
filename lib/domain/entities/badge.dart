@@ -194,6 +194,29 @@ class UserLevel {
       totalXP: json['totalXP'] as int? ?? 0,
     );
   }
+
+  /// Seviye numarasından UserLevel oluştur
+  factory UserLevel.fromLevel(int level) {
+    final titles = [
+      'Yeni Okuyucu', 'Meraklı Okuyucu', 'Düzenli Okuyucu', 'Aktif Okuyucu',
+      'Tutkulu Okuyucu', 'Deneyimli Okuyucu', 'Uzman Okuyucu', 'Usta Okuyucu',
+      'Elit Okuyucu', 'Efsane Okuyucu', 'Haber Avcısı', 'Bilgi Uzmanı',
+      'Medya Analisti', 'Enformasyon Ustası', 'Haber Dehası', 'Bilgi Kaynağı',
+      'Medya Guru', 'Haber Efsanesi', 'Omniscient Reader', 'Haber Tanrısı'
+    ];
+    
+    final clampedLevel = level.clamp(1, 20);
+    final title = titles[clampedLevel - 1];
+    final requiredXP = 100 * clampedLevel;
+    
+    return UserLevel(
+      level: clampedLevel,
+      title: title,
+      currentXP: 0,
+      requiredXP: requiredXP,
+      totalXP: 0,
+    );
+  }
 }
 
 /// Gamification durumu

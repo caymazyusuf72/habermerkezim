@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Badge;
 
-import '../../domain/entities/badge.dart' as game_badge;
+import '../../domain/entities/badge.dart';
 
 /// Rozet açıldığında gösterilen dialog
 class BadgeUnlockDialog extends StatefulWidget {

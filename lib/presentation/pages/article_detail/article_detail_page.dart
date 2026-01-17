@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../domain/entities/article.dart';
 import '../../../domain/entities/badge.dart' as game_badge;
+import '../../../domain/entities/badge.dart';
 import '../../../core/services/article_content_service.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../../providers/providers.dart';
@@ -96,7 +97,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   }
 
   /// Açılan rozetleri göster
-  void _showUnlockedBadges(List<Badge> badges) {
+  void _showUnlockedBadges(List<game_badge.Badge> badges) {
     for (final badge in badges) {
       showDialog(
         context: context,
@@ -106,10 +107,18 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   }
 
   /// Seviye atlama dialogu göster
-  void _showLevelUpDialog(UserLevel newLevel) {
+  void _showLevelUpDialog(int newLevelNumber) {
+    final gamificationState = ref.read(gamificationProvider);
+    final oldLevel = gamificationState.userLevel.level;
+    final newLevel = UserLevel.fromLevel(newLevelNumber);
+    
     showDialog(
       context: context,
-      builder: (context) => LevelUpDialog(newLevel: newLevel),
+      builder: (context) => LevelUpDialog(
+        oldLevel: oldLevel,
+        newLevel: newLevel.level,
+        newTitle: newLevel.title,
+      ),
     );
   }
 

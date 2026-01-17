@@ -11,6 +11,7 @@ import '../../themes/app_theme.dart';
 import '../../widgets/badge_unlock_dialog.dart';
 import '../../../domain/entities/article.dart';
 import '../../../domain/entities/badge.dart' as game_badge;
+import '../../../domain/entities/badge.dart';
 import '../../../core/services/search_service.dart';
 import '../home/widgets/article_card.dart';
 import '../home/widgets/article_filter_dialog.dart';
@@ -98,7 +99,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 
   /// Açılan rozetleri göster
-  void _showUnlockedBadges(List<Badge> badges) {
+  void _showUnlockedBadges(List<game_badge.Badge> badges) {
     for (final badge in badges) {
       showDialog(
         context: context,
@@ -108,10 +109,18 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 
   /// Seviye atlama dialogu göster
-  void _showLevelUpDialog(UserLevel newLevel) {
+  void _showLevelUpDialog(int newLevelNumber) {
+    final gamificationState = ref.read(gamificationProvider);
+    final oldLevel = gamificationState.userLevel.level;
+    final newLevel = UserLevel.fromLevel(newLevelNumber);
+    
     showDialog(
       context: context,
-      builder: (context) => LevelUpDialog(newLevel: newLevel),
+      builder: (context) => LevelUpDialog(
+        oldLevel: oldLevel,
+        newLevel: newLevel.level,
+        newTitle: newLevel.title,
+      ),
     );
   }
 
