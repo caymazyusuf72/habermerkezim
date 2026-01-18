@@ -21,6 +21,26 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   
   RssRemoteDataSourceImpl({Dio? dio}) : _dio = dio ?? _createDio();
   
+  /// Kategori eşleştirme haritası - RSS feed'lerindeki kategori isimleri
+  static const Map<String, List<String>> _categoryMappings = {
+    'genel': ['genel', 'gündem', 'gundem', 'haber', 'news', 'türkiye', 'turkiye'],
+    'ekonomi': ['ekonomi', 'economy', 'finans', 'finance', 'borsa', 'döviz', 'doviz', 'para'],
+    'spor': ['spor', 'sports', 'futbol', 'football', 'basketbol', 'basketball', 'voleybol'],
+    'teknoloji': ['teknoloji', 'technology', 'tech', 'bilişim', 'bilisim', 'yazılım', 'yazilim', 'donanım', 'donanim'],
+    'sağlık': ['sağlık', 'saglik', 'health', 'tıp', 'tip', 'doktor', 'hastane', 'sağlıklı', 'saglikli'],
+    'saglik': ['sağlık', 'saglik', 'health', 'tıp', 'tip', 'doktor', 'hastane', 'sağlıklı', 'saglikli'],
+    'eğitim': ['eğitim', 'egitim', 'education', 'okul', 'school', 'üniversite', 'universite', 'öğrenci', 'ogrenci'],
+    'egitim': ['eğitim', 'egitim', 'education', 'okul', 'school', 'üniversite', 'universite', 'öğrenci', 'ogrenci'],
+    'magazin': ['magazin', 'magazine', 'ünlü', 'unlu', 'celebrity', 'şov', 'sov', 'show'],
+    'kültür': ['kültür', 'kultur', 'culture', 'sanat', 'art', 'sinema', 'müzik', 'muzik', 'tiyatro'],
+    'kultur': ['kültür', 'kultur', 'culture', 'sanat', 'art', 'sinema', 'müzik', 'muzik', 'tiyatro'],
+    'dünya': ['dünya', 'dunya', 'world', 'uluslararası', 'uluslararasi', 'international', 'global'],
+    'dunya': ['dünya', 'dunya', 'world', 'uluslararası', 'uluslararasi', 'international', 'global'],
+    'bilim': ['bilim', 'science', 'araştırma', 'arastirma', 'research', 'teknoloji', 'technology'],
+    'otomobil': ['otomobil', 'automobile', 'araba', 'car', 'otomotiv', 'automotive', 'motorsport'],
+    'turkiye': ['türkiye', 'turkiye', 'turkey', 'gündem', 'gundem', 'haber'],
+  };
+  
   /// Dio client oluşturur
   static Dio _createDio() {
     final dio = Dio(BaseOptions(
@@ -303,6 +323,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   List<ArticleModel> _parseRss2Format(XmlDocument document, String category, String sourceName) {
     final items = document.findAllElements('item');
     final List<ArticleModel> articles = [];
+    int filteredCount = 0;
     
     for (final item in items) {
       try {
@@ -318,6 +339,15 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         articleData['content'] = _getElementText(item, 'content:encoded') ??
                                  _getElementText(item, 'content') ??
                                  articleData['description'];
+        
+        // RSS kategori tag'ini çıkar
+        articleData['rssCategory'] = _getElementText(item, 'category');
+        
+        // Kategori doğrulaması yap
+        if (!_isArticleInCorrectCategory(category, articleData['rssCategory'], articleData['title'])) {
+          filteredCount++;
+          continue; // Bu makaleyi atla
+        }
         
         // Media content (görsel)
         articleData['mediaContent'] = _getMediaContent(item);
@@ -340,6 +370,10 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       }
     }
     
+    if (filteredCount > 0) {
+      debugPrint('🔍 [$category] RSS 2.0 kategori filtreleme: $filteredCount makale filtrelendi, ${articles.length} makale kaldı');
+    }
+    
     if (articles.isEmpty) {
       throw EmptyRssFeedException(ApiEndpoints.rssFeedUrls[category] ?? '');
     }
@@ -351,6 +385,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   List<ArticleModel> _parseAtomFormat(XmlDocument document, String category, String sourceName) {
     final entries = document.findAllElements('entry');
     final List<ArticleModel> articles = [];
+    int filteredCount = 0;
     
     for (final entry in entries) {
       try {
@@ -373,6 +408,15 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         
         articleData['content'] = articleData['description'];
         
+        // Atom kategori tag'ini çıkar
+        articleData['rssCategory'] = _getElementText(entry, 'category');
+        
+        // Kategori doğrulaması yap
+        if (!_isArticleInCorrectCategory(category, articleData['rssCategory'], articleData['title'])) {
+          filteredCount++;
+          continue; // Bu makaleyi atla
+        }
+        
         // Atom formatında görsel çekme
         articleData['mediaContent'] = _getMediaContent(entry);
         
@@ -388,6 +432,10 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         debugPrint('Atom entry parse hatası: $e');
         continue;
       }
+    }
+    
+    if (filteredCount > 0) {
+      debugPrint('🔍 [$category] Atom kategori filtreleme: $filteredCount makale filtrelendi, ${articles.length} makale kaldı');
     }
     
     if (articles.isEmpty) {
@@ -439,7 +487,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     return null;
   }
 
-  /// Enclosure URL'ini çıkarır  
+  /// Enclosure URL'ini çıkarır
   String? _getEnclosureUrl(XmlElement item) {
     final enclosureElement = item.findElements('enclosure').firstOrNull;
     
@@ -451,6 +499,37 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     }
     
     return null;
+  }
+  
+  /// Makalenin RSS kategorisi ile beklenen kategoriyi karşılaştırır
+  /// Returns true if article should be included, false if filtered out
+  bool _isArticleInCorrectCategory(String expectedCategory, String? rssCategory, String? title) {
+    // RSS'de kategori bilgisi yoksa kabul et (bazı feed'lerde kategori tag'i olmayabilir)
+    if (rssCategory == null || rssCategory.isEmpty) {
+      return true;
+    }
+    
+    // Kategori mapping'leri al
+    final mappings = _categoryMappings[expectedCategory.toLowerCase()] ?? [];
+    if (mappings.isEmpty) {
+      // Mapping yoksa kabul et
+      return true;
+    }
+    
+    // RSS kategorisini normalize et
+    final rssCategoryLower = rssCategory.toLowerCase().trim();
+    
+    // Mapping'lerden herhangi biri RSS kategorisinde geçiyor mu kontrol et
+    final isMatch = mappings.any((mapping) =>
+      rssCategoryLower.contains(mapping.toLowerCase())
+    );
+    
+    // Kategori uyuşmazlığı varsa log at
+    if (!isMatch) {
+      debugPrint('⚠️ Kategori uyuşmazlığı: Beklenen="$expectedCategory", RSS="$rssCategory", Başlık="${title?.substring(0, title.length > 50 ? 50 : title.length)}..."');
+    }
+    
+    return isMatch;
   }
 
   /// DioError'ı uygun exception'a çevirir

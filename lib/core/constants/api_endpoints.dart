@@ -62,7 +62,7 @@ class ApiEndpoints {
     // Sağlık
     'saglik': 'https://www.sabah.com.tr/rss/saglik.xml',
     'saglik_hurriyet': 'https://www.hurriyet.com.tr/rss/saglik',
-    'saglik_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/saglikRSS.xml',
+    // 'saglik_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/saglikRSS.xml', // ❌ Redirect to sondakika
     'saglik_ntv': 'https://www.ntv.com.tr/saglik.rss',
     'saglik_haberturk': 'https://www.haberturk.com/rss/kategori/saglik.xml',
     'saglik_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/11.xml',
@@ -70,14 +70,14 @@ class ApiEndpoints {
     // Kültür-Sanat
     'kultur': 'https://www.hurriyet.com.tr/rss/kultur-sanat',
     'kultur_sabah': 'https://www.sabah.com.tr/rss/kultur-sanat.xml',
-    'kultur_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/kulturSanatRSS.xml',
+    // 'kultur_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/kulturSanatRSS.xml', // ❌ Redirect to sondakika
     'kultur_ntv': 'https://www.ntv.com.tr/yasam.rss',
     'kultur_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/5.xml',
     
     // Magazin
     'magazin': 'https://www.hurriyet.com.tr/rss/magazin',
     'magazin_sabah': 'https://www.sabah.com.tr/rss/magazin.xml',
-    'magazin_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/magazinRSS.xml',
+    // 'magazin_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/magazinRSS.xml', // ❌ Redirect to sondakika
     'magazin_posta': 'https://www.posta.com.tr/rss/magazin.xml',
     'magazin_mynet': 'https://www.mynet.com/rss/magazin',
     'magazin_ensonhaber': 'https://www.ensonhaber.com/rss/magazin.xml',
@@ -94,16 +94,16 @@ class ApiEndpoints {
     'egitim': 'https://www.hurriyet.com.tr/rss/egitim',
     'egitim_sabah': 'https://www.sabah.com.tr/rss/egitim.xml',
     'egitim_ntv': 'https://www.ntv.com.tr/egitim.rss',
-    'egitim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/egitimRSS.xml',
+    // 'egitim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/egitimRSS.xml', // ❌ Redirect to sondakika
     'egitim_haberturk': 'https://www.haberturk.com/rss/kategori/egitim.xml',
-    'egitim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/12.xml',
+    // 'egitim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/12.xml', // ❌ Redirect to cevre
     
     // Otomobil
     'otomobil': 'https://www.ntv.com.tr/otomobil.rss',
     'otomobil_ntv': 'https://www.ntv.com.tr/otomobil.rss',
     'otomobil_ensonhaber': 'https://www.ensonhaber.com/rss/otomobil.xml',
     'otomobil_haberturk': 'https://www.haberturk.com/rss/kategori/otomobil.xml',
-    'otomobil_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/otomotivRSS.xml',
+    // 'otomobil_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/otomotivRSS.xml', // ❌ Redirect to sondakika
     'otomobil_gazetevatan': 'https://www.gazetevatan.com/rss/otomobil.xml',
     'otomobil_otomobilturkiye': 'https://www.otomobilturkiye.com/rss.xml',
   };
