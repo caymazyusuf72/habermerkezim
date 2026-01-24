@@ -228,5 +228,45 @@
   "thursdayShort": "Per",
   "fridayShort": "Cum",
   "saturdayShort": "Cmt",
-  "sundayShort": "Paz"
+  "sundayShort": "Paz",
+  
+  "notificationCategoryFilters": "Kategori Bildirimleri",
+  "notificationQuietHours": "Sessiz Saatler",
+  "notificationDailyLimit": "Günlük Bildirim Limiti",
+  "notificationQuietHoursStart": "Başlangıç Saati",
+  "notificationQuietHoursEnd": "Bitiş Saati",
+  "notificationMaxDaily": "Maksimum Bildirim",
+  "notificationTodayCount": "Bugün: {count}/{max}",
+  "@notificationTodayCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationPrioritySettings": "Öncelik Ayarları",
+  "notificationHighPrioritySound": "Yüksek Öncelik Sesi",
+  "notificationHighPriorityVibration": "Yüksek Öncelik Titreşimi",
+  
+  "readingMode": "Okuma Modu",
+  "readingModeFontSize": "Font Boyutu",
+  "readingModeBackground": "Arka Plan Rengi",
+  "readingModeLineSpacing": "Satır Aralığı",
+  "readingModeNightMode": "Gece Modu",
+  "readingModeReset": "Varsayılana Dön",
+  "readingModeSettings": "Okuma Ayarları",
+  
+  "readingColorWhite": "Beyaz",
+  "readingColorBeige": "Bej",
+  "readingColorSepia": "Sepia",
+  "readingColorBlack": "Siyah",
+  "readingColorNight": "Gece",
+  
+  "readingSpacingCompact": "Dar",
+  "readingSpacingNormal": "Normal",
+  "readingSpacingComfortable": "Rahat",
+  "readingSpacingWide": "Geniş"
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/providers.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/gamification_provider.dart';
+import '../../providers/reading_mode_provider.dart';
 import '../../themes/app_theme.dart' show AppTheme, ColorTheme;
 import '../../widgets/dialogs/modern_alert_dialog.dart';
 import '../rss_sources/rss_sources_page.dart';
@@ -13,6 +14,7 @@ import '../notifications/notification_preferences_page.dart';
 import '../../../core/services/rss_sources_service.dart';
 import 'export_import_page.dart';
 import '../badges/badges_page.dart';
+import '../article_detail/widgets/reading_mode_bottom_sheet.dart';
 
 /// Ayarlar sayfası - uygulama ayarları
 class SettingsPage extends ConsumerWidget {
@@ -38,6 +40,11 @@ class SettingsPage extends ConsumerWidget {
           // Dil Ayarları
           _buildSectionHeader(context, 'Dil', Icons.language_rounded),
           _buildLanguageSection(context, ref),
+          const SizedBox(height: 24),
+
+          // Okuma Modu
+          _buildSectionHeader(context, 'Okuma Modu', Icons.chrome_reader_mode_rounded),
+          _buildReadingModeSection(context, ref),
           const SizedBox(height: 24),
 
           // Haber Kaynakları
@@ -336,6 +343,125 @@ class SettingsPage extends ConsumerWidget {
     if (scale <= 1.2) return 'Büyük';
     if (scale <= 1.4) return 'Çok Büyük';
     return 'Maksimum';
+  }
+
+  /// Okuma modu bölümü
+  Widget _buildReadingModeSection(BuildContext context, WidgetRef ref) {
+    final readingMode = ref.watch(readingModeProvider);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.chrome_reader_mode_rounded,
+                color: AppTheme.primaryBlue,
+                size: 20,
+              ),
+            ),
+            title: const Text('Okuma Ayarları'),
+            subtitle: Text('${readingMode.backgroundColorName} • ${(readingMode.fontSize * 100).toInt()}%'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              ReadingModeBottomSheet.show(context);
+            },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.text_fields),
+            title: const Text('Font Boyutu'),
+            subtitle: Text('${(readingMode.fontSize * 100).toInt()}% boyutunda'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.remove_circle_outline),
+                  onPressed: () {
+                    ref.read(readingModeProvider.notifier).decreaseFontSize();
+                  },
+                  iconSize: 20,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add_circle_outline),
+                  onPressed: () {
+                    ref.read(readingModeProvider.notifier).increaseFontSize();
+                  },
+                  iconSize: 20,
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          SwitchListTile(
+            secondary: Icon(
+              Icons.nightlight_round,
+              color: readingMode.nightModeEnabled ? Colors.amber : Colors.grey,
+            ),
+            title: const Text('Gece Modu'),
+            subtitle: const Text('Karanlık arka plan ile rahat okuma'),
+            value: readingMode.nightModeEnabled,
+            activeColor: Colors.amber,
+            onChanged: (value) {
+              ref.read(readingModeProvider.notifier).toggleNightMode(value);
+            },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.refresh),
+            title: const Text('Varsayılana Dön'),
+            subtitle: const Text('Tüm okuma ayarlarını sıfırla'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () async {
+              final result = await ModernDialogs.showConfirmDialog(
+                context: context,
+                title: 'Varsayılana Dön',
+                content: 'Tüm okuma modu ayarları varsayılan değerlere döndürülecek. Devam etmek istiyor musunuz?',
+                icon: Icons.refresh,
+                iconColor: Colors.orange,
+                confirmText: 'Sıfırla',
+                cancelText: 'İptal',
+              );
+              
+              if (result == true) {
+                ref.read(readingModeProvider.notifier).resetToDefaults();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Row(
+                        children: [
+                          Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+                          SizedBox(width: 8),
+                          Text('Okuma modu varsayılana döndürüldü'),
+                        ],
+                      ),
+                      backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  );
+                }
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   /// Dil seçimi bölümü

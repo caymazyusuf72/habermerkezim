@@ -228,5 +228,45 @@
   "thursdayShort": "Thu",
   "fridayShort": "Fri",
   "saturdayShort": "Sat",
-  "sundayShort": "Sun"
+  "sundayShort": "Sun",
+  
+  "notificationCategoryFilters": "Category Notifications",
+  "notificationQuietHours": "Quiet Hours",
+  "notificationDailyLimit": "Daily Notification Limit",
+  "notificationQuietHoursStart": "Start Time",
+  "notificationQuietHoursEnd": "End Time",
+  "notificationMaxDaily": "Maximum Notifications",
+  "notificationTodayCount": "Today: {count}/{max}",
+  "@notificationTodayCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationPrioritySettings": "Priority Settings",
+  "notificationHighPrioritySound": "High Priority Sound",
+  "notificationHighPriorityVibration": "High Priority Vibration",
+  
+  "readingMode": "Reading Mode",
+  "readingModeFontSize": "Font Size",
+  "readingModeBackground": "Background Color",
+  "readingModeLineSpacing": "Line Spacing",
+  "readingModeNightMode": "Night Mode",
+  "readingModeReset": "Reset to Default",
+  "readingModeSettings": "Reading Settings",
+  
+  "readingColorWhite": "White",
+  "readingColorBeige": "Beige",
+  "readingColorSepia": "Sepia",
+  "readingColorBlack": "Black",
+  "readingColorNight": "Night",
+  
+  "readingSpacingCompact": "Compact",
+  "readingSpacingNormal": "Normal",
+  "readingSpacingComfortable": "Comfortable",
+  "readingSpacingWide": "Wide"
 }

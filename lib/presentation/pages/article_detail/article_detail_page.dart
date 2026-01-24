@@ -15,11 +15,13 @@ import '../../providers/analytics_provider.dart';
 import '../../providers/reading_list_provider.dart';
 import '../../providers/popular_articles_provider.dart';
 import '../../providers/gamification_provider.dart';
+import '../../providers/reading_mode_provider.dart';
 import '../../themes/app_theme.dart';
 import '../../widgets/badge_unlock_dialog.dart';
 import 'widgets/image_gallery.dart';
 import 'widgets/related_articles_section.dart';
 import 'widgets/tts_controls.dart';
+import 'widgets/reading_mode_bottom_sheet.dart';
 
 /// Haber detay sayfası - tek bir haberin ayrıntılı görünümü
 /// Görsel, başlık, içerik, tarih, paylaşma ve kaynak görme özellikleri
@@ -174,6 +176,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     final categoryColor = AppTheme.getCategoryColor(widget.article.category);
     final responsive = ResponsiveHelper(context);
     final isTabletOrLarger = responsive.isTablet || responsive.isDesktop;
+    final readingMode = ref.watch(readingModeProvider);
 
     // Tablet ve desktop için yan panel layout
     if (isTabletOrLarger) {
@@ -182,6 +185,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
 
     // Mobil layout
     return Scaffold(
+      backgroundColor: readingMode.backgroundColorValue,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
@@ -194,7 +198,13 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           ),
         ],
       ),
-      
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => ReadingModeBottomSheet.show(context),
+        icon: const Icon(Icons.chrome_reader_mode_rounded),
+        label: const Text('Okuma Modu'),
+        backgroundColor: AppTheme.primaryBlue,
+        tooltip: 'Okuma Ayarları',
+      ),
     );
   }
   
@@ -891,6 +901,8 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
 
   /// Makale içeriği
   Widget _buildArticleContent(BuildContext context, ThemeData theme) {
+    final readingMode = ref.watch(readingModeProvider);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -899,18 +911,20 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              color: readingMode.backgroundColorValue.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                color: readingMode.textColorValue.withValues(alpha: 0.2),
               ),
             ),
             child: Text(
               widget.article.description,
               style: theme.textTheme.bodyLarge?.copyWith(
+                fontSize: 17 * readingMode.fontSize,
                 fontWeight: FontWeight.w500,
-                height: 1.6,
+                height: readingMode.lineSpacingValue,
                 fontStyle: FontStyle.italic,
+                color: readingMode.textColorValue,
               ),
             ),
           ),
@@ -925,8 +939,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               Text(
                 _formatContentForReading(widget.article.content!),
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  height: 2.0,
-                  fontSize: 17,
+                  fontSize: 17 * readingMode.fontSize,
+                  height: readingMode.lineSpacingValue,
+                  color: readingMode.textColorValue,
                   letterSpacing: 0.3,
                 ),
               ),
@@ -974,8 +989,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               Text(
                 _formatContentForReading(_fullContent!.content ?? 'İçerik bulunamadı'),
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  height: 2.0,
-                  fontSize: 17,
+                  fontSize: 17 * readingMode.fontSize,
+                  height: readingMode.lineSpacingValue,
+                  color: readingMode.textColorValue,
                   letterSpacing: 0.3,
                 ),
               ),
