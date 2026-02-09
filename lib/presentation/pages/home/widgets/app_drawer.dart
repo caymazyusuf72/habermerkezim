@@ -36,6 +36,18 @@ class AppDrawer extends ConsumerWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                // NAVİGASYON BAŞLIKLARI
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Text(
+                    'SAYFALAR',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                
                 // Profil
                 _buildMenuTile(
                   context,
@@ -51,18 +63,6 @@ class AppDrawer extends ConsumerWidget {
                   },
                 ),
                 
-                const Divider(),
-                
-                // Ana Sayfa
-                _buildMenuTile(
-                  context,
-                  icon: Icons.home_rounded,
-                  title: 'Ana Sayfa',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                
                 // Trending
                 _buildMenuTile(
                   context,
@@ -73,22 +73,6 @@ class AppDrawer extends ConsumerWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const TrendingPage(),
-                      ),
-                    );
-                  },
-                ),
-                
-                // Favoriler
-                _buildMenuTile(
-                  context,
-                  icon: Icons.favorite_rounded,
-                  title: 'Favoriler',
-                  trailing: _buildFavoriteCount(ref),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const FavoritesPage(),
                       ),
                     );
                   },
@@ -111,6 +95,18 @@ class AppDrawer extends ConsumerWidget {
                 ),
                 
                 const Divider(),
+                
+                // AYARLAR BAŞLIĞI
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Text(
+                    'ARAÇLAR',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
                 
                 // Tema Ayarları
                 _buildThemeSection(context, ref, isDarkMode),
@@ -137,7 +133,7 @@ class AppDrawer extends ConsumerWidget {
                 _buildMenuTile(
                   context,
                   icon: Icons.speed_rounded,
-                  title: 'Performans İzleme',
+                  title: 'Performans',
                   onTap: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(

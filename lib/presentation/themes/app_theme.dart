@@ -21,9 +21,10 @@ class AppTheme {
   static const Color sageGreenDark = Color(0xFF6B8A4F);
   static const Color sageGreenAccent = Color(0xFFA8C088);
   
-  static const Color matBlack = Color(0xFF0D0D0D);
-  static const Color matBlackSurface = Color(0xFF1A1A1A);
-  static const Color matBlackSurfaceVariant = Color(0xFF2A2A2A);
+  // Material Design 3 Dark Theme Colors
+  static const Color matBlack = Color(0xFF121212);           // MD3 background
+  static const Color matBlackSurface = Color(0xFF1E1E1E);    // MD3 surface
+  static const Color matBlackSurfaceVariant = Color(0xFF2C2C2C); // MD3 surface variant
   
   static const Color lightSurface = Color(0xFFFFFEF9);
   static const Color lightBackground = Color(0xFFFAF9F4);
@@ -345,9 +346,11 @@ class AppTheme {
       cs = ColorScheme.fromSeed(
         seedColor: pColor,
         brightness: Brightness.dark,
-        surface: matBlackSurface,
-        onSurface: const Color(0xFFE8E8E8), // Açık gri metin rengi
-        surfaceContainerHighest: matBlackSurfaceVariant,
+        // Material Design 3 Dark Surface Colors
+        background: matBlack,                              // #121212
+        surface: matBlackSurface,                          // #1E1E1E
+        surfaceContainerHighest: matBlackSurfaceVariant,   // #2C2C2C
+        onSurface: const Color(0xFFE3E3E3),               // MD3 on-surface
         error: errorRed,
         primary: pColor,
         secondary: pLight,
@@ -380,7 +383,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(color: epc.withValues(alpha: 0.4), width: 1.5),
         ),
-        color: const Color(0xFF252525), // Daha açık koyu gri - kartlar için
+        color: matBlackSurfaceVariant, // #2C2C2C - MD3 surface variant
         surfaceTintColor: epc.withValues(alpha: 0.08),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(

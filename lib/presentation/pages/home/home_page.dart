@@ -365,7 +365,8 @@ class _HomePageState extends ConsumerState<HomePage>
                   )
                 : const Center(child: CircularProgressIndicator()),
           ),
-        ];
+        ],
+      );
       case 1:
         // Arama
         return const SearchPage();

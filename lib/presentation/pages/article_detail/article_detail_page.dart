@@ -198,13 +198,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => ReadingModeBottomSheet.show(context),
-        icon: const Icon(Icons.chrome_reader_mode_rounded),
-        label: const Text('Okuma Modu'),
-        backgroundColor: AppTheme.primaryBlue,
-        tooltip: 'Okuma Ayarları',
-      ),
+      // FAB kaldırıldı - Okuma modu artık overflow menüde
     );
   }
   
@@ -226,28 +220,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
-          // Okuma listesi butonu
-          Consumer(
-            builder: (context, ref, child) {
-              final isInReadingList = ref.watch(isInReadingListProvider(widget.article.id));
-              return IconButton(
-                onPressed: () {
-                  ref.read(readingListProvider.notifier).toggleReadingList(widget.article);
-                },
-                icon: Icon(
-                  isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                ),
-                tooltip: isInReadingList ? 'Okuma listesinden çıkar' : 'Okuma listesine ekle',
-              );
-            },
-          ),
-          // Paylaş butonu
-          IconButton(
-            onPressed: () => _shareArticle(),
-            icon: const Icon(Icons.share),
-            tooltip: 'Paylaş',
-          ),
-          // Favori butonu
+          // Favori butonu - AppBar'da kalacak
           Consumer(
             builder: (context, ref, child) {
               final newsState = ref.watch(newsProvider);
@@ -265,31 +238,65 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               );
             },
           ),
-          // Menü
+          
+          // Paylaş butonu - AppBar'da kalacak
+          IconButton(
+            onPressed: () => _shareArticle(),
+            icon: const Icon(Icons.share),
+            tooltip: 'Paylaş',
+          ),
+          
+          // Overflow Menü - Diğer eylemler
           PopupMenuButton<String>(
             onSelected: _handleMenuSelection,
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'copy_link',
-                child: Row(
-                  children: [
-                    Icon(Icons.copy),
-                    SizedBox(width: 12),
-                    Text('Bağlantıyı Kopyala'),
-                  ],
+            itemBuilder: (context) {
+              final isInReadingList = ref.watch(isInReadingListProvider(widget.article.id));
+              return [
+                // Okuma listesi
+                PopupMenuItem(
+                  value: 'reading_list',
+                  child: Row(
+                    children: [
+                      Icon(
+                        isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(isInReadingList ? 'Listeden Çıkar' : 'Listeye Ekle'),
+                    ],
+                  ),
                 ),
-              ),
-              const PopupMenuItem(
-                value: 'open_browser',
-                child: Row(
-                  children: [
-                    Icon(Icons.open_in_browser),
-                    SizedBox(width: 12),
-                    Text('Tarayıcıda Aç'),
-                  ],
+                const PopupMenuItem(
+                  value: 'reading_mode',
+                  child: Row(
+                    children: [
+                      Icon(Icons.chrome_reader_mode_rounded),
+                      SizedBox(width: 12),
+                      Text('Okuma Modu'),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                const PopupMenuItem(
+                  value: 'open_browser',
+                  child: Row(
+                    children: [
+                      Icon(Icons.open_in_browser),
+                      SizedBox(width: 12),
+                      Text('Kaynağı Görüntüle'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'copy_link',
+                  child: Row(
+                    children: [
+                      Icon(Icons.copy),
+                      SizedBox(width: 12),
+                      Text('Bağlantıyı Kopyala'),
+                    ],
+                  ),
+                ),
+              ];
+            },
           ),
         ],
       ),
@@ -468,29 +475,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         ],
       ),
       actions: [
-        // Okuma listesi butonu
-        Consumer(
-          builder: (context, ref, child) {
-            final isInReadingList = ref.watch(isInReadingListProvider(widget.article.id));
-            return IconButton(
-              onPressed: () {
-                ref.read(readingListProvider.notifier).toggleReadingList(widget.article);
-              },
-              icon: Icon(
-                isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-              ),
-              tooltip: isInReadingList ? 'Okuma listesinden çıkar' : 'Okuma listesine ekle',
-            );
-          },
-        ),
-        // Paylaş butonu
-        IconButton(
-          onPressed: () => _shareArticle(),
-          icon: const Icon(Icons.share),
-          tooltip: 'Paylaş',
-        ),
-        
-        // Favori butonu
+        // Favori butonu - AppBar'da kalacak
         Consumer(
           builder: (context, ref, child) {
             final newsState = ref.watch(newsProvider);
@@ -509,31 +494,64 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           },
         ),
         
-        // Menü
+        // Paylaş butonu - AppBar'da kalacak
+        IconButton(
+          onPressed: () => _shareArticle(),
+          icon: const Icon(Icons.share),
+          tooltip: 'Paylaş',
+        ),
+        
+        // Overflow Menü - Diğer eylemler
         PopupMenuButton<String>(
           onSelected: _handleMenuSelection,
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'copy_link',
-              child: Row(
-                children: [
-                  Icon(Icons.copy),
-                  SizedBox(width: 12),
-                  Text('Bağlantıyı Kopyala'),
-                ],
+          itemBuilder: (context) {
+            final isInReadingList = ref.watch(isInReadingListProvider(widget.article.id));
+            return [
+              // Okuma listesi
+              PopupMenuItem(
+                value: 'reading_list',
+                child: Row(
+                  children: [
+                    Icon(
+                      isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(isInReadingList ? 'Listeden Çıkar' : 'Listeye Ekle'),
+                  ],
+                ),
               ),
-            ),
-            const PopupMenuItem(
-              value: 'open_browser',
-              child: Row(
-                children: [
-                  Icon(Icons.open_in_browser),
-                  SizedBox(width: 12),
-                  Text('Tarayıcıda Aç'),
-                ],
+              const PopupMenuItem(
+                value: 'reading_mode',
+                child: Row(
+                  children: [
+                    Icon(Icons.chrome_reader_mode_rounded),
+                    SizedBox(width: 12),
+                    Text('Okuma Modu'),
+                  ],
+                ),
               ),
-            ),
-          ],
+              const PopupMenuItem(
+                value: 'open_browser',
+                child: Row(
+                  children: [
+                    Icon(Icons.open_in_browser),
+                    SizedBox(width: 12),
+                    Text('Kaynağı Görüntüle'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'copy_link',
+                child: Row(
+                  children: [
+                    Icon(Icons.copy),
+                    SizedBox(width: 12),
+                    Text('Bağlantıyı Kopyala'),
+                  ],
+                ),
+              ),
+            ];
+          },
         ),
       ],
     );
@@ -1236,7 +1254,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   /// Makaleyi paylaş
   void _shareArticle() async {
     final text = '${widget.article.title}\n\n${widget.article.link}';
-    SharePlus.instance.share(text, subject: widget.article.title);
+    await Share.share(text, subject: widget.article.title);
     
     // Analytics kaydı - paylaşım yapıldı
     ref.read(analyticsProvider.notifier).recordSharePerformed();
@@ -1436,6 +1454,21 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   /// Menü seçimlerini handle et
   void _handleMenuSelection(String value) {
     switch (value) {
+      case 'reading_list':
+        ref.read(readingListProvider.notifier).toggleReadingList(widget.article);
+        final isInList = ref.read(isInReadingListProvider(widget.article.id));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isInList ? 'Listeye eklendi' : 'Listeden çıkarıldı'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        break;
+        
+      case 'reading_mode':
+        ReadingModeBottomSheet.show(context);
+        break;
+        
       case 'copy_link':
         Clipboard.setData(ClipboardData(text: widget.article.link));
         ScaffoldMessenger.of(context).showSnackBar(
