@@ -45,7 +45,8 @@ class NewsRepositoryImpl implements NewsRepository {
           
           // 2. ARKA PLANDA YENİLE (non-blocking)
           final connectivityResult = await connectivity.checkConnectivity();
-          final hasConnection = connectivityResult != ConnectivityResult.none;
+          final hasConnection = !connectivityResult.contains(ConnectivityResult.none) &&
+                                 connectivityResult.isNotEmpty;
           
           if (hasConnection) {
             debugPrint('🔄 [$category] Arka planda yenileme başlatılıyor...');
@@ -61,7 +62,8 @@ class NewsRepositoryImpl implements NewsRepository {
       // 3. CACHE YOKSA NETWORK'TEN ÇEK
       debugPrint('📡 [$category] Cache boş, network\'ten çekiliyor...');
       final connectivityResult = await connectivity.checkConnectivity();
-      final hasConnection = connectivityResult != ConnectivityResult.none;
+      final hasConnection = !connectivityResult.contains(ConnectivityResult.none) &&
+                             connectivityResult.isNotEmpty;
       debugPrint('🌐 Network durumu: $hasConnection');
 
       if (hasConnection) {
@@ -133,7 +135,8 @@ class NewsRepositoryImpl implements NewsRepository {
           
           // 2. ARKA PLANDA YENİLE (non-blocking)
           final connectivityResult = await connectivity.checkConnectivity();
-          final hasConnection = connectivityResult != ConnectivityResult.none;
+          final hasConnection = !connectivityResult.contains(ConnectivityResult.none) &&
+                                 connectivityResult.isNotEmpty;
           
           if (hasConnection) {
             debugPrint('🔄 Arka planda yenileme başlatılıyor...');
@@ -149,7 +152,8 @@ class NewsRepositoryImpl implements NewsRepository {
       // 3. CACHE YOKSA NETWORK'TEN ÇEK
       debugPrint('📡 Cache boş, network\'ten çekiliyor...');
       final connectivityResult = await connectivity.checkConnectivity();
-      final hasConnection = connectivityResult != ConnectivityResult.none;
+      final hasConnection = !connectivityResult.contains(ConnectivityResult.none) &&
+                             connectivityResult.isNotEmpty;
       debugPrint('🌐 Network durumu: $hasConnection ($connectivityResult)');
 
       if (hasConnection) {
@@ -255,7 +259,8 @@ class NewsRepositoryImpl implements NewsRepository {
   Future<bool> isConnected() async {
     try {
       final connectivityResult = await connectivity.checkConnectivity();
-      return connectivityResult != ConnectivityResult.none;
+      return !connectivityResult.contains(ConnectivityResult.none) &&
+             connectivityResult.isNotEmpty;
     } catch (e) {
       return false;
     }

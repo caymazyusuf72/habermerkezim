@@ -222,6 +222,8 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         title: Text(
           widget.article.sourceName,
           style: theme.textTheme.titleMedium,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         actions: [
           // Okuma listesi butonu
@@ -357,6 +359,8 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                           fontWeight: FontWeight.bold,
                           height: 1.3,
                         ),
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       
                       const SizedBox(height: 24),
@@ -665,6 +669,8 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               fontWeight: FontWeight.bold,
               height: 1.3,
             ),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
           ),
           
           const SizedBox(height: 16),

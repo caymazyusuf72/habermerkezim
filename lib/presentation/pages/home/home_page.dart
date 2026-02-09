@@ -110,7 +110,7 @@ class _HomePageState extends ConsumerState<HomePage>
     await ref.read(newsProvider.notifier).refreshArticles();
   }
 
-  /// Seçili navigation index (tablet için)
+  /// Seçili navigation index (mobil ve tablet için)
   int _selectedNavIndex = 0;
 
   @override
@@ -149,10 +149,10 @@ class _HomePageState extends ConsumerState<HomePage>
       );
     }
     
-    // Mobil layout
+    // Mobil layout - Bottom Navigation ile
     return Scaffold(
       // App Bar
-      appBar: AppBar(
+      appBar: _selectedNavIndex == 0 ? AppBar(
         title: Row(
           children: [
             // Logo
@@ -161,7 +161,7 @@ class _HomePageState extends ConsumerState<HomePage>
               height: 28,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppTheme.sageGreen, AppTheme.sageGreenLight],
+                  colors: [AppTheme.oceanBlueDark, AppTheme.oceanBlueLight],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -181,21 +181,8 @@ class _HomePageState extends ConsumerState<HomePage>
           ],
         ),
         
-        // App bar actions
+        // App bar actions (sadece ana sayfada)
         actions: [
-          // Profil butonu (sağ üst, ilk sırada)
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const ProfilePage(),
-                ),
-              );
-            },
-            icon: const Icon(Icons.person_rounded),
-            tooltip: 'Profil',
-          ),
-          
           // Bağlantı durumu göstergesi
           if (!isConnected)
             Container(
@@ -222,19 +209,6 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
             ),
           
-          // Arama butonu
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const SearchPage(),
-                ),
-              );
-            },
-            icon: const Icon(Icons.search_rounded),
-            tooltip: 'Ara',
-          ),
-          
           // Dark mode toggle
           IconButton(
             onPressed: () {
@@ -257,13 +231,84 @@ class _HomePageState extends ConsumerState<HomePage>
                 ),
               )
             : null,
+      ) : null,
+
+      // Drawer (sadece ana sayfada)
+      drawer: _selectedNavIndex == 0 ? const AppDrawer() : null,
+
+      // Ana içerik - seçili sayfaya göre
+      body: _buildMobileContent(
+        context,
+        newsState,
+        isConnected,
+        categories,
       ),
 
-      // Drawer
-      drawer: const AppDrawer(),
+      // Bottom Navigation Bar
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedNavIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            _selectedNavIndex = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home_rounded),
+            label: 'Ana Sayfa',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search_outlined),
+            selectedIcon: Icon(Icons.search_rounded),
+            label: 'Ara',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.favorite_outline),
+            selectedIcon: Icon(Icons.favorite_rounded),
+            label: 'Favoriler',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings_rounded),
+            label: 'Ayarlar',
+          ),
+        ],
+      ),
 
-      // Ana içerik
-      body: Column(
+      // FAB - sadece ana sayfada
+      floatingActionButton: _selectedNavIndex == 0 && newsState.hasArticles
+          ? FloatingActionButton.small(
+              onPressed: () {
+                // Aktif tab'ın NewsList'ine eriş ve scroll to top yap
+                if (_tabController != null) {
+                  final activeCategory = categories[_tabController!.index];
+                  final newsListKey = _newsListKeys[activeCategory.id];
+                  final newsListState = newsListKey?.currentState;
+                  
+                  if (newsListState != null) {
+                    newsListState.scrollToTop();
+                  }
+                }
+              },
+              child: const Icon(Icons.keyboard_arrow_up),
+              tooltip: 'Yukarı git',
+            )
+          : null,
+    );
+  }
+  
+  /// Mobil içerik alanı - seçili sayfaya göre
+  Widget _buildMobileContent(
+    BuildContext context,
+    NewsState newsState,
+    bool isConnected,
+    List<Category> categories,
+  ) {
+    switch (_selectedNavIndex) {
+      case 0:
+        // Ana sayfa - haberler
+        return Column(
         children: [
           // Bildirim banner'ı
           const NotificationBanner(),
@@ -320,29 +365,74 @@ class _HomePageState extends ConsumerState<HomePage>
                   )
                 : const Center(child: CircularProgressIndicator()),
           ),
-        ],
-      ),
+        ];
+      case 1:
+        // Arama
+        return const SearchPage();
+      case 2:
+        // Favoriler
+        return const FavoritesPage();
+      case 3:
+        // Ayarlar
+        return const SettingsPage();
+      default:
+        return Column(
+          children: [
+            // Bildirim banner'ı
+            const NotificationBanner(),
+            
+            // Hata mesajı (varsa)
+            if (newsState.hasError && !newsState.isLoading)
+              Container(
+                width: double.infinity,
+                color: Colors.red.shade50,
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      color: Colors.red.shade600,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        newsState.errorMessage ?? 'Bir hata oluştu',
+                        style: TextStyle(
+                          color: Colors.red.shade700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        ref.read(newsProvider.notifier).clearError();
+                        _onRefresh();
+                      },
+                      child: const Text('Yeniden Dene'),
+                    ),
+                  ],
+                ),
+              ),
 
-      // FAB - Yukarı scroll et
-      floatingActionButton: newsState.hasArticles
-          ? FloatingActionButton.small(
-              onPressed: () {
-                // Aktif tab'ın NewsList'ine eriş ve scroll to top yap
-                if (_tabController != null) {
-                  final activeCategory = categories[_tabController!.index];
-                  final newsListKey = _newsListKeys[activeCategory.id];
-                  final newsListState = newsListKey?.currentState;
-                  
-                  if (newsListState != null) {
-                    newsListState.scrollToTop();
-                  }
-                }
-              },
-              child: const Icon(Icons.keyboard_arrow_up),
-              tooltip: 'Yukarı git',
-            )
-          : null,
-    );
+            // Haber listesi
+            Expanded(
+              child: _tabController != null
+                  ? TabBarView(
+                      controller: _tabController!,
+                      children: categories.map((category) {
+                        return NewsList(
+                          key: _newsListKeys[category.id],
+                          category: category.id,
+                          onRefresh: _onRefresh,
+                        );
+                      }).toList(),
+                    )
+                  : const Center(child: CircularProgressIndicator()),
+            ),
+          ],
+        );
+    }
   }
   
   /// Tablet ve Desktop için NavigationRail layout
@@ -377,7 +467,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     height: 48,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppTheme.sageGreen, AppTheme.sageGreenLight],
+                        colors: [AppTheme.oceanBlueDark, AppTheme.oceanBlueLight],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -442,24 +532,19 @@ class _HomePageState extends ConsumerState<HomePage>
                 label: Text('Ana Sayfa'),
               ),
               NavigationRailDestination(
+                icon: Icon(Icons.search_outlined),
+                selectedIcon: Icon(Icons.search_rounded),
+                label: Text('Ara'),
+              ),
+              NavigationRailDestination(
                 icon: Icon(Icons.favorite_outline),
                 selectedIcon: Icon(Icons.favorite_rounded),
                 label: Text('Favoriler'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.bookmark_outline),
-                selectedIcon: Icon(Icons.bookmark_rounded),
-                label: Text('Okuma Listesi'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.search_rounded),
-                selectedIcon: Icon(Icons.search_rounded),
-                label: Text('Ara'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.person_outline),
-                selectedIcon: Icon(Icons.person_rounded),
-                label: Text('Profil'),
+                icon: Icon(Icons.settings_outlined),
+                selectedIcon: Icon(Icons.settings_rounded),
+                label: Text('Ayarlar'),
               ),
             ],
           ),
@@ -503,17 +588,14 @@ class _HomePageState extends ConsumerState<HomePage>
           categories,
         );
       case 1:
-        // Favoriler
-        return const FavoritesPage();
-      case 2:
-        // Okuma Listesi
-        return const ReadingListPage();
-      case 3:
         // Arama
         return const SearchPage();
-      case 4:
-        // Profil
-        return const ProfilePage();
+      case 2:
+        // Favoriler
+        return const FavoritesPage();
+      case 3:
+        // Ayarlar
+        return const SettingsPage();
       default:
         return _buildTabletNewsContent(
           context,

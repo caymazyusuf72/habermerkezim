@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'firebase_options.dart';
 
 import 'core/services/hive_service.dart';
@@ -44,6 +46,17 @@ Future<void> main() async {
     } else {
       debugPrint('ℹ️ Firebase zaten initialize edilmiş');
     }
+    
+    // Firebase Crashlytics'i başlat
+    debugPrint('🔄 Firebase Crashlytics initialize ediliyor...');
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    
+    // Async hataları yakala
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+    debugPrint('✅ Firebase Crashlytics başarıyla initialize edildi');
     
     // Memory cache boyutunu optimize et (RAM tasarrufu için)
     debugPrint('🔄 Memory cache optimize ediliyor...');

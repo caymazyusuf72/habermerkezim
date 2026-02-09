@@ -29,12 +29,13 @@ class AppTheme {
   static const Color lightBackground = Color(0xFFFAF9F4);
   static const Color lightSurfaceVariant = Color(0xFFF5F4EF);
   
-  static const Color primaryColor = sageGreen;
-  static const Color accentColor = sageGreenAccent;
-  static const Color primaryBlue = sageGreen;
-  static const Color primaryBlueDark = sageGreenDark;
-  static const Color secondaryBlue = sageGreenLight;
-  static const Color accentBlue = sageGreenAccent;
+  // MAVİ TEMA - Material Blue #1976D2 (Default)
+  static const Color primaryColor = oceanBlueDark;  // #1976D2
+  static const Color accentColor = oceanBlueAccent;
+  static const Color primaryBlue = oceanBlueDark;
+  static const Color primaryBlueDark = oceanBlueDark;
+  static const Color secondaryBlue = oceanBlueLight;
+  static const Color accentBlue = oceanBlueAccent;
   
   static const Color darkSurface = matBlackSurface;
   static const Color darkBackground = matBlack;
@@ -65,10 +66,11 @@ class AppTheme {
   static const Color amberDark = Color(0xFFF57C00);
   static const Color amberAccent = Color(0xFFFFA726);
   
-  static const Color defaultPrimary = sageGreen;
-  static const Color defaultPrimaryLight = sageGreenLight;
-  static const Color defaultPrimaryDark = sageGreenDark;
-  static const Color defaultPrimaryAccent = sageGreenAccent;
+  // Default tema artık MAVİ (#1976D2)
+  static const Color defaultPrimary = oceanBlueDark;         // #1976D2
+  static const Color defaultPrimaryLight = oceanBlueLight;   // #64B5F6
+  static const Color defaultPrimaryDark = oceanBlueDark;     // #1976D2
+  static const Color defaultPrimaryAccent = oceanBlueAccent; // #42A5F5
 
   static ThemeData get lightTheme => getLightTheme();
   
@@ -658,7 +660,7 @@ class AppTheme {
       case ColorTheme.purple: return 'Mor';
       case ColorTheme.amber: return 'Turuncu';
       case ColorTheme.dynamic: return 'Dinamik (Sistem)';
-      case ColorTheme.defaultTheme: return 'Adaçayı Yeşili';
+      case ColorTheme.defaultTheme: return 'Mavi Tema';
     }
   }
   
@@ -669,7 +671,7 @@ class AppTheme {
       case ColorTheme.purple: return 'Zarif ve modern mor tonlar';
       case ColorTheme.amber: return 'Enerjik turuncu tonlar';
       case ColorTheme.dynamic: return 'Duvar kağıdından otomatik renk (Android 12+)';
-      case ColorTheme.defaultTheme: return 'Doğal adaçayı yeşili';
+      case ColorTheme.defaultTheme: return 'Profesyonel mavi tema (Material Blue)';
     }
   }
   
@@ -678,8 +680,8 @@ class AppTheme {
   static Color getCategoryColor(String category) {
     switch (category) {
       case 'genel': return customColors['breakingNews'] ?? errorRed;
-      case 'turkiye': return sageGreenDark;
-      case 'ekonomi': return sageGreen;
+      case 'turkiye': return oceanBlueDark;
+      case 'ekonomi': return oceanBlue;
       case 'teknoloji': return customColors['technology'] ?? Colors.purple;
       case 'spor': return customColors['sports'] ?? warningOrange;
       case 'dunya': return const Color(0xFF607D8B);
