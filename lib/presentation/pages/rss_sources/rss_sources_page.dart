@@ -339,7 +339,12 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
                   Switch.adaptive(
                     value: source.isEnabled,
                     onChanged: (value) => _toggleSourceStatus(source.id),
-                    activeColor: Colors.green,
+                    thumbColor: WidgetStateProperty.resolveWith((states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return Colors.green;
+                      }
+                      return null;
+                    }),
                   ),
                 ],
               ),

@@ -1230,7 +1230,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   /// Makaleyi paylaş
   void _shareArticle() async {
     final text = '${widget.article.title}\n\n${widget.article.link}';
-    Share.share(text, subject: widget.article.title);
+    SharePlus.instance.share(text, subject: widget.article.title);
     
     // Analytics kaydı - paylaşım yapıldı
     ref.read(analyticsProvider.notifier).recordSharePerformed();

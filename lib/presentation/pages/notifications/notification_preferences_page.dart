@@ -96,7 +96,12 @@ class NotificationPreferencesPage extends ConsumerWidget {
             return SwitchListTile(
               title: Text(category),
               value: isEnabled,
-              activeColor: AppTheme.primaryBlue,
+              thumbColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppTheme.primaryBlue;
+                }
+                return null;
+              }),
               onChanged: (value) {
                 ref
                     .read(notificationProvider.notifier)
@@ -146,7 +151,12 @@ class NotificationPreferencesPage extends ConsumerWidget {
             ),
             subtitle: const Text('Belirli saatlerde bildirim almayın'),
             value: settings.quietHoursEnabled,
-            activeColor: Colors.purple,
+            thumbColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return Colors.purple;
+              }
+              return null;
+            }),
             onChanged: (value) {
               ref.read(notificationProvider.notifier).toggleQuietHours(value);
             },
@@ -248,7 +258,12 @@ class NotificationPreferencesPage extends ConsumerWidget {
             ),
             subtitle: const Text('Spam önleme için maksimum bildirim sayısı'),
             value: settings.dailyLimitEnabled,
-            activeColor: Colors.orange,
+            thumbColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return Colors.orange;
+              }
+              return null;
+            }),
             onChanged: (value) {
               ref.read(notificationProvider.notifier).toggleDailyLimit(value);
             },

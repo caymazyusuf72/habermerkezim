@@ -187,7 +187,12 @@ class _NotificationSettingsPageState
                   onChanged: state.permissionsGranted
                       ? (value) => notifier.updateDailyNewsSettings(enabled: value)
                       : null,
-                  activeColor: AppTheme.primaryColor,
+                  thumbColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return AppTheme.primaryColor;
+                    }
+                    return null;
+                  }),
                 ),
               ],
             ),
@@ -275,7 +280,12 @@ class _NotificationSettingsPageState
                   onChanged: state.permissionsGranted
                       ? (value) => notifier.updateReadingGoalSettings(enabled: value)
                       : null,
-                  activeColor: AppTheme.accentColor,
+                  thumbColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return AppTheme.accentColor;
+                    }
+                    return null;
+                  }),
                 ),
               ],
             ),
@@ -416,7 +426,12 @@ class _NotificationSettingsPageState
                   onChanged: state.permissionsGranted
                       ? (value) => notifier.updateBreakingNewsEnabled(value)
                       : null,
-                  activeColor: Colors.red,
+                  thumbColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return Colors.red;
+                    }
+                    return null;
+                  }),
                 ),
               ],
             ),

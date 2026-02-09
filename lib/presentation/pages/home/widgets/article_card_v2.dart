@@ -387,7 +387,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                           child: Icon(
                             Icons.image_not_supported_rounded,
                             size: 24,
-                            color: theme.colorScheme.onsurfaceContainerHighest,
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -508,7 +508,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                   child: Icon(
                     Icons.image_not_supported_rounded,
                     size: 48,
-                    color: theme.colorScheme.onsurfaceContainerHighest,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               )
@@ -855,7 +855,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                         child: Icon(
                           Icons.image_not_supported_rounded,
                           size: 32,
-                          color: theme.colorScheme.onsurfaceContainerHighest,
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     )
@@ -1021,7 +1021,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
                 child: Icon(
                   Icons.image_not_supported_rounded,
                   size: 40,
-                  color: theme.colorScheme.onsurfaceContainerHighest,
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -1378,7 +1378,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
   /// Makaleyi paylaş
   void _shareArticle(BuildContext context) {
     final text = '${widget.article.title}\n\n${widget.article.link}';
-    Share.share(
+    SharePlus.instance.share(
       text,
       subject: widget.article.title,
     );

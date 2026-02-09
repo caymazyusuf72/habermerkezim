@@ -911,7 +911,7 @@ class NewsListState extends ConsumerState<NewsList>
     }
     
     final text = '${article.title}\n\n${article.link}';
-    Share.share(text, subject: article.title);
+    SharePlus.instance.share(text, subject: article.title);
     
     // Feedback göster
     ScaffoldMessenger.of(context).showSnackBar(

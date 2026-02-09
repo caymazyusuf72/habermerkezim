@@ -224,7 +224,7 @@ class _ReadingListPageState extends ConsumerState<ReadingListPage> {
             },
             onShare: () {
               final text = '${article.title}\n\n${article.link}';
-              Share.share(text, subject: article.title);
+              SharePlus.instance.share(text, subject: article.title);
             },
             showCategoryBadge: true,
           );

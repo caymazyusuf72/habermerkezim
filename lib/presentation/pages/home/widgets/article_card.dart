@@ -811,7 +811,7 @@ class ArticleCard extends ConsumerWidget {
   /// Makaleyi paylaş
   void _shareArticle(BuildContext context) {
     final text = '${article.title}\n\n${article.link}';
-    Share.share(
+    SharePlus.instance.share(
       text,
       subject: article.title,
     );

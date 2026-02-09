@@ -163,7 +163,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   Future<void> _shareArticle(Article article) async {
     try {
       final shareText = '${article.title}\n\n${article.link}';
-      await Share.share(
+      await SharePlus.instance.share(
         shareText,
         subject: article.title,
       );

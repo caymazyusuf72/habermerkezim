@@ -414,7 +414,12 @@ class SettingsPage extends ConsumerWidget {
             title: const Text('Gece Modu'),
             subtitle: const Text('Karanlık arka plan ile rahat okuma'),
             value: readingMode.nightModeEnabled,
-            activeColor: Colors.amber,
+            thumbColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return Colors.amber;
+              }
+              return null;
+            }),
             onChanged: (value) {
               ref.read(readingModeProvider.notifier).toggleNightMode(value);
             },

@@ -382,7 +382,12 @@ class ReadingModeBottomSheet extends ConsumerWidget {
           ),
         ),
         value: readingMode.nightModeEnabled,
-        activeColor: Colors.amber,
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return Colors.amber;
+          }
+          return null;
+        }),
         onChanged: (value) {
           ref.read(readingModeProvider.notifier).toggleNightMode(value);
         },
