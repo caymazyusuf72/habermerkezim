@@ -12,6 +12,8 @@ import '../../widgets/loading/shimmer_loading.dart';
 import '../onboarding/edit_interests_page.dart';
 import '../../../core/constants/interest_tags.dart';
 import '../../../core/services/avatar_service.dart';
+import 'widgets/category_pie_chart.dart';
+import 'widgets/reading_stats_chart.dart';
 
 /// Profesyonel Profil Sayfası - Modern UI/UX
 class ProfilePage extends ConsumerStatefulWidget {
@@ -125,6 +127,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   _buildLevelSection(context, profile, theme),
                   const SizedBox(height: 24),
                   _buildEnhancedStatsGrid(context, profile.stats, theme),
+                  const SizedBox(height: 24),
+                  ReadingStatsChart(stats: profile.stats, theme: theme),
+                  const SizedBox(height: 24),
+                  CategoryPieChart(preferences: profile.preferences, theme: theme),
                   const SizedBox(height: 24),
                   _buildAchievementsSection(context, profile, theme),
                   const SizedBox(height: 24),

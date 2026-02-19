@@ -83,6 +83,10 @@ dependencies:
   # Lottie Animations
   lottie: ^3.1.2
   
+  # Animations
+  animations: ^2.0.11
+  flutter_animate: ^4.5.0
+  
   # Video Player
   video_player: ^2.8.2
   
@@ -125,6 +129,18 @@ dependencies:
   # Security
   flutter_dotenv: ^5.1.0
   flutter_secure_storage: ^9.2.2
+  
+  # UI Components (Plan 2026 Q1)
+  flutter_staggered_grid_view: ^0.7.0
+  flutter_slidable: ^3.1.0
+  
+  # Backend (Plan 2026 Q1)
+  web_socket_channel: ^3.0.1
+  retry: ^3.1.2
+  
+  # Performance (Plan 2026 Q1)
+  flutter_native_splash: ^2.4.1
+  flutter_displaymode: ^0.6.0
 
 dev_dependencies:
   flutter_test:
