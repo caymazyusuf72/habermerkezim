@@ -185,7 +185,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
 
     // Mobil layout
     return Scaffold(
-      backgroundColor: readingMode.backgroundColorValue,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
@@ -665,8 +665,13 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
 
   /// Ana içerik
   Widget _buildContent(BuildContext context, ThemeData theme, Color categoryColor) {
-    return Padding(
+    return Container(
+      margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -935,10 +940,10 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: readingMode.backgroundColorValue.withValues(alpha: 0.5),
+              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: readingMode.textColorValue.withValues(alpha: 0.2),
+                color: theme.dividerColor,
               ),
             ),
             child: Text(
@@ -948,7 +953,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                 fontWeight: FontWeight.w500,
                 height: readingMode.lineSpacingValue,
                 fontStyle: FontStyle.italic,
-                color: readingMode.textColorValue,
+                color: theme.textTheme.bodyLarge?.color,
               ),
             ),
           ),
@@ -965,7 +970,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontSize: 17 * readingMode.fontSize,
                   height: readingMode.lineSpacingValue,
-                  color: readingMode.textColorValue,
+                  color: theme.textTheme.bodyLarge?.color,
                   letterSpacing: 0.3,
                 ),
               ),
@@ -1015,7 +1020,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontSize: 17 * readingMode.fontSize,
                   height: readingMode.lineSpacingValue,
-                  color: readingMode.textColorValue,
+                  color: theme.textTheme.bodyLarge?.color,
                   letterSpacing: 0.3,
                 ),
               ),

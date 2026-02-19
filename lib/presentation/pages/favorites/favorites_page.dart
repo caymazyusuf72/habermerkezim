@@ -358,7 +358,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
   /// Makaleyi paylaş
   void _shareArticle(Article article) {
     final text = '${article.title}\n\n${article.link}';
-    SharePlus.instance.share(text, subject: article.title);
+    Share.share(text);
     
     // Feedback göster
     ScaffoldMessenger.of(context).showSnackBar(

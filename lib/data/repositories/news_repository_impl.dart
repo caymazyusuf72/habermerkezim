@@ -187,20 +187,42 @@ class NewsRepositoryImpl implements NewsRepository {
     }
   }
   
-  /// Arka planda yenileme (non-blocking)
+  /// Arka planda yenileme (non-blocking) - Kategori kategori yükler
   void _refreshInBackground() async {
     try {
-      debugPrint('🔄 [Background] Haberleri yeniliyorum...');
-      final articles = await remoteDataSource.getAllArticles();
-      await localDataSource.cacheArticles(articles);
-      debugPrint('✅ [Background] ${articles.length} makale cache\'e kaydedildi');
+      debugPrint('🔄 [Background] Haberleri kategori kategori yeniliyorum...');
       
-      // ✅ Stream'e yeni verileri gönder (UI güncellemesi için)
-      final entities = articles.map((model) => model.toEntity()).toList();
-      final sortedEntities = _sortArticlesByImage(entities);
-      if (!_articlesStreamController.isClosed) {
-        _articlesStreamController.add(sortedEntities);
-        debugPrint('📡 [Stream] ${sortedEntities.length} makale stream\'e gönderildi');
+      // Kategorileri sırayla yükle (paralel değil, sıralı)
+      final categories = ['genel', 'turkiye', 'dunya', 'ekonomi', 'teknoloji',
+                         'spor', 'saglik', 'kultur', 'egitim', 'magazin', 'otomobil', 'bilim'];
+      
+      final allArticles = <ArticleModel>[];
+      
+      for (final category in categories) {
+        try {
+          debugPrint('📥 [Background] $category kategorisi yükleniyor...');
+          final categoryArticles = await remoteDataSource.getArticlesByCategory(category);
+          allArticles.addAll(categoryArticles);
+          
+          // Her kategori sonrası kısa bekleme (UI'ı rahatlatmak için)
+          await Future.delayed(const Duration(milliseconds: 500));
+          
+          // Ara güncelleme - şimdiye kadar yüklenen makaleleri göster
+          if (allArticles.isNotEmpty && !_articlesStreamController.isClosed) {
+            final entities = allArticles.map((model) => model.toEntity()).toList();
+            final sortedEntities = _sortArticlesByImage(entities);
+            _articlesStreamController.add(sortedEntities);
+            debugPrint('📡 [Stream] ${sortedEntities.length} makale stream\'e gönderildi (${category} dahil)');
+          }
+        } catch (e) {
+          debugPrint('⚠️ [Background] $category kategorisi yüklenemedi: $e');
+        }
+      }
+      
+      // Tüm makaleleri cache'e kaydet
+      if (allArticles.isNotEmpty) {
+        await localDataSource.cacheArticles(allArticles);
+        debugPrint('✅ [Background] ${allArticles.length} makale cache\'e kaydedildi');
       }
     } catch (e) {
       debugPrint('⚠️ [Background] Yenileme hatası (sessizce başarısız): $e');
