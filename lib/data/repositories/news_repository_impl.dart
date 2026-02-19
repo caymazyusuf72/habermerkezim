@@ -5,6 +5,7 @@ import '../../domain/entities/article.dart';
 import '../../domain/repositories/news_repository.dart';
 import '../datasources/local/news_local_data_source.dart';
 import '../datasources/remote/rss_remote_data_source.dart';
+import '../models/article_model.dart';
 
 import 'package:flutter/foundation.dart';
 /// NewsRepository interface'inin implementasyonu

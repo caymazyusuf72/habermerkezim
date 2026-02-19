@@ -1378,10 +1378,7 @@ class _ArticleCardV2State extends ConsumerState<ArticleCardV2>
   /// Makaleyi paylaş
   void _shareArticle(BuildContext context) {
     final text = '${widget.article.title}\n\n${widget.article.link}';
-    SharePlus.instance.share(
-      text,
-      subject: widget.article.title,
-    );
+    Share.share(text);
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
