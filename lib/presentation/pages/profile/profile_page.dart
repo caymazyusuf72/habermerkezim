@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -7,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../domain/entities/user_profile.dart';
 import '../../providers/providers.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/user_profile_provider.dart';
 import '../../themes/app_theme.dart';
 import '../../widgets/loading/shimmer_loading.dart';
 import '../onboarding/edit_interests_page.dart';
@@ -48,7 +50,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(userProfileProvider.notifier).loadProfile();
+      // Firebase User bilgilerini al
+      final firebaseUser = ref.read(currentUserProvider);
+      
+      // Profili Firebase bilgileri ile yükle
+      ref.read(userProfileProvider.notifier).loadProfile(firebaseUser: firebaseUser);
       ref.read(userProfileProvider.notifier).refreshStats();
       _animationController.forward();
     });
@@ -282,9 +288,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
   Widget _buildAvatarWithRing(BuildContext context, UserProfile profile, ThemeData theme) {
     final completionPercent = _calculateProfileCompletion(profile);
     
-    return GestureDetector(
-      onTap: () => _showAvatarEditDialog(context, profile),
-      child: Stack(
+    return Stack(
         alignment: Alignment.center,
         children: [
           SizedBox(
@@ -338,26 +342,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   )
                 : const Icon(Icons.person_rounded, size: 50, color: Colors.white),
           ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryBlue,
-                shape: BoxShape.circle,
-                border: Border.all(color: theme.colorScheme.surface, width: 3),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
-            ),
-          ),
           if (completionPercent == 100)
             Positioned(
               top: 0,
@@ -372,8 +356,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                 child: const Icon(Icons.check, size: 12, color: Colors.white),
               ),
             ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -1440,69 +1423,92 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
   }) async {
     Navigator.pop(context); // Bottom sheet'i kapat
     
-    // Loading göster
+    // Loading dialog göster
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
+      builder: (context) => WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(
+                'Fotoğraf işleniyor...',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
       ),
     );
 
     try {
       final avatarService = AvatarService();
       
-      // Fotoğraf seç
+      // Fotoğraf seç (timeout ile)
       File? imageFile;
       if (fromCamera) {
-        imageFile = await avatarService.pickImageFromCamera();
+        imageFile = await avatarService.pickImageFromCamera()
+            .timeout(const Duration(seconds: 30));
       } else {
-        imageFile = await avatarService.pickImageFromGallery();
+        imageFile = await avatarService.pickImageFromGallery()
+            .timeout(const Duration(seconds: 30));
       }
 
       if (imageFile == null) {
-        if (context.mounted) Navigator.pop(context); // Loading'i kapat
+        if (context.mounted) Navigator.pop(context);
         return;
       }
 
-      // Fotoğrafı kırp
-      final croppedFile = await avatarService.cropImage(imageFile);
+      // Fotoğrafı kırp (timeout ile)
+      final croppedFile = await avatarService.cropImage(imageFile)
+          .timeout(const Duration(seconds: 30));
       
       if (croppedFile == null) {
-        if (context.mounted) Navigator.pop(context); // Loading'i kapat
+        if (context.mounted) Navigator.pop(context);
         return;
       }
 
-      // Avatar'ı kaydet
-      final savedPath = await avatarService.saveAvatar(croppedFile, profile.id);
+      // Avatar'ı kaydet (timeout ile)
+      final savedPath = await avatarService.saveAvatar(croppedFile, profile.id)
+          .timeout(const Duration(seconds: 10));
       
       if (savedPath == null) {
         if (context.mounted) {
-          Navigator.pop(context); // Loading'i kapat
+          Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Avatar kaydedilemedi'),
               backgroundColor: Colors.red,
+              duration: Duration(seconds: 2),
             ),
           );
         }
         return;
       }
 
-      // User profile'ı güncelle
-      final success = await avatarService.updateUserAvatar(profile.id, savedPath);
+      // User profile'ı güncelle (timeout ile)
+      final success = await avatarService.updateUserAvatar(profile.id, savedPath)
+          .timeout(const Duration(seconds: 5));
       
       if (context.mounted) {
-        Navigator.pop(context); // Loading'i kapat
+        Navigator.pop(context);
         
         if (success) {
+          // Avatar URL'ini provider'a güncelle
+          await ref.read(userProfileProvider.notifier).updateAvatar(savedPath);
+          
           // Profili yeniden yükle
-          ref.read(userProfileProvider.notifier).loadProfile();
+          await ref.read(userProfileProvider.notifier).loadProfile();
           
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Avatar başarıyla güncellendi! 🎉'),
               backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
             ),
           );
         } else {
@@ -1510,17 +1516,30 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             const SnackBar(
               content: Text('Avatar güncellenemedi'),
               backgroundColor: Colors.red,
+              duration: Duration(seconds: 2),
             ),
           );
         }
       }
+    } on TimeoutException {
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('İşlem zaman aşımına uğradı. Lütfen tekrar deneyin.'),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
     } catch (e) {
       if (context.mounted) {
-        Navigator.pop(context); // Loading'i kapat
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hata: $e'),
+            content: Text('Hata: ${e.toString().length > 50 ? e.toString().substring(0, 50) + "..." : e.toString()}'),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
       }

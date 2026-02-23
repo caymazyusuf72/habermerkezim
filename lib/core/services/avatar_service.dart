@@ -26,9 +26,9 @@ class AvatarService {
     try {
       final XFile? photo = await _picker.pickImage(
         source: ImageSource.camera,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 70,
       );
 
       if (photo == null) return null;
@@ -44,9 +44,9 @@ class AvatarService {
     try {
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 70,
       );
 
       if (image == null) return null;
@@ -84,9 +84,9 @@ class AvatarService {
             ],
           ),
         ],
-        compressQuality: 85,
-        maxWidth: 512,
-        maxHeight: 512,
+        compressQuality: 70,
+        maxWidth: 400,
+        maxHeight: 400,
       );
 
       if (croppedFile == null) return null;

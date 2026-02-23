@@ -190,22 +190,45 @@ class NewsNotifier extends StateNotifier<NewsState> {
 
   /// Kategori bazında haberleri yükler
   Future<void> loadArticlesByCategory(String category, {bool refresh = false}) async {
-    if (refresh) {
+    // Eğer allArticles boşsa önce tüm haberleri yükle
+    if (state.allArticles.isEmpty || refresh) {
       state = state.copyWith(isLoading: true, errorMessage: null, currentPage: 1);
-    } else {
-      state = state.copyWith(isLoading: true, errorMessage: null, currentPage: 1);
+      
+      try {
+        final allArticles = await _repository.getArticlesByCategory(category);
+        final paginatedArticles = _paginateArticles(allArticles, page: 1);
+        
+        state = state.copyWith(
+          allArticles: allArticles,
+          articles: paginatedArticles,
+          isLoading: false,
+          errorMessage: null,
+          hasMore: allArticles.length > NewsState.pageSize,
+          currentPage: 1,
+        );
+      } catch (e, stackTrace) {
+        debugPrint('❌ Kategori haberleri yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: ErrorMessageHelper.getErrorMessage(e),
+        );
+      }
+      return;
     }
-
+    
+    // allArticles varsa sadece filtreleme yap (cache'den)
     try {
-      final allArticles = await _repository.getArticlesByCategory(category);
-      final paginatedArticles = _paginateArticles(allArticles, page: 1);
+      final filteredArticles = state.allArticles
+          .where((article) => article.category.toLowerCase() == category.toLowerCase())
+          .toList();
+      
+      final paginatedArticles = _paginateArticles(filteredArticles, page: 1);
       
       state = state.copyWith(
-        allArticles: allArticles,
         articles: paginatedArticles,
         isLoading: false,
         errorMessage: null,
-        hasMore: allArticles.length > NewsState.pageSize,
+        hasMore: filteredArticles.length > NewsState.pageSize,
         currentPage: 1,
       );
     } catch (e, stackTrace) {

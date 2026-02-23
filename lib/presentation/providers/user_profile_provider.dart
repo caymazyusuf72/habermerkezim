@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 import 'providers.dart';
+import 'auth_provider.dart';
 
 /// UserProfile State - profil durumunu tutar
 class UserProfileState {
@@ -39,17 +41,69 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
 
   UserProfileNotifier(this._repository) : super(const UserProfileState());
 
-  /// Profili yükle
-  Future<void> loadProfile() async {
+  /// Firebase Auth bilgilerini profil ile senkronize et
+  Future<void> syncWithFirebaseAuth(User? firebaseUser) async {
+    if (firebaseUser == null) return;
+
+    try {
+      // Mevcut profili al
+      final currentProfile = await _repository.getProfile();
+      
+      // Firebase'den gelen bilgilerle güncelle
+      final updatedProfile = currentProfile.copyWith(
+        name: firebaseUser.displayName ?? currentProfile.name,
+        email: firebaseUser.email ?? currentProfile.email,
+        avatarUrl: firebaseUser.photoURL ?? currentProfile.avatarUrl,
+      );
+      
+      // Profili kaydet
+      await _repository.updateProfile(updatedProfile);
+      state = state.copyWith(profile: updatedProfile);
+    } catch (e) {
+      // Hata durumunda sadece log
+      print('⚠️ Firebase Auth sync error: $e');
+    }
+  }
+
+  /// Profili yükle ve Firebase Auth ile senkronize et
+  Future<void> loadProfile({User? firebaseUser}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
       final profile = await _repository.getProfile();
-      state = state.copyWith(
-        profile: profile,
-        isLoading: false,
-        errorMessage: null,
-      );
+      
+      // Firebase User varsa bilgileri senkronize et
+      if (firebaseUser != null) {
+        final syncedProfile = profile.copyWith(
+          name: firebaseUser.displayName ?? profile.name,
+          email: firebaseUser.email ?? profile.email,
+          avatarUrl: firebaseUser.photoURL ?? profile.avatarUrl,
+        );
+        
+        // Eğer değişiklik varsa kaydet
+        if (syncedProfile.name != profile.name ||
+            syncedProfile.email != profile.email ||
+            syncedProfile.avatarUrl != profile.avatarUrl) {
+          await _repository.updateProfile(syncedProfile);
+          state = state.copyWith(
+            profile: syncedProfile,
+            isLoading: false,
+            errorMessage: null,
+          );
+        } else {
+          state = state.copyWith(
+            profile: profile,
+            isLoading: false,
+            errorMessage: null,
+          );
+        }
+      } else {
+        state = state.copyWith(
+          profile: profile,
+          isLoading: false,
+          errorMessage: null,
+        );
+      }
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
