@@ -36,7 +36,7 @@ Future<void> main() async {
   );
   
   try {
-    // Firebase'i initialize et (sadece bir kez)
+    // === ADIM 1: Firebase (diğer servisler için gerekli) ===
     debugPrint('🔄 Firebase initialize ediliyor...');
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
@@ -47,79 +47,47 @@ Future<void> main() async {
       debugPrint('ℹ️ Firebase zaten initialize edilmiş');
     }
     
-    // Firebase Crashlytics'i başlat
-    debugPrint('🔄 Firebase Crashlytics initialize ediliyor...');
+    // === ADIM 2: Senkron ayarlar (Crashlytics + Memory Cache) ===
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-    
-    // Async hataları yakala
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
-    debugPrint('✅ Firebase Crashlytics başarıyla initialize edildi');
+    debugPrint('✅ Firebase Crashlytics callback\'leri ayarlandı');
     
-    // Memory cache boyutunu optimize et (RAM tasarrufu için)
-    debugPrint('🔄 Memory cache optimize ediliyor...');
-    PaintingBinding.instance.imageCache.maximumSize = 50; // Varsayılan 1000'den 50'ye düşürüldü
-    PaintingBinding.instance.imageCache.maximumSizeBytes = 25 * 1024 * 1024; // 25 MB (varsayılan 100 MB)
+    PaintingBinding.instance.imageCache.maximumSize = 50;
+    PaintingBinding.instance.imageCache.maximumSizeBytes = 25 * 1024 * 1024;
     debugPrint('✅ Memory cache optimize edildi');
     
-    // Environment Config servisini initialize et
-    debugPrint('🔄 Environment Config service initialize ediliyor...');
-    await EnvConfigService().init();
-    debugPrint('✅ Environment Config service başarıyla initialize edildi');
+    // === ADIM 3: Bağımsız servisleri paralel başlat ===
+    // Hive, EnvConfig, ImageCache, Notification, Widget birbirinden bağımsız
+    debugPrint('🔄 Bağımsız servisler paralel başlatılıyor...');
+    await Future.wait([
+      HiveService.initialize(),
+      EnvConfigService().init(),
+      ImageCacheService().init(),
+      NotificationService().initialize(),
+      WidgetService.initialize(),
+    ]);
+    debugPrint('✅ Bağımsız servisler başarıyla initialize edildi');
     
-    // Hive database'i initialize et
-    debugPrint('🔄 Hive database initialize ediliyor...');
-    await HiveService.initialize();
-    debugPrint('✅ Hive başarıyla initialize edildi');
+    // === ADIM 4: Hive'a bağımlı servisleri paralel başlat ===
+    // Hive artık hazır, Hive box kullanan servisleri paralel başlat
+    debugPrint('🔄 Hive-bağımlı servisler paralel başlatılıyor...');
+    await Future.wait([
+      RssSourcesService.init(),
+      CustomCategoriesService.init(),
+      AnalyticsService.init(),
+      ArticlePopularityService.init(),
+      GamificationService.instance.init(),
+    ]);
+    debugPrint('✅ Hive-bağımlı servisler başarıyla initialize edildi');
     
-    // Image Cache servisini initialize et
-    debugPrint('🔄 Image Cache service initialize ediliyor...');
-    await ImageCacheService().init();
-    debugPrint('✅ Image Cache service başarıyla initialize edildi');
-    
-    // RSS Sources servisini initialize et
-    debugPrint('🔄 RSS Sources service initialize ediliyor...');
-    await RssSourcesService.init();
-    debugPrint('✅ RSS Sources service başarıyla initialize edildi');
-    
-    // Custom Categories servisini initialize et
-    debugPrint('🔄 Custom Categories service initialize ediliyor...');
-    await CustomCategoriesService.init();
-    debugPrint('✅ Custom Categories service başarıyla initialize edildi');
-    
-    // Analytics servisini initialize et
-    debugPrint('🔄 Analytics service initialize ediliyor...');
-    await AnalyticsService.init();
-    debugPrint('✅ Analytics service başarıyla initialize edildi');
-    
-    // Article Popularity servisini initialize et
-    debugPrint('🔄 Article Popularity service initialize ediliyor...');
-    await ArticlePopularityService.init();
-    debugPrint('✅ Article Popularity service başarıyla initialize edildi');
-    
-    // Gamification servisini initialize et
-    debugPrint('🔄 Gamification service initialize ediliyor...');
-    await GamificationService.instance.init();
-    debugPrint('✅ Gamification service başarıyla initialize edildi');
-    
-    // Notification servisini initialize et
-    debugPrint('🔄 Notification service initialize ediliyor...');
-    await NotificationService().initialize();
-    debugPrint('✅ Notification service başarıyla initialize edildi');
-    
-    // Widget servisini initialize et
-    debugPrint('🔄 Widget service initialize ediliyor...');
-    await WidgetService.initialize();
-    debugPrint('✅ Widget service başarıyla initialize edildi');
-    
-    // RSS Health Check servisini başlat (6 saatte bir kontrol)
-    debugPrint('🔄 RSS Health Check service başlatılıyor...');
+    // === ADIM 5: Periyodik görevleri başlat ===
     RssHealthCheckService().startPeriodicHealthCheck(
       interval: const Duration(hours: 6),
     );
-    debugPrint('✅ RSS Health Check service başarıyla başlatıldı');
+    debugPrint('✅ RSS Health Check service başlatıldı');
     
     // Uygulamayı başlat
     runApp(
