@@ -64,45 +64,36 @@ final appInitializationProvider = FutureProvider<void>((ref) async {
   debugPrint('🔄 App initialization basliyor...');
   
   // Minimum splash süresi (0.3 saniye) - çok hızlı açılış
-  final minSplashDuration = Future.delayed(const Duration(milliseconds: 300));
+  await Future.delayed(const Duration(milliseconds: 300));
   
-  try {
-    // ÖNCE: Cache'den hızlıca yükle (refresh: false)
-    debugPrint('⚡ Cache\'den hızlı yükleme...');
+  debugPrint('✅ App initialization tamamlandi');
+  
+  // Initialization tamamlandıktan SONRA haberleri yükle
+  // Future.microtask ile Riverpod build cycle dışına çıkıyoruz
+  Future.microtask(() async {
     try {
+      debugPrint('⚡ Cache\'den hızlı yükleme...');
       await ref.read(newsProvider.notifier).loadAllArticles(refresh: false);
       debugPrint('✅ Cache\'den haberler yüklendi');
     } catch (e) {
       debugPrint('⚠️ Cache yükleme hatası: $e');
     }
     
-    // Minimum splash süresini bekle
-    await minSplashDuration;
-    
-    // SONRA: Arka planda güncelle (refresh: true) - timeout ile
-    debugPrint('🔄 Arka planda güncelleme başlatılıyor...');
-    Future.microtask(() async {
-      try {
-        await ref.read(newsProvider.notifier)
-            .loadAllArticles(refresh: true)
-            .timeout(const Duration(seconds: 15));
-        debugPrint('✅ Arka plan güncelleme tamamlandı');
-      } catch (e) {
-        if (e.toString().contains('timeout') || e.toString().contains('Timeout')) {
-          debugPrint('⚠️ Arka plan güncelleme timeout (15 saniye)');
-        } else {
-          debugPrint('⚠️ Arka plan güncelleme hatası: $e');
-        }
+    // Arka planda güncelle (refresh: true) - timeout ile
+    try {
+      debugPrint('🔄 Arka planda güncelleme başlatılıyor...');
+      await ref.read(newsProvider.notifier)
+          .loadAllArticles(refresh: true)
+          .timeout(const Duration(seconds: 15));
+      debugPrint('✅ Arka plan güncelleme tamamlandı');
+    } catch (e) {
+      if (e.toString().contains('timeout') || e.toString().contains('Timeout')) {
+        debugPrint('⚠️ Arka plan güncelleme timeout (15 saniye)');
+      } else {
+        debugPrint('⚠️ Arka plan güncelleme hatası: $e');
       }
-    });
-    
-  } catch (e) {
-    debugPrint('⚠️ App initialization hatasi: $e');
-    // Hata durumunda minimum splash süresini bekle
-    await minSplashDuration;
-  }
-  
-  debugPrint('✅ App initialization tamamlandi');
+    }
+  });
 });
 
 /// App lifecycle provider - uygulama yaşam döngüsünü izler
