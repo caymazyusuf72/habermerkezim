@@ -2,16 +2,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/scheduler.dart';
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import '../../domain/entities/article.dart';
-import '../../domain/repositories/news_repository.dart';
+import '../../domain/usecases/get_all_articles.dart';
+import '../../domain/usecases/get_articles_by_category.dart';
+import '../../domain/usecases/mark_article_as_read.dart';
+import '../../domain/usecases/toggle_article_favorite.dart';
+import '../../domain/usecases/clear_article_cache.dart';
+import '../../domain/usecases/check_breaking_news.dart';
 import '../../core/services/widget_service.dart';
-import '../../core/services/breaking_news_service.dart';
-import '../../core/services/notification_service.dart';
-import '../../core/services/hive_service.dart';
 import '../../core/utils/error_message_helper.dart';
 import 'providers.dart';
-
-import 'package:flutter/foundation.dart';
 /// News State - haber listesinin durumunu tutar
 class NewsState {
   final List<Article> articles;
@@ -64,17 +65,39 @@ class NewsState {
 }
 
 /// News StateNotifier - haber işlemlerini yönetir
+/// Use case'ler üzerinden iş mantığına erişir (Clean Architecture)
 class NewsNotifier extends StateNotifier<NewsState> {
-  final NewsRepository _repository;
+  final GetAllArticles _getAllArticles;
+  final GetArticlesByCategory _getArticlesByCategory;
+  final MarkArticleAsRead _markArticleAsRead;
+  final ToggleArticleFavorite _toggleArticleFavorite;
+  final ClearArticleCache _clearArticleCache;
+  final CheckBreakingNews _checkBreakingNews;
+  final WatchAllArticles _watchAllArticles;
   StreamSubscription<List<Article>>? _articlesSubscription;
 
-  NewsNotifier(this._repository) : super(const NewsState()) {
+  NewsNotifier({
+    required GetAllArticles getAllArticles,
+    required GetArticlesByCategory getArticlesByCategory,
+    required MarkArticleAsRead markArticleAsRead,
+    required ToggleArticleFavorite toggleArticleFavorite,
+    required ClearArticleCache clearArticleCache,
+    required CheckBreakingNews checkBreakingNews,
+    required WatchAllArticles watchAllArticles,
+  })  : _getAllArticles = getAllArticles,
+        _getArticlesByCategory = getArticlesByCategory,
+        _markArticleAsRead = markArticleAsRead,
+        _toggleArticleFavorite = toggleArticleFavorite,
+        _clearArticleCache = clearArticleCache,
+        _checkBreakingNews = checkBreakingNews,
+        _watchAllArticles = watchAllArticles,
+        super(const NewsState()) {
     _setupArticlesStream();
   }
 
   /// Stream'i dinlemeye başla
   void _setupArticlesStream() {
-    _articlesSubscription = _repository.watchAllArticles().listen(
+    _articlesSubscription = _watchAllArticles().listen(
       (articles) {
         // Background refresh sonrası gelen verileri handle et
         debugPrint('📡 [Provider] Stream\'den ${articles.length} makale alındı');
@@ -125,7 +148,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
     }
 
     try {
-      final allArticles = await _repository.getAllArticles();
+      final allArticles = await _getAllArticles();
       final paginatedArticles = _paginateArticles(allArticles, page: 1);
       
       state = state.copyWith(
@@ -142,8 +165,8 @@ class NewsNotifier extends StateNotifier<NewsState> {
         debugPrint('⚠️ Widget update hatası (sessizce başarısız): $e');
       });
       
-      // Breaking news kontrolü (NON-BLOCKING - arka planda)
-      _checkAndNotifyBreakingNews(allArticles).catchError((e) {
+      // Breaking news kontrolü (NON-BLOCKING - use case üzerinden)
+      _checkBreakingNews(allArticles).catchError((e) {
         debugPrint('⚠️ Breaking news kontrolü hatası (sessizce başarısız): $e');
       });
     } catch (e, stackTrace) {
@@ -195,7 +218,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
       state = state.copyWith(isLoading: true, errorMessage: null, currentPage: 1);
       
       try {
-        final allArticles = await _repository.getArticlesByCategory(category);
+        final allArticles = await _getArticlesByCategory(category);
         final paginatedArticles = _paginateArticles(allArticles, page: 1);
         
         state = state.copyWith(
@@ -257,7 +280,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
   /// Makaleyi okundu olarak işaretle
   Future<void> markAsRead(String articleId) async {
     try {
-      await _repository.markAsRead(articleId);
+      await _markArticleAsRead(articleId);
       
       // Update local state
       final updatedArticles = state.articles.map((article) {
@@ -277,7 +300,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
   /// Favori durumunu değiştir
   Future<void> toggleFavorite(String articleId) async {
     try {
-      await _repository.toggleFavorite(articleId);
+      await _toggleArticleFavorite(articleId);
       
       // Update local state
       final updatedArticles = state.articles.map((article) {
@@ -302,99 +325,10 @@ class NewsNotifier extends StateNotifier<NewsState> {
   /// Cache'i temizle
   Future<void> clearCache() async {
     try {
-      await _repository.clearCache();
+      await _clearArticleCache();
       state = const NewsState();
     } catch (e) {
       debugPrint('Failed to clear cache: $e');
-    }
-  }
-
-  /// Breaking news kontrolü ve bildirim gönderimi
-  Future<void> _checkAndNotifyBreakingNews(List<Article> articles) async {
-    try {
-      final breakingNewsService = BreakingNewsService();
-      final notificationService = NotificationService();
-      
-      // Son 10 dakika içindeki haberleri kontrol et
-      final now = DateTime.now();
-      final recentArticles = articles.where((article) {
-        final diff = now.difference(article.publishedDate);
-        return diff.inMinutes <= 10;
-      }).toList();
-      
-      // Breaking news'leri filtrele
-      final breakingNews = breakingNewsService.filterBreakingNews(recentArticles);
-      
-      if (breakingNews.isNotEmpty) {
-        // En yüksek öncelikli breaking news'i al
-        breakingNews.sort((a, b) {
-          final priorityA = breakingNewsService.calculatePriority(a);
-          final priorityB = breakingNewsService.calculatePriority(b);
-          return priorityB.compareTo(priorityA);
-        });
-        
-        final topBreakingNews = breakingNews.first;
-        
-        // Bildirim sıklığı kontrolü
-        if (await _canSendNotification()) {
-          await notificationService.showBreakingNewsNotification(
-            title: topBreakingNews.title,
-            summary: topBreakingNews.description,
-            articleId: topBreakingNews.id,
-          );
-          
-          // Son bildirim zamanını kaydet
-          await _saveLastNotificationTime();
-        }
-      }
-    } catch (e) {
-      debugPrint('⚠️ Breaking news kontrolü hatası: $e');
-    }
-  }
-  
-  /// Bildirim gönderilebilir mi kontrol et (saatte max 3 bildirim)
-  Future<bool> _canSendNotification() async {
-    try {
-      final box = HiveService.notificationFrequencyBox;
-      final lastNotificationTimes = box.get('lastNotificationTimes', defaultValue: <int>[]) as List<dynamic>?;
-      
-      if (lastNotificationTimes == null || lastNotificationTimes.isEmpty) {
-        return true;
-      }
-      
-      final now = DateTime.now().millisecondsSinceEpoch;
-      final oneHourAgo = now - (60 * 60 * 1000);
-      
-      // Son 1 saat içindeki bildirimleri filtrele
-      final recentNotifications = lastNotificationTimes
-          .where((time) => (time as int) > oneHourAgo)
-          .toList();
-      
-      // Saatte max 3 bildirim
-      return recentNotifications.length < 3;
-    } catch (e) {
-      debugPrint('⚠️ Bildirim sıklığı kontrolü hatası: $e');
-      return true; // Hata durumunda bildirim gönder
-    }
-  }
-  
-  /// Son bildirim zamanını kaydet
-  Future<void> _saveLastNotificationTime() async {
-    try {
-      final box = HiveService.notificationFrequencyBox;
-      final lastNotificationTimes = box.get('lastNotificationTimes', defaultValue: <int>[]) as List<dynamic>?;
-      
-      final now = DateTime.now().millisecondsSinceEpoch;
-      final updatedTimes = List<int>.from(lastNotificationTimes ?? []);
-      updatedTimes.add(now);
-      
-      // Son 24 saat içindeki bildirimleri tut
-      final oneDayAgo = now - (24 * 60 * 60 * 1000);
-      final filteredTimes = updatedTimes.where((time) => time > oneDayAgo).toList();
-      
-      await box.put('lastNotificationTimes', filteredTimes);
-    } catch (e) {
-      debugPrint('⚠️ Bildirim zamanı kaydetme hatası: $e');
     }
   }
 
@@ -416,10 +350,53 @@ class NewsNotifier extends StateNotifier<NewsState> {
 }
 
 
+// ============================================================================
+// USE CASE PROVIDERS
+// ============================================================================
+
+final getAllArticlesProvider = Provider<GetAllArticles>((ref) {
+  return GetAllArticles(ref.read(newsRepositoryProvider));
+});
+
+final watchAllArticlesProvider = Provider<WatchAllArticles>((ref) {
+  return WatchAllArticles(ref.read(newsRepositoryProvider));
+});
+
+final getArticlesByCategoryProvider = Provider<GetArticlesByCategory>((ref) {
+  return GetArticlesByCategory(ref.read(newsRepositoryProvider));
+});
+
+final markArticleAsReadProvider = Provider<MarkArticleAsRead>((ref) {
+  return MarkArticleAsRead(ref.read(newsRepositoryProvider));
+});
+
+final toggleArticleFavoriteProvider = Provider<ToggleArticleFavorite>((ref) {
+  return ToggleArticleFavorite(ref.read(newsRepositoryProvider));
+});
+
+final clearArticleCacheProvider = Provider<ClearArticleCache>((ref) {
+  return ClearArticleCache(ref.read(newsRepositoryProvider));
+});
+
+final checkBreakingNewsProvider = Provider<CheckBreakingNews>((ref) {
+  return CheckBreakingNews();
+});
+
+// ============================================================================
+// NEWS PROVIDER - Use case'ler ile oluşturulur
+// ============================================================================
+
 /// News provider - StateNotifierProvider
 final newsProvider = StateNotifierProvider<NewsNotifier, NewsState>((ref) {
-  final repository = ref.read(newsRepositoryProvider);
-  return NewsNotifier(repository);
+  return NewsNotifier(
+    getAllArticles: ref.read(getAllArticlesProvider),
+    getArticlesByCategory: ref.read(getArticlesByCategoryProvider),
+    markArticleAsRead: ref.read(markArticleAsReadProvider),
+    toggleArticleFavorite: ref.read(toggleArticleFavoriteProvider),
+    clearArticleCache: ref.read(clearArticleCacheProvider),
+    checkBreakingNews: ref.read(checkBreakingNewsProvider),
+    watchAllArticles: ref.read(watchAllArticlesProvider),
+  );
 });
 
 /// Favorite articles provider
