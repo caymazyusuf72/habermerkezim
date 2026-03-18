@@ -16,7 +16,7 @@ import 'pages/splash/splash_page.dart';
 import 'pages/onboarding/onboarding_page.dart';
 import 'pages/auth/login_page.dart';
 import 'pages/update/update_dialog.dart';
-import '../../core/services/update_service.dart';
+import '../core/services/update_service.dart';
 import '../l10n/generated/app_localizations.dart';
 
 /// Ana uygulama widget'ı - Haber Merkezi

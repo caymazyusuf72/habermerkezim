@@ -49,3 +49,10 @@ google-services.json
 *.jks
 *.keystore
 key.properties
+
+# Build artifacts and temporary files
+*.apk
+*.log
+
+# Backup folder (contains sensitive files)
+gerekli_dosyalar/
