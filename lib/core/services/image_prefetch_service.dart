@@ -40,8 +40,8 @@ class ImagePrefetchService {
   /// Prefetch başına timeout
   static const Duration _prefetchTimeout = Duration(seconds: 10);
 
-  /// Prefetch aktif mi?
-  bool _isPrefetchingEnabled = true;
+  /// Prefetch aktif mi? (PERFORMANS: Varsayılan olarak KAPALI)
+  bool _isPrefetchingEnabled = false;
 
   /// Prefetch'i etkinleştir/devre dışı bırak
   void setEnabled(bool enabled) {
@@ -158,10 +158,9 @@ class ImagePrefetchService {
           .timeout(_prefetchTimeout);
 
       _completedPrefetches.add(imageUrl);
-      debugPrint('✅ Prefetch completed: ${_truncateUrl(imageUrl)}');
+      // Prefetch log'ları kaldırıldı (performans)
     } catch (e) {
-      // Hata durumunda sessizce devam et
-      debugPrint('⚠️ Prefetch failed: ${_truncateUrl(imageUrl)} - $e');
+      // Hata durumunda sessizce devam et (log yok)
     } finally {
       _activePrefetches.remove(imageUrl);
       // Kuyrukta bekleyen varsa devam et

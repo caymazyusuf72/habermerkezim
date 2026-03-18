@@ -14,22 +14,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "661419486599-1hkumh2j875nhddi7fmdpar8i7javhd1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.habermerkezi.app",
-            "certificate_hash": "27875a122f2ab8dd40581db3adf31b173ae472e8"
-          }
-        },
-        {
-          "client_id": "661419486599-skbavmfev9u5ltcrpa63itn0flsgp5k1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.habermerkezi.app",
-            "certificate_hash": "97b4a0195a223f11d61bcdc41d84d882599426d2"
-          }
-        },
-        {
           "client_id": "661419486599-jsntb4vdhiatkv9g3pq5n040031g7mqi.apps.googleusercontent.com",
           "client_type": 3
         }

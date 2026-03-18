@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/scheduler.dart';
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
+
 import '../../domain/entities/article.dart';
+import '../../core/utils/app_logger.dart';
 import '../../domain/usecases/get_all_articles.dart';
 import '../../domain/usecases/get_articles_by_category.dart';
 import '../../domain/usecases/mark_article_as_read.dart';
@@ -100,7 +101,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
     _articlesSubscription = _watchAllArticles().listen(
       (articles) {
         // Background refresh sonrası gelen verileri handle et
-        debugPrint('📡 [Provider] Stream\'den ${articles.length} makale alındı');
+        AppLogger.debug('[Provider] Stream\'den ${articles.length} makale alındı');
         
         // Build cycle dışında state güncellemesi için SchedulerBinding kullan
         SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -113,12 +114,12 @@ class NewsNotifier extends StateNotifier<NewsState> {
               errorMessage: null,
               hasMore: articles.length > NewsState.pageSize * state.currentPage,
             );
-            debugPrint('✅ [Provider] State güncellendi: ${paginatedArticles.length} makale gösteriliyor');
+            AppLogger.success('[Provider] State güncellendi: ${paginatedArticles.length} makale gösteriliyor');
           }
         });
       },
       onError: (error) {
-        debugPrint('❌ [Provider] Stream hatası: $error');
+        AppLogger.error('[Provider] Stream hatası', error);
         SchedulerBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             state = state.copyWith(
@@ -162,15 +163,15 @@ class NewsNotifier extends StateNotifier<NewsState> {
       
       // Widget'ı güncelle (NON-BLOCKING - await kullanma)
       WidgetService.updateWidget(allArticles).catchError((e) {
-        debugPrint('⚠️ Widget update hatası (sessizce başarısız): $e');
+        AppLogger.debug('Widget update hatası (sessizce başarısız): $e');
       });
       
       // Breaking news kontrolü (NON-BLOCKING - use case üzerinden)
       _checkBreakingNews(allArticles).catchError((e) {
-        debugPrint('⚠️ Breaking news kontrolü hatası (sessizce başarısız): $e');
+        AppLogger.debug('Breaking news kontrolü hatası (sessizce başarısız): $e');
       });
     } catch (e, stackTrace) {
-      debugPrint('❌ Haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+      AppLogger.error('Haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoading: false,
         errorMessage: ErrorMessageHelper.getErrorMessage(e),
@@ -197,7 +198,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
         currentPage: nextPage,
       );
     } catch (e, stackTrace) {
-      debugPrint('❌ Daha fazla haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+      AppLogger.error('Daha fazla haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoadingMore: false,
         errorMessage: ErrorMessageHelper.getErrorMessage(e),
@@ -230,7 +231,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
           currentPage: 1,
         );
       } catch (e, stackTrace) {
-        debugPrint('❌ Kategori haberleri yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+        AppLogger.error('Kategori haberleri yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
         state = state.copyWith(
           isLoading: false,
           errorMessage: ErrorMessageHelper.getErrorMessage(e),
@@ -255,7 +256,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
         currentPage: 1,
       );
     } catch (e, stackTrace) {
-      debugPrint('❌ Kategori yükleme hatası [$category]: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+      AppLogger.error('Kategori yükleme hatası [$category]: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoading: false,
         errorMessage: ErrorMessageHelper.getErrorMessage(e),
@@ -293,7 +294,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
       state = state.copyWith(articles: updatedArticles);
     } catch (e) {
       // Silently handle error for UX
-      debugPrint('Failed to mark as read: $e');
+      AppLogger.debug('Failed to mark as read: $e');
     }
   }
 
@@ -313,7 +314,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
       state = state.copyWith(articles: updatedArticles);
     } catch (e) {
       // Silently handle error for UX
-      debugPrint('Failed to toggle favorite: $e');
+      AppLogger.debug('Failed to toggle favorite: $e');
     }
   }
 
@@ -328,7 +329,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
       await _clearArticleCache();
       state = const NewsState();
     } catch (e) {
-      debugPrint('Failed to clear cache: $e');
+      AppLogger.debug('Failed to clear cache: $e');
     }
   }
 

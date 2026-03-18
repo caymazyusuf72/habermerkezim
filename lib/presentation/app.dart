@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../core/utils/app_logger.dart';
 import 'providers/providers.dart';
 import 'providers/onboarding_provider.dart';
 import 'providers/theme_provider.dart';
@@ -94,7 +95,7 @@ class HaberMerkeziApp extends ConsumerWidget {
             },
             loading: () => const SplashPage(),
             error: (error, stackTrace) {
-              debugPrint('❌ App initialization hatasi: $error');
+              AppLogger.error('App initialization hatasi', error, stackTrace);
               return ErrorPage(
                 error: error,
                 onRetry: () {
@@ -297,7 +298,7 @@ class _UpdateCheckWrapperState extends ConsumerState<_UpdateCheckWrapper> {
         );
       }
     } catch (e) {
-      debugPrint('⚠️ Güncelleme kontrolü hatası: $e');
+      AppLogger.warning('Güncelleme kontrolü hatası: $e');
       // Hata durumunda sessizce devam et
     }
   }
@@ -343,7 +344,7 @@ class _OnboardingCheckWrapperState extends ConsumerState<_OnboardingCheckWrapper
         });
       }
     } catch (e) {
-      debugPrint('⚠️ Onboarding kontrolü hatası: $e');
+      AppLogger.warning('Onboarding kontrolü hatası: $e');
       if (mounted) {
         setState(() {
           _hasError = true;
@@ -399,7 +400,7 @@ class _AuthCheckWrapper extends ConsumerWidget {
       },
       loading: () => const SplashPage(),
       error: (error, stackTrace) {
-        debugPrint('❌ Auth kontrolü hatası: $error');
+        AppLogger.error('Auth kontrolü hatası', error, stackTrace);
         // Hata durumunda Login sayfasına yönlendir
         return const LoginPage();
       },
