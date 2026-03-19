@@ -13,7 +13,6 @@ import 'providers/auth_provider.dart';
 import 'providers/locale_provider.dart';
 import 'themes/app_theme.dart';
 import 'pages/home/home_page.dart';
-import 'pages/splash/splash_page.dart';
 import 'pages/onboarding/onboarding_page.dart';
 import 'pages/auth/login_page.dart';
 import 'pages/update/update_dialog.dart';
@@ -93,7 +92,11 @@ class HaberMerkeziApp extends ConsumerWidget {
                 ),
               );
             },
-            loading: () => const SplashPage(),
+            loading: () => const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
             error: (error, stackTrace) {
               AppLogger.error('App initialization hatasi', error, stackTrace);
               return ErrorPage(
@@ -108,7 +111,6 @@ class HaberMerkeziApp extends ConsumerWidget {
           // Route ayarları
           routes: {
             '/home': (context) => const HomePage(),
-            '/splash': (context) => const SplashPage(),
             '/onboarding': (context) => const OnboardingPage(),
             '/login': (context) => const LoginPage(),
           },
@@ -367,7 +369,11 @@ class _OnboardingCheckWrapperState extends ConsumerState<_OnboardingCheckWrapper
           });
         }
       });
-      return const SplashPage();
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
 
     if (_hasError || _hasCompletedOnboarding == true) {
@@ -398,7 +404,11 @@ class _AuthCheckWrapper extends ConsumerWidget {
         // Kullanıcı giriş yapmış, ana sayfaya devam et
         return child;
       },
-      loading: () => const SplashPage(),
+      loading: () => const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
       error: (error, stackTrace) {
         AppLogger.error('Auth kontrolü hatası', error, stackTrace);
         // Hata durumunda Login sayfasına yönlendir
