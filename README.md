@@ -1,231 +1,376 @@
 # 📰 Haber Merkezi - RSS Tabanlı Haber Uygulaması
 
-Modern Flutter ile geliştirilmiş, RSS feed tabanlı kapsamlı haber uygulaması.
+Modern Flutter ile geliştirilmiş, Clean Architecture + Riverpod tabanlı kapsamlı haber uygulaması.
+
+[![CI](https://github.com/username/haber-merkezi/actions/workflows/ci.yml/badge.svg)](https://github.com/username/haber-merkezi/actions/workflows/ci.yml)
+[![Release](https://github.com/username/haber-merkezi/actions/workflows/release.yml/badge.svg)](https://github.com/username/haber-merkezi/actions/workflows/release.yml)
+
+---
 
 ## 🎯 Özellikler
 
+### Temel Özellikler
 - ✅ **RSS Tabanlı İçerik**: Güvenilir haber kaynaklarından otomatik içerik çekimi
 - 📱 **Modern UI/UX**: Material Design 3 ile modern, kullanıcı dostu arayüz
-- 🌙 **Dark Mode**: Göz yorgunluğunu azaltan karanlık tema desteği (Sistem teması otomatik algılama)
+- 🌙 **Dark/Light Mode**: Göz yorgunluğunu azaltan karanlık tema + sistem teması algılama
 - 📴 **Offline Mode**: İnternet bağlantısı olmadan da haberleri görüntüleme
 - 🔄 **Pull-to-Refresh**: Hızlı içerik yenileme
 - 📄 **Infinite Scroll**: Sayfa sayfa haber yükleme ile performans optimizasyonu
-- 🏷️ **Kategori Filtreleme**: Genel, Türkiye, Ekonomi, Teknoloji kategorileri
+- 🏷️ **Kategori Filtreleme**: Genel, Türkiye, Ekonomi, Teknoloji, Spor kategorileri
 - 🎨 **Gelişmiş Filtreleme**: Tarih aralığı, kaynak, kategori ve okunma durumu filtreleri
-- 🔗 **Kaynak Görüntüleme**: Orijinal haberlere doğrudan erişim
+- 🔍 **Gelişmiş Arama**: İçerik içinde arama ve filtreleme
 - 📤 **Paylaşım**: Haberleri sosyal medyada paylaşma
-- 🔍 **Arama**: İçerik içinde arama özelliği
-- ⚡ **Görsel Optimizasyonu**: Otomatik görsel boyutlandırma ve cache yönetimi
-- 📊 **Analitik**: Okuma istatistikleri ve hedef takibi
-- 🔔 **Bildirimler**: Günlük haber özetleri ve okuma hedefi hatırlatıcıları
+- 🔗 **Kaynak Görüntüleme**: Orijinal haberlere doğrudan erişim
 
-## 🏗️ Teknik Mimari
+### Gelişmiş Özellikler
+- 🔖 **Yer İşaretleri**: Haberleri kaydetme ve koleksiyon oluşturma
+- 📊 **Okuma İstatistikleri**: Okuma alışkanlıkları takibi ve hedef belirleme
+- 🔔 **Akıllı Bildirimler**: Günlük haber özetleri ve okuma hedefi hatırlatıcıları
+- 🗣️ **Metin Okuma (TTS)**: Haberleri sesli dinleme
+- 🎙️ **Podcast Desteği**: Haber podcast'leri
+- 🏆 **Gamification**: Okuma rozetleri ve başarı sistemi
+- 🤖 **ML Öneri Sistemi**: Kişiselleştirilmiş haber önerileri
+- 🔥 **Trend Haberler**: Popüler ve trend içerikler
+- 🌐 **Çoklu Dil**: Türkçe ve İngilizce dil desteği (l10n)
+- 🔐 **Firebase Auth**: Google Sign-In ile kullanıcı hesabı
+- ☁️ **Cloud Sync**: Firestore ile bulut senkronizasyonu
+
+### Performans ve DevOps
+- ⚡ **Performans Monitoring**: Sayfa yükleme ve API response süreleri takibi
+- 🖼️ **Görsel Optimizasyonu**: Otomatik boyutlandırma, CDN desteği, cache yönetimi
+- 🌐 **Network Optimizasyonu**: Request debouncing, retry logic, circuit breaker
+- 💾 **Multi-level Cache**: Memory → Disk katmanlı cache, LRU eviction, TTL invalidation
+- 🚀 **App Startup Optimizer**: Sıralı servis başlatma, lazy initialization
+- 🧹 **Memory Management**: Image cache temizleme, dispose takibi
+- 🔄 **CI/CD**: GitHub Actions ile otomatik test, analiz ve build
+
+---
+
+## 🏗️ Mimari
 
 ### Clean Architecture
+
 ```
 📁 lib/
-├── 🎯 core/           # Temel bileşenler ve yardımcılar
-├── 💾 data/           # Veri kaynakları ve repository implementasyonu
-├── 🧠 domain/         # İş mantığı ve use case'ler  
-├── 🎨 presentation/   # UI bileşenleri ve state management
-└── 📱 main.dart       # Uygulama başlangıç noktası
+├── 📱 main.dart                    # Uygulama giriş noktası
+├── 🔥 firebase_options.dart        # Firebase konfigürasyonu
+├── 🎯 core/                        # Temel bileşenler
+│   ├── config/                     # Uygulama konfigürasyonu (env)
+│   ├── constants/                  # Sabitler (API endpoints, renkler vb.)
+│   ├── error/                      # Hata yönetimi (Failure sınıfları)
+│   ├── extensions/                 # Extension metotları
+│   ├── providers/                  # Global Riverpod provider'lar
+│   ├── services/                   # Servisler (44+ servis)
+│   │   ├── analytics_service.dart
+│   │   ├── app_startup_service.dart
+│   │   ├── cache_manager_service.dart
+│   │   ├── image_optimization_service.dart
+│   │   ├── logger_service.dart
+│   │   ├── network_optimizer_service.dart
+│   │   ├── performance_monitor_service.dart
+│   │   └── ... (40+ daha)
+│   ├── theme/                      # Tema yönetimi
+│   └── utils/                      # Yardımcı fonksiyonlar
+│       ├── memory_utils.dart
+│       ├── retry_helper.dart
+│       └── ...
+├── 💾 data/                        # Veri katmanı
+│   ├── datasources/                # Uzak/yerel veri kaynakları
+│   ├── models/                     # Veri modelleri (Hive adaptörleri)
+│   └── repositories/               # Repository implementasyonları
+├── 🧠 domain/                      # İş mantığı katmanı
+│   ├── entities/                   # Entity sınıfları
+│   ├── repositories/               # Repository arayüzleri
+│   └── usecases/                   # Use case'ler
+│       ├── bookmark/               # Yer işareti use case'leri
+│       ├── category/               # Kategori use case'leri
+│       └── settings/               # Ayarlar use case'leri
+├── 🎨 presentation/               # Sunum katmanı
+│   ├── pages/                      # Sayfa widget'ları
+│   ├── providers/                  # UI state provider'ları
+│   ├── theme/                      # Tema verileri
+│   └── widgets/                    # Tekrar kullanılabilir widget'lar
+└── 🌐 l10n/                       # Lokalizasyon dosyaları
 ```
 
-### State Management
-- **Riverpod**: Modern, güvenilir state management
-- **Provider Pattern**: Dependency injection
-- **Reactive Programming**: Stream-based data flow
+### Katmanlar Arası İletişim
 
-### Teknoloji Stack
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│ Presentation │ ──▶ │   Domain     │ ◀── │    Data      │
+│   (UI/State) │     │ (Use Cases)  │     │ (Repository) │
+└──────────────┘     └──────────────┘     └──────────────┘
+       │                    │                     │
+   Riverpod            Entities              Models/API
+   Providers           Interfaces            Hive/Dio
+```
+
+---
+
+## 🛠️ Teknoloji Stack
+
 | Kategori | Teknoloji | Versiyon |
 |----------|-----------|----------|
 | **Framework** | Flutter | 3.8.1+ |
-| **Language** | Dart | 3.0+ |
-| **State Management** | Riverpod | ^2.4.9 |
+| **Language** | Dart | 3.8.1+ |
+| **State Management** | Riverpod | ^2.6.1 |
 | **HTTP Client** | Dio | ^5.4.0 |
 | **Local Database** | Hive | ^2.2.3 |
-| **XML Parsing** | xml | ^6.4.2 |
-| **UI Components** | Material 3 | Built-in |
+| **Cache** | flutter_cache_manager | ^3.4.1 |
+| **Firebase** | Core, Auth, Firestore, Crashlytics, Analytics | v3/v5 |
+| **Auth** | Google Sign-In | ^6.2.1 |
+| **XML/HTML Parsing** | xml, html | ^6.4.2, ^0.15.5 |
+| **UI Components** | Material 3, Shimmer, Lottie, Flutter Animate | Latest |
+| **Charts** | fl_chart | ^0.69.0 |
+| **Audio** | just_audio, audio_service | Latest |
+| **Video** | video_player, youtube_player_flutter | Latest |
+| **TTS** | flutter_tts | ^4.0.2 |
+| **Notifications** | flutter_local_notifications | ^19.5.0 |
+| **Security** | flutter_secure_storage, envied | Latest |
 
-## 📊 RSS Haber Kaynakları
-
-| Kategori | Kaynak | Format | Durum |
-|----------|--------|--------|-------|
-| 🚨 **Genel/Son Dakika** | Hürriyet | RSS 2.0 | ✅ Aktif |
-| 🇹🇷 **Türkiye Haberleri** | NTV | Atom | ✅ Aktif |
-| 💰 **Ekonomi** | Milliyet | RSS 2.0 | 🔄 Entegre edilecek |
-| 💻 **Teknoloji** | WebTekno | RSS 2.0 | 🔄 Entegre edilecek |
-| ⚽ **Spor** | Fanatik | RSS 2.0 | 🔄 Entegre edilecek |
-
-## 🎨 Tasarım Sistemi
-
-### Renk Paleti
-```dart
-// Light Theme (Mavi-Beyaz)
-Primary: #1976D2    (Ana Mavi)
-Secondary: #2196F3  (Açık Mavi)
-Surface: #FFFFFF    (Beyaz)
-Background: #F5F5F5 (Açık Gri)
-
-// Dark Theme
-Primary: #0D47A1    (Koyu Mavi) 
-Surface: #121212    (Koyu Gri)
-Background: #1E1E1E (Çok Koyu Gri)
-```
-
-### Typography
-- **Başlıklar**: Roboto Bold, 18-24px
-- **İçerik**: Roboto Regular, 14-16px  
-- **Meta Bilgi**: Roboto Light, 12-14px
+---
 
 ## 🚀 Kurulum ve Çalıştırma
 
 ### Ön Gereksinimler
-- Flutter SDK (3.8.1 veya üstü)
+- Flutter SDK 3.8.1 veya üstü
+- Dart SDK 3.8.1 veya üstü
 - Android Studio / VSCode
 - Git
+- Firebase projesi (opsiyonel - Firebase özellikleri için)
 
 ### Adım Adım Kurulum
 
-1. **Repository'yi klonlayın:**
 ```bash
+# 1. Repository'yi klonlayın
 git clone <repository-url>
 cd haber-merkezi
-```
 
-2. **Dependencies yükleyin:**
-```bash
+# 2. Environment dosyasını oluşturun
+cp .env.example .env
+# .env dosyasını düzenleyin
+
+# 3. Dependencies yükleyin
 flutter pub get
-```
 
-3. **Hive adaptörlerini oluşturun:**
-```bash
-flutter packages pub run build_runner build
-```
+# 4. Kod üretimini çalıştırın (Hive adaptörleri, envied vb.)
+flutter pub run build_runner build --delete-conflicting-outputs
 
-4. **Uygulamayı çalıştırın:**
-```bash
+# 5. Uygulamayı çalıştırın
 flutter run
 ```
 
-### Build Komutları
+### Environment Değişkenleri
 
-**Android APK:**
-```bash
-flutter build apk --release
+`.env.example` dosyasını `.env` olarak kopyalayıp gerekli değişkenleri doldurun:
+
+```env
+# API anahtarları ve konfigürasyon
+# Detaylar için .env.example dosyasına bakın
 ```
 
-**iOS IPA:**
+---
+
+## 🔨 Build Komutları
+
+### Geliştirme
 ```bash
+# Debug modda çalıştır
+flutter run
+
+# Hot reload ile çalıştır
+flutter run --hot
+```
+
+### Test
+```bash
+# Tüm testleri çalıştır
+flutter test
+
+# Coverage ile çalıştır
+flutter test --coverage
+
+# Belirli bir test dosyası
+flutter test test/presentation/widgets/error/error_widget_test.dart
+```
+
+### Analiz
+```bash
+# Statik analiz
+dart analyze
+
+# Format kontrolü
+dart format --set-exit-if-changed lib/
+
+# Format düzeltme
+dart format lib/
+```
+
+### Production Build
+```bash
+# Android APK
+flutter build apk --release
+
+# Android App Bundle (Play Store için)
+flutter build appbundle --release
+
+# Web
+flutter build web --release
+
+# iOS (macOS gerekli)
 flutter build ios --release
 ```
 
-## 📱 Ekran Görüntüleri
+---
 
-### Ana Sayfa
-- Kategori tabları
-- Haber kartları (görsel + başlık + özet)
-- Pull-to-refresh özelliği
+## 🧪 Test Stratejisi
 
-### Haber Detayı
-- Büyük görsel
-- Tam başlık ve içerik
-- Kaynak görüntüleme butonu
-- Paylaşım seçenekleri
+### Test Türleri
+| Tür | Konum | Açıklama |
+|-----|-------|----------|
+| **Unit Tests** | `test/` | Entity, model ve servis testleri |
+| **Widget Tests** | `test/presentation/` | UI bileşen testleri |
+| **Integration Tests** | `integration_test/` | E2E senaryoları |
 
-### Dark Mode
-- Göz dostu karanlık tema
-- Tutarlı renk paleti
-- Otomatik sistem teması desteği
-
-## 🔧 Konfigürasyon
-
-### RSS Feed Ekleme
-```dart
-// lib/core/constants/api_endpoints.dart
-static const Map<String, String> rssFeedUrls = {
-  'genel': 'https://www.hurriyet.com.tr/rss/anasayfa',
-  'turkiye': 'https://www.ntv.com.tr/gundem.rss',
-  // Yeni feed ekleyin...
-};
-```
-
-### Tema Özelleştirme
-```dart
-// lib/presentation/themes/app_theme.dart
-static final lightTheme = ThemeData(
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: Color(0xFF1976D2),
-  ),
-);
-```
-
-## 🧪 Testing
+### Mevcut Testler
+- `test/presentation/widgets/error/error_widget_test.dart` — Hata widget testleri
+- `test/presentation/widgets/shimmer/shimmer_widget_test.dart` — Shimmer widget testleri
 
 ### Test Çalıştırma
 ```bash
 # Tüm testler
 flutter test
 
-# Sadece unit testler
-flutter test test/unit/
-
-# Sadece widget testler
-flutter test test/widget/
-
-# Integration testler  
-flutter test integration_test/
+# Coverage raporu
+flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html
 ```
 
-### Test Coverage
-- ✅ **Unit Tests**: Domain entities (Article, NewsState)
-- ✅ **Widget Tests**: UI components (ArticleCard)
-- 🔄 **Integration Tests**: E2E scenarios (planlanıyor)
+---
 
-### Mevcut Testler
-- `test/unit/article_test.dart` - Article entity testleri
-- `test/unit/news_state_test.dart` - NewsState testleri
-- `test/widget/article_card_test.dart` - ArticleCard widget testleri
+## 🔄 CI/CD Pipeline
+
+### GitHub Actions
+
+**CI Pipeline** (`.github/workflows/ci.yml`):
+- **Tetikleyici**: Push (main, develop), Pull Request
+- **Analyze**: `dart analyze` + format kontrolü
+- **Test**: `flutter test --coverage`
+- **Build**: Android APK (sadece main branch)
+
+**Release Pipeline** (`.github/workflows/release.yml`):
+- **Tetikleyici**: Tag push (`v*`)
+- **Build**: APK + AAB oluşturma
+- **Artifact**: Otomatik artifact upload
+
+### Release Oluşturma
+```bash
+# Versiyon etiketi oluştur
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+---
+
+## 📊 Performans Optimizasyonları
+
+| Optimizasyon | Açıklama |
+|-------------|----------|
+| **Multi-level Cache** | Memory → Disk katmanlı cache, LRU eviction |
+| **Image Optimization** | Ekran boyutuna göre otomatik boyutlandırma, thumbnail URL |
+| **Network Optimizer** | Request debouncing, deduplication, exponential backoff |
+| **Circuit Breaker** | Hatalı servislere otomatik istek kesme |
+| **Performance Monitor** | Sayfa yükleme süresi, API response time tracking |
+| **App Startup** | Sıralı servis başlatma, lazy initialization |
+| **Memory Management** | Image cache temizleme, dispose takibi |
+| **ProGuard** | Android release build boyut optimizasyonu |
+
+---
+
+## 📁 Proje Yapısı (Kök Dizin)
+
+```
+habermerkezim1/
+├── .github/workflows/        # CI/CD pipeline'ları
+│   ├── ci.yml
+│   └── release.yml
+├── android/                  # Android platform konfigürasyonu
+│   └── app/
+│       ├── proguard-rules.pro
+│       └── ...
+├── assets/                   # Statik dosyalar
+│   └── icons/
+├── animation/                # Lottie animasyonları
+├── docs/                     # Proje dokümantasyonu
+├── lib/                      # Ana kaynak kod
+├── plans/                    # Geliştirme planları
+├── test/                     # Test dosyaları
+├── web/                      # Web platform dosyaları
+├── .env.example              # Örnek environment dosyası
+├── analysis_options.yaml     # Dart lint kuralları
+├── pubspec.yaml              # Proje bağımlılıkları
+└── README.md                 # Bu dosya
+```
+
+---
 
 ## 🤝 Katkıda Bulunma
 
 1. Fork yapın
 2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
-4. Branch'i push edin (`git push origin feature/amazing-feature`)
-5. Pull Request oluşturun
+3. Lint kurallarına uyduğunuzdan emin olun (`dart analyze`)
+4. Testlerinizi yazın ve çalıştırın (`flutter test`)
+5. Değişikliklerinizi commit edin (`git commit -m 'feat: Add amazing feature'`)
+6. Branch'i push edin (`git push origin feature/amazing-feature`)
+7. Pull Request oluşturun
+
+### Commit Mesajı Formatı
+```
+feat: Yeni özellik ekleme
+fix: Hata düzeltme
+docs: Dokümantasyon güncelleme
+style: Kod formatı değişikliği
+refactor: Kod yeniden düzenleme
+test: Test ekleme/güncelleme
+chore: Build/CI değişiklikleri
+perf: Performans iyileştirmesi
+```
+
+---
 
 ## 📄 Lisans
 
 Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
-## 📞 İletişim
+---
 
-- **Proje Sahibi**: [İsim]
-- **E-posta**: [email@example.com]
-- **GitHub**: [github.com/username]
-
-## ✨ Son Güncellemeler
+## ✨ Sürüm Geçmişi
 
 ### v1.1.0 (Güncel)
-- ✅ Debug kodlarının temizlenmesi
-- ✅ Infinite scroll implementasyonu
-- ✅ Görsel optimizasyonu (CDN desteği, memory cache)
-- ✅ Sistem teması otomatik algılama
-- ✅ Analytics progress entegrasyonu
-- ✅ Performans iyileştirmeleri
-- ✅ Unit ve widget testleri eklendi
+- ✅ Clean Architecture yeniden yapılandırma
+- ✅ 44+ servis ile kapsamlı özellik seti
+- ✅ Firebase entegrasyonu (Auth, Firestore, Analytics, Crashlytics)
+- ✅ Performans optimizasyonları (cache, network, memory)
+- ✅ CI/CD pipeline (GitHub Actions)
+- ✅ Strict lint kuralları
+- ✅ Çoklu dil desteği (l10n)
+
+### v1.0.0
+- ✅ Temel haber okuma özellikleri
+- ✅ RSS feed entegrasyonu
+- ✅ Dark/Light tema
+- ✅ Offline okuma desteği
+- ✅ Kategori filtreleme
+
+---
 
 ## 🔮 Gelecek Planları
 
-- [x] Infinite scroll
-- [x] Görsel optimizasyonu
-- [x] Sistem teması algılama
 - [ ] Push notification geliştirmeleri
-- [ ] Çoklu dil desteği
-- [ ] Widget desteği (Android/iOS)
-- [ ] Tablet optimizasyonu
+- [ ] Tablet ve masaüstü optimizasyonu
 - [ ] Daha fazla test coverage
+- [ ] Accessibility (a11y) iyileştirmeleri
+- [ ] App Widget (Android/iOS)
 
 ---
 
