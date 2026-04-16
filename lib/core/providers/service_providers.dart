@@ -1,0 +1,96 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../services/analytics_service.dart';
+import '../services/avatar_service.dart';
+import '../services/image_prefetch_service.dart';
+import '../services/crashlytics_service.dart';
+import '../services/search_service.dart';
+import '../services/notification_service.dart';
+import '../services/hive_service.dart';
+import '../services/recommendation_service.dart';
+import '../services/article_content_service.dart';
+import '../services/article_popularity_service.dart';
+import '../services/audio_player_service.dart';
+import '../services/auth_service.dart';
+import '../services/breaking_news_service.dart';
+import '../services/custom_categories_service.dart';
+import '../services/export_service.dart';
+import '../services/gamification_service.dart';
+import '../services/image_cache_service.dart';
+import '../services/interest_matching_service.dart';
+import '../services/ml_recommendation_service.dart';
+import '../services/onboarding_service.dart';
+import '../services/optimized_api_service.dart';
+import '../services/podcast_service.dart';
+import '../services/realtime_update_service.dart';
+import '../services/related_articles_service.dart';
+import '../services/rss_feed_validator.dart';
+import '../services/rss_health_check_service.dart';
+import '../services/rss_sources_service.dart';
+import '../services/secure_storage_service.dart';
+import '../services/text_to_speech_service.dart';
+import '../services/trending_service.dart';
+import '../services/update_service.dart';
+import '../services/widget_service.dart';
+import '../services/logger_service.dart';
+
+/// =============================================================================
+/// Servis Provider'ları - DI Tutarlılığı
+/// =============================================================================
+/// Static/singleton servislerin Riverpod provider'ları.
+/// Mevcut kodda doğrudan singleton erişimi yapan yerler geriye uyumlu kalır,
+/// ancak yeni kodlar bu provider'lar üzerinden erişim yapmalıdır.
+/// =============================================================================
+
+// ─── Singleton Instance Provider'ları ─────────────────────────────────────────
+
+/// AvatarService singleton provider
+final avatarServiceProvider = Provider<AvatarService>((ref) {
+  return AvatarService();
+});
+
+/// ImagePrefetchService singleton provider
+final imagePrefetchServiceProvider = Provider<ImagePrefetchService>((ref) {
+  return ImagePrefetchService();
+});
+
+/// SearchService singleton provider
+final searchServiceProvider = Provider<SearchService>((ref) {
+  return SearchService();
+});
+
+/// NotificationService singleton provider
+final notificationServiceProvider = Provider<NotificationService>((ref) {
+  return NotificationService();
+});
+
+// ─── Static Servis Provider'ları ──────────────────────────────────────────────
+// Bu servisler static metotlar kullandığı için Provider<Type> yerine
+// Provider<Type> olarak sarmalanır. Bu sayede test ve mock desteği sağlanır.
+
+/// AnalyticsService provider (static metotlar - wrapper)
+final analyticsServiceProvider = Provider<AnalyticsService>((ref) {
+  return AnalyticsService();
+});
+
+/// CrashlyticsService provider (static metotlar - wrapper)
+final crashlyticsServiceProvider = Provider<CrashlyticsService>((ref) {
+  return CrashlyticsService();
+});
+
+/// HiveService provider (static metotlar - wrapper)
+final hiveServiceProvider = Provider<HiveService>((ref) {
+  return HiveService();
+});
+
+/// RecommendationService provider (static metotlar - wrapper)
+final recommendationServiceProvider = Provider<RecommendationService>((ref) {
+  return RecommendationService();
+});
+
+// ─── Logger Provider ──────────────────────────────────────────────────────────
+
+/// LoggerService provider
+final loggerServiceProvider = Provider<LoggerService>((ref) {
+  return LoggerService();
+});
