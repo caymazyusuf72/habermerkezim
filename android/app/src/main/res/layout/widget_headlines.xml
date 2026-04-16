@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_headlines_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/widget_background"
+    android:gravity="center_vertical"
+    android:padding="@dimen/widget_padding">
+
+    <!-- Sol: Uygulama İkonu -->
+    <ImageView
+        android:layout_width="@dimen/widget_icon_size"
+        android:layout_height="@dimen/widget_icon_size"
+        android:src="@mipmap/launcher_icon"
+        android:contentDescription="Haber Merkezi"
+        android:layout_marginEnd="@dimen/widget_item_spacing" />
+
+    <!-- Orta: ViewFlipper ile kayan başlıklar -->
+    <ViewFlipper
+        android:id="@+id/widget_headlines_flipper"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:flipInterval="5000"
+        android:inAnimation="@android:anim/fade_in"
+        android:outAnimation="@android:anim/fade_out"
+        android:autoStart="true">
+
+        <!-- Haber 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_headline_title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/widget_loading"
+                android:textSize="@dimen/widget_text_title"
+                android:textStyle="bold"
+                android:textColor="@color/widget_text_primary"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/widget_headline_source1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_caption"
+                android:textColor="@color/widget_text_tertiary"
+                android:maxLines="1"
+                android:layout_marginTop="1dp" />
+        </LinearLayout>
+
+        <!-- Haber 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_headline_title2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_title"
+                android:textStyle="bold"
+                android:textColor="@color/widget_text_primary"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/widget_headline_source2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_caption"
+                android:textColor="@color/widget_text_tertiary"
+                android:maxLines="1"
+                android:layout_marginTop="1dp" />
+        </LinearLayout>
+
+        <!-- Haber 3 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_headline_title3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_title"
+                android:textStyle="bold"
+                android:textColor="@color/widget_text_primary"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/widget_headline_source3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_caption"
+                android:textColor="@color/widget_text_tertiary"
+                android:maxLines="1"
+                android:layout_marginTop="1dp" />
+        </LinearLayout>
+
+        <!-- Haber 4 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_headline_title4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_title"
+                android:textStyle="bold"
+                android:textColor="@color/widget_text_primary"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/widget_headline_source4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_caption"
+                android:textColor="@color/widget_text_tertiary"
+                android:maxLines="1"
+                android:layout_marginTop="1dp" />
+        </LinearLayout>
+
+        <!-- Haber 5 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_headline_title5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_title"
+                android:textStyle="bold"
+                android:textColor="@color/widget_text_primary"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/widget_headline_source5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_caption"
+                android:textColor="@color/widget_text_tertiary"
+                android:maxLines="1"
+                android:layout_marginTop="1dp" />
+        </LinearLayout>
+    </ViewFlipper>
+
+    <!-- Sağ: İleri ok -->
+    <ImageButton
+        android:id="@+id/widget_headlines_next"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:src="@android:drawable/ic_media_next"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:tint="@color/widget_primary"
+        android:contentDescription="Sonraki"
+        android:padding="4dp"
+        android:layout_marginStart="@dimen/widget_item_spacing_small" />
+</LinearLayout>

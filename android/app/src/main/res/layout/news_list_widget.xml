@@ -4,19 +4,34 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/widget_dark_bg"
-    android:padding="8dp">
+    android:background="@drawable/widget_background"
+    android:padding="@dimen/widget_padding">
 
-    <!-- Başlık -->
-    <TextView
-        android:id="@+id/widget_list_header"
+    <!-- Header -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Son Haberler"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:textColor="#9C27B0"
-        android:paddingBottom="4dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/widget_item_spacing">
+
+        <ImageView
+            android:layout_width="@dimen/widget_icon_size_small"
+            android:layout_height="@dimen/widget_icon_size_small"
+            android:src="@mipmap/launcher_icon"
+            android:contentDescription="Haber Merkezi"
+            android:layout_marginEnd="@dimen/widget_item_spacing_small" />
+
+        <TextView
+            android:id="@+id/widget_list_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Son Haberler"
+            android:textSize="@dimen/widget_text_header"
+            android:textStyle="bold"
+            android:textColor="@color/widget_primary" />
+    </LinearLayout>
 
     <!-- 1. Haber -->
     <TextView
@@ -24,13 +39,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Haber 1"
-        android:textSize="13sp"
+        android:textSize="@dimen/widget_text_body"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/widget_text_primary"
         android:maxLines="2"
         android:ellipsize="end"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp" />
+        android:paddingTop="@dimen/widget_item_spacing_small"
+        android:paddingBottom="@dimen/widget_item_spacing_small" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/widget_divider_height"
+        android:background="@color/widget_divider" />
 
     <!-- 2. Haber -->
     <TextView
@@ -38,13 +59,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Haber 2"
-        android:textSize="13sp"
+        android:textSize="@dimen/widget_text_body"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/widget_text_primary"
         android:maxLines="2"
         android:ellipsize="end"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp" />
+        android:paddingTop="@dimen/widget_item_spacing_small"
+        android:paddingBottom="@dimen/widget_item_spacing_small" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/widget_divider_height"
+        android:background="@color/widget_divider" />
 
     <!-- 3. Haber -->
     <TextView
@@ -52,14 +79,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Haber 3"
-        android:textSize="13sp"
+        android:textSize="@dimen/widget_text_body"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/widget_text_primary"
         android:maxLines="2"
         android:ellipsize="end"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp" />
-
+        android:paddingTop="@dimen/widget_item_spacing_small"
+        android:paddingBottom="@dimen/widget_item_spacing_small" />
 </LinearLayout>
-
-

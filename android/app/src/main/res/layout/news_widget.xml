@@ -4,55 +4,54 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/widget_dark_bg"
+    android:background="@drawable/widget_background"
     android:clickable="true"
     android:focusable="true"
     android:padding="0dp">
-    
+
     <!-- Ana Banner Container -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:background="#1A1A1A">
-        
-        <!-- Hamburger Menu Icon (görünür ama tıklanamaz) -->
+        android:paddingStart="@dimen/widget_padding"
+        android:paddingEnd="@dimen/widget_padding_small"
+        android:background="@drawable/widget_background_gradient">
+
+        <!-- Uygulama İkonu -->
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_more"
-            android:tint="#9C27B0"
-            android:contentDescription="Menu"
-            android:layout_marginEnd="8dp" />
-        
-        <!-- SON DAKİKA Rozeti (mor kenarlıklı, mor yazılı) -->
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@mipmap/launcher_icon"
+            android:contentDescription="Haber Merkezi"
+            android:layout_marginEnd="@dimen/widget_item_spacing" />
+
+        <!-- SON DAKİKA Rozeti -->
         <TextView
             android:id="@+id/widget_breaking_badge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SON DAKİKA"
-            android:textSize="10sp"
+            android:text="@string/widget_breaking"
+            android:textSize="@dimen/widget_text_caption"
             android:textStyle="bold"
-            android:textColor="#9C27B0"
+            android:textColor="@color/widget_badge_text"
             android:background="@drawable/widget_badge_background"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:layout_marginEnd="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:layout_marginEnd="@dimen/widget_item_spacing"
             android:gravity="center" />
-        
-        <!-- Haber Başlığı (kaydırılabilir) -->
+
+        <!-- Haber Başlığı (marquee) -->
         <TextView
             android:id="@+id/widget_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Haberler yükleniyor..."
-            android:textSize="13sp"
+            android:text="@string/widget_loading"
+            android:textSize="@dimen/widget_text_header"
             android:textColor="#FFFFFF"
             android:maxLines="1"
             android:ellipsize="marquee"
@@ -61,30 +60,29 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:scrollHorizontally="true"
-            android:layout_marginEnd="8dp" />
-        
-        <!-- İleri Butonu (sağ ok) -->
+            android:layout_marginEnd="@dimen/widget_item_spacing" />
+
+        <!-- İleri Butonu -->
         <ImageButton
             android:id="@+id/widget_next_btn"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/widget_button_height"
+            android:layout_height="@dimen/widget_button_height"
             android:src="@android:drawable/ic_media_next"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="#9C27B0"
+            android:tint="#FFFFFF"
             android:contentDescription="Sonraki"
-            android:padding="4dp"
-            android:layout_marginEnd="4dp" />
-        
+            android:padding="@dimen/widget_button_padding"
+            android:layout_marginEnd="2dp" />
+
         <!-- Duraklat/Oynat Butonu -->
         <ImageButton
             android:id="@+id/widget_play_pause_btn"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/widget_button_height"
+            android:layout_height="@dimen/widget_button_height"
             android:src="@android:drawable/ic_media_pause"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tint="#9C27B0"
+            android:tint="#FFFFFF"
             android:contentDescription="Duraklat/Oynat"
-            android:padding="4dp" />
+            android:padding="@dimen/widget_button_padding" />
     </LinearLayout>
-    
 </LinearLayout>

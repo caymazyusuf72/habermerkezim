@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_medium_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:padding="0dp">
+
+    <!-- Header Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/widget_header_background"
+        android:paddingStart="@dimen/widget_padding"
+        android:paddingEnd="@dimen/widget_padding_small">
+
+        <!-- Logo -->
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@mipmap/launcher_icon"
+            android:contentDescription="Haber Merkezi"
+            android:layout_marginEnd="@dimen/widget_item_spacing_small" />
+
+        <!-- Başlık -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/widget_header_title"
+            android:textSize="@dimen/widget_text_header"
+            android:textStyle="bold"
+            android:textColor="@color/widget_on_primary" />
+
+        <!-- Güncelleme Butonu -->
+        <ImageButton
+            android:id="@+id/widget_medium_refresh"
+            android:layout_width="@dimen/widget_button_height"
+            android:layout_height="@dimen/widget_button_height"
+            android:src="@drawable/widget_refresh_icon"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/widget_refresh"
+            android:padding="@dimen/widget_button_padding"
+            android:tint="@color/widget_on_primary" />
+    </LinearLayout>
+
+    <!-- Haber Listesi -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="@dimen/widget_padding_small">
+
+        <!-- 1. Haber -->
+        <LinearLayout
+            android:id="@+id/widget_medium_item1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/widget_item_background"
+            android:padding="@dimen/widget_padding_small">
+
+            <!-- Haber Resmi -->
+            <ImageView
+                android:id="@+id/widget_medium_image1"
+                android:layout_width="@dimen/widget_image_size"
+                android:layout_height="@dimen/widget_image_size"
+                android:scaleType="centerCrop"
+                android:background="@drawable/widget_placeholder"
+                android:contentDescription="Haber resmi"
+                android:layout_marginEnd="@dimen/widget_item_spacing" />
+
+            <!-- Haber Bilgisi -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/widget_medium_title1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Haber 1"
+                    android:textSize="@dimen/widget_text_body"
+                    android:textStyle="bold"
+                    android:textColor="@color/widget_text_primary"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="2dp">
+
+                    <TextView
+                        android:id="@+id/widget_medium_source1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="@dimen/widget_text_caption"
+                        android:textColor="@color/widget_text_tertiary"
+                        android:maxLines="1" />
+
+                    <TextView
+                        android:id="@+id/widget_medium_time1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="@dimen/widget_text_caption"
+                        android:textColor="@color/widget_text_tertiary"
+                        android:maxLines="1"
+                        android:layout_marginStart="@dimen/widget_item_spacing_small" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider 1 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_divider_height"
+            android:background="@color/widget_divider"
+            android:layout_marginTop="@dimen/widget_item_spacing_small"
+            android:layout_marginBottom="@dimen/widget_item_spacing_small" />
+
+        <!-- 2. Haber -->
+        <LinearLayout
+            android:id="@+id/widget_medium_item2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/widget_item_background"
+            android:padding="@dimen/widget_padding_small">
+
+            <ImageView
+                android:id="@+id/widget_medium_image2"
+                android:layout_width="@dimen/widget_image_size"
+                android:layout_height="@dimen/widget_image_size"
+                android:scaleType="centerCrop"
+                android:background="@drawable/widget_placeholder"
+                android:contentDescription="Haber resmi"
+                android:layout_marginEnd="@dimen/widget_item_spacing" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/widget_medium_title2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Haber 2"
+                    android:textSize="@dimen/widget_text_body"
+                    android:textStyle="bold"
+                    android:textColor="@color/widget_text_primary"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="2dp">
+
+                    <TextView
+                        android:id="@+id/widget_medium_source2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="@dimen/widget_text_caption"
+                        android:textColor="@color/widget_text_tertiary"
+                        android:maxLines="1" />
+
+                    <TextView
+                        android:id="@+id/widget_medium_time2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="@dimen/widget_text_caption"
+                        android:textColor="@color/widget_text_tertiary"
+                        android:maxLines="1"
+                        android:layout_marginStart="@dimen/widget_item_spacing_small" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider 2 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_divider_height"
+            android:background="@color/widget_divider"
+            android:layout_marginTop="@dimen/widget_item_spacing_small"
+            android:layout_marginBottom="@dimen/widget_item_spacing_small" />
+
+        <!-- 3. Haber -->
+        <LinearLayout
+            android:id="@+id/widget_medium_item3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/widget_item_background"
+            android:padding="@dimen/widget_padding_small">
+
+            <ImageView
+                android:id="@+id/widget_medium_image3"
+                android:layout_width="@dimen/widget_image_size"
+                android:layout_height="@dimen/widget_image_size"
+                android:scaleType="centerCrop"
+                android:background="@drawable/widget_placeholder"
+                android:contentDescription="Haber resmi"
+                android:layout_marginEnd="@dimen/widget_item_spacing" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/widget_medium_title3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Haber 3"
+                    android:textSize="@dimen/widget_text_body"
+                    android:textStyle="bold"
+                    android:textColor="@color/widget_text_primary"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="2dp">
+
+                    <TextView
+                        android:id="@+id/widget_medium_source3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="@dimen/widget_text_caption"
+                        android:textColor="@color/widget_text_tertiary"
+                        android:maxLines="1" />
+
+                    <TextView
+                        android:id="@+id/widget_medium_time3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="@dimen/widget_text_caption"
+                        android:textColor="@color/widget_text_tertiary"
+                        android:maxLines="1"
+                        android:layout_marginStart="@dimen/widget_item_spacing_small" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Alt: Tümünü Gör Butonu -->
+    <LinearLayout
+        android:id="@+id/widget_medium_see_all"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center"
+        android:background="@color/widget_surface"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/widget_see_all"
+            android:textSize="@dimen/widget_text_body"
+            android:textStyle="bold"
+            android:textColor="@color/widget_primary" />
+    </LinearLayout>
+</LinearLayout>
