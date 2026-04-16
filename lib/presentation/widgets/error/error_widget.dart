@@ -4,6 +4,17 @@ import '../../../core/error/failures.dart';
 import '../../../core/utils/error_message_helper.dart';
 import '../../themes/app_theme.dart';
 
+/// Hata türleri enum - doğrudan hata türü belirtmek için
+enum ErrorType {
+  network,
+  server,
+  empty,
+  timeout,
+  rss,
+  cache,
+  general,
+}
+
 /// Custom error widget - hataları kullanıcı dostu şekilde gösterir
 /// Farklı hata tiplerini farklı görsellerle sunar
 class CustomErrorWidget extends StatelessWidget {
@@ -12,6 +23,9 @@ class CustomErrorWidget extends StatelessWidget {
   final bool showOfflineMessage;
   final bool isCompact;
   final String? customMessage;
+  final ErrorType? errorType;
+  final String? lottieAsset;
+  final Widget? customIcon;
 
   const CustomErrorWidget({
     super.key,
@@ -20,7 +34,71 @@ class CustomErrorWidget extends StatelessWidget {
     this.showOfflineMessage = false,
     this.isCompact = false,
     this.customMessage,
+    this.errorType,
+    this.lottieAsset,
+    this.customIcon,
   });
+
+  /// Ağ hatası için factory constructor
+  factory CustomErrorWidget.network({
+    Key? key,
+    VoidCallback? onRetry,
+    String? customMessage,
+  }) {
+    return CustomErrorWidget(
+      key: key,
+      error: const NetworkFailure('İnternet bağlantısı yok', code: 'NO_INTERNET'),
+      onRetry: onRetry,
+      showOfflineMessage: true,
+      errorType: ErrorType.network,
+      customMessage: customMessage,
+    );
+  }
+
+  /// Sunucu hatası için factory constructor
+  factory CustomErrorWidget.server({
+    Key? key,
+    VoidCallback? onRetry,
+    String? customMessage,
+  }) {
+    return CustomErrorWidget(
+      key: key,
+      error: const NetworkFailure('Sunucu hatası', code: 'SERVER_ERROR'),
+      onRetry: onRetry,
+      errorType: ErrorType.server,
+      customMessage: customMessage,
+    );
+  }
+
+  /// Boş sonuç için factory constructor
+  factory CustomErrorWidget.empty({
+    Key? key,
+    String? customMessage,
+    VoidCallback? onRetry,
+  }) {
+    return CustomErrorWidget(
+      key: key,
+      error: 'empty',
+      onRetry: onRetry,
+      errorType: ErrorType.empty,
+      customMessage: customMessage ?? 'Sonuç bulunamadı',
+    );
+  }
+
+  /// Zaman aşımı hatası için factory constructor
+  factory CustomErrorWidget.timeout({
+    Key? key,
+    VoidCallback? onRetry,
+    String? customMessage,
+  }) {
+    return CustomErrorWidget(
+      key: key,
+      error: const NetworkFailure('Zaman aşımı', code: 'TIMEOUT'),
+      onRetry: onRetry,
+      errorType: ErrorType.timeout,
+      customMessage: customMessage,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -223,6 +301,11 @@ class CustomErrorWidget extends StatelessWidget {
 
   /// Hata bilgilerini döner
   ErrorInfo _getErrorInfo() {
+    // Önce errorType'a bak
+    if (errorType != null) {
+      return _getErrorInfoByType(errorType!);
+    }
+
     if (error is NetworkFailure) {
       final networkError = error as NetworkFailure;
       
@@ -239,6 +322,14 @@ class CustomErrorWidget extends StatelessWidget {
           icon: Icons.timer_off,
           color: Colors.red,
           title: 'Zaman Aşımı',
+          retryIcon: Icons.refresh,
+          retryText: 'Yeniden Dene',
+        );
+      } else if (networkError.code == 'SERVER_ERROR') {
+        return ErrorInfo(
+          icon: Icons.dns_outlined,
+          color: Colors.redAccent,
+          title: 'Sunucu Hatası',
           retryIcon: Icons.refresh,
           retryText: 'Yeniden Dene',
         );
@@ -275,6 +366,68 @@ class CustomErrorWidget extends StatelessWidget {
         retryIcon: Icons.refresh,
         retryText: 'Yeniden Dene',
       );
+    }
+  }
+
+  /// ErrorType enum'una göre hata bilgisi
+  ErrorInfo _getErrorInfoByType(ErrorType type) {
+    switch (type) {
+      case ErrorType.network:
+        return ErrorInfo(
+          icon: Icons.wifi_off,
+          color: Colors.orange,
+          title: 'İnternet Bağlantısı Yok',
+          retryIcon: Icons.wifi,
+          retryText: 'Bağlantıyı Kontrol Et',
+        );
+      case ErrorType.server:
+        return ErrorInfo(
+          icon: Icons.dns_outlined,
+          color: Colors.redAccent,
+          title: 'Sunucu Hatası',
+          retryIcon: Icons.refresh,
+          retryText: 'Yeniden Dene',
+        );
+      case ErrorType.empty:
+        return ErrorInfo(
+          icon: Icons.search_off,
+          color: Colors.blueGrey,
+          title: 'Sonuç Bulunamadı',
+          retryIcon: Icons.search,
+          retryText: 'Tekrar Ara',
+        );
+      case ErrorType.timeout:
+        return ErrorInfo(
+          icon: Icons.timer_off,
+          color: Colors.red,
+          title: 'Zaman Aşımı',
+          retryIcon: Icons.refresh,
+          retryText: 'Yeniden Dene',
+        );
+      case ErrorType.rss:
+        return ErrorInfo(
+          icon: Icons.rss_feed,
+          color: Colors.amber,
+          title: 'RSS Hatası',
+          retryIcon: Icons.sync,
+          retryText: 'Yeniden Yükle',
+        );
+      case ErrorType.cache:
+        return ErrorInfo(
+          icon: Icons.storage,
+          color: Colors.blue,
+          title: 'Önbellek Hatası',
+          retryIcon: Icons.cached,
+          retryText: 'Önbelleği Yenile',
+        );
+      case ErrorType.general:
+        return ErrorInfo(
+          icon: Icons.error_outline,
+          color: Colors.grey,
+          title: 'Beklenmeyen Hata',
+          retryIcon: Icons.refresh,
+          retryText: 'Yeniden Dene',
+        );
     }
   }
 
@@ -318,6 +471,7 @@ class CustomErrorWidget extends StatelessWidget {
   
   /// Hatanın retry edilebilir olup olmadığını kontrol eder
   bool _isRetryable() {
+    if (errorType == ErrorType.empty) return false;
     if (error is Failure) {
       return error is NetworkFailure || error is RssParseFailure;
     }
@@ -447,6 +601,46 @@ class EmptyStateWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Sunucu hatası widget'ı
+class ServerErrorWidget extends StatelessWidget {
+  final VoidCallback? onRetry;
+
+  const ServerErrorWidget({super.key, this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomErrorWidget.server(onRetry: onRetry);
+  }
+}
+
+/// Boş sonuç widget'ı
+class EmptyResultWidget extends StatelessWidget {
+  final String? message;
+  final VoidCallback? onRetry;
+
+  const EmptyResultWidget({super.key, this.message, this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomErrorWidget.empty(
+      customMessage: message,
+      onRetry: onRetry,
+    );
+  }
+}
+
+/// Zaman aşımı widget'ı
+class TimeoutErrorWidget extends StatelessWidget {
+  final VoidCallback? onRetry;
+
+  const TimeoutErrorWidget({super.key, this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomErrorWidget.timeout(onRetry: onRetry);
   }
 }
 
