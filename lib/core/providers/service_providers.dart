@@ -33,6 +33,13 @@ import '../services/trending_service.dart';
 import '../services/update_service.dart';
 import '../services/widget_service.dart';
 import '../services/logger_service.dart';
+import '../services/offline_reading_service.dart';
+import '../services/advanced_search_service.dart';
+import '../services/smart_notification_service.dart';
+import '../services/deep_link_service.dart';
+import '../services/share_service.dart';
+import '../services/reading_stats_service.dart';
+import '../services/collection_service.dart';
 
 /// =============================================================================
 /// Servis Provider'ları - DI Tutarlılığı
@@ -93,4 +100,41 @@ final recommendationServiceProvider = Provider<RecommendationService>((ref) {
 /// LoggerService provider
 final loggerServiceProvider = Provider<LoggerService>((ref) {
   return LoggerService();
+});
+
+// ─── Yeni Servis Provider'ları (Aşama 4) ─────────────────────────────────────
+
+/// OfflineReadingService provider (re-export)
+final offlineReadingProvider = Provider<OfflineReadingService>((ref) {
+  return OfflineReadingService();
+});
+
+/// AdvancedSearchService provider (re-export)
+final advancedSearchProvider2 = Provider<AdvancedSearchService>((ref) {
+  return AdvancedSearchService();
+});
+
+/// SmartNotificationService provider (re-export)
+final smartNotificationProvider = Provider<SmartNotificationService>((ref) {
+  return SmartNotificationService();
+});
+
+/// DeepLinkService provider (re-export)
+final deepLinkProvider = Provider<DeepLinkService>((ref) {
+  return DeepLinkService();
+});
+
+/// ShareService provider (re-export)
+final shareProvider = Provider<ShareService>((ref) {
+  return ShareService();
+});
+
+/// ReadingStatsService provider (re-export)
+final readingStatsProvider = Provider<ReadingStatsService>((ref) {
+  return ReadingStatsService();
+});
+
+/// CollectionService provider (re-export)
+final collectionProvider = Provider<CollectionService>((ref) {
+  return CollectionService();
 });
