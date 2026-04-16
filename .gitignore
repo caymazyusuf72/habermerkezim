@@ -49,6 +49,8 @@ google-services.json
 *.jks
 *.keystore
 key.properties
+.env
+lib/firebase_options.dart
 
 # Build artifacts and temporary files
 *.apk

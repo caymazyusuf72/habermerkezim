@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 import 'providers.dart';
-import 'auth_provider.dart';
 
 /// UserProfile State - profil durumunu tutar
 class UserProfileState {

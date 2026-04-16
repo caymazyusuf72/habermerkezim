@@ -108,7 +108,7 @@ class NotificationPreferencesPage extends ConsumerWidget {
                     .toggleCategoryNotification(category, value);
               },
             );
-          }).toList(),
+          }),
         ],
       ),
     );

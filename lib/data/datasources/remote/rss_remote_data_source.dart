@@ -241,7 +241,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       }
     }
     
-    AppLogger.success('Paralel yükleme tamamlandı: ${allArticles.length} makale (${loadedCount}/${mainCategories.length} kategori başarılı)');
+    AppLogger.success('Paralel yükleme tamamlandı: ${allArticles.length} makale ($loadedCount/${mainCategories.length} kategori başarılı)');
     
     if (allArticles.isEmpty) {
       throw const RssParseException('Hiç haber alınamadı');

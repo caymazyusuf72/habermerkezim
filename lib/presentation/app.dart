@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -7,8 +6,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../core/utils/app_logger.dart';
 import 'providers/providers.dart';
-import 'providers/onboarding_provider.dart';
-import 'providers/theme_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/locale_provider.dart';
 import 'themes/app_theme.dart';

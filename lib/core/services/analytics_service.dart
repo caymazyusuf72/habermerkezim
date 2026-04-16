@@ -413,7 +413,7 @@ class AnalyticsHelper {
   /// Okuma motivasyonu mesajı
   static String getMotivationMessage(ReadingAnalytics todayData, int streakDays) {
     if (streakDays >= 7) {
-      return '🔥 Muhteşem! ${streakDays} günlük okuma seriniz devam ediyor!';
+      return '🔥 Muhteşem! $streakDays günlük okuma seriniz devam ediyor!';
     } else if (todayData.articlesRead >= 5) {
       return '📚 Bugün çok aktifsiniz! ${todayData.articlesRead} makale okudunuz.';
     } else if (todayData.articlesRead > 0) {

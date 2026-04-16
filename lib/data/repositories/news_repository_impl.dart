@@ -213,7 +213,7 @@ class NewsRepositoryImpl implements NewsRepository {
             final entities = allArticles.map((model) => model.toEntity()).toList();
             final sortedEntities = _sortArticlesByImage(entities);
             _articlesStreamController.add(sortedEntities);
-            debugPrint('📡 [Stream] ${sortedEntities.length} makale stream\'e gönderildi (${category} dahil)');
+            debugPrint('📡 [Stream] ${sortedEntities.length} makale stream\'e gönderildi ($category dahil)');
           }
         } catch (e) {
           debugPrint('⚠️ [Background] $category kategorisi yüklenemedi: $e');

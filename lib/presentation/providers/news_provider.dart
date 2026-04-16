@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/scheduler.dart';
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/article.dart';
 import '../../core/utils/app_logger.dart';

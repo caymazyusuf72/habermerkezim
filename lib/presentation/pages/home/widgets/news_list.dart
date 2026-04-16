@@ -254,7 +254,7 @@ class NewsListState extends ConsumerState<NewsList>
             body = const Text('Yenileme başarısız');
           }
           
-          return Container(
+          return SizedBox(
             height: 60,
             child: Center(child: body),
           );
@@ -464,7 +464,7 @@ class NewsListState extends ConsumerState<NewsList>
                         ? Image.network(
                             article.imageUrl!,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
+                            errorBuilder: (_, _, _) => Container(
                               color: Theme.of(context).colorScheme.surfaceContainerHighest,
                               child: Icon(
                                 Icons.article_rounded,

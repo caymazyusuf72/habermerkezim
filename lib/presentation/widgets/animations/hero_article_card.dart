@@ -37,14 +37,13 @@ class HeroArticleCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (article.category != null)
-                    _buildCategoryChip(theme),
+                  _buildCategoryChip(theme),
                   const SizedBox(height: 8),
                   _buildHeroTitle(theme),
                   const SizedBox(height: 8),
-                  if (article.description != null && article.description!.isNotEmpty)
+                  if (article.description.isNotEmpty)
                     Text(
-                      article.description!,
+                      article.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyMedium?.copyWith(
@@ -127,7 +126,7 @@ class HeroArticleCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        article.category!,
+        article.category,
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onPrimaryContainer,
           fontWeight: FontWeight.w600,

@@ -143,7 +143,9 @@ enum PageTransitionType {
 /// Modal için özel route
 class ModalPageRoute<T> extends PageRouteBuilder<T> {
   final Widget page;
+  @override
   final bool barrierDismissible;
+  @override
   final Color barrierColor;
 
   ModalPageRoute({
@@ -180,6 +182,7 @@ class ModalPageRoute<T> extends PageRouteBuilder<T> {
 /// Bottom sheet için özel route
 class BottomSheetPageRoute<T> extends PageRouteBuilder<T> {
   final Widget page;
+  @override
   final bool barrierDismissible;
 
   BottomSheetPageRoute({

@@ -1,5 +1,6 @@
 /// Base UseCase sınıfları - Clean Architecture Use Case Pattern
 /// Tüm use case'ler bu soyut sınıflardan türetilir
+library;
 
 /// Parametresiz use case
 abstract class UseCase<Type> {

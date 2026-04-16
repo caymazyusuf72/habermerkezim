@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:uuid/uuid.dart';
 import '../../domain/entities/article.dart';
 
 import 'package:flutter/foundation.dart';
@@ -407,15 +408,14 @@ class ArticleModel extends HiveObject {
   }
 
   /// Unique ID oluşturur - link, kaynak adı, başlık ve tarih bazlı
+  /// UUID v5 kullanarak deterministic ve platform-bağımsız ID üretir
   /// Bu sayede aynı linkli haberler farklı kaynaklardan geldiğinde karışmaz
   static String _generateId(String link, String sourceName, String title, String pubDate) {
-    // Tüm bilgileri birleştir ve unique ID oluştur
-    final combined = '$link|$sourceName|$title|$pubDate';
-    // Hash'i string'e çevir - bu her zaman unique olacak
-    final hash = combined.hashCode.abs().toString();
-    // Daha güvenli olmak için link'in son 8 karakterini de ekle
-    final linkSuffix = link.length > 8 ? link.substring(link.length - 8) : link;
-    return '$hash-${linkSuffix.hashCode.abs()}';
+    const uuid = Uuid();
+    // UUID v5: namespace + name bazlı deterministic UUID üretir
+    // Aynı girdi her zaman aynı UUID'yi üretir (hashCode'dan farklı olarak platform bağımsız)
+    final name = '$link|$sourceName|$title|$pubDate';
+    return uuid.v5(Uuid.NAMESPACE_URL, name);
   }
 
   @override

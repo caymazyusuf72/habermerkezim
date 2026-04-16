@@ -301,7 +301,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
                 
                 // Kategori seçimi
                 DropdownButtonFormField<String>(
-                  value: selectedCategory,
+                  initialValue: selectedCategory,
                   decoration: const InputDecoration(
                     labelText: 'Kategori *',
                     prefixIcon: Icon(Icons.category),

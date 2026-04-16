@@ -190,7 +190,7 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
                   child: Image.network(
                     article.imageUrl!,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
+                    errorBuilder: (_, _, _) => Container(
                       color: theme.colorScheme.surfaceContainerHighest,
                       child: Icon(
                         Icons.article_rounded,

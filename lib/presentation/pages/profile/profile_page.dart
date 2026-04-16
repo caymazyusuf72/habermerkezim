@@ -1537,7 +1537,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hata: ${e.toString().length > 50 ? e.toString().substring(0, 50) + "..." : e.toString()}'),
+            content: Text('Hata: ${e.toString().length > 50 ? "${e.toString().substring(0, 50)}..." : e.toString()}'),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),

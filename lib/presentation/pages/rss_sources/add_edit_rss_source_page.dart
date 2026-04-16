@@ -213,7 +213,7 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
     ];
 
     return DropdownButtonFormField<String>(
-      value: _selectedCategory,
+      initialValue: _selectedCategory,
       decoration: const InputDecoration(
         labelText: 'Kategori *',
         prefixIcon: Icon(Icons.category_rounded),

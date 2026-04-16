@@ -1,6 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
 
 import '../../data/datasources/local/news_local_data_source.dart';
 import '../../core/utils/app_logger.dart';

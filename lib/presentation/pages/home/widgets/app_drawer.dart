@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../providers/providers.dart';
 import '../../../providers/connectivity_provider.dart';
-import '../../../providers/reading_list_provider.dart';
 import '../../../themes/app_theme.dart';
 import '../../../../core/services/hive_service.dart';
-import '../../favorites/favorites_page.dart';
 import '../../reading_list/reading_list_page.dart';
 import '../../settings/settings_page.dart';
 import '../../profile/profile_page.dart';

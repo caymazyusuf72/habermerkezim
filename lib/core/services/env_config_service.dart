@@ -1,13 +1,16 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../config/env.dart';
 
 /// Environment configuration service
-/// Manages environment variables loaded from .env file
+/// Compile-time Env sınıfını birincil kaynak olarak kullanır.
+/// flutter_dotenv yalnızca runtime override ihtiyacı için yedek olarak kalır.
 class EnvConfigService {
   static final EnvConfigService _instance = EnvConfigService._internal();
   factory EnvConfigService() => _instance;
   EnvConfigService._internal();
 
   bool _isInitialized = false;
+  bool _dotenvLoaded = false;
 
   /// Initialize the environment configuration
   Future<void> init() async {
@@ -15,38 +18,78 @@ class EnvConfigService {
 
     try {
       await dotenv.load(fileName: '.env');
-      _isInitialized = true;
+      _dotenvLoaded = true;
     } catch (e) {
-      // .env file might not exist in production
-      // Use default values instead
-      _isInitialized = true;
+      // .env dosyası yoksa (production APK gibi) compile-time değerler kullanılır
+      _dotenvLoaded = false;
     }
+    _isInitialized = true;
   }
 
-  /// Get a string value from environment
+  /// Get a string value - önce dotenv, sonra compile-time Env
   String getString(String key, {String defaultValue = ''}) {
-    return dotenv.env[key] ?? defaultValue;
+    if (_dotenvLoaded) {
+      final dotenvValue = dotenv.env[key];
+      if (dotenvValue != null) return dotenvValue;
+    }
+    return _getEnvValue(key) ?? defaultValue;
   }
 
   /// Get an integer value from environment
   int getInt(String key, {int defaultValue = 0}) {
-    final value = dotenv.env[key];
-    if (value == null) return defaultValue;
+    final value = getString(key);
+    if (value.isEmpty) return defaultValue;
     return int.tryParse(value) ?? defaultValue;
   }
 
   /// Get a boolean value from environment
   bool getBool(String key, {bool defaultValue = false}) {
-    final value = dotenv.env[key];
-    if (value == null) return defaultValue;
+    final value = getString(key);
+    if (value.isEmpty) return defaultValue;
     return value.toLowerCase() == 'true';
   }
 
   /// Get a double value from environment
   double getDouble(String key, {double defaultValue = 0.0}) {
-    final value = dotenv.env[key];
-    if (value == null) return defaultValue;
+    final value = getString(key);
+    if (value.isEmpty) return defaultValue;
     return double.tryParse(value) ?? defaultValue;
+  }
+
+  /// Compile-time Env sınıfından değer döndürür
+  String? _getEnvValue(String key) {
+    switch (key) {
+      case 'APP_NAME':
+        return Env.appName;
+      case 'APP_VERSION':
+        return Env.appVersion;
+      case 'DEBUG_MODE':
+        return Env.debugMode;
+      case 'RSS_CACHE_DURATION_MINUTES':
+        return Env.rssCacheDurationMinutes;
+      case 'RSS_REQUEST_TIMEOUT_SECONDS':
+        return Env.rssRequestTimeoutSeconds;
+      case 'ANALYTICS_ENABLED':
+        return Env.analyticsEnabled;
+      case 'FEATURE_GAMIFICATION':
+        return Env.featureGamification;
+      case 'FEATURE_DARK_MODE':
+        return Env.featureDarkMode;
+      case 'FEATURE_NOTIFICATIONS':
+        return Env.featureNotifications;
+      case 'FEATURE_OFFLINE_MODE':
+        return Env.featureOfflineMode;
+      case 'NEWS_API_KEY':
+        return Env.newsApiKey;
+      case 'WEATHER_API_KEY':
+        return Env.weatherApiKey;
+      case 'FIREBASE_API_KEY':
+        return Env.firebaseApiKey;
+      case 'FIREBASE_PROJECT_ID':
+        return Env.firebaseProjectId;
+      default:
+        return null;
+    }
   }
 
   // App Configuration
@@ -88,7 +131,10 @@ class EnvConfigService {
   /// Get all environment variables (for debugging)
   Map<String, String> getAllVariables() {
     if (!_isInitialized) return {};
-    return Map.from(dotenv.env);
+    if (_dotenvLoaded) {
+      return Map.from(dotenv.env);
+    }
+    return {};
   }
 
   /// Check if environment is initialized

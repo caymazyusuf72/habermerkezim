@@ -8,7 +8,6 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../domain/entities/article.dart';
 import '../../../themes/app_theme.dart';
 import '../../../providers/favorites_provider.dart';
-import '../../../providers/reading_list_provider.dart';
 
 /// Haber kartı widget'ı - her bir haberi gösteren kart
 /// Görsel, başlık, özet, tarih ve kategori bilgilerini içerir

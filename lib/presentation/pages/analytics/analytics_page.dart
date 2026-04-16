@@ -619,7 +619,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
                   ),
                 ],
               ),
-            )).toList(),
+            )),
           ],
         ),
       ),

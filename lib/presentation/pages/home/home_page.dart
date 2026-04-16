@@ -291,8 +291,8 @@ class _HomePageState extends ConsumerState<HomePage>
                   }
                 }
               },
-              child: const Icon(Icons.keyboard_arrow_up),
               tooltip: 'Yukarı git',
+              child: const Icon(Icons.keyboard_arrow_up),
             )
           : null,
     );
