@@ -48,6 +48,9 @@ class NewsListState extends ConsumerState<NewsList>
   /// Yükleme durumu - çift yüklemeyi önlemek için
   bool _isLoadingMore = false;
   
+  /// Sayfalama için yerel değişken
+  int _currentPage = 1;
+  
   /// Image prefetch servisi
   final ImagePrefetchService _prefetchService = ImagePrefetchService();
   
@@ -77,6 +80,39 @@ class NewsListState extends ConsumerState<NewsList>
     super.dispose();
   }
 
+  /// Kategori ve filtrelere göre tüm makaleleri döndürür
+  List<Article> _getFilteredArticles() {
+    final newsState = ref.read(newsProvider);
+    final filter = ref.read(articleFilterProvider);
+    
+    // allArticles üzerinden filtreleme yap (articles değil!)
+    var categoryArticles = newsState.allArticles
+        .where((article) => widget.category == 'genel' || article.category == widget.category)
+        .toList();
+        
+    // Filtreleri uygula
+    if (filter.isActive) {
+      categoryArticles = categoryArticles.where((article) {
+        if (filter.startDate != null && article.publishedDate.isBefore(filter.startDate!)) return false;
+        if (filter.endDate != null && article.publishedDate.isAfter(filter.endDate!)) return false;
+        if (filter.selectedSources.isNotEmpty && !filter.selectedSources.contains(article.sourceName)) return false;
+        if (filter.selectedCategories.isNotEmpty && !filter.selectedCategories.contains(article.category)) return false;
+        if (filter.isRead != null && article.isRead != filter.isRead) return false;
+        
+        if (filter.searchQuery != null && filter.searchQuery!.isNotEmpty) {
+          final query = filter.searchQuery!.toLowerCase();
+          final titleMatch = article.title.toLowerCase().contains(query);
+          final descMatch = article.description.toLowerCase().contains(query);
+          final contentMatch = article.content?.toLowerCase().contains(query) ?? false;
+          if (!titleMatch && !descMatch && !contentMatch) return false;
+        }
+        return true;
+      }).toList();
+    }
+    
+    return categoryArticles;
+  }
+
   /// Scroll olaylarını dinler - optimize edilmiş
   void _onScroll() {
     if (!_scrollController.hasClients) return;
@@ -92,11 +128,18 @@ class NewsListState extends ConsumerState<NewsList>
     final threshold = maxScroll * 0.7;
     
     if (currentScroll >= threshold && !_isLoadingMore) {
-      final newsState = ref.read(newsProvider);
-      if (newsState.hasMore && !newsState.isLoadingMore) {
+      final categoryArticles = _getFilteredArticles();
+      final hasMoreLocal = categoryArticles.length > _currentPage * NewsState.pageSize;
+      
+      if (hasMoreLocal) {
         _isLoadingMore = true;
-        ref.read(newsProvider.notifier).loadMoreArticles().then((_) {
-          _isLoadingMore = false;
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            setState(() {
+              _currentPage++;
+              _isLoadingMore = false;
+            });
+          }
         });
       }
     }
@@ -107,12 +150,10 @@ class NewsListState extends ConsumerState<NewsList>
   
   /// Görselleri önceden yükle
   void _prefetchImages(double currentScroll) {
-    final newsState = ref.read(newsProvider);
-    
-    // Kategoriye göre makaleleri filtrele
-    final categoryArticles = newsState.articles
-        .where((article) => widget.category == 'genel' || article.category == widget.category)
-        .toList();
+    // Kategoriye göre makaleleri filtrele (lokal pagination ile)
+    final allCategoryArticles = _getFilteredArticles();
+    final endIndex = (_currentPage * NewsState.pageSize).clamp(0, allCategoryArticles.length);
+    final categoryArticles = allCategoryArticles.sublist(0, endIndex);
     
     if (categoryArticles.isEmpty) return;
     
@@ -143,6 +184,10 @@ class NewsListState extends ConsumerState<NewsList>
   /// Pull-to-refresh callback
   void _onRefresh() async {
     try {
+      setState(() {
+        _currentPage = 1;
+      });
+      
       if (widget.onRefresh != null) {
         await widget.onRefresh!();
       } else {
@@ -156,14 +201,25 @@ class NewsListState extends ConsumerState<NewsList>
 
   /// Loading callback (sayfa sonunda daha fazla yükle)
   void _onLoading() async {
-    final newsState = ref.read(newsProvider);
-    if (newsState.hasMore && !newsState.isLoadingMore) {
-      try {
-        await ref.read(newsProvider.notifier).loadMoreArticles();
+    final categoryArticles = _getFilteredArticles();
+    final hasMoreLocal = categoryArticles.length > _currentPage * NewsState.pageSize;
+    
+    if (hasMoreLocal) {
+      if (_isLoadingMore) {
         _refreshController.loadComplete();
-      } catch (e) {
-        _refreshController.loadFailed();
+        return;
       }
+      
+      _isLoadingMore = true;
+      await Future.delayed(const Duration(milliseconds: 300));
+      
+      if (mounted) {
+        setState(() {
+          _currentPage++;
+          _isLoadingMore = false;
+        });
+      }
+      _refreshController.loadComplete();
     } else {
       _refreshController.loadNoData();
     }
@@ -178,62 +234,16 @@ class NewsListState extends ConsumerState<NewsList>
     final connectivityState = ref.watch(connectivityProvider);
     final isConnected = connectivityState.isConnected;
     
-    // Filtre durumunu al
-    final filter = ref.watch(articleFilterProvider);
-    
-    // Kategoriye göre makaleleri filtrele
-    var categoryArticles = newsState.articles
-        .where((article) => widget.category == 'genel' || article.category == widget.category)
-        .toList();
-    
-    // Filtreleri uygula
-    if (filter.isActive) {
-      categoryArticles = categoryArticles.where((article) {
-        // Tarih filtresi
-        if (filter.startDate != null && article.publishedDate.isBefore(filter.startDate!)) {
-          return false;
-        }
-        if (filter.endDate != null && article.publishedDate.isAfter(filter.endDate!)) {
-          return false;
-        }
-        
-        // Kaynak filtresi
-        if (filter.selectedSources.isNotEmpty &&
-            !filter.selectedSources.contains(article.sourceName)) {
-          return false;
-        }
-        
-        // Kategori filtresi
-        if (filter.selectedCategories.isNotEmpty &&
-            !filter.selectedCategories.contains(article.category)) {
-          return false;
-        }
-        
-        // Okunmuş/okunmamış filtresi
-        if (filter.isRead != null && article.isRead != filter.isRead) {
-          return false;
-        }
-        
-        // Kelime arama filtresi
-        if (filter.searchQuery != null && filter.searchQuery!.isNotEmpty) {
-          final query = filter.searchQuery!.toLowerCase();
-          final titleMatch = article.title.toLowerCase().contains(query);
-          final descMatch = article.description.toLowerCase().contains(query);
-          final contentMatch = article.content?.toLowerCase().contains(query) ?? false;
-          
-          if (!titleMatch && !descMatch && !contentMatch) {
-            return false;
-          }
-        }
-        
-        return true;
-      }).toList();
-    }
+    // Tüm haberleri lokal olarak filtrele ve paginasyon uygula
+    final allCategoryArticles = _getFilteredArticles();
+    final hasMoreLocal = allCategoryArticles.length > _currentPage * NewsState.pageSize;
+    final endIndex = (_currentPage * NewsState.pageSize).clamp(0, allCategoryArticles.length);
+    final categoryArticles = allCategoryArticles.sublist(0, endIndex);
 
     return SmartRefresher(
       controller: _refreshController,
       enablePullDown: true,
-      enablePullUp: newsState.hasMore,
+      enablePullUp: hasMoreLocal,
       onRefresh: _onRefresh,
       onLoading: _onLoading,
       

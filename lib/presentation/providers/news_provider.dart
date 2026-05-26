@@ -218,15 +218,38 @@ class NewsNotifier extends StateNotifier<NewsState> {
       state = state.copyWith(isLoading: true, errorMessage: null, currentPage: 1);
       
       try {
-        final allArticles = await _getArticlesByCategory(category);
-        final paginatedArticles = _paginateArticles(allArticles, page: 1);
+        final categoryArticles = await _getArticlesByCategory(category);
+        
+        List<Article> newAllArticles;
+        if (state.allArticles.isNotEmpty && refresh) {
+          // Mevcut allArticles içinden bu kategoriye ait OLMAYANLARI tut
+          final otherArticles = state.allArticles
+              .where((a) => a.category.toLowerCase() != category.toLowerCase())
+              .toList();
+          
+          // Yeni kategori makalelerini ekle
+          newAllArticles = [...otherArticles, ...categoryArticles];
+          
+          // Yeniden resim varlığı ve tarihe göre sırala
+          newAllArticles.sort((a, b) {
+            final aHasImage = a.imageUrl != null && a.imageUrl!.isNotEmpty;
+            final bHasImage = b.imageUrl != null && b.imageUrl!.isNotEmpty;
+            if (aHasImage && !bHasImage) return -1;
+            if (!aHasImage && bHasImage) return 1;
+            return b.publishedDate.compareTo(a.publishedDate);
+          });
+        } else {
+          newAllArticles = categoryArticles;
+        }
+
+        final paginatedArticles = _paginateArticles(categoryArticles, page: 1);
         
         state = state.copyWith(
-          allArticles: allArticles,
+          allArticles: newAllArticles,
           articles: paginatedArticles,
           isLoading: false,
           errorMessage: null,
-          hasMore: allArticles.length > NewsState.pageSize,
+          hasMore: categoryArticles.length > NewsState.pageSize,
           currentPage: 1,
         );
       } catch (e, stackTrace) {
@@ -265,7 +288,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
 
   /// Haberleri yenile (pull-to-refresh için)
   Future<void> refreshArticles([String? category]) async {
-    if (category != null) {
+    if (category != null && category != 'genel') {
       await loadArticlesByCategory(category, refresh: true);
     } else {
       await loadAllArticles(refresh: true);
