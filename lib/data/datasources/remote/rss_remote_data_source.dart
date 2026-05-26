@@ -67,7 +67,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       dio.interceptors.add(LogInterceptor(
         requestBody: false,
         responseBody: false,
-        logPrint: (object) => AppLogger.debug('[RSS HTTP] $object'),
+        // logPrint: (object) => // AppLogger.debug('[RSS HTTP] $object'),
       ));
     }
     
@@ -77,7 +77,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   @override
   Future<List<ArticleModel>> getArticlesByCategory(String category) async {
     try {
-      AppLogger.network('RSS Request: $category');
+      // AppLogger.network('RSS Request: $category');
       
       // Disabled feed'leri al
       final healthCheckService = RssHealthCheckService();
@@ -93,7 +93,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
           .toList();
       
       if (disabledFeeds.isNotEmpty) {
-        AppLogger.debug('Devre dışı feed\'ler: ${disabledFeeds.join(", ")}');
+        // AppLogger.debug('Devre dışı feed\'ler: ${disabledFeeds.join(", ")}');
       }
       
       if (categoryFeeds.isEmpty) {
@@ -109,9 +109,9 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
           operation: () async {
             final feedUrl = feedEntry.value;
             final feedKey = feedEntry.key;
-            AppLogger.debug('URL [$feedKey]: $feedUrl');
+            // AppLogger.debug('URL [$feedKey]: $feedUrl');
             final response = await _dio.get(feedUrl);
-            AppLogger.debug('Response [$feedKey]: ${response.statusCode}');
+            // AppLogger.debug('Response [$feedKey]: ${response.statusCode}');
             
             if (response.statusCode != 200) {
               throw ServerException(
@@ -121,10 +121,10 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
             }
             
             final xmlString = response.data as String;
-            AppLogger.debug('Parsing XML [$feedKey]...');
+            // AppLogger.debug('Parsing XML [$feedKey]...');
             // XML parsing - şimdilik ana thread'de (isolate refactoring sonrası taşınacak)
             final parsedArticles = await _parseRssXml(xmlString, category, feedEntry.key);
-            AppLogger.success('${feedEntry.key}: ${parsedArticles.length} makale');
+            // AppLogger.success('${feedEntry.key}: ${parsedArticles.length} makale');
             return parsedArticles;
           },
           maxAttempts: 3,
@@ -136,7 +136,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         });
       }).toList();
       
-      AppLogger.performance('${feedFutures.length} feed paralel olarak yükleniyor...');
+      // AppLogger.performance('${feedFutures.length} feed paralel olarak yükleniyor...');
       final feedResults = await Future.wait(feedFutures);
       
       for (final articles in feedResults) {
@@ -164,7 +164,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         return b.publishedDate.compareTo(a.publishedDate);
       });
       
-      AppLogger.success('$category: Toplam ${uniqueArticles.length} makale (${allArticles.length} feed\'den)');
+      // AppLogger.success('$category: Toplam ${uniqueArticles.length} makale (${allArticles.length} feed\'den)');
       return uniqueArticles;
       
     } on DioException catch (e) {
@@ -217,7 +217,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     // Sadece ana kategorileri al (alt feed'leri değil)
     final mainCategories = _getMainCategories();
     
-    AppLogger.info('Toplam ${mainCategories.length} kategori PARALEL yüklenecek...');
+    // AppLogger.info('Toplam ${mainCategories.length} kategori PARALEL yüklenecek...');
     
     // Tüm kategorileri PARALEL olarak yükle (performans optimizasyonu)
     final futures = mainCategories.map((category) {
@@ -227,7 +227,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       });
     }).toList();
     
-    AppLogger.performance('${futures.length} kategori paralel olarak yükleniyor...');
+    // AppLogger.performance('${futures.length} kategori paralel olarak yükleniyor...');
     final results = await Future.wait(futures);
     
     // Sonuçları birleştir
@@ -237,11 +237,11 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       if (articles.isNotEmpty) {
         loadedCount++;
         allArticles.addAll(articles);
-        AppLogger.debug('${mainCategories[i]}: ${articles.length} makale eklendi (Toplam: ${allArticles.length})');
+        // AppLogger.debug('${mainCategories[i]}: ${articles.length} makale eklendi (Toplam: ${allArticles.length})');
       }
     }
     
-    AppLogger.success('Paralel yükleme tamamlandı: ${allArticles.length} makale ($loadedCount/${mainCategories.length} kategori başarılı)');
+    // AppLogger.success('Paralel yükleme tamamlandı: ${allArticles.length} makale ($loadedCount/${mainCategories.length} kategori başarılı)');
     
     if (allArticles.isEmpty) {
       throw const RssParseException('Hiç haber alınamadı');
@@ -262,7 +262,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       return b.publishedDate.compareTo(a.publishedDate);
     });
     
-    AppLogger.success('Tüm kategoriler: Toplam ${uniqueArticles.length} makale');
+    // AppLogger.success('Tüm kategoriler: Toplam ${uniqueArticles.length} makale');
     return uniqueArticles;
   }
 
@@ -299,7 +299,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         maxDelay: const Duration(seconds: 5),
         shouldRetry: RetryHelper.shouldRetryError,
         onRetry: (attempt, error) {
-          AppLogger.debug('Refresh retry [$category]: Deneme $attempt - $error');
+          // AppLogger.debug('Refresh retry [$category]: Deneme $attempt - $error');
         },
       );
     } on DioException catch (e) {
@@ -376,14 +376,14 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         articles.add(article);
         
       } catch (e) {
-        AppLogger.debug('RSS item parse hatası: $e');
+        // AppLogger.debug('RSS item parse hatası: $e');
         // Tek item başarısız olursa devam et
         continue;
       }
     }
     
     if (filteredCount > 0) {
-      AppLogger.debug('[$category] RSS 2.0 kategori filtreleme: $filteredCount makale filtrelendi, ${articles.length} makale kaldı');
+      // AppLogger.debug('[$category] RSS 2.0 kategori filtreleme: $filteredCount makale filtrelendi, ${articles.length} makale kaldı');
     }
     
     if (articles.isEmpty) {
@@ -441,13 +441,13 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         articles.add(article);
         
       } catch (e) {
-        AppLogger.debug('Atom entry parse hatası: $e');
+        // AppLogger.debug('Atom entry parse hatası: $e');
         continue;
       }
     }
     
     if (filteredCount > 0) {
-      AppLogger.debug('[$category] Atom kategori filtreleme: $filteredCount makale filtrelendi, ${articles.length} makale kaldı');
+      // AppLogger.debug('[$category] Atom kategori filtreleme: $filteredCount makale filtrelendi, ${articles.length} makale kaldı');
     }
     
     if (articles.isEmpty) {
@@ -538,7 +538,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     
     // Kategori uyuşmazlığı varsa log at
     if (!isMatch) {
-      AppLogger.debug('Kategori uyuşmazlığı: Beklenen="$expectedCategory", RSS="$rssCategory", Başlık="${title?.substring(0, title.length > 50 ? 50 : title.length)}..."');
+      // AppLogger.debug('Kategori uyuşmazlığı: Beklenen="$expectedCategory", RSS="$rssCategory", Başlık="${title?.substring(0, title.length > 50 ? 50 : title.length)}..."');
     }
     
     return isMatch;

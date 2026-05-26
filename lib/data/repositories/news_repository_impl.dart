@@ -34,13 +34,13 @@ class NewsRepositoryImpl implements NewsRepository {
   @override
   Future<List<Article>> getArticlesByCategory(String category) async {
     try {
-      debugPrint('🔄 getArticlesByCategory başladı: $category (Cache-First)');
+      // debugPrint('🔄 getArticlesByCategory başladı: $category (Cache-First)');
       
       // 1. ÖNCE CACHE'DEN AL (Hızlı başlangıç)
       try {
         final cachedArticles = await localDataSource.getCachedArticlesByCategory(category);
         if (cachedArticles.isNotEmpty) {
-          debugPrint('✅ Cache\'den $category kategorisi için ${cachedArticles.length} haber alındı (HIZLI YÜKLEME)');
+          // debugPrint('✅ Cache\'den $category kategorisi için ${cachedArticles.length} haber alındı (HIZLI YÜKLEME)');
           final entities = cachedArticles.map((model) => model.toEntity()).toList();
           final sortedEntities = _sortArticlesByImage(entities);
           
@@ -50,53 +50,53 @@ class NewsRepositoryImpl implements NewsRepository {
                                  connectivityResult.isNotEmpty;
           
           if (hasConnection) {
-            debugPrint('🔄 [$category] Arka planda yenileme başlatılıyor...');
+            // debugPrint('🔄 [$category] Arka planda yenileme başlatılıyor...');
             _refreshCategoryInBackground(category);
           }
           
           return sortedEntities;
         }
       } catch (cacheError) {
-        debugPrint('⚠️ Cache okuma hatası: $cacheError');
+        // debugPrint('⚠️ Cache okuma hatası: $cacheError');
       }
       
       // 3. CACHE YOKSA NETWORK'TEN ÇEK
-      debugPrint('📡 [$category] Cache boş, network\'ten çekiliyor...');
+      // debugPrint('📡 [$category] Cache boş, network\'ten çekiliyor...');
       final connectivityResult = await connectivity.checkConnectivity();
       final hasConnection = !connectivityResult.contains(ConnectivityResult.none) &&
                              connectivityResult.isNotEmpty;
-      debugPrint('🌐 Network durumu: $hasConnection');
+      // debugPrint('🌐 Network durumu: $hasConnection');
 
       if (hasConnection) {
         try {
-          debugPrint('🔄 Remote\'dan $category kategorisi için haberler çekiliyor...');
+          // debugPrint('🔄 Remote\'dan $category kategorisi için haberler çekiliyor...');
           final articles = await remoteDataSource.getArticlesByCategory(category);
-          debugPrint('✅ Remote\'dan ${articles.length} makale alındı');
+          // debugPrint('✅ Remote\'dan ${articles.length} makale alındı');
           
           if (articles.isEmpty) {
-            debugPrint('⚠️ Remote\'dan haber gelmedi, demo data döndürülüyor');
+            // debugPrint('⚠️ Remote\'dan haber gelmedi, demo data döndürülüyor');
             return _createDemoArticlesByCategory(category);
           }
           
           // Cache articles locally
-          debugPrint('💾 $category kategorisi cache\'e kaydediliyor...');
+          // debugPrint('💾 $category kategorisi cache\'e kaydediliyor...');
           await localDataSource.cacheArticles(articles);
           
           // Convert ArticleModel to Article and sort by image
           final entities = articles.map((model) => model.toEntity()).toList();
-          debugPrint('✅ $category kategorisi için ${entities.length} haber alındı');
+          // debugPrint('✅ $category kategorisi için ${entities.length} haber alındı');
           return _sortArticlesByImage(entities);
         } catch (e) {
-          debugPrint('⚠️ Remote request hatası: $e, demo data döndürülüyor');
+          // debugPrint('⚠️ Remote request hatası: $e, demo data döndürülüyor');
           return _createDemoArticlesByCategory(category);
         }
       } else {
         // Offline - demo data
-        debugPrint('📱 Offline mod - demo data döndürülüyor');
+        // debugPrint('📱 Offline mod - demo data döndürülüyor');
         return _createDemoArticlesByCategory(category);
       }
     } catch (e) {
-      debugPrint('💥 getArticlesByCategory HATA: $e');
+      // debugPrint('💥 getArticlesByCategory HATA: $e');
       return _createDemoArticlesByCategory(category);
     }
   }
@@ -104,33 +104,33 @@ class NewsRepositoryImpl implements NewsRepository {
   /// Kategori için arka planda yenileme (non-blocking)
   void _refreshCategoryInBackground(String category) async {
     try {
-      debugPrint('🔄 [Background] $category kategorisini yeniliyorum...');
+      // debugPrint('🔄 [Background] $category kategorisini yeniliyorum...');
       final articles = await remoteDataSource.getArticlesByCategory(category);
       await localDataSource.cacheArticles(articles);
-      debugPrint('✅ [Background] $category: ${articles.length} makale cache\'e kaydedildi');
+      // debugPrint('✅ [Background] $category: ${articles.length} makale cache\'e kaydedildi');
       
       // ✅ Stream'e yeni verileri gönder (UI güncellemesi için)
       final entities = articles.map((model) => model.toEntity()).toList();
       final sortedEntities = _sortArticlesByImage(entities);
       if (!_articlesStreamController.isClosed) {
         _articlesStreamController.add(sortedEntities);
-        debugPrint('📡 [Stream] $category kategorisi için ${sortedEntities.length} makale stream\'e gönderildi');
+        // debugPrint('📡 [Stream] $category kategorisi için ${sortedEntities.length} makale stream\'e gönderildi');
       }
     } catch (e) {
-      debugPrint('⚠️ [Background] $category yenileme hatası (sessizce başarısız): $e');
+      // debugPrint('⚠️ [Background] $category yenileme hatası (sessizce başarısız): $e');
     }
   }
 
   @override
   Future<List<Article>> getAllArticles() async {
     try {
-      debugPrint('🔄 getAllArticles başladı (Cache-First stratejisi)');
+      // debugPrint('🔄 getAllArticles başladı (Cache-First stratejisi)');
       
       // 1. ÖNCE CACHE'DEN AL (Hızlı başlangıç)
       try {
         final cachedArticles = await localDataSource.getCachedArticles();
         if (cachedArticles.isNotEmpty) {
-          debugPrint('✅ Cache\'den ${cachedArticles.length} makale alındı (HIZLI YÜKLEME)');
+          // debugPrint('✅ Cache\'den ${cachedArticles.length} makale alındı (HIZLI YÜKLEME)');
           final entities = cachedArticles.map((model) => model.toEntity()).toList();
           final sortedEntities = _sortArticlesByImage(entities);
           
@@ -140,7 +140,7 @@ class NewsRepositoryImpl implements NewsRepository {
                                  connectivityResult.isNotEmpty;
           
           if (hasConnection) {
-            debugPrint('🔄 Arka planda yenileme başlatılıyor...');
+            // debugPrint('🔄 Arka planda yenileme başlatılıyor...');
             _refreshInBackground();
           }
           
@@ -151,39 +151,39 @@ class NewsRepositoryImpl implements NewsRepository {
       }
       
       // 3. CACHE YOKSA NETWORK'TEN ÇEK
-      debugPrint('📡 Cache boş, network\'ten çekiliyor...');
+      // debugPrint('📡 Cache boş, network\'ten çekiliyor...');
       final connectivityResult = await connectivity.checkConnectivity();
       final hasConnection = !connectivityResult.contains(ConnectivityResult.none) &&
                              connectivityResult.isNotEmpty;
-      debugPrint('🌐 Network durumu: $hasConnection ($connectivityResult)');
+      // debugPrint('🌐 Network durumu: $hasConnection ($connectivityResult)');
 
       if (hasConnection) {
         try {
-          debugPrint('⬇️ Remote data source\'dan veri çekiliyor...');
+          // debugPrint('⬇️ Remote data source\'dan veri çekiliyor...');
           final articles = await remoteDataSource.getAllArticles();
-          debugPrint('✅ Remote\'dan ${articles.length} makale alındı');
+          // debugPrint('✅ Remote\'dan ${articles.length} makale alındı');
           
           // Cache articles locally
-          debugPrint('💾 Makaleler cache\'e kaydediliyor...');
+          // debugPrint('💾 Makaleler cache\'e kaydediliyor...');
           await localDataSource.cacheArticles(articles);
-          debugPrint('✅ Cache\'e kaydetme başarılı');
+          // debugPrint('✅ Cache\'e kaydetme başarılı');
           
           // Convert ArticleModel to Article and sort by image
           final entities = articles.map((model) => model.toEntity()).toList();
           final sortedEntities = _sortArticlesByImage(entities);
-          debugPrint('✅ getAllArticles tamamlandı: ${sortedEntities.length} makale');
+          // debugPrint('✅ getAllArticles tamamlandı: ${sortedEntities.length} makale');
           return sortedEntities;
         } catch (e) {
-          debugPrint('❌ Remote request hatası: $e');
-          debugPrint('❌ Cache de boş, demo data döndürülüyor');
+          // debugPrint('❌ Remote request hatası: $e');
+          // debugPrint('❌ Cache de boş, demo data döndürülüyor');
           return _createDemoArticles();
         }
       } else {
-        debugPrint('📱 Offline mod - demo data döndürülüyor');
+        // debugPrint('📱 Offline mod - demo data döndürülüyor');
         return _createDemoArticles();
       }
     } catch (e) {
-      debugPrint('💥 getAllArticles HATA: $e');
+      // debugPrint('💥 getAllArticles HATA: $e');
       throw Exception('Failed to get all articles: $e');
     }
   }
@@ -191,7 +191,7 @@ class NewsRepositoryImpl implements NewsRepository {
   /// Arka planda yenileme (non-blocking) - Kategori kategori yükler
   void _refreshInBackground() async {
     try {
-      debugPrint('🔄 [Background] Haberleri kategori kategori yeniliyorum...');
+      // debugPrint('🔄 [Background] Haberleri kategori kategori yeniliyorum...');
       
       // Kategorileri sırayla yükle (paralel değil, sıralı)
       final categories = ['genel', 'turkiye', 'dunya', 'ekonomi', 'teknoloji',
