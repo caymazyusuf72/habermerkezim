@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:marionette_flutter/marionette_flutter.dart';
 import 'firebase_options.dart';
 
 import 'core/services/hive_service.dart';
@@ -25,7 +26,11 @@ import 'presentation/app.dart';
 /// Haber Merkezi uygulamasının giriş noktası
 /// Hive database'i initialize eder ve Riverpod ile app'i başlatır
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  if (kDebugMode) {
+    MarionetteBinding.ensureInitialized();
+  } else {
+    WidgetsFlutterBinding.ensureInitialized();
+  }
   
   // System UI overlay'i ayarla
   SystemChrome.setSystemUIOverlayStyle(

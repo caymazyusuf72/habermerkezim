@@ -107,6 +107,14 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("androidx.glance:glance-appwidget:1.1.1")
+        force("androidx.glance:glance:1.1.1")
+        force("androidx.glance:glance-material3:1.1.1")
+    }
+}
+
 flutter {
     source = "../.."
 }

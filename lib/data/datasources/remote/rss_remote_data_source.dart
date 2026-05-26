@@ -57,7 +57,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       receiveTimeout: const Duration(milliseconds: ApiEndpoints.receiveTimeoutMs),
       sendTimeout: const Duration(milliseconds: ApiEndpoints.sendTimeoutMs),
       headers: {
-        'User-Agent': 'Haber Merkezi RSS Reader v1.0',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'application/rss+xml, application/xml, text/xml',
       },
     ));
@@ -84,13 +84,21 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       final disabledFeeds = await healthCheckService.getDisabledFeeds();
       
       // Kategoriye ait tüm RSS feed'lerini bul (disabled olanları hariç tut)
-      final categoryFeeds = ApiEndpoints.rssFeedUrls.entries
+      var categoryFeeds = ApiEndpoints.rssFeedUrls.entries
           .where((entry) {
             final matchesCategory = entry.key == category || entry.key.startsWith('${category}_');
             final isNotDisabled = !disabledFeeds.contains(entry.key);
             return matchesCategory && isNotDisabled;
           })
           .toList();
+      
+      // FALLBACK: Eğer tüm feed'ler devre dışı bırakılmışsa (örn. geçici ağ kesintilerinde),
+      // kullanıcıya boş kategori göstermek yerine devre dışı bırakma filtresini devre dışı bırak ve hepsini tekrar dene.
+      if (categoryFeeds.isEmpty) {
+        categoryFeeds = ApiEndpoints.rssFeedUrls.entries
+            .where((entry) => entry.key == category || entry.key.startsWith('${category}_'))
+            .toList();
+      }
       
       if (disabledFeeds.isNotEmpty) {
         // AppLogger.debug('Devre dışı feed\'ler: ${disabledFeeds.join(", ")}');
