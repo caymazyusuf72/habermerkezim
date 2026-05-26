@@ -109,12 +109,21 @@ class NewsRepositoryImpl implements NewsRepository {
       await localDataSource.cacheArticles(articles);
       // debugPrint('✅ [Background] $category: ${articles.length} makale cache\'e kaydedildi');
       
-      // ✅ Stream'e yeni verileri gönder (UI güncellemesi için)
-      final entities = articles.map((model) => model.toEntity()).toList();
-      final sortedEntities = _sortArticlesByImage(entities);
+      // ✅ Stream'e tüm güncel verileri gönder (Sadece o kategoriyi gönderirsek diğer sekmeler silinir!)
       if (!_articlesStreamController.isClosed) {
-        _articlesStreamController.add(sortedEntities);
-        // debugPrint('📡 [Stream] $category kategorisi için ${sortedEntities.length} makale stream\'e gönderildi');
+        try {
+          final allCachedArticles = await localDataSource.getCachedArticles();
+          final entities = allCachedArticles.map((model) => model.toEntity()).toList();
+          final sortedEntities = _sortArticlesByImage(entities);
+          
+          // DEBUG GÜVENLİK: Çekilen veri içinde hedeflenen kategori makalelerini say
+          final targetCategoryCount = sortedEntities.where((a) => a.category.toLowerCase() == category.toLowerCase()).length;
+          debugPrint('🔍 [Background Guard] Yenileme sonrası cache içinde "$category" kategorisinden $targetCategoryCount makale var. (Toplam: ${sortedEntities.length})');
+          
+          _articlesStreamController.add(sortedEntities);
+        } catch (e) {
+          debugPrint('⚠️ [Background] $category yenileme sonrası cache okuma hatası: $e');
+        }
       }
     } catch (e) {
       // debugPrint('⚠️ [Background] $category yenileme hatası (sessizce başarısız): $e');
@@ -191,29 +200,41 @@ class NewsRepositoryImpl implements NewsRepository {
   /// Arka planda yenileme (non-blocking) - Kategori kategori yükler
   void _refreshInBackground() async {
     try {
-      // debugPrint('🔄 [Background] Haberleri kategori kategori yeniliyorum...');
+      // Önce mevcut önbellekteki haberleri al ve bir sözlüğe (Map) yerleştir
+      final articlesMap = <String, ArticleModel>{};
+      try {
+        final cachedArticles = await localDataSource.getCachedArticles();
+        for (final article in cachedArticles) {
+          articlesMap[article.link] = article;
+        }
+      } catch (e) {
+        debugPrint('⚠️ [Background] Mevcut cache yüklenemedi, boş başlanıyor: $e');
+      }
       
       // Kategorileri sırayla yükle (paralel değil, sıralı)
       final categories = ['genel', 'turkiye', 'dunya', 'ekonomi', 'teknoloji',
                          'spor', 'saglik', 'kultur', 'egitim', 'magazin', 'otomobil', 'bilim'];
       
-      final allArticles = <ArticleModel>[];
-      
       for (final category in categories) {
         try {
           debugPrint('📥 [Background] $category kategorisi yükleniyor...');
           final categoryArticles = await remoteDataSource.getArticlesByCategory(category);
-          allArticles.addAll(categoryArticles);
+          
+          // ESKİ haberleri SİLMİYORUZ. Sadece YENİ haberleri haritaya ekliyoruz (link'e göre üzerine yazıyoruz).
+          // Böylece Cloudflare/hata nedeniyle az veri gelse bile eski haberler silinmiyor.
+          for (final article in categoryArticles) {
+            articlesMap[article.link] = article;
+          }
           
           // Her kategori sonrası kısa bekleme (UI'ı rahatlatmak için)
           await Future.delayed(const Duration(milliseconds: 500));
           
-          // Ara güncelleme - şimdiye kadar yüklenen makaleleri göster
-          if (allArticles.isNotEmpty && !_articlesStreamController.isClosed) {
-            final entities = allArticles.map((model) => model.toEntity()).toList();
+          // Ara güncelleme - şimdiye kadar biriken (eski + yeni birleşimi) makaleleri göster
+          if (articlesMap.isNotEmpty && !_articlesStreamController.isClosed) {
+            final entities = articlesMap.values.map((model) => model.toEntity()).toList();
             final sortedEntities = _sortArticlesByImage(entities);
             _articlesStreamController.add(sortedEntities);
-            debugPrint('📡 [Stream] ${sortedEntities.length} makale stream\'e gönderildi ($category dahil)');
+            debugPrint('📡 [Stream] ${sortedEntities.length} makale stream\'e gönderildi ($category güncellendi)');
           }
         } catch (e) {
           debugPrint('⚠️ [Background] $category kategorisi yüklenemedi: $e');
@@ -221,9 +242,9 @@ class NewsRepositoryImpl implements NewsRepository {
       }
       
       // Tüm makaleleri cache'e kaydet
-      if (allArticles.isNotEmpty) {
-        await localDataSource.cacheArticles(allArticles);
-        debugPrint('✅ [Background] ${allArticles.length} makale cache\'e kaydedildi');
+      if (articlesMap.isNotEmpty) {
+        await localDataSource.cacheArticles(articlesMap.values.toList());
+        debugPrint('✅ [Background] ${articlesMap.length} makale cache\'e kaydedildi');
       }
     } catch (e) {
       debugPrint('⚠️ [Background] Yenileme hatası (sessizce başarısız): $e');

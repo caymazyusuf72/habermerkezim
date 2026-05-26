@@ -105,13 +105,45 @@ class NewsNotifier extends StateNotifier<NewsState> {
         // Build cycle dışında state güncellemesi için SchedulerBinding kullan
         SchedulerBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
-            final paginatedArticles = _paginateArticles(articles, page: state.currentPage);
+            // DEBUG GÜVENLİK: Eğer stream'den gelen verilerde mevcut bir kategorinin haberleri
+            // tamamen silinmişse (örneğin 'bilim' haberleri yoksa) ve bizde varsa, KORU!
+            List<Article> safeArticles = List.from(articles);
+            
+            // Eğer state'imizde zaten haberler varsa
+            if (state.allArticles.isNotEmpty) {
+              // Uygulamadaki tüm kategoriler (dinamik olarak da alınabilirdi)
+              final categories = state.allArticles.map((a) => a.category).toSet();
+              
+              for (final cat in categories) {
+                final countInNew = safeArticles.where((a) => a.category == cat).length;
+                final countInOld = state.allArticles.where((a) => a.category == cat).length;
+                
+                // Eğer yeni listede o kategori tamamen yok olmuşsa veya eskisinden "çok daha az" ise ve eski liste 0 değilse
+                if (countInNew == 0 && countInOld > 0) {
+                  // Eski haberleri güvenli listeye geri ekle
+                  final missingArticles = state.allArticles.where((a) => a.category == cat).toList();
+                  safeArticles.addAll(missingArticles);
+                  debugPrint('🛡️ [State Guard] Stream "$cat" kategorisini BOŞ getirdi! Eski $countInOld haber korunuyor.');
+                }
+              }
+              
+              // Yeniden sırala
+              safeArticles.sort((a, b) {
+                final aHasImage = a.imageUrl != null && a.imageUrl!.isNotEmpty;
+                final bHasImage = b.imageUrl != null && b.imageUrl!.isNotEmpty;
+                if (aHasImage && !bHasImage) return -1;
+                if (!aHasImage && bHasImage) return 1;
+                return b.publishedDate.compareTo(a.publishedDate);
+              });
+            }
+
+            final paginatedArticles = _paginateArticles(safeArticles, page: state.currentPage);
             state = state.copyWith(
-              allArticles: articles,
+              allArticles: safeArticles,
               articles: paginatedArticles,
               isLoading: false,
               errorMessage: null,
-              hasMore: articles.length > NewsState.pageSize * state.currentPage,
+              hasMore: safeArticles.length > NewsState.pageSize * state.currentPage,
             );
             AppLogger.success('[Provider] State güncellendi: ${paginatedArticles.length} makale gösteriliyor');
           }
