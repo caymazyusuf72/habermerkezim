@@ -123,7 +123,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
                   // Eski haberleri güvenli listeye geri ekle
                   final missingArticles = state.allArticles.where((a) => a.category == cat).toList();
                   safeArticles.addAll(missingArticles);
-                  debugPrint('🛡️ [State Guard] Stream "$cat" kategorisini BOŞ getirdi! Eski $countInOld haber korunuyor.');
+                  AppLogger.warning('🛡️ [State Guard] Stream "$cat" kategorisini BOŞ getirdi! Eski $countInOld haber korunuyor.');
                 }
               }
               
