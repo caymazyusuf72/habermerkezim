@@ -81,7 +81,7 @@ dependencies:
   home_widget: ^0.8.1
   
   # Lottie Animations
-  lottie: ^3.1.2
+  lottie: ^3.3.3
   
   # Animations
   animations: ^2.0.11
