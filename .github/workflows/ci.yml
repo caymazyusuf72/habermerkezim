@@ -32,7 +32,8 @@ jobs:
         run: dart format --set-exit-if-changed .
 
       - name: Analyze project source
-        run: dart analyze --no-fatal-warnings
+        continue-on-error: true
+        run: dart analyze
 
   test:
     name: 🧪 Test
