@@ -2,8 +2,8 @@
 
 Modern Flutter ile geliştirilmiş, Clean Architecture + Riverpod tabanlı kapsamlı haber uygulaması.
 
-[![CI](https://github.com/username/haber-merkezi/actions/workflows/ci.yml/badge.svg)](https://github.com/username/haber-merkezi/actions/workflows/ci.yml)
-[![Release](https://github.com/username/haber-merkezi/actions/workflows/release.yml/badge.svg)](https://github.com/username/haber-merkezi/actions/workflows/release.yml)
+[![CI](https://github.com/caymazyusuf72/habermerkezim/actions/workflows/ci.yml/badge.svg)](https://github.com/caymazyusuf72/habermerkezim/actions/workflows/ci.yml)
+[![Release](https://github.com/caymazyusuf72/habermerkezim/actions/workflows/release.yml/badge.svg)](https://github.com/caymazyusuf72/habermerkezim/actions/workflows/release.yml)
 
 ---
 
