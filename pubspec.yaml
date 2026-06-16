@@ -95,7 +95,7 @@ dependencies:
   audio_service: ^0.18.12
   
   # YouTube Player
-  youtube_player_flutter: ^9.0.3
+  youtube_player_flutter: ^10.0.1
   
   # Text-to-Speech
   flutter_tts: ^4.0.2
