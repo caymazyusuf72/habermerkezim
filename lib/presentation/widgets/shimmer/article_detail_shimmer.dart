@@ -17,11 +17,7 @@ class ArticleDetailShimmer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Hero resim placeholder
-            Container(
-              width: double.infinity,
-              height: 250,
-              color: surfaceColor,
-            ),
+            Container(width: double.infinity, height: 250, color: surfaceColor),
 
             Padding(
               padding: const EdgeInsets.all(16),
@@ -132,63 +128,69 @@ class ArticleDetailShimmer extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   // İçerik paragrafları
-                  ...List.generate(4, (index) => Padding(
-                    padding: EdgeInsets.only(bottom: index < 3 ? 16 : 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: surfaceColor,
-                            borderRadius: BorderRadius.circular(4),
+                  ...List.generate(
+                    4,
+                    (index) => Padding(
+                      padding: EdgeInsets.only(bottom: index < 3 ? 16 : 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              color: surfaceColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        Container(
-                          width: double.infinity,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: surfaceColor,
-                            borderRadius: BorderRadius.circular(4),
+                          const SizedBox(height: 6),
+                          Container(
+                            width: double.infinity,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              color: surfaceColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        Container(
-                          width: double.infinity,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: surfaceColor,
-                            borderRadius: BorderRadius.circular(4),
+                          const SizedBox(height: 6),
+                          Container(
+                            width: double.infinity,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              color: surfaceColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        Container(
-                          width: index.isEven ? 250.0 : 180.0,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: surfaceColor,
-                            borderRadius: BorderRadius.circular(4),
+                          const SizedBox(height: 6),
+                          Container(
+                            width: index.isEven ? 250.0 : 180.0,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              color: surfaceColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  )),
+                  ),
 
                   const SizedBox(height: 24),
 
                   // Aksiyon butonları
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(4, (index) => Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: surfaceColor,
-                        shape: BoxShape.circle,
+                    children: List.generate(
+                      4,
+                      (index) => Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    )),
+                    ),
                   ),
 
                   const SizedBox(height: 32),

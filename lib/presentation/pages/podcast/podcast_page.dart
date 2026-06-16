@@ -35,7 +35,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     try {
       final podcastService = ref.read(podcastServiceProvider);
       final episodes = await podcastService.fetchPodcastFeed(feedUrl);
-      
+
       setState(() {
         _episodes = episodes;
         _isLoading = false;
@@ -119,10 +119,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                 children: [
                   const Text(
                     'Popüler Podcast Feed\'leri',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   _SampleFeedCard(
@@ -130,7 +127,8 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                     description: 'Haber ve gündem podcast\'leri',
                     feedUrl: 'https://feeds.feedburner.com/example',
                     onTap: () {
-                      _feedUrlController.text = 'https://feeds.feedburner.com/example';
+                      _feedUrlController.text =
+                          'https://feeds.feedburner.com/example';
                       _loadPodcastFeed('https://feeds.feedburner.com/example');
                     },
                   ),
@@ -145,178 +143,178 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _error != null
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.error_outline,
-                                size: 64,
-                                color: Colors.red,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                _error!,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(height: 24),
-                              ElevatedButton(
-                                onPressed: () => _loadPodcastFeed(_feedUrlController.text),
-                                child: const Text('Tekrar Dene'),
-                              ),
-                            ],
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            _error!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton(
+                            onPressed: () =>
+                                _loadPodcastFeed(_feedUrlController.text),
+                            child: const Text('Tekrar Dene'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : _episodes.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.podcasts, size: 80, color: Colors.grey[400]),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Podcast feed URL\'si girin',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[600],
                           ),
                         ),
-                      )
-                    : _episodes.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.podcasts,
-                                  size: 80,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Podcast feed URL\'si girin',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : ListView.builder(
-                            padding: const EdgeInsets.all(16),
-                            itemCount: _episodes.length,
-                            itemBuilder: (context, index) {
-                              final episode = _episodes[index];
-                              final isCurrentEpisode =
-                                  audioState.currentEpisode?.audioUrl == episode.audioUrl;
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _episodes.length,
+                    itemBuilder: (context, index) {
+                      final episode = _episodes[index];
+                      final isCurrentEpisode =
+                          audioState.currentEpisode?.audioUrl ==
+                          episode.audioUrl;
 
-                              return Card(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                child: ListTile(
-                                  contentPadding: const EdgeInsets.all(12),
-                                  leading: episode.imageUrl != null
-                                      ? ClipRRect(
-                                          borderRadius: BorderRadius.circular(8),
-                                          child: Image.network(
-                                            episode.imageUrl!,
-                                            width: 60,
-                                            height: 60,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (context, error, stackTrace) =>
-                                                Container(
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(12),
+                          leading: episode.imageUrl != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    episode.imageUrl!,
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
                                               width: 60,
                                               height: 60,
                                               color: Colors.grey[300],
-                                              child: const Icon(Icons.headphones),
+                                              child: const Icon(
+                                                Icons.headphones,
+                                              ),
                                             ),
-                                          ),
-                                        )
-                                      : Container(
-                                          width: 60,
-                                          height: 60,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[300],
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: const Icon(Icons.headphones),
-                                        ),
-                                  title: Text(
-                                    episode.title,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                )
+                              : Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(Icons.headphones),
+                                ),
+                          title: Text(
+                            episode.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontWeight: isCurrentEpisode
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              color: isCurrentEpisode
+                                  ? Theme.of(context).primaryColor
+                                  : null,
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 4),
+                              Text(
+                                episode.description,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.access_time,
+                                    size: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    episode.formattedDuration,
                                     style: TextStyle(
-                                      fontWeight: isCurrentEpisode
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                      color: isCurrentEpisode
-                                          ? Theme.of(context).primaryColor
-                                          : null,
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
                                     ),
                                   ),
-                                  subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        episode.description,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.access_time,
-                                            size: 14,
-                                            color: Colors.grey[600],
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            episode.formattedDuration,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Icon(
-                                            Icons.calendar_today,
-                                            size: 14,
-                                            color: Colors.grey[600],
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            episode.formattedPubDate,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                  const SizedBox(width: 12),
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 14,
+                                    color: Colors.grey[600],
                                   ),
-                                  trailing: isCurrentEpisode && audioState.isPlaying
-                                      ? IconButton(
-                                          icon: const Icon(Icons.pause_circle_filled),
-                                          iconSize: 48,
-                                          onPressed: () => ref
-                                              .read(audioPlayerProvider.notifier)
-                                              .pause(),
-                                        )
-                                      : IconButton(
-                                          icon: const Icon(Icons.play_circle_filled),
-                                          iconSize: 48,
-                                          onPressed: () {
-                                            ref
-                                                .read(audioPlayerProvider.notifier)
-                                                .loadAndPlay(episode);
-                                          },
-                                        ),
-                                  onTap: () {
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    episode.formattedPubDate,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          trailing: isCurrentEpisode && audioState.isPlaying
+                              ? IconButton(
+                                  icon: const Icon(Icons.pause_circle_filled),
+                                  iconSize: 48,
+                                  onPressed: () => ref
+                                      .read(audioPlayerProvider.notifier)
+                                      .pause(),
+                                )
+                              : IconButton(
+                                  icon: const Icon(Icons.play_circle_filled),
+                                  iconSize: 48,
+                                  onPressed: () {
                                     ref
                                         .read(audioPlayerProvider.notifier)
                                         .loadAndPlay(episode);
                                   },
                                 ),
-                              );
-                            },
-                          ),
+                          onTap: () {
+                            ref
+                                .read(audioPlayerProvider.notifier)
+                                .loadAndPlay(episode);
+                          },
+                        ),
+                      );
+                    },
+                  ),
           ),
 
           // Mini Player
-          if (audioState.currentEpisode != null)
-            const MiniAudioPlayer(),
+          if (audioState.currentEpisode != null) const MiniAudioPlayer(),
         ],
       ),
     );
@@ -348,10 +346,7 @@ class _SampleFeedCard extends StatelessWidget {
             color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            Icons.podcasts,
-            color: Theme.of(context).primaryColor,
-          ),
+          child: Icon(Icons.podcasts, color: Theme.of(context).primaryColor),
         ),
         title: Text(title),
         subtitle: Text(description),

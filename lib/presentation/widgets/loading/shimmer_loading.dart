@@ -26,16 +26,16 @@ class ArticleCardShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Shimmer.fromColors(
-        baseColor: isDark 
-            ? AppTheme.matBlackSurfaceVariant 
+        baseColor: isDark
+            ? AppTheme.matBlackSurfaceVariant
             : AppTheme.sageGreen.withValues(alpha: 0.1),
-        highlightColor: isDark 
+        highlightColor: isDark
             ? AppTheme.sageGreen.withValues(alpha: 0.2)
             : AppTheme.sageGreenLight.withValues(alpha: 0.3),
         period: const Duration(milliseconds: 1500),
@@ -54,7 +54,7 @@ class ArticleCardShimmer extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Content
             Padding(
               padding: const EdgeInsets.all(16),
@@ -70,9 +70,9 @@ class ArticleCardShimmer extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   // Title lines
                   Container(
                     width: double.infinity,
@@ -91,9 +91,9 @@ class ArticleCardShimmer extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   // Description lines
                   Container(
                     width: double.infinity,
@@ -121,9 +121,9 @@ class ArticleCardShimmer extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Footer
                   Row(
                     children: [
@@ -163,16 +163,16 @@ class CompactArticleCardShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Shimmer.fromColors(
-        baseColor: isDark 
-            ? AppTheme.matBlackSurfaceVariant 
+        baseColor: isDark
+            ? AppTheme.matBlackSurfaceVariant
             : AppTheme.sageGreen.withValues(alpha: 0.1),
-        highlightColor: isDark 
+        highlightColor: isDark
             ? AppTheme.sageGreen.withValues(alpha: 0.2)
             : AppTheme.sageGreenLight.withValues(alpha: 0.3),
         period: const Duration(milliseconds: 1500),
@@ -190,9 +190,9 @@ class CompactArticleCardShimmer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Content
               Expanded(
                 child: Column(
@@ -207,9 +207,9 @@ class CompactArticleCardShimmer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(7),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     // Title
                     Container(
                       width: double.infinity,
@@ -228,9 +228,9 @@ class CompactArticleCardShimmer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // Footer
                     Container(
                       width: 80,
@@ -267,12 +267,12 @@ class ShimmerContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Shimmer.fromColors(
-      baseColor: isDark 
-          ? AppTheme.matBlackSurfaceVariant 
+      baseColor: isDark
+          ? AppTheme.matBlackSurfaceVariant
           : AppTheme.sageGreen.withValues(alpha: 0.1),
-      highlightColor: isDark 
+      highlightColor: isDark
           ? AppTheme.sageGreen.withValues(alpha: 0.2)
           : AppTheme.sageGreenLight.withValues(alpha: 0.3),
       period: const Duration(milliseconds: 1500),
@@ -306,13 +306,13 @@ class ShimmerText extends StatelessWidget {
     if (lines == 1) {
       return ShimmerContainer(width: width, height: height);
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(lines, (index) {
         final isLastLine = index == lines - 1;
         final lineWidth = isLastLine ? width * 0.6 : width;
-        
+
         return Padding(
           padding: EdgeInsets.only(bottom: index < lines - 1 ? 6 : 0),
           child: ShimmerContainer(width: lineWidth, height: height),
@@ -323,7 +323,8 @@ class ShimmerText extends StatelessWidget {
 }
 
 /// Category tabs shimmer
-class CategoryTabsShimmer extends StatelessWidget implements PreferredSizeWidget {
+class CategoryTabsShimmer extends StatelessWidget
+    implements PreferredSizeWidget {
   const CategoryTabsShimmer({super.key});
 
   @override
@@ -332,21 +333,22 @@ class CategoryTabsShimmer extends StatelessWidget implements PreferredSizeWidget
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       height: 48,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Shimmer.fromColors(
-        baseColor: isDark 
-            ? AppTheme.matBlackSurfaceVariant 
+        baseColor: isDark
+            ? AppTheme.matBlackSurfaceVariant
             : AppTheme.sageGreen.withValues(alpha: 0.1),
-        highlightColor: isDark 
+        highlightColor: isDark
             ? AppTheme.sageGreen.withValues(alpha: 0.2)
             : AppTheme.sageGreenLight.withValues(alpha: 0.3),
         period: const Duration(milliseconds: 1500),
         child: Row(
-          children: List.generate(5, (index) => 
-            Padding(
+          children: List.generate(
+            5,
+            (index) => Padding(
               padding: const EdgeInsets.only(right: 16),
               child: Container(
                 width: 80,
@@ -378,7 +380,7 @@ class LoadingOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!isVisible) return const SizedBox.shrink();
-    
+
     return Container(
       color: Colors.black.withValues(alpha: 0.3),
       child: Center(
@@ -393,7 +395,9 @@ class LoadingOverlay extends StatelessWidget {
                   height: 40,
                   child: CircularProgressIndicator(
                     strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.sageGreen),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppTheme.sageGreen,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),

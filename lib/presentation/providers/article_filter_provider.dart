@@ -12,10 +12,7 @@ class ArticleFilterNotifier extends StateNotifier<ArticleFilter> {
 
   /// Tarih aralığı ayarla
   void setDateRange(DateTime? startDate, DateTime? endDate) {
-    state = state.copyWith(
-      startDate: startDate,
-      endDate: endDate,
-    );
+    state = state.copyWith(startDate: startDate, endDate: endDate);
   }
 
   /// Kaynak ekle/çıkar
@@ -72,7 +69,7 @@ class ArticleFilterNotifier extends StateNotifier<ArticleFilter> {
 }
 
 /// Article filter provider
-final articleFilterProvider = StateNotifierProvider<ArticleFilterNotifier, ArticleFilter>((ref) {
-  return ArticleFilterNotifier();
-});
-
+final articleFilterProvider =
+    StateNotifierProvider<ArticleFilterNotifier, ArticleFilter>((ref) {
+      return ArticleFilterNotifier();
+    });

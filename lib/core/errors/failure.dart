@@ -1,7 +1,7 @@
 import 'app_exceptions.dart';
 
 /// Genişletilmiş Failure Sınıfları
-/// 
+///
 /// Mevcut [core/error/failures.dart] ile geriye uyumludur.
 /// Exception'ları Failure'lara dönüştüren factory metotları içerir.
 /// Use case katmanında hata yönetimi için kullanılır.
@@ -20,14 +20,17 @@ abstract class AppFailure {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is AppFailure && other.message == message && other.code == code;
+    return other is AppFailure &&
+        other.message == message &&
+        other.code == code;
   }
 
   @override
   int get hashCode => message.hashCode ^ (code?.hashCode ?? 0);
 
   @override
-  String toString() => '${runtimeType.toString()}: $message${code != null ? ' ($code)' : ''}';
+  String toString() =>
+      '${runtimeType.toString()}: $message${code != null ? ' ($code)' : ''}';
 
   /// Exception'ı uygun Failure'a dönüştür
   static AppFailure fromException(Object error) {
@@ -52,27 +55,17 @@ abstract class AppFailure {
         originalError: error,
       );
     } else {
-      return UnexpectedFailure(
-        error.toString(),
-        originalError: error,
-      );
+      return UnexpectedFailure(error.toString(), originalError: error);
     }
   }
 }
 
 /// Network failure'ları
 class NetworkFailure extends AppFailure {
-  const NetworkFailure(
-    super.message, {
-    super.code,
-    super.originalError,
-  });
+  const NetworkFailure(super.message, {super.code, super.originalError});
 
   factory NetworkFailure.noInternet() {
-    return const NetworkFailure(
-      'İnternet bağlantısı yok',
-      code: 'NO_INTERNET',
-    );
+    return const NetworkFailure('İnternet bağlantısı yok', code: 'NO_INTERNET');
   }
 
   factory NetworkFailure.timeout() {
@@ -105,11 +98,7 @@ class NetworkFailure extends AppFailure {
 
 /// Cache failure'ları
 class CacheFailure extends AppFailure {
-  const CacheFailure(
-    super.message, {
-    super.code,
-    super.originalError,
-  });
+  const CacheFailure(super.message, {super.code, super.originalError});
 
   factory CacheFailure.notFound() {
     return const CacheFailure(
@@ -252,11 +241,7 @@ class ServerFailure extends AppFailure {
 
 /// Beklenmeyen hatalar
 class UnexpectedFailure extends AppFailure {
-  const UnexpectedFailure(
-    super.message, {
-    super.code,
-    super.originalError,
-  });
+  const UnexpectedFailure(super.message, {super.code, super.originalError});
 
   factory UnexpectedFailure.unknown({Object? originalError}) {
     return UnexpectedFailure(
@@ -267,5 +252,6 @@ class UnexpectedFailure extends AppFailure {
   }
 
   @override
-  String get userMessage => 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
+  String get userMessage =>
+      'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
 }

@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/entities/custom_category.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Özel kategoriler servisi
 class CustomCategoriesService {
   static const String _boxName = 'custom_categories';
@@ -97,4 +98,3 @@ class CustomCategoriesService {
     return _box!.containsKey(categoryId);
   }
 }
-

@@ -39,9 +39,11 @@ final newsLocalDataSourceProvider = Provider<NewsLocalDataSource>((ref) {
   return NewsLocalDataSourceImpl();
 });
 
-final userProfileLocalDataSourceProvider = Provider<UserProfileLocalDataSource>((ref) {
-  return UserProfileLocalDataSourceImpl();
-});
+final userProfileLocalDataSourceProvider = Provider<UserProfileLocalDataSource>(
+  (ref) {
+    return UserProfileLocalDataSourceImpl();
+  },
+);
 
 // Repository
 final newsRepositoryProvider = Provider<NewsRepository>((ref) {
@@ -62,12 +64,12 @@ final userProfileRepositoryProvider = Provider<UserProfileRepository>((ref) {
 /// Cache'den hızlı göster, arka planda güncelle
 final appInitializationProvider = FutureProvider<void>((ref) async {
   AppLogger.info('App initialization basliyor...');
-  
+
   // Minimum splash süresi (0.3 saniye) - çok hızlı açılış
   await Future.delayed(const Duration(milliseconds: 300));
-  
+
   AppLogger.success('App initialization tamamlandi');
-  
+
   // Initialization tamamlandıktan SONRA haberleri yükle
   // Future.microtask ile Riverpod build cycle dışına çıkıyoruz
   Future.microtask(() async {
@@ -78,16 +80,18 @@ final appInitializationProvider = FutureProvider<void>((ref) async {
     } catch (e) {
       AppLogger.warning('Cache yükleme hatası: $e');
     }
-    
+
     // Arka planda güncelle (refresh: true) - timeout ile
     try {
       AppLogger.info('Arka planda güncelleme başlatılıyor...');
-      await ref.read(newsProvider.notifier)
+      await ref
+          .read(newsProvider.notifier)
           .loadAllArticles(refresh: true)
           .timeout(const Duration(seconds: 15));
       AppLogger.success('Arka plan güncelleme tamamlandı');
     } catch (e) {
-      if (e.toString().contains('timeout') || e.toString().contains('Timeout')) {
+      if (e.toString().contains('timeout') ||
+          e.toString().contains('Timeout')) {
         AppLogger.warning('Arka plan güncelleme timeout (15 saniye)');
       } else {
         AppLogger.warning('Arka plan güncelleme hatası: $e');
@@ -140,20 +144,23 @@ final newsArticleCountProvider = Provider<int>((ref) {
 });
 
 /// Kategoriye göre filtrelenmiş makaleleri döndürür
-final categoryArticlesProvider = Provider.family<List<Article>, String>((ref, category) {
+final categoryArticlesProvider = Provider.family<List<Article>, String>((
+  ref,
+  category,
+) {
   final articles = ref.watch(newsProvider.select((state) => state.articles));
-  
+
   if (category == 'genel') {
     return articles;
   }
-  
+
   return articles.where((article) => article.category == category).toList();
 });
 
 /// Belirli bir makaleyi ID'ye göre döndürür
 final articleByIdProvider = Provider.family<Article?, String>((ref, articleId) {
   final articles = ref.watch(newsProvider.select((state) => state.articles));
-  
+
   try {
     return articles.firstWhere((article) => article.id == articleId);
   } catch (e) {
@@ -163,24 +170,28 @@ final articleByIdProvider = Provider.family<Article?, String>((ref, articleId) {
 
 /// Okunmamış makale sayısını döndürür
 final unreadArticleCountProvider = Provider<int>((ref) {
-  return ref.watch(newsProvider.select((state) =>
-    state.articles.where((article) => !article.isRead).length
-  ));
+  return ref.watch(
+    newsProvider.select(
+      (state) => state.articles.where((article) => !article.isRead).length,
+    ),
+  );
 });
 
 /// Favori makale sayısını döndürür
 final favoriteArticleCountProvider = Provider<int>((ref) {
-  return ref.watch(newsProvider.select((state) =>
-    state.articles.where((article) => article.isFavorite).length
-  ));
+  return ref.watch(
+    newsProvider.select(
+      (state) => state.articles.where((article) => article.isFavorite).length,
+    ),
+  );
 });
 
 /// Son güncelleme zamanını döndürür (en son makalenin tarihi)
 final lastUpdateTimeProvider = Provider<DateTime?>((ref) {
   final articles = ref.watch(newsProvider.select((state) => state.articles));
-  
+
   if (articles.isEmpty) return null;
-  
+
   return articles
       .map((a) => a.publishedDate)
       .reduce((a, b) => a.isAfter(b) ? a : b);
@@ -189,24 +200,24 @@ final lastUpdateTimeProvider = Provider<DateTime?>((ref) {
 /// Kategorilere göre makale sayılarını döndürür
 final categoryCountsProvider = Provider<Map<String, int>>((ref) {
   final articles = ref.watch(newsProvider.select((state) => state.articles));
-  
+
   final counts = <String, int>{};
   for (final article in articles) {
     counts[article.category] = (counts[article.category] ?? 0) + 1;
   }
-  
+
   return counts;
 });
 
 /// Kaynaklara göre makale sayılarını döndürür
 final sourceCountsProvider = Provider<Map<String, int>>((ref) {
   final articles = ref.watch(newsProvider.select((state) => state.articles));
-  
+
   final counts = <String, int>{};
   for (final article in articles) {
     counts[article.sourceName] = (counts[article.sourceName] ?? 0) + 1;
   }
-  
+
   return counts;
 });
 
@@ -214,19 +225,19 @@ final sourceCountsProvider = Provider<Map<String, int>>((ref) {
 final todayArticleCountProvider = Provider<int>((ref) {
   final articles = ref.watch(newsProvider.select((state) => state.articles));
   final today = DateTime.now();
-  
+
   return articles.where((article) {
     final articleDate = article.publishedDate;
     return articleDate.year == today.year &&
-           articleDate.month == today.month &&
-           articleDate.day == today.day;
+        articleDate.month == today.month &&
+        articleDate.day == today.day;
   }).length;
 });
 
 /// Pagination bilgilerini döndürür
 final paginationInfoProvider = Provider<Map<String, dynamic>>((ref) {
   final state = ref.watch(newsProvider);
-  
+
   return {
     'currentPage': state.currentPage,
     'hasMore': state.hasMore,

@@ -30,10 +30,7 @@ class ReadingAnalytics {
 
   /// Boş analytics
   static ReadingAnalytics empty() {
-    return ReadingAnalytics(
-      id: getTodayId(),
-      date: DateTime.now(),
-    );
+    return ReadingAnalytics(id: getTodayId(), date: DateTime.now());
   }
 
   /// Bu hafta için ID oluştur
@@ -49,16 +46,13 @@ class ReadingAnalytics {
 
   /// Toplam aktivite puanı
   int get totalActivity {
-    return articlesRead * 3 + 
-           favoriteCount * 2 + 
-           searchCount + 
-           shareCount;
+    return articlesRead * 3 + favoriteCount * 2 + searchCount + shareCount;
   }
 
   /// En çok okunan kategori
   String get topCategory {
     if (categoriesRead.isEmpty) return 'Henüz veri yok';
-    
+
     var maxEntry = categoriesRead.entries.first;
     for (final entry in categoriesRead.entries) {
       if (entry.value > maxEntry.value) {
@@ -71,7 +65,7 @@ class ReadingAnalytics {
   /// En çok okunan kaynak
   String get topSource {
     if (sourcesRead.isEmpty) return 'Henüz veri yok';
-    
+
     var maxEntry = sourcesRead.entries.first;
     for (final entry in sourcesRead.entries) {
       if (entry.value > maxEntry.value) {
@@ -113,7 +107,11 @@ class ReadingAnalytics {
   }
 
   /// Makale okundu olayını ekle
-  ReadingAnalytics incrementArticleRead(String category, String source, {int timeSpent = 0}) {
+  ReadingAnalytics incrementArticleRead(
+    String category,
+    String source, {
+    int timeSpent = 0,
+  }) {
     final newCategoriesRead = Map<String, int>.from(categoriesRead);
     newCategoriesRead[category] = (newCategoriesRead[category] ?? 0) + 1;
 
@@ -227,10 +225,10 @@ class AnalyticsSummary {
 
   /// Toplam aktivite puanı
   int get totalActivityScore {
-    return totalArticlesRead * 3 + 
-           totalFavorites * 2 + 
-           totalSearches + 
-           totalShares;
+    return totalArticlesRead * 3 +
+        totalFavorites * 2 +
+        totalSearches +
+        totalShares;
   }
 
   /// Günlük ortalama makale okuma
@@ -242,7 +240,7 @@ class AnalyticsSummary {
   /// En aktif gün
   ReadingAnalytics? get mostActiveDay {
     if (dailyData.isEmpty) return null;
-    
+
     ReadingAnalytics mostActive = dailyData.first;
     for (final day in dailyData) {
       if (day.totalActivity > mostActive.totalActivity) {
@@ -255,7 +253,7 @@ class AnalyticsSummary {
   /// En çok okunan kategori
   String get topCategory {
     if (categoriesBreakdown.isEmpty) return 'Henüz veri yok';
-    
+
     var maxEntry = categoriesBreakdown.entries.first;
     for (final entry in categoriesBreakdown.entries) {
       if (entry.value > maxEntry.value) {
@@ -268,8 +266,10 @@ class AnalyticsSummary {
   /// Okuma tutarlılığı (0-100 arası)
   double get readingConsistency {
     if (dailyData.length < 2) return 0;
-    
-    final daysWithReading = dailyData.where((day) => day.articlesRead > 0).length;
+
+    final daysWithReading = dailyData
+        .where((day) => day.articlesRead > 0)
+        .length;
     return (daysWithReading / dailyData.length) * 100;
   }
 }

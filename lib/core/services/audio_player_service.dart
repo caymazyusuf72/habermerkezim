@@ -2,6 +2,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Audio Player Service - Podcast ve ses haberleri için
 class AudioPlayerService {
   static final AudioPlayerService _instance = AudioPlayerService._internal();
@@ -23,16 +24,16 @@ class AudioPlayerService {
   /// Servisi başlat
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     try {
       // Audio session ayarları
-      await _audioPlayer.setAudioSource(
-        AudioSource.uri(Uri.parse(''), tag: null),
-      ).catchError((_) {
-        // İlk başlatma için boş source
-        return null;
-      });
-      
+      await _audioPlayer
+          .setAudioSource(AudioSource.uri(Uri.parse(''), tag: null))
+          .catchError((_) {
+            // İlk başlatma için boş source
+            return null;
+          });
+
       _isInitialized = true;
     } catch (e) {
       debugPrint('Audio player initialization error: $e');
@@ -41,10 +42,14 @@ class AudioPlayerService {
   }
 
   /// Ses dosyasını yükle
-  Future<Duration?> loadAudio(String url, {String? title, String? artist}) async {
+  Future<Duration?> loadAudio(
+    String url, {
+    String? title,
+    String? artist,
+  }) async {
     try {
       await initialize();
-      
+
       final duration = await _audioPlayer.setAudioSource(
         AudioSource.uri(
           Uri.parse(url),
@@ -56,7 +61,7 @@ class AudioPlayerService {
           ),
         ),
       );
-      
+
       return duration;
     } catch (e) {
       debugPrint('Audio load error: $e');
@@ -68,7 +73,7 @@ class AudioPlayerService {
   Future<void> loadPlaylist(List<Map<String, String>> items) async {
     try {
       await initialize();
-      
+
       final playlist = ConcatenatingAudioSource(
         children: items.map((item) {
           return AudioSource.uri(
@@ -81,7 +86,7 @@ class AudioPlayerService {
           );
         }).toList(),
       );
-      
+
       await _audioPlayer.setAudioSource(playlist);
     } catch (e) {
       debugPrint('Playlist load error: $e');
@@ -192,7 +197,8 @@ class AudioPlayerService {
   bool get isPlaying => _audioPlayer.playing;
 
   /// İşleniyor mu?
-  bool get isProcessing => _audioPlayer.processingState == ProcessingState.loading ||
+  bool get isProcessing =>
+      _audioPlayer.processingState == ProcessingState.loading ||
       _audioPlayer.processingState == ProcessingState.buffering;
 
   /// Servisi temizle

@@ -78,7 +78,7 @@ class RssFeed {
   /// Feed'in en son ne zaman güncellendiğini gösterir
   String get lastUpdateText {
     if (lastFetchTime == null) return 'Hiç güncellenmedi';
-    
+
     final now = DateTime.now();
     final difference = now.difference(lastFetchTime!);
 

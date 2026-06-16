@@ -44,13 +44,15 @@ class _CategoryChipState extends State<CategoryChip>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-    _checkAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
-    );
+    _checkAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
     if (widget.isSelected) {
       _controller.value = 1.0;
@@ -131,15 +133,17 @@ class _CategoryChipState extends State<CategoryChip>
               color: widget.isSelected
                   ? chipColor.withValues(alpha: isDark ? 0.25 : 0.15)
                   : _isHovered
-                      ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8)
-                      : Colors.transparent,
+                  ? theme.colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.8,
+                    )
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: widget.isSelected
                     ? chipColor
                     : _isHovered
-                        ? theme.colorScheme.outline.withValues(alpha: 0.5)
-                        : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    ? theme.colorScheme.outline.withValues(alpha: 0.5)
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
                 width: widget.isSelected ? 2 : 1.5,
               ),
               boxShadow: widget.isSelected
@@ -172,7 +176,9 @@ class _CategoryChipState extends State<CategoryChip>
                   widget.label,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
+                    fontWeight: widget.isSelected
+                        ? FontWeight.w600
+                        : FontWeight.w500,
                     color: widget.isSelected
                         ? chipColor
                         : theme.colorScheme.onSurface.withValues(alpha: 0.8),
@@ -331,8 +337,8 @@ class _FilterChipState extends State<FilterChip> {
             color: widget.isSelected
                 ? selectedColor.withValues(alpha: 0.15)
                 : _isHovered
-                    ? theme.colorScheme.surfaceContainerHighest
-                    : theme.colorScheme.surface,
+                ? theme.colorScheme.surfaceContainerHighest
+                : theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: widget.isSelected
@@ -358,7 +364,9 @@ class _FilterChipState extends State<FilterChip> {
                 widget.label,
                 style: TextStyle(
                   fontSize: 13,
-                  fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
+                  fontWeight: widget.isSelected
+                      ? FontWeight.w600
+                      : FontWeight.w500,
                   color: widget.isSelected
                       ? selectedColor
                       : theme.colorScheme.onSurface.withValues(alpha: 0.8),
@@ -412,10 +420,7 @@ class TagChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: tagColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: tagColor.withValues(alpha: 0.3),
-            width: 1,
-          ),
+          border: Border.all(color: tagColor.withValues(alpha: 0.3), width: 1),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -432,11 +437,7 @@ class TagChip extends StatelessWidget {
               const SizedBox(width: 4),
               GestureDetector(
                 onTap: onRemove,
-                child: Icon(
-                  Icons.close_rounded,
-                  size: 14,
-                  color: tagColor,
-                ),
+                child: Icon(Icons.close_rounded, size: 14, color: tagColor),
               ),
             ],
           ],

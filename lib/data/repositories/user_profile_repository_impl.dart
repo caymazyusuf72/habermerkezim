@@ -6,34 +6,33 @@ import '../../domain/repositories/user_profile_repository.dart';
 import '../datasources/local/user_profile_local_data_source.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// UserProfileRepository interface'inin implementasyonu
 /// Analytics service'ten veri çekerek istatistikleri hesaplar
 class UserProfileRepositoryImpl implements UserProfileRepository {
   final UserProfileLocalDataSource localDataSource;
 
-  UserProfileRepositoryImpl({
-    required this.localDataSource,
-  });
+  UserProfileRepositoryImpl({required this.localDataSource});
 
   @override
   Future<UserProfile> getProfile() async {
     try {
       final profile = await localDataSource.getProfile();
-      
+
       if (profile == null) {
         // Profil yoksa varsayılan profil oluştur ve kaydet
         final defaultProfile = UserProfile.defaultProfile;
         await localDataSource.saveProfile(defaultProfile);
         return defaultProfile;
       }
-      
+
       // İstatistikleri güncelle
       final updatedStats = await calculateStats();
       final updatedProfile = profile.copyWith(stats: updatedStats);
-      
+
       // Güncellenmiş profili kaydet
       await localDataSource.updateProfile(updatedProfile);
-      
+
       return updatedProfile;
     } catch (e) {
       debugPrint('💥 Profil getirme hatası: $e');
@@ -87,30 +86,34 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   Future<UserStats> calculateStats() async {
     try {
       // Analytics'ten veri çek
-      final monthlySummary = AnalyticsService.createSummary(AnalyticsTimeRange.month);
-      final weeklySummary = AnalyticsService.createSummary(AnalyticsTimeRange.week);
-      
+      final monthlySummary = AnalyticsService.createSummary(
+        AnalyticsTimeRange.month,
+      );
+      final weeklySummary = AnalyticsService.createSummary(
+        AnalyticsTimeRange.week,
+      );
+
       // Hive'dan favori ve okuma listesi sayılarını al
       final favoritesCount = HiveService.favoritesBox.length;
       final readingListCount = HiveService.readingListBox.length;
-      
+
       // Okunan makale sayısı - monthly summary'den
       final totalArticlesRead = monthlySummary.totalArticlesRead;
-      
+
       // Streak günleri - weekly summary'den
       final streakDays = weeklySummary.streakDays;
-      
+
       // Kategori bazlı okuma sayıları
       final categoryReadCount = <String, int>{};
       final monthlyAnalytics = AnalyticsService.getLast30DaysAnalytics();
-      
+
       for (final analytics in monthlyAnalytics) {
         for (final entry in analytics.categoriesRead.entries) {
-          categoryReadCount[entry.key] = 
+          categoryReadCount[entry.key] =
               (categoryReadCount[entry.key] ?? 0) + entry.value;
         }
       }
-      
+
       // Son okuma tarihi
       DateTime? lastReadDate;
       if (monthlyAnalytics.isNotEmpty) {
@@ -120,7 +123,7 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
           lastReadDate = lastAnalytics.date;
         }
       }
-      
+
       return UserStats(
         totalArticlesRead: totalArticlesRead,
         totalFavorites: favoritesCount,
@@ -136,4 +139,3 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     }
   }
 }
-

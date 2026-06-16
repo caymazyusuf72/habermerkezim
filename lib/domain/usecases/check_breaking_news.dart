@@ -15,8 +15,8 @@ class CheckBreakingNews {
   CheckBreakingNews({
     BreakingNewsService? breakingNewsService,
     NotificationService? notificationService,
-  })  : _breakingNewsService = breakingNewsService ?? BreakingNewsService(),
-        _notificationService = notificationService ?? NotificationService();
+  }) : _breakingNewsService = breakingNewsService ?? BreakingNewsService(),
+       _notificationService = notificationService ?? NotificationService();
 
   /// Makaleler arasında breaking news kontrol et ve bildirim gönder
   Future<void> call(List<Article> articles) async {
@@ -29,7 +29,9 @@ class CheckBreakingNews {
       }).toList();
 
       // Breaking news'leri filtrele
-      final breakingNews = _breakingNewsService.filterBreakingNews(recentArticles);
+      final breakingNews = _breakingNewsService.filterBreakingNews(
+        recentArticles,
+      );
 
       if (breakingNews.isEmpty) return;
 
@@ -63,7 +65,8 @@ class CheckBreakingNews {
     try {
       final box = HiveService.notificationFrequencyBox;
       final lastNotificationTimes =
-          box.get('lastNotificationTimes', defaultValue: <int>[]) as List<dynamic>?;
+          box.get('lastNotificationTimes', defaultValue: <int>[])
+              as List<dynamic>?;
 
       if (lastNotificationTimes == null || lastNotificationTimes.isEmpty) {
         return true;
@@ -73,8 +76,9 @@ class CheckBreakingNews {
       final oneHourAgo = now - (60 * 60 * 1000);
 
       // Son 1 saat içindeki bildirimleri filtrele
-      final recentNotifications =
-          lastNotificationTimes.where((time) => (time as int) > oneHourAgo).toList();
+      final recentNotifications = lastNotificationTimes
+          .where((time) => (time as int) > oneHourAgo)
+          .toList();
 
       // Saatte max 3 bildirim
       return recentNotifications.length < 3;
@@ -89,7 +93,8 @@ class CheckBreakingNews {
     try {
       final box = HiveService.notificationFrequencyBox;
       final lastNotificationTimes =
-          box.get('lastNotificationTimes', defaultValue: <int>[]) as List<dynamic>?;
+          box.get('lastNotificationTimes', defaultValue: <int>[])
+              as List<dynamic>?;
 
       final now = DateTime.now().millisecondsSinceEpoch;
       final updatedTimes = List<int>.from(lastNotificationTimes ?? []);
@@ -97,7 +102,9 @@ class CheckBreakingNews {
 
       // Son 24 saat içindeki bildirimleri tut
       final oneDayAgo = now - (24 * 60 * 60 * 1000);
-      final filteredTimes = updatedTimes.where((time) => time > oneDayAgo).toList();
+      final filteredTimes = updatedTimes
+          .where((time) => time > oneDayAgo)
+          .toList();
 
       await box.put('lastNotificationTimes', filteredTimes);
     } catch (e) {

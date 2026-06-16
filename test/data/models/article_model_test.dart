@@ -268,7 +268,8 @@ void main() {
         // Arrange
         final rssItem = {
           'title': 'Img Test',
-          'description': '<p>Text <img src="https://example.com/photo.png" alt="foto"> more text</p>',
+          'description':
+              '<p>Text <img src="https://example.com/photo.png" alt="foto"> more text</p>',
           'link': 'https://example.com/img-test',
           'pubDate': '2026-01-15T10:30:00.000Z',
         };

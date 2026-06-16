@@ -3,6 +3,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Görsel önbellek ve optimizasyon servisi
 ///
 /// Özellikler:
@@ -18,13 +19,13 @@ class ImageCacheService {
   /// Cache boyut limitleri - cihaz belleğine göre ayarlanabilir
   static const int _defaultMaxCacheObjects = 200;
   static const int _lowMemoryMaxCacheObjects = 100;
-  
+
   /// Cache süresi
   static const Duration _stalePeriod = Duration(days: 7);
-  
+
   late final CacheManager _cacheManager;
   bool _isInitialized = false;
-  
+
   /// Cache istatistikleri
   int _cacheHits = 0;
   int _cacheMisses = 0;
@@ -32,9 +33,11 @@ class ImageCacheService {
   /// Servisi başlat
   Future<void> init({bool lowMemoryMode = false}) async {
     if (_isInitialized) return;
-    
-    final maxObjects = lowMemoryMode ? _lowMemoryMaxCacheObjects : _defaultMaxCacheObjects;
-    
+
+    final maxObjects = lowMemoryMode
+        ? _lowMemoryMaxCacheObjects
+        : _defaultMaxCacheObjects;
+
     _cacheManager = CacheManager(
       Config(
         'haber_merkezi_image_cache',
@@ -44,7 +47,7 @@ class ImageCacheService {
         fileService: HttpFileService(),
       ),
     );
-    
+
     _isInitialized = true;
     debugPrint('📷 Image Cache Service başlatıldı (maxObjects: $maxObjects)');
   }
@@ -52,28 +55,28 @@ class ImageCacheService {
   /// Görsel URL'ini optimize eder (CDN veya resize parametreleri ekler)
   static String? optimizeImageUrl(String? imageUrl, {int? width, int? height}) {
     if (imageUrl == null || imageUrl.isEmpty) return null;
-    
+
     try {
       // Cloudinary için
       if (imageUrl.contains('cloudinary.com')) {
         return _optimizeCloudinaryUrl(imageUrl, width: width, height: height);
       }
-      
+
       // Imgix için
       if (imageUrl.contains('imgix.net')) {
         return _optimizeImgixUrl(imageUrl, width: width, height: height);
       }
-      
+
       // WordPress için (wp-content/uploads)
       if (imageUrl.contains('wp-content/uploads')) {
         return _optimizeWordPressUrl(imageUrl, width: width, height: height);
       }
-      
+
       // Hürriyet, Sabah, NTV gibi Türk haber siteleri için
       if (_isTurkishNewsSource(imageUrl)) {
         return _optimizeTurkishNewsUrl(imageUrl, width: width, height: height);
       }
-      
+
       // Genel olarak URL'yi döndür (optimizasyon yoksa)
       return imageUrl;
     } catch (e) {
@@ -81,9 +84,13 @@ class ImageCacheService {
       return imageUrl;
     }
   }
-  
+
   /// Cloudinary URL optimizasyonu
-  static String _optimizeCloudinaryUrl(String imageUrl, {int? width, int? height}) {
+  static String _optimizeCloudinaryUrl(
+    String imageUrl, {
+    int? width,
+    int? height,
+  }) {
     final uri = Uri.parse(imageUrl);
     final params = Map<String, String>.from(uri.queryParameters);
     if (width != null) params['w'] = width.toString();
@@ -93,7 +100,7 @@ class ImageCacheService {
     params['c'] = 'fill'; // Crop mode
     return uri.replace(queryParameters: params).toString();
   }
-  
+
   /// Imgix URL optimizasyonu
   static String _optimizeImgixUrl(String imageUrl, {int? width, int? height}) {
     final uri = Uri.parse(imageUrl);
@@ -104,9 +111,13 @@ class ImageCacheService {
     params['fit'] = 'crop';
     return uri.replace(queryParameters: params).toString();
   }
-  
+
   /// WordPress URL optimizasyonu
-  static String _optimizeWordPressUrl(String imageUrl, {int? width, int? height}) {
+  static String _optimizeWordPressUrl(
+    String imageUrl, {
+    int? width,
+    int? height,
+  }) {
     // WordPress'in yerleşik resize özelliğini kullan
     if (width != null && height != null) {
       // -WxH formatında boyut ekle
@@ -119,7 +130,7 @@ class ImageCacheService {
     }
     return imageUrl;
   }
-  
+
   /// Türk haber sitesi kontrolü
   static bool _isTurkishNewsSource(String url) {
     final turkishDomains = [
@@ -134,26 +145,30 @@ class ImageCacheService {
     ];
     return turkishDomains.any((domain) => url.contains(domain));
   }
-  
+
   /// Türk haber sitesi URL optimizasyonu
-  static String _optimizeTurkishNewsUrl(String imageUrl, {int? width, int? height}) {
+  static String _optimizeTurkishNewsUrl(
+    String imageUrl, {
+    int? width,
+    int? height,
+  }) {
     // Çoğu Türk haber sitesi kendi CDN'lerini kullanıyor
     // Genellikle URL'de boyut parametresi desteklenmez
     // Ancak bazı siteler için özel optimizasyon yapılabilir
-    
+
     // Hürriyet için
     if (imageUrl.contains('hurriyet.com.tr') && width != null) {
       // Hürriyet'in resim URL formatı: /resim/w_WIDTHxh_HEIGHT/...
       // Bu format destekleniyorsa kullan
     }
-    
+
     return imageUrl;
   }
 
   /// Görseli önbelleğe al
   Future<File?> cacheImage(String imageUrl) async {
     if (!_isInitialized) await init();
-    
+
     try {
       final file = await _cacheManager.getSingleFile(imageUrl);
       _cacheHits++;
@@ -168,7 +183,7 @@ class ImageCacheService {
   /// Önbellekten görseli getir
   Future<File?> getCachedImage(String imageUrl) async {
     if (!_isInitialized) await init();
-    
+
     try {
       final fileInfo = await _cacheManager.getFileFromCache(imageUrl);
       if (fileInfo != null) {
@@ -182,11 +197,11 @@ class ImageCacheService {
       return null;
     }
   }
-  
+
   /// Görselin cache'de olup olmadığını kontrol et
   Future<bool> isImageCached(String imageUrl) async {
     if (!_isInitialized) await init();
-    
+
     try {
       final fileInfo = await _cacheManager.getFileFromCache(imageUrl);
       return fileInfo != null;
@@ -198,7 +213,7 @@ class ImageCacheService {
   /// Önbelleği temizle
   Future<void> clearCache() async {
     if (!_isInitialized) return;
-    
+
     try {
       await _cacheManager.emptyCache();
       _cacheHits = 0;
@@ -214,7 +229,7 @@ class ImageCacheService {
     try {
       final cacheDir = await getTemporaryDirectory();
       final imageCacheDir = Directory('${cacheDir.path}/libCachedImageData');
-      
+
       if (await imageCacheDir.exists()) {
         int totalSize = 0;
         await for (final entity in imageCacheDir.list(recursive: true)) {
@@ -229,7 +244,7 @@ class ImageCacheService {
       return 0;
     }
   }
-  
+
   /// Önbellek boyutunu formatlanmış string olarak al
   Future<String> getFormattedCacheSize() async {
     final bytes = await getCacheSize();
@@ -239,23 +254,27 @@ class ImageCacheService {
   }
 
   /// Eski önbellekleri temizle (belirli bir süreden eski)
-  Future<void> clearOldCache({Duration maxAge = const Duration(days: 7)}) async {
+  Future<void> clearOldCache({
+    Duration maxAge = const Duration(days: 7),
+  }) async {
     if (!_isInitialized) return;
-    
+
     try {
       // CacheManager'ın removeFile metodunu kullanarak eski dosyaları temizle
       // Not: flutter_cache_manager otomatik olarak stalePeriod'a göre temizler
-      debugPrint('✅ Eski önbellekler temizlendi (maxAge: ${maxAge.inDays} gün)');
+      debugPrint(
+        '✅ Eski önbellekler temizlendi (maxAge: ${maxAge.inDays} gün)',
+      );
     } catch (e) {
       debugPrint('💥 Eski önbellek temizleme hatası: $e');
     }
   }
-  
+
   /// Cache istatistiklerini al
   Map<String, dynamic> getCacheStats() {
     final total = _cacheHits + _cacheMisses;
     final hitRate = total > 0 ? (_cacheHits / total * 100) : 0.0;
-    
+
     return {
       'hits': _cacheHits,
       'misses': _cacheMisses,
@@ -263,11 +282,11 @@ class ImageCacheService {
       'hitRate': hitRate.toStringAsFixed(1),
     };
   }
-  
+
   /// Belirli bir URL'yi cache'den sil
   Future<void> removeFromCache(String imageUrl) async {
     if (!_isInitialized) return;
-    
+
     try {
       await _cacheManager.removeFile(imageUrl);
     } catch (e) {
@@ -275,4 +294,3 @@ class ImageCacheService {
     }
   }
 }
-

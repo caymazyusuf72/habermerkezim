@@ -18,4 +18,3 @@ abstract class InterestTagsRepository {
   /// Kullanıcının seçtiği hashtag'leri temizle
   Future<void> clearUserInterestTags();
 }
-

@@ -20,7 +20,7 @@ class EnhancedErrorHandler {
     void Function(Exception)? onRetry,
   }) async {
     final retryOptions = options ?? defaultRetryOptions;
-    
+
     return retryOptions.retry(
       operation,
       retryIf: retryIf ?? (e) => _shouldRetry(e),
@@ -105,15 +105,17 @@ class EnhancedErrorHandler {
       final cachedData = await getFromCache();
       if (cachedData != null) {
         debugPrint('✅ Data loaded from cache');
-        
+
         // Refresh in background
-        getFromNetwork().then((networkData) {
-          saveToCache(networkData);
-          debugPrint('🔄 Cache updated in background');
-        }).catchError((e) {
-          debugPrint('⚠️ Background refresh failed: $e');
-        });
-        
+        getFromNetwork()
+            .then((networkData) {
+              saveToCache(networkData);
+              debugPrint('🔄 Cache updated in background');
+            })
+            .catchError((e) {
+              debugPrint('⚠️ Background refresh failed: $e');
+            });
+
         return cachedData;
       }
     } catch (e) {
@@ -122,10 +124,8 @@ class EnhancedErrorHandler {
 
     // Fallback to network
     debugPrint('📡 Loading from network');
-    final networkData = await retryNetworkOperation(
-      operation: getFromNetwork,
-    );
-    
+    final networkData = await retryNetworkOperation(operation: getFromNetwork);
+
     // Save to cache
     try {
       await saveToCache(networkData);
@@ -133,7 +133,7 @@ class EnhancedErrorHandler {
     } catch (e) {
       debugPrint('⚠️ Cache save failed: $e');
     }
-    
+
     return networkData;
   }
 
@@ -142,19 +142,19 @@ class EnhancedErrorHandler {
     if (error is TimeoutException) {
       return 'İşlem zaman aşımına uğradı. Lütfen tekrar deneyin.';
     }
-    
+
     if (_isNetworkError(error)) {
       return 'İnternet bağlantısı yok. Lütfen bağlantınızı kontrol edin.';
     }
-    
+
     if (_isParseError(error)) {
       return 'Veri işlenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.';
     }
-    
+
     if (_isServerError(error)) {
       return 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.';
     }
-    
+
     return 'Bir hata oluştu. Lütfen tekrar deneyin.';
   }
 
@@ -171,7 +171,11 @@ class EnhancedErrorHandler {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.error_outline_rounded, color: Colors.red, size: 28),
+            const Icon(
+              Icons.error_outline_rounded,
+              color: Colors.red,
+              size: 28,
+            ),
             const SizedBox(width: 12),
             Text(title),
           ],
@@ -229,7 +233,7 @@ class EnhancedErrorHandler {
   }
 
   // Private helper methods
-  
+
   static bool _shouldRetry(Exception e) {
     return _isNetworkError(e) || _isTimeoutError(e);
   }
@@ -282,18 +286,14 @@ class ErrorRecoveryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 64,
-              color: theme.colorScheme.error,
-            ),
+            Icon(icon, size: 64, color: theme.colorScheme.error),
             const SizedBox(height: 24),
             Text(
               'Bir Hata Oluştu',

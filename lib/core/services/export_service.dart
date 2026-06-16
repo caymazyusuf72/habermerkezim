@@ -8,19 +8,10 @@ import 'package:intl/intl.dart';
 import '../../domain/entities/article.dart';
 
 /// Export formatları
-enum ExportFormat {
-  csv,
-  json,
-}
+enum ExportFormat { csv, json }
 
 /// Export türleri
-enum ExportType {
-  favorites,
-  readingHistory,
-  readingList,
-  statistics,
-  all,
-}
+enum ExportType { favorites, readingHistory, readingList, statistics, all }
 
 /// Export sonucu
 class ExportResult {
@@ -45,10 +36,7 @@ class ExportResult {
   }
 
   factory ExportResult.failure(String error) {
-    return ExportResult(
-      success: false,
-      error: error,
-    );
+    return ExportResult(success: false, error: error);
   }
 }
 
@@ -66,10 +54,10 @@ class ExportService {
     try {
       final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
       final fileName = 'haber_merkezi_favoriler_$timestamp';
-      
+
       String content;
       String extension;
-      
+
       if (format == ExportFormat.csv) {
         content = _articlesToCsv(favorites);
         extension = 'csv';
@@ -77,12 +65,14 @@ class ExportService {
         content = _articlesToJson(favorites, 'favorites');
         extension = 'json';
       }
-      
+
       final filePath = await _saveToFile(fileName, extension, content);
       return ExportResult.success(filePath, favorites.length);
     } catch (e) {
       debugPrint('Export error: $e');
-      return ExportResult.failure('Favoriler dışa aktarılırken hata oluştu: $e');
+      return ExportResult.failure(
+        'Favoriler dışa aktarılırken hata oluştu: $e',
+      );
     }
   }
 
@@ -94,10 +84,10 @@ class ExportService {
     try {
       final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
       final fileName = 'haber_merkezi_okuma_gecmisi_$timestamp';
-      
+
       String content;
       String extension;
-      
+
       if (format == ExportFormat.csv) {
         content = _articlesToCsv(history);
         extension = 'csv';
@@ -105,12 +95,14 @@ class ExportService {
         content = _articlesToJson(history, 'reading_history');
         extension = 'json';
       }
-      
+
       final filePath = await _saveToFile(fileName, extension, content);
       return ExportResult.success(filePath, history.length);
     } catch (e) {
       debugPrint('Export error: $e');
-      return ExportResult.failure('Okuma geçmişi dışa aktarılırken hata oluştu: $e');
+      return ExportResult.failure(
+        'Okuma geçmişi dışa aktarılırken hata oluştu: $e',
+      );
     }
   }
 
@@ -122,10 +114,10 @@ class ExportService {
     try {
       final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
       final fileName = 'haber_merkezi_okuma_listesi_$timestamp';
-      
+
       String content;
       String extension;
-      
+
       if (format == ExportFormat.csv) {
         content = _articlesToCsv(readingList);
         extension = 'csv';
@@ -133,12 +125,14 @@ class ExportService {
         content = _articlesToJson(readingList, 'reading_list');
         extension = 'json';
       }
-      
+
       final filePath = await _saveToFile(fileName, extension, content);
       return ExportResult.success(filePath, readingList.length);
     } catch (e) {
       debugPrint('Export error: $e');
-      return ExportResult.failure('Okuma listesi dışa aktarılırken hata oluştu: $e');
+      return ExportResult.failure(
+        'Okuma listesi dışa aktarılırken hata oluştu: $e',
+      );
     }
   }
 
@@ -150,10 +144,10 @@ class ExportService {
     try {
       final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
       final fileName = 'haber_merkezi_istatistikler_$timestamp';
-      
+
       String content;
       String extension;
-      
+
       if (format == ExportFormat.csv) {
         content = _statisticsToCsv(statistics);
         extension = 'csv';
@@ -161,12 +155,14 @@ class ExportService {
         content = _statisticsToJson(statistics);
         extension = 'json';
       }
-      
+
       final filePath = await _saveToFile(fileName, extension, content);
       return ExportResult.success(filePath, statistics.length);
     } catch (e) {
       debugPrint('Export error: $e');
-      return ExportResult.failure('İstatistikler dışa aktarılırken hata oluştu: $e');
+      return ExportResult.failure(
+        'İstatistikler dışa aktarılırken hata oluştu: $e',
+      );
     }
   }
 
@@ -180,7 +176,7 @@ class ExportService {
     try {
       final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
       final fileName = 'haber_merkezi_tum_veriler_$timestamp';
-      
+
       final allData = {
         'export_date': DateTime.now().toIso8601String(),
         'app_version': '1.0.0',
@@ -189,11 +185,12 @@ class ExportService {
         'reading_list': readingList.map((a) => _articleToMap(a)).toList(),
         'statistics': statistics,
       };
-      
+
       final content = const JsonEncoder.withIndent('  ').convert(allData);
       final filePath = await _saveToFile(fileName, 'json', content);
-      
-      final totalItems = favorites.length + readingHistory.length + readingList.length;
+
+      final totalItems =
+          favorites.length + readingHistory.length + readingList.length;
       return ExportResult.success(filePath, totalItems);
     } catch (e) {
       debugPrint('Export error: $e');
@@ -204,10 +201,9 @@ class ExportService {
   /// Dosyayı paylaş
   Future<void> shareExportedFile(String filePath) async {
     try {
-      await Share.shareXFiles(
-        [XFile(filePath)],
-        subject: 'Haber Merkezi Verileri',
-      );
+      await Share.shareXFiles([
+        XFile(filePath),
+      ], subject: 'Haber Merkezi Verileri');
     } catch (e) {
       debugPrint('Share error: $e');
       rethrow;
@@ -217,10 +213,12 @@ class ExportService {
   /// Makaleleri CSV formatına dönüştür
   String _articlesToCsv(List<Article> articles) {
     final buffer = StringBuffer();
-    
+
     // Header
-    buffer.writeln('ID,Başlık,Açıklama,Kaynak,Kategori,Yayın Tarihi,Link,Okundu,Favori');
-    
+    buffer.writeln(
+      'ID,Başlık,Açıklama,Kaynak,Kategori,Yayın Tarihi,Link,Okundu,Favori',
+    );
+
     // Data rows
     for (final article in articles) {
       final row = [
@@ -236,7 +234,7 @@ class ExportService {
       ].join(',');
       buffer.writeln(row);
     }
-    
+
     return buffer.toString();
   }
 
@@ -248,28 +246,30 @@ class ExportService {
       'count': articles.length,
       'articles': articles.map((a) => _articleToMap(a)).toList(),
     };
-    
+
     return const JsonEncoder.withIndent('  ').convert(data);
   }
 
   /// İstatistikleri CSV formatına dönüştür
   String _statisticsToCsv(Map<String, dynamic> statistics) {
     final buffer = StringBuffer();
-    
+
     buffer.writeln('Metrik,Değer');
-    
+
     void addRow(String key, dynamic value) {
       if (value is Map) {
         for (final entry in value.entries) {
-          buffer.writeln('${_escapeCsv('$key - ${entry.key}')},${_escapeCsv(entry.value.toString())}');
+          buffer.writeln(
+            '${_escapeCsv('$key - ${entry.key}')},${_escapeCsv(entry.value.toString())}',
+          );
         }
       } else {
         buffer.writeln('${_escapeCsv(key)},${_escapeCsv(value.toString())}');
       }
     }
-    
+
     statistics.forEach(addRow);
-    
+
     return buffer.toString();
   }
 
@@ -280,7 +280,7 @@ class ExportService {
       'type': 'statistics',
       'data': statistics,
     };
-    
+
     return const JsonEncoder.withIndent('  ').convert(data);
   }
 
@@ -310,17 +310,21 @@ class ExportService {
   }
 
   /// Dosyaya kaydet
-  Future<String> _saveToFile(String fileName, String extension, String content) async {
+  Future<String> _saveToFile(
+    String fileName,
+    String extension,
+    String content,
+  ) async {
     final directory = await getApplicationDocumentsDirectory();
     final exportDir = Directory('${directory.path}/exports');
-    
+
     if (!await exportDir.exists()) {
       await exportDir.create(recursive: true);
     }
-    
+
     final file = File('${exportDir.path}/$fileName.$extension');
     await file.writeAsString(content, encoding: utf8);
-    
+
     return file.path;
   }
 
@@ -329,13 +333,14 @@ class ExportService {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final exportDir = Directory('${directory.path}/exports');
-      
+
       if (!await exportDir.exists()) {
         return [];
       }
-      
-      return exportDir.listSync()
-        ..sort((a, b) => b.statSync().modified.compareTo(a.statSync().modified));
+
+      return exportDir.listSync()..sort(
+        (a, b) => b.statSync().modified.compareTo(a.statSync().modified),
+      );
     } catch (e) {
       debugPrint('List exports error: $e');
       return [];
@@ -362,7 +367,7 @@ class ExportService {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final exportDir = Directory('${directory.path}/exports');
-      
+
       if (await exportDir.exists()) {
         await exportDir.delete(recursive: true);
       }

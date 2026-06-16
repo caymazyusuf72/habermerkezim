@@ -29,10 +29,7 @@ class LocaleState {
   final Locale locale;
   final AppLanguage language;
 
-  const LocaleState({
-    required this.locale,
-    required this.language,
-  });
+  const LocaleState({required this.locale, required this.language});
 
   factory LocaleState.initial() {
     return const LocaleState(
@@ -41,10 +38,7 @@ class LocaleState {
     );
   }
 
-  LocaleState copyWith({
-    Locale? locale,
-    AppLanguage? language,
-  }) {
+  LocaleState copyWith({Locale? locale, AppLanguage? language}) {
     return LocaleState(
       locale: locale ?? this.locale,
       language: language ?? this.language,
@@ -65,13 +59,10 @@ class LocaleNotifier extends StateNotifier<LocaleState> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedCode = prefs.getString(_localeKey);
-      
+
       if (savedCode != null) {
         final language = AppLanguage.fromCode(savedCode);
-        state = LocaleState(
-          locale: language.locale,
-          language: language,
-        );
+        state = LocaleState(locale: language.locale, language: language);
       }
     } catch (e) {
       debugPrint('Error loading locale: $e');
@@ -83,11 +74,8 @@ class LocaleNotifier extends StateNotifier<LocaleState> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_localeKey, language.code);
-      
-      state = LocaleState(
-        locale: language.locale,
-        language: language,
-      );
+
+      state = LocaleState(locale: language.locale, language: language);
     } catch (e) {
       debugPrint('Error saving locale: $e');
     }
@@ -108,7 +96,9 @@ class LocaleNotifier extends StateNotifier<LocaleState> {
 }
 
 /// Locale provider
-final localeProvider = StateNotifierProvider<LocaleNotifier, LocaleState>((ref) {
+final localeProvider = StateNotifierProvider<LocaleNotifier, LocaleState>((
+  ref,
+) {
   return LocaleNotifier();
 });
 

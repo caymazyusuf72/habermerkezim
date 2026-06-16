@@ -123,10 +123,7 @@ class _EnhancedOnboardingPageState
               child: Column(
                 children: [
                   // Dot indicator
-                  _DotIndicator(
-                    currentPage: state.currentPage,
-                    totalPages: 4,
-                  ),
+                  _DotIndicator(currentPage: state.currentPage, totalPages: 4),
                   const SizedBox(height: 24),
 
                   // Butonlar
@@ -194,10 +191,7 @@ class _DotIndicator extends StatelessWidget {
   final int currentPage;
   final int totalPages;
 
-  const _DotIndicator({
-    required this.currentPage,
-    required this.totalPages,
-  });
+  const _DotIndicator({required this.currentPage, required this.totalPages});
 
   @override
   Widget build(BuildContext context) {
@@ -278,20 +272,14 @@ class _WelcomePage extends StatelessWidget {
           const SizedBox(height: 32),
 
           // Özellik listesi
-          _FeatureItem(
-            icon: Icons.bolt,
-            text: 'Anlık haber bildirimleri',
-          ),
+          _FeatureItem(icon: Icons.bolt, text: 'Anlık haber bildirimleri'),
           const SizedBox(height: 12),
           _FeatureItem(
             icon: Icons.bookmark_border,
             text: 'Haberleri kaydet ve sonra oku',
           ),
           const SizedBox(height: 12),
-          _FeatureItem(
-            icon: Icons.dark_mode,
-            text: 'Karanlık mod desteği',
-          ),
+          _FeatureItem(icon: Icons.dark_mode, text: 'Karanlık mod desteği'),
         ],
       ),
     );
@@ -360,7 +348,9 @@ class _CategoriesPage extends ConsumerWidget {
               itemCount: _categories.length,
               itemBuilder: (context, index) {
                 final category = _categories[index];
-                final isSelected = state.selectedCategories.contains(category.id);
+                final isSelected = state.selectedCategories.contains(
+                  category.id,
+                );
 
                 return GestureDetector(
                   onTap: () => ref
@@ -372,7 +362,7 @@ class _CategoriesPage extends ConsumerWidget {
                       color: isSelected
                           ? theme.colorScheme.primary.withValues(alpha: 0.15)
                           : theme.colorScheme.surfaceContainerHighest
-                              .withValues(alpha: 0.5),
+                                .withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isSelected
@@ -389,14 +379,17 @@ class _CategoriesPage extends ConsumerWidget {
                           size: 32,
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              : theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.6,
+                                ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           category.name,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            fontWeight:
-                                isSelected ? FontWeight.bold : FontWeight.w500,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.w500,
                             color: isSelected
                                 ? theme.colorScheme.primary
                                 : theme.colorScheme.onSurface,
@@ -590,8 +583,9 @@ class _ReadyPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest
-                  .withValues(alpha: 0.5),
+              color: theme.colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.5,
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -702,10 +696,7 @@ class _NotificationOption extends StatelessWidget {
               ],
             ),
           ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-          ),
+          Switch(value: value, onChanged: onChanged),
         ],
       ),
     );

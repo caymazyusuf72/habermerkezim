@@ -12,7 +12,8 @@ class ArticleFilterDialog extends ConsumerStatefulWidget {
   const ArticleFilterDialog({super.key});
 
   @override
-  ConsumerState<ArticleFilterDialog> createState() => _ArticleFilterDialogState();
+  ConsumerState<ArticleFilterDialog> createState() =>
+      _ArticleFilterDialogState();
 }
 
 class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
@@ -51,7 +52,7 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
     final theme = Theme.of(context);
     final filter = ref.watch(articleFilterProvider);
     final newsState = ref.watch(newsProvider);
-    
+
     // Initialize state from filter if not already initialized (fallback)
     if (!_initialized) {
       _startDate = filter.startDate;
@@ -63,18 +64,14 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
       _searchController.text = filter.searchQuery ?? '';
       _initialized = true;
     }
-    
+
     // Tüm kaynakları topla
-    final allSources = newsState.articles
-        .map((article) => article.sourceName)
-        .toSet()
-        .toList()
-      ..sort();
+    final allSources =
+        newsState.articles.map((article) => article.sourceName).toSet().toList()
+          ..sort();
 
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         constraints: const BoxConstraints(maxHeight: 600),
         child: Column(
@@ -85,10 +82,7 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
               padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.filter_list_rounded,
-                    color: AppTheme.primaryBlue,
-                  ),
+                  Icon(Icons.filter_list_rounded, color: AppTheme.primaryBlue),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -110,9 +104,9 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
                 ],
               ),
             ),
-            
+
             const Divider(height: 1),
-            
+
             // İçerik
             Flexible(
               child: SingleChildScrollView(
@@ -123,32 +117,32 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
                     // Kelime Arama
                     _buildSearchFilter(theme),
                     const SizedBox(height: 24),
-                    
+
                     // Tarih Aralığı
                     _buildDateRangeSection(theme),
                     const SizedBox(height: 24),
-                    
+
                     // Hızlı Tarih Filtreleri
                     _buildQuickDateFilters(theme),
                     const SizedBox(height: 24),
-                    
+
                     // Kaynak Filtresi
                     _buildSourceFilter(theme, allSources),
                     const SizedBox(height: 24),
-                    
+
                     // Kategori Filtresi
                     _buildCategoryFilter(theme),
                     const SizedBox(height: 24),
-                    
+
                     // Okunmuş/Okunmamış Filtresi
                     _buildReadStatusFilter(theme),
                   ],
                 ),
               ),
             ),
-            
+
             const Divider(height: 1),
-            
+
             // Alt butonlar
             Padding(
               padding: const EdgeInsets.all(16),
@@ -168,18 +162,21 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
                     flex: 2,
                     child: ElevatedButton(
                       onPressed: () {
-                        ref.read(articleFilterProvider.notifier).updateFilter(
-                          ArticleFilter(
-                            startDate: _startDate,
-                            endDate: _endDate,
-                            selectedSources: _selectedSources,
-                            selectedCategories: _selectedCategories,
-                            isRead: _isRead,
-                            searchQuery: _searchController.text.trim().isEmpty
-                                ? null
-                                : _searchController.text.trim(),
-                          ),
-                        );
+                        ref
+                            .read(articleFilterProvider.notifier)
+                            .updateFilter(
+                              ArticleFilter(
+                                startDate: _startDate,
+                                endDate: _endDate,
+                                selectedSources: _selectedSources,
+                                selectedCategories: _selectedCategories,
+                                isRead: _isRead,
+                                searchQuery:
+                                    _searchController.text.trim().isEmpty
+                                    ? null
+                                    : _searchController.text.trim(),
+                              ),
+                            );
                         Navigator.of(context).pop();
                       },
                       style: ElevatedButton.styleFrom(
@@ -223,9 +220,7 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
                     },
                   )
                 : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           onChanged: (value) {
             setState(() {});
@@ -316,47 +311,45 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
           spacing: 8,
           runSpacing: 8,
           children: [
-            _buildQuickFilterChip(
-              theme,
-              'Bugün',
-              () {
-                setState(() {
-                  final now = DateTime.now();
-                  _startDate = DateTime(now.year, now.month, now.day);
-                  _endDate = now;
-                });
-              },
-            ),
-            _buildQuickFilterChip(
-              theme,
-              'Bu Hafta',
-              () {
-                setState(() {
-                  final now = DateTime.now();
-                  final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-                  _startDate = DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day);
-                  _endDate = now;
-                });
-              },
-            ),
-            _buildQuickFilterChip(
-              theme,
-              'Bu Ay',
-              () {
-                setState(() {
-                  final now = DateTime.now();
-                  _startDate = DateTime(now.year, now.month, 1);
-                  _endDate = now;
-                });
-              },
-            ),
+            _buildQuickFilterChip(theme, 'Bugün', () {
+              setState(() {
+                final now = DateTime.now();
+                _startDate = DateTime(now.year, now.month, now.day);
+                _endDate = now;
+              });
+            }),
+            _buildQuickFilterChip(theme, 'Bu Hafta', () {
+              setState(() {
+                final now = DateTime.now();
+                final startOfWeek = now.subtract(
+                  Duration(days: now.weekday - 1),
+                );
+                _startDate = DateTime(
+                  startOfWeek.year,
+                  startOfWeek.month,
+                  startOfWeek.day,
+                );
+                _endDate = now;
+              });
+            }),
+            _buildQuickFilterChip(theme, 'Bu Ay', () {
+              setState(() {
+                final now = DateTime.now();
+                _startDate = DateTime(now.year, now.month, 1);
+                _endDate = now;
+              });
+            }),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildQuickFilterChip(ThemeData theme, String label, VoidCallback onTap) {
+  Widget _buildQuickFilterChip(
+    ThemeData theme,
+    String label,
+    VoidCallback onTap,
+  ) {
     return ActionChip(
       label: Text(label),
       onPressed: onTap,
@@ -410,7 +403,7 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
 
   Widget _buildCategoryFilter(ThemeData theme) {
     final categories = Category.defaultCategories;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -463,18 +456,9 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
         const SizedBox(height: 12),
         SegmentedButton<bool?>(
           segments: const [
-            ButtonSegment<bool?>(
-              value: null,
-              label: Text('Hepsi'),
-            ),
-            ButtonSegment<bool?>(
-              value: false,
-              label: Text('Okunmamış'),
-            ),
-            ButtonSegment<bool?>(
-              value: true,
-              label: Text('Okunmuş'),
-            ),
+            ButtonSegment<bool?>(value: null, label: Text('Hepsi')),
+            ButtonSegment<bool?>(value: false, label: Text('Okunmamış')),
+            ButtonSegment<bool?>(value: true, label: Text('Okunmuş')),
           ],
           selected: {_isRead},
           onSelectionChanged: (Set<bool?> selected) {
@@ -487,4 +471,3 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
     );
   }
 }
-

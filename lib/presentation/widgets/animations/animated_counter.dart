@@ -35,18 +35,12 @@ class _AnimatedCounterState extends State<AnimatedCounter>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _animation = Tween<double>(
       begin: 0,
       end: widget.value.toDouble(),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
 
     _controller.forward();
   }
@@ -59,10 +53,7 @@ class _AnimatedCounterState extends State<AnimatedCounter>
       _animation = Tween<double>(
         begin: _previousValue.toDouble(),
         end: widget.value.toDouble(),
-      ).animate(CurvedAnimation(
-        parent: _controller,
-        curve: widget.curve,
-      ));
+      ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
       _controller.forward(from: 0);
     }
   }
@@ -127,18 +118,9 @@ class _AnimatedCounterWithScaleState extends State<AnimatedCounterWithScale>
     );
 
     _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.3),
-        weight: 50,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.3, end: 1.0),
-        weight: 50,
-      ),
-    ]).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+      TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.3), weight: 50),
+      TweenSequenceItem(tween: Tween<double>(begin: 1.3, end: 1.0), weight: 50),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -198,18 +180,12 @@ class AnimatedBadgeCounter extends StatelessWidget {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       transitionBuilder: (child, animation) {
-        return ScaleTransition(
-          scale: animation,
-          child: child,
-        );
+        return ScaleTransition(scale: animation, child: child);
       },
       child: count > 0
           ? Container(
               key: ValueKey(count),
-              constraints: BoxConstraints(
-                minWidth: size,
-                minHeight: size,
-              ),
+              constraints: BoxConstraints(minWidth: size, minHeight: size),
               padding: const EdgeInsets.symmetric(horizontal: 4),
               decoration: BoxDecoration(
                 color: bgColor,

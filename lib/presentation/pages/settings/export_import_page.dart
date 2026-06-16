@@ -55,7 +55,9 @@ class _ExportImportPageState extends ConsumerState<ExportImportPage> {
 
         case ExportType.readingHistory:
           // TODO: Implement after creating reading_history_provider
-          throw UnimplementedError('Reading history export not yet implemented');
+          throw UnimplementedError(
+            'Reading history export not yet implemented',
+          );
 
         case ExportType.readingList:
           final readingListState = ref.read(readingListProvider);
@@ -134,10 +136,7 @@ class _ExportImportPageState extends ConsumerState<ExportImportPage> {
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
@@ -216,9 +215,9 @@ class _ExportImportPageState extends ConsumerState<ExportImportPage> {
       if (success) {
         _loadExportedFiles();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Dosya silindi')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Dosya silindi')));
         }
       }
     }
@@ -251,9 +250,9 @@ class _ExportImportPageState extends ConsumerState<ExportImportPage> {
       if (success) {
         _loadExportedFiles();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Tüm dosyalar silindi')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Tüm dosyalar silindi')));
         }
       }
     }
@@ -440,7 +439,9 @@ class _ExportImportPageState extends ConsumerState<ExportImportPage> {
                       subtitle,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: highlighted
-                            ? colorScheme.onPrimaryContainer.withValues(alpha: 0.7)
+                            ? colorScheme.onPrimaryContainer.withValues(
+                                alpha: 0.7,
+                              )
                             : colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -475,7 +476,9 @@ class _ExportImportPageState extends ConsumerState<ExportImportPage> {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: (isJson ? Colors.orange : Colors.green).withValues(alpha: 0.1),
+            color: (isJson ? Colors.orange : Colors.green).withValues(
+              alpha: 0.1,
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(

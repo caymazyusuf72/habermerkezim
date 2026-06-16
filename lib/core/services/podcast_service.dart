@@ -4,6 +4,7 @@ import 'package:haber_merkezi/domain/entities/article.dart';
 import 'package:haber_merkezi/core/services/audio_player_service.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Podcast RSS feed'lerini yönetmek için servis
 class PodcastService {
   static final PodcastService _instance = PodcastService._internal();
@@ -18,10 +19,10 @@ class PodcastService {
     try {
       final response = await _dio.get(feedUrl);
       final document = XmlDocument.parse(response.data);
-      
+
       final episodes = <PodcastEpisode>[];
       final items = document.findAllElements('item');
-      
+
       for (var item in items) {
         try {
           final episode = _parseEpisode(item);
@@ -32,7 +33,7 @@ class PodcastService {
           debugPrint('Episode parse error: $e');
         }
       }
-      
+
       return episodes;
     } catch (e) {
       debugPrint('Podcast feed fetch error: $e');
@@ -44,20 +45,27 @@ class PodcastService {
   PodcastEpisode? _parseEpisode(XmlElement item) {
     try {
       final title = item.findElements('title').firstOrNull?.innerText ?? '';
-      final description = item.findElements('description').firstOrNull?.innerText ?? '';
+      final description =
+          item.findElements('description').firstOrNull?.innerText ?? '';
       final pubDate = item.findElements('pubDate').firstOrNull?.innerText ?? '';
-      
+
       // Audio URL'sini bul (enclosure tag)
       final enclosure = item.findElements('enclosure').firstOrNull;
       final audioUrl = enclosure?.getAttribute('url') ?? '';
       final duration = enclosure?.getAttribute('length') ?? '';
-      
+
       // iTunes namespace için
-      final itunesImage = item.findElements('itunes:image').firstOrNull?.getAttribute('href');
-      final itunesDuration = item.findElements('itunes:duration').firstOrNull?.innerText;
-      
+      final itunesImage = item
+          .findElements('itunes:image')
+          .firstOrNull
+          ?.getAttribute('href');
+      final itunesDuration = item
+          .findElements('itunes:duration')
+          .firstOrNull
+          ?.innerText;
+
       if (audioUrl.isEmpty) return null;
-      
+
       return PodcastEpisode(
         title: title,
         description: description,
@@ -89,12 +97,16 @@ class PodcastService {
   /// Podcast playlist'i oluştur
   Future<void> playPlaylist(List<PodcastEpisode> episodes) async {
     try {
-      final items = episodes.map((ep) => {
-        'url': ep.audioUrl,
-        'title': ep.title,
-        'artist': 'Haber Merkezi',
-      }).toList();
-      
+      final items = episodes
+          .map(
+            (ep) => {
+              'url': ep.audioUrl,
+              'title': ep.title,
+              'artist': 'Haber Merkezi',
+            },
+          )
+          .toList();
+
       await _audioPlayer.loadPlaylist(items);
       await _audioPlayer.play();
     } catch (e) {
@@ -147,7 +159,7 @@ class PodcastEpisode {
   /// Duration'u insan okunabilir formata çevir
   String get formattedDuration {
     if (duration == null) return '';
-    
+
     try {
       // Eğer saniye cinsinden ise
       final seconds = int.tryParse(duration!);
@@ -156,7 +168,7 @@ class PodcastEpisode {
         final remainingSeconds = seconds % 60;
         return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
       }
-      
+
       // Zaten formatlanmış ise (HH:MM:SS)
       return duration!;
     } catch (e) {

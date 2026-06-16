@@ -32,7 +32,7 @@ class ReadingListState {
   bool get hasArticles => readingListArticles.isNotEmpty;
   bool get hasError => error != null;
   int get readingListCount => readingListArticles.length;
-  
+
   // Export/Import için ek getter
   List<Article> get articles => readingListArticles;
 
@@ -65,11 +65,8 @@ class ReadingListNotifier extends StateNotifier<ReadingListState> {
 
     try {
       final articles = await _repository.getReadingListArticles();
-      
-      state = state.copyWith(
-        readingListArticles: articles,
-        isLoading: false,
-      );
+
+      state = state.copyWith(readingListArticles: articles, isLoading: false);
     } catch (e) {
       state = state.copyWith(
         error: 'Okuma listesi yüklenirken hata oluştu: ${e.toString()}',
@@ -87,15 +84,12 @@ class ReadingListNotifier extends StateNotifier<ReadingListState> {
 
     try {
       await _repository.addToReadingList(article.id);
-      
+
       // State'i güncelle
       final updatedList = List<Article>.from(state.readingListArticles);
       updatedList.insert(0, article); // En başa ekle
-      
-      state = state.copyWith(
-        readingListArticles: updatedList,
-        error: null,
-      );
+
+      state = state.copyWith(readingListArticles: updatedList, error: null);
     } catch (e) {
       state = state.copyWith(
         error: 'Okuma listesine eklenirken hata oluştu: ${e.toString()}',
@@ -107,16 +101,13 @@ class ReadingListNotifier extends StateNotifier<ReadingListState> {
   Future<void> removeFromReadingList(String articleId) async {
     try {
       await _repository.removeFromReadingList(articleId);
-      
+
       // State'i güncelle
       final updatedList = state.readingListArticles
           .where((article) => article.id != articleId)
           .toList();
-      
-      state = state.copyWith(
-        readingListArticles: updatedList,
-        error: null,
-      );
+
+      state = state.copyWith(readingListArticles: updatedList, error: null);
     } catch (e) {
       state = state.copyWith(
         error: 'Okuma listesinden çıkarılırken hata oluştu: ${e.toString()}',
@@ -137,11 +128,8 @@ class ReadingListNotifier extends StateNotifier<ReadingListState> {
   Future<void> clearReadingList() async {
     try {
       await _repository.clearReadingList();
-      
-      state = state.copyWith(
-        readingListArticles: [],
-        error: null,
-      );
+
+      state = state.copyWith(readingListArticles: [], error: null);
     } catch (e) {
       state = state.copyWith(
         error: 'Okuma listesi temizlenirken hata oluştu: ${e.toString()}',
@@ -164,7 +152,7 @@ class ReadingListNotifier extends StateNotifier<ReadingListState> {
   void sortByDate() {
     final sortedList = List<Article>.from(state.readingListArticles);
     sortedList.sort((a, b) => b.publishedDate.compareTo(a.publishedDate));
-    
+
     state = state.copyWith(readingListArticles: sortedList);
   }
 
@@ -172,7 +160,7 @@ class ReadingListNotifier extends StateNotifier<ReadingListState> {
   void sortByTitle() {
     final sortedList = List<Article>.from(state.readingListArticles);
     sortedList.sort((a, b) => a.title.compareTo(b.title));
-    
+
     state = state.copyWith(readingListArticles: sortedList);
   }
 
@@ -180,15 +168,16 @@ class ReadingListNotifier extends StateNotifier<ReadingListState> {
   void sortBySource() {
     final sortedList = List<Article>.from(state.readingListArticles);
     sortedList.sort((a, b) => a.sourceName.compareTo(b.sourceName));
-    
+
     state = state.copyWith(readingListArticles: sortedList);
   }
 }
 
 /// Reading list provider'ı
-final readingListProvider = StateNotifierProvider<ReadingListNotifier, ReadingListState>((ref) {
-  return ReadingListNotifier(ref);
-});
+final readingListProvider =
+    StateNotifierProvider<ReadingListNotifier, ReadingListState>((ref) {
+      return ReadingListNotifier(ref);
+    });
 
 /// Tek bir makalenin okuma listesinde olup olmadığını kontrol eden provider
 final isInReadingListProvider = Provider.family<bool, String>((ref, articleId) {
@@ -201,4 +190,3 @@ final readingListCountProvider = Provider<int>((ref) {
   final readingListState = ref.watch(readingListProvider);
   return readingListState.readingListCount;
 });
-

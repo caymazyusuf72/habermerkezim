@@ -12,7 +12,8 @@ import 'package:haber_merkezi/core/services/logger_service.dart';
 class PerformanceMonitorService {
   PerformanceMonitorService._();
 
-  static final PerformanceMonitorService _instance = PerformanceMonitorService._();
+  static final PerformanceMonitorService _instance =
+      PerformanceMonitorService._();
   factory PerformanceMonitorService() => _instance;
 
   final LoggerService _logger = LoggerService();
@@ -20,7 +21,9 @@ class PerformanceMonitorService {
   // --- Frame Rate Monitoring ---
   final List<Duration> _frameDurations = [];
   static const int _maxFrameSamples = 120;
-  static const Duration _jankThreshold = Duration(milliseconds: 16); // 60fps = ~16ms/frame
+  static const Duration _jankThreshold = Duration(
+    milliseconds: 16,
+  ); // 60fps = ~16ms/frame
   Timer? _frameReportTimer;
   int _jankFrameCount = 0;
   int _totalFrameCount = 0;
@@ -94,14 +97,16 @@ class PerformanceMonitorService {
   void _reportFrameStats() {
     if (_frameDurations.isEmpty) return;
 
-    final avgDuration = _frameDurations.fold<int>(
-          0,
-          (sum, d) => sum + d.inMilliseconds,
-        ) ~/
+    final avgDuration =
+        _frameDurations.fold<int>(0, (sum, d) => sum + d.inMilliseconds) ~/
         _frameDurations.length;
 
-    final fps = avgDuration > 0 ? (1000 / avgDuration).clamp(0, 120).toInt() : 60;
-    final jankRatio = _totalFrameCount > 0 ? _jankFrameCount / _totalFrameCount : 0.0;
+    final fps = avgDuration > 0
+        ? (1000 / avgDuration).clamp(0, 120).toInt()
+        : 60;
+    final jankRatio = _totalFrameCount > 0
+        ? _jankFrameCount / _totalFrameCount
+        : 0.0;
 
     if (jankRatio > jankRatioWarning) {
       _logger.warning(
@@ -254,7 +259,8 @@ class PerformanceMonitorService {
 
   Map<String, dynamic> _getFrameStats() {
     if (_frameDurations.isEmpty) return {'status': 'no data'};
-    final avgMs = _frameDurations.fold<int>(0, (s, d) => s + d.inMilliseconds) ~/
+    final avgMs =
+        _frameDurations.fold<int>(0, (s, d) => s + d.inMilliseconds) ~/
         _frameDurations.length;
     return {
       'avgFrameMs': avgMs,

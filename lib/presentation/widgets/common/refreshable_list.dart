@@ -240,10 +240,9 @@ class _RefreshableListState<T> extends State<RefreshableList<T>> {
           child: Text(
             'Tüm haberler yüklendi',
             style: TextStyle(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
               fontSize: 12,
             ),
           ),
@@ -261,9 +260,7 @@ class _DefaultLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 }
 

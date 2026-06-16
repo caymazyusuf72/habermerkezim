@@ -41,22 +41,21 @@ class NewsList extends ConsumerStatefulWidget {
 
 class NewsListState extends ConsumerState<NewsList>
     with AutomaticKeepAliveClientMixin {
-
   late RefreshController _refreshController;
   final ScrollController _scrollController = ScrollController();
-  
+
   /// Yükleme durumu - çift yüklemeyi önlemek için
   bool _isLoadingMore = false;
-  
+
   /// Sayfalama için yerel değişken
   int _currentPage = 1;
-  
+
   /// Image prefetch servisi
   final ImagePrefetchService _prefetchService = ImagePrefetchService();
-  
+
   /// Son scroll pozisyonu (scroll yönü için)
   double _lastScrollPosition = 0;
-  
+
   /// Son scroll yönü (1: aşağı, -1: yukarı)
   int _lastScrollDirection = 1;
 
@@ -67,7 +66,7 @@ class NewsListState extends ConsumerState<NewsList>
   void initState() {
     super.initState();
     _refreshController = RefreshController(initialRefresh: false);
-    
+
     // Scroll listener ekle
     _scrollController.addListener(_onScroll);
   }
@@ -84,53 +83,67 @@ class NewsListState extends ConsumerState<NewsList>
   List<Article> _getFilteredArticles() {
     final newsState = ref.read(newsProvider);
     final filter = ref.read(articleFilterProvider);
-    
+
     // allArticles üzerinden filtreleme yap (articles değil!)
     var categoryArticles = newsState.allArticles
-        .where((article) => widget.category == 'genel' || article.category == widget.category)
+        .where(
+          (article) =>
+              widget.category == 'genel' || article.category == widget.category,
+        )
         .toList();
-        
+
     // Filtreleri uygula
     if (filter.isActive) {
       categoryArticles = categoryArticles.where((article) {
-        if (filter.startDate != null && article.publishedDate.isBefore(filter.startDate!)) return false;
-        if (filter.endDate != null && article.publishedDate.isAfter(filter.endDate!)) return false;
-        if (filter.selectedSources.isNotEmpty && !filter.selectedSources.contains(article.sourceName)) return false;
-        if (filter.selectedCategories.isNotEmpty && !filter.selectedCategories.contains(article.category)) return false;
-        if (filter.isRead != null && article.isRead != filter.isRead) return false;
-        
+        if (filter.startDate != null &&
+            article.publishedDate.isBefore(filter.startDate!))
+          return false;
+        if (filter.endDate != null &&
+            article.publishedDate.isAfter(filter.endDate!))
+          return false;
+        if (filter.selectedSources.isNotEmpty &&
+            !filter.selectedSources.contains(article.sourceName))
+          return false;
+        if (filter.selectedCategories.isNotEmpty &&
+            !filter.selectedCategories.contains(article.category))
+          return false;
+        if (filter.isRead != null && article.isRead != filter.isRead)
+          return false;
+
         if (filter.searchQuery != null && filter.searchQuery!.isNotEmpty) {
           final query = filter.searchQuery!.toLowerCase();
           final titleMatch = article.title.toLowerCase().contains(query);
           final descMatch = article.description.toLowerCase().contains(query);
-          final contentMatch = article.content?.toLowerCase().contains(query) ?? false;
+          final contentMatch =
+              article.content?.toLowerCase().contains(query) ?? false;
           if (!titleMatch && !descMatch && !contentMatch) return false;
         }
         return true;
       }).toList();
     }
-    
+
     return categoryArticles;
   }
 
   /// Scroll olaylarını dinler - optimize edilmiş
   void _onScroll() {
     if (!_scrollController.hasClients) return;
-    
+
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
-    
+
     // Scroll yönünü belirle
     _lastScrollDirection = currentScroll > _lastScrollPosition ? 1 : -1;
     _lastScrollPosition = currentScroll;
-    
+
     // Daha erken yükleme başlat - %70'e ulaşıldığında
     final threshold = maxScroll * 0.7;
-    
+
     if (currentScroll >= threshold && !_isLoadingMore) {
       final categoryArticles = _getFilteredArticles();
-      final hasMoreLocal = categoryArticles.length > _currentPage * NewsState.pageSize;
-      
+      final hasMoreLocal =
+          categoryArticles.length > _currentPage * NewsState.pageSize;
+
       if (hasMoreLocal) {
         _isLoadingMore = true;
         Future.delayed(const Duration(milliseconds: 300), () {
@@ -143,24 +156,29 @@ class NewsListState extends ConsumerState<NewsList>
         });
       }
     }
-    
+
     // Görsel prefetch - scroll yönüne göre
     _prefetchImages(currentScroll);
   }
-  
+
   /// Görselleri önceden yükle
   void _prefetchImages(double currentScroll) {
     // Kategoriye göre makaleleri filtrele (lokal pagination ile)
     final allCategoryArticles = _getFilteredArticles();
-    final endIndex = (_currentPage * NewsState.pageSize).clamp(0, allCategoryArticles.length);
+    final endIndex = (_currentPage * NewsState.pageSize).clamp(
+      0,
+      allCategoryArticles.length,
+    );
     final categoryArticles = allCategoryArticles.sublist(0, endIndex);
-    
+
     if (categoryArticles.isEmpty) return;
-    
+
     // Görünür alan indeksini hesapla (yaklaşık kart yüksekliği: 120px)
     const estimatedItemHeight = 120.0;
-    final visibleStartIndex = (currentScroll / estimatedItemHeight).floor().clamp(0, categoryArticles.length - 1);
-    
+    final visibleStartIndex = (currentScroll / estimatedItemHeight)
+        .floor()
+        .clamp(0, categoryArticles.length - 1);
+
     // Prefetch tetikle
     _prefetchService.prefetchArticleImages(
       articles: categoryArticles,
@@ -187,7 +205,7 @@ class NewsListState extends ConsumerState<NewsList>
       setState(() {
         _currentPage = 1;
       });
-      
+
       if (widget.onRefresh != null) {
         await widget.onRefresh!();
       } else {
@@ -202,17 +220,18 @@ class NewsListState extends ConsumerState<NewsList>
   /// Loading callback (sayfa sonunda daha fazla yükle)
   void _onLoading() async {
     final categoryArticles = _getFilteredArticles();
-    final hasMoreLocal = categoryArticles.length > _currentPage * NewsState.pageSize;
-    
+    final hasMoreLocal =
+        categoryArticles.length > _currentPage * NewsState.pageSize;
+
     if (hasMoreLocal) {
       if (_isLoadingMore) {
         _refreshController.loadComplete();
         return;
       }
-      
+
       _isLoadingMore = true;
       await Future.delayed(const Duration(milliseconds: 300));
-      
+
       if (mounted) {
         setState(() {
           _currentPage++;
@@ -228,16 +247,20 @@ class NewsListState extends ConsumerState<NewsList>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
+
     // State'leri izle
     final newsState = ref.watch(newsProvider);
     final connectivityState = ref.watch(connectivityProvider);
     final isConnected = connectivityState.isConnected;
-    
+
     // Tüm haberleri lokal olarak filtrele ve paginasyon uygula
     final allCategoryArticles = _getFilteredArticles();
-    final hasMoreLocal = allCategoryArticles.length > _currentPage * NewsState.pageSize;
-    final endIndex = (_currentPage * NewsState.pageSize).clamp(0, allCategoryArticles.length);
+    final hasMoreLocal =
+        allCategoryArticles.length > _currentPage * NewsState.pageSize;
+    final endIndex = (_currentPage * NewsState.pageSize).clamp(
+      0,
+      allCategoryArticles.length,
+    );
     final categoryArticles = allCategoryArticles.sublist(0, endIndex);
 
     return SmartRefresher(
@@ -246,12 +269,12 @@ class NewsListState extends ConsumerState<NewsList>
       enablePullUp: hasMoreLocal,
       onRefresh: _onRefresh,
       onLoading: _onLoading,
-      
+
       // Pull-to-refresh header
       header: CustomHeader(
         builder: (context, mode) {
           Widget body;
-          
+
           if (mode == RefreshStatus.idle) {
             body = const Text('Yenilemek için çekin');
           } else if (mode == RefreshStatus.refreshing) {
@@ -263,14 +286,11 @@ class NewsListState extends ConsumerState<NewsList>
           } else {
             body = const Text('Yenileme başarısız');
           }
-          
-          return SizedBox(
-            height: 60,
-            child: Center(child: body),
-          );
+
+          return SizedBox(height: 60, child: Center(child: body));
         },
       ),
-      
+
       child: _buildContent(context, newsState, categoryArticles, isConnected),
     );
   }
@@ -286,7 +306,7 @@ class NewsListState extends ConsumerState<NewsList>
     if (newsState.isLoading && articles.isEmpty) {
       return const NewsListShimmer();
     }
-    
+
     // Hata durumu (ve cache'de veri yok)
     if (newsState.hasError && articles.isEmpty) {
       return Center(
@@ -316,21 +336,21 @@ class NewsListState extends ConsumerState<NewsList>
         ),
       );
     }
-    
+
     // Boş durum
     if (articles.isEmpty && !newsState.isLoading) {
       return _buildEmptyState(context, isConnected);
     }
-    
+
     // Responsive layout için helper
     final responsive = ResponsiveHelper(context);
     final isTabletOrLarger = responsive.isTablet || responsive.isDesktop;
-    
+
     // Tablet ve desktop için grid layout, mobil için liste
     if (isTabletOrLarger) {
       return _buildResponsiveGrid(context, newsState, articles, responsive);
     }
-    
+
     // Haber listesi - Gelişmiş lazy loading optimizasyonları (Mobil)
     return ListView.builder(
       controller: _scrollController,
@@ -341,7 +361,8 @@ class NewsListState extends ConsumerState<NewsList>
       addAutomaticKeepAlives: false, // Görünmeyen widget'ları dispose et
       addRepaintBoundaries: true, // Repaint boundary ekle (performans)
       addSemanticIndexes: false, // Semantic index'leri kapat (daha hızlı)
-      cacheExtent: 2000, // Cache extent artırıldı (1000→2000) - daha smooth scroll
+      cacheExtent:
+          2000, // Cache extent artırıldı (1000→2000) - daha smooth scroll
       // Tahmini item yüksekliği - scroll bar hesaplaması için
       // itemExtent kullanılmıyor çünkü kartlar dinamik yüksekliğe sahip
       padding: const EdgeInsets.only(
@@ -354,18 +375,20 @@ class NewsListState extends ConsumerState<NewsList>
         if (index == articles.length) {
           return _buildLoadingIndicator();
         }
-        
+
         final article = articles[index];
-        
+
         // Repaint boundary ve key ile widget'ı optimize et
         return RepaintBoundary(
-          key: ValueKey('article_${article.id}'), // Unique key - rebuild optimizasyonu
+          key: ValueKey(
+            'article_${article.id}',
+          ), // Unique key - rebuild optimizasyonu
           child: _buildArticleCard(article, index),
         );
       },
     );
   }
-  
+
   /// Tablet/Desktop için responsive grid layout
   Widget _buildResponsiveGrid(
     BuildContext context,
@@ -375,7 +398,7 @@ class NewsListState extends ConsumerState<NewsList>
   ) {
     final crossAxisCount = responsive.gridColumns;
     final padding = responsive.horizontalPadding;
-    
+
     return CustomScrollView(
       controller: _scrollController,
       physics: const BouncingScrollPhysics(
@@ -384,10 +407,7 @@ class NewsListState extends ConsumerState<NewsList>
       slivers: [
         // Grid içeriği
         SliverPadding(
-          padding: EdgeInsets.symmetric(
-            horizontal: padding,
-            vertical: 8,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: padding, vertical: 8),
           sliver: SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
@@ -395,34 +415,27 @@ class NewsListState extends ConsumerState<NewsList>
               crossAxisSpacing: 16,
               childAspectRatio: responsive.isDesktop ? 1.2 : 0.85,
             ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final article = articles[index];
-                
-                return RepaintBoundary(
-                  key: ValueKey('grid_article_${article.id}'),
-                  child: _buildGridArticleCard(article, index),
-                );
-              },
-              childCount: articles.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final article = articles[index];
+
+              return RepaintBoundary(
+                key: ValueKey('grid_article_${article.id}'),
+                child: _buildGridArticleCard(article, index),
+              );
+            }, childCount: articles.length),
           ),
         ),
-        
+
         // Loading indicator
         if (newsState.isLoadingMore)
-          SliverToBoxAdapter(
-            child: _buildLoadingIndicator(),
-          ),
-        
+          SliverToBoxAdapter(child: _buildLoadingIndicator()),
+
         // Bottom padding
-        const SliverToBoxAdapter(
-          child: SizedBox(height: 100),
-        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 100)),
       ],
     );
   }
-  
+
   /// Grid için optimize edilmiş article card
   Widget _buildGridArticleCard(Article article, int index) {
     return Dismissible(
@@ -455,9 +468,7 @@ class NewsListState extends ConsumerState<NewsList>
       child: Card(
         elevation: 2,
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: InkWell(
           onTap: () => _onArticleTap(article),
           child: Column(
@@ -475,23 +486,31 @@ class NewsListState extends ConsumerState<NewsList>
                             article.imageUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (_, _, _) => Container(
-                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
                               child: Icon(
                                 Icons.article_rounded,
                                 size: 48,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           )
                         : Container(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                             child: Icon(
                               Icons.article_rounded,
                               size: 48,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                           ),
-                    
+
                     // Kategori badge
                     if (widget.category == 'genel')
                       Positioned(
@@ -503,19 +522,24 @@ class NewsListState extends ConsumerState<NewsList>
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             article.category,
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ),
                       ),
-                    
+
                     // Favori ve paylaş butonları
                     Positioned(
                       top: 8,
@@ -541,7 +565,7 @@ class NewsListState extends ConsumerState<NewsList>
                   ],
                 ),
               ),
-              
+
               // İçerik
               Expanded(
                 flex: 2,
@@ -554,41 +578,50 @@ class NewsListState extends ConsumerState<NewsList>
                       Expanded(
                         child: Text(
                           article.title,
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            height: 1.3,
-                          ),
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                height: 1.3,
+                              ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      
+
                       const SizedBox(height: 8),
-                      
+
                       // Kaynak ve tarih
                       Row(
                         children: [
                           Icon(
                             Icons.source_rounded,
                             size: 14,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               article.sourceName,
-                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Text(
                             _formatDate(article.publishedDate),
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                         ],
                       ),
@@ -602,7 +635,7 @@ class NewsListState extends ConsumerState<NewsList>
       ),
     );
   }
-  
+
   /// Grid için icon button
   Widget _buildGridIconButton({
     required IconData icon,
@@ -617,21 +650,17 @@ class NewsListState extends ConsumerState<NewsList>
         borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(6),
-          child: Icon(
-            icon,
-            size: 18,
-            color: color ?? Colors.white,
-          ),
+          child: Icon(icon, size: 18, color: color ?? Colors.white),
         ),
       ),
     );
   }
-  
+
   /// Tarih formatla
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inMinutes < 60) {
       return '${difference.inMinutes}dk';
     } else if (difference.inHours < 24) {
@@ -673,7 +702,7 @@ class NewsListState extends ConsumerState<NewsList>
       ),
     );
   }
-  
+
   /// Article card widget'ı - optimize edilmiş - Swipe-to-dismiss eklendi
   Widget _buildArticleCard(Article article, int index) {
     return Dismissible(
@@ -711,7 +740,8 @@ class NewsListState extends ConsumerState<NewsList>
         onFavoriteToggle: () => _onFavoriteToggle(article.id),
         onShare: () => _onShareArticle(article),
         showCategoryBadge: widget.category == 'genel',
-        heroTagSuffix: 'list_${widget.category}_$index', // Hero çakışmasını önle
+        heroTagSuffix:
+            'list_${widget.category}_$index', // Hero çakışmasını önle
       ),
     );
   }
@@ -768,10 +798,10 @@ class NewsListState extends ConsumerState<NewsList>
     if (widget.enableHapticFeedback) {
       HapticFeedback.mediumImpact();
     }
-    
+
     // Okuma listesi provider'ını kullan
     ref.read(readingListProvider.notifier).toggleReadingList(article);
-    
+
     // Feedback göster
     final isInList = ref.read(isInReadingListProvider(article.id));
     ScaffoldMessenger.of(context).showSnackBar(
@@ -784,14 +814,16 @@ class NewsListState extends ConsumerState<NewsList>
               size: 18,
             ),
             const SizedBox(width: 8),
-            Text(isInList ? 'Okuma listesine eklendi' : 'Okuma listesinden çıkarıldı'),
+            Text(
+              isInList
+                  ? 'Okuma listesine eklendi'
+                  : 'Okuma listesinden çıkarıldı',
+            ),
           ],
         ),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
         action: SnackBarAction(
           label: 'Geri Al',
@@ -825,9 +857,9 @@ class NewsListState extends ConsumerState<NewsList>
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Başlık
             Text(
               isConnected ? 'Henüz haber yok' : 'İnternet bağlantısı yok',
@@ -836,26 +868,30 @@ class NewsListState extends ConsumerState<NewsList>
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // Açıklama
             Text(
               isConnected
                   ? 'Bu kategoride henüz haber bulunmuyor.'
                   : 'Offline moddasınız. Önbelleğe alınmış haberler gösteriliyor.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Yenile butonu
             ElevatedButton.icon(
               onPressed: _onRefresh,
-              icon: Icon(isConnected ? Icons.refresh_rounded : Icons.wifi_rounded),
+              icon: Icon(
+                isConnected ? Icons.refresh_rounded : Icons.wifi_rounded,
+              ),
               label: Text(isConnected ? 'Yenile' : 'Yeniden Dene'),
             ),
           ],
@@ -870,10 +906,10 @@ class NewsListState extends ConsumerState<NewsList>
     if (widget.enableHapticFeedback) {
       HapticFeedback.lightImpact();
     }
-    
+
     // Makaleyi okundu olarak işaretle
     ref.read(newsProvider.notifier).markAsRead(article.id);
-    
+
     // Detay sayfasına git - Hero animation için tag ekle
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -883,11 +919,12 @@ class NewsListState extends ConsumerState<NewsList>
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
           const curve = Curves.easeInOut;
-          
-          var tween = Tween(begin: begin, end: end).chain(
-            CurveTween(curve: curve),
-          );
-          
+
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
+
           return SlideTransition(
             position: animation.drive(tween),
             child: child,
@@ -904,11 +941,16 @@ class NewsListState extends ConsumerState<NewsList>
     if (widget.enableHapticFeedback) {
       HapticFeedback.mediumImpact();
     }
-    
+
     // Makaleyi bul
-    final article = ref.read(newsProvider).articles
-        .firstWhere((a) => a.id == articleId, orElse: () => throw Exception('Article not found'));
-    
+    final article = ref
+        .read(newsProvider)
+        .articles
+        .firstWhere(
+          (a) => a.id == articleId,
+          orElse: () => throw Exception('Article not found'),
+        );
+
     // Favoriler provider'ını kullan
     ref.read(favoritesProvider.notifier).toggleFavorite(article);
   }
@@ -919,10 +961,10 @@ class NewsListState extends ConsumerState<NewsList>
     if (widget.enableHapticFeedback) {
       HapticFeedback.lightImpact();
     }
-    
+
     final text = '${article.title}\n\n${article.link}';
     Share.share(text);
-    
+
     // Feedback göster
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -939,9 +981,7 @@ class NewsListState extends ConsumerState<NewsList>
         ),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
       ),
     );
@@ -951,15 +991,18 @@ class NewsListState extends ConsumerState<NewsList>
 /// News list için utility sınıfı
 class NewsListUtils {
   NewsListUtils._();
-  
+
   /// Sayfa başına gösterilecek makale sayısı
   static const int pageSize = 20;
-  
+
   /// Scroll threshold - sayfa sonuna bu kadar yaklaşınca yeni sayfa yükle
   static const double loadMoreThreshold = 200.0;
-  
+
   /// Makale listesini tarihe göre sıralar
-  static List<Article> sortArticlesByDate(List<Article> articles, {bool ascending = false}) {
+  static List<Article> sortArticlesByDate(
+    List<Article> articles, {
+    bool ascending = false,
+  }) {
     final sortedList = List<Article>.from(articles);
     sortedList.sort((a, b) {
       return ascending
@@ -968,28 +1011,30 @@ class NewsListUtils {
     });
     return sortedList;
   }
-  
+
   /// Makale listesini kategoriye göre gruplar
-  static Map<String, List<Article>> groupArticlesByCategory(List<Article> articles) {
+  static Map<String, List<Article>> groupArticlesByCategory(
+    List<Article> articles,
+  ) {
     final Map<String, List<Article>> grouped = {};
-    
+
     for (final article in articles) {
       if (!grouped.containsKey(article.category)) {
         grouped[article.category] = [];
       }
       grouped[article.category]!.add(article);
     }
-    
+
     return grouped;
   }
-  
+
   /// Scroll position'ını hesaplar
   static double calculateScrollProgress(ScrollController controller) {
     if (!controller.hasClients) return 0.0;
-    
+
     final maxScroll = controller.position.maxScrollExtent;
     final currentScroll = controller.position.pixels;
-    
+
     return maxScroll > 0 ? currentScroll / maxScroll : 0.0;
   }
 }

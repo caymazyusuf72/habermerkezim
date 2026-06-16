@@ -35,18 +35,20 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   Future<void> _initializeVideo() async {
     try {
-      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
-      
+      _controller = VideoPlayerController.networkUrl(
+        Uri.parse(widget.videoUrl),
+      );
+
       await _controller!.initialize();
-      
+
       if (widget.autoPlay) {
         _controller!.play();
       }
-      
+
       setState(() {
         _isInitialized = true;
       });
-      
+
       _controller!.addListener(() {
         if (_controller!.value.hasError) {
           setState(() {
@@ -87,7 +89,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         children: [
           // Video player
           VideoPlayer(_controller!),
-          
+
           // Kontroller
           if (widget.showControls)
             _VideoControls(
@@ -113,11 +115,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               width: double.infinity,
               height: double.infinity,
             ),
-          
+
           // Loading indicator
-          const CircularProgressIndicator(
-            color: Colors.white,
-          ),
+          const CircularProgressIndicator(color: Colors.white),
         ],
       ),
     );
@@ -148,10 +148,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             const SizedBox(height: 8),
             Text(
               _errorMessage!,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
               textAlign: TextAlign.center,
             ),
           ],
@@ -178,10 +175,7 @@ class _VideoControls extends StatefulWidget {
   final VideoPlayerController controller;
   final String? thumbnailUrl;
 
-  const _VideoControls({
-    required this.controller,
-    this.thumbnailUrl,
-  });
+  const _VideoControls({required this.controller, this.thumbnailUrl});
 
   @override
   State<_VideoControls> createState() => _VideoControlsState();
@@ -246,7 +240,7 @@ class _VideoControlsState extends State<_VideoControls> {
                   ),
                 ),
               ),
-              
+
               // Alt kontroller
               Positioned(
                 bottom: 0,
@@ -264,9 +258,9 @@ class _VideoControlsState extends State<_VideoControls> {
                           fontSize: 12,
                         ),
                       ),
-                      
+
                       const SizedBox(width: 8),
-                      
+
                       // Progress bar
                       Expanded(
                         child: VideoProgressIndicator(
@@ -279,9 +273,9 @@ class _VideoControlsState extends State<_VideoControls> {
                           ),
                         ),
                       ),
-                      
+
                       const SizedBox(width: 8),
-                      
+
                       // Toplam süre
                       Text(
                         _formatDuration(widget.controller.value.duration),
@@ -307,4 +301,3 @@ class _VideoControlsState extends State<_VideoControls> {
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 }
-

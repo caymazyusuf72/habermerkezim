@@ -5,11 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'hive_service.dart';
 
 /// Okuma istatistikleri zaman aralığı
-enum StatsTimeRange {
-  daily,
-  weekly,
-  monthly,
-}
+enum StatsTimeRange { daily, weekly, monthly }
 
 /// Günlük okuma verisi
 class DailyReadingData {
@@ -63,7 +59,8 @@ class ReadingStatsSummary {
   double get averageReadingMinutes {
     if (dailyData.isEmpty) return 0;
     final totalMinutes = dailyData.fold<int>(
-      0, (sum, data) => sum + data.readingMinutes,
+      0,
+      (sum, data) => sum + data.readingMinutes,
     );
     return totalMinutes / dailyData.length;
   }
@@ -98,18 +95,21 @@ class ReadingStatsService {
 
       // Günlük veri güncelle
       final dailyData = _getDailyDataMap();
-      final todayData = dailyData[today] ?? {
-        'date': DateTime.now().toIso8601String(),
-        'articleCount': 0,
-        'readingMinutes': 0,
-      };
+      final todayData =
+          dailyData[today] ??
+          {
+            'date': DateTime.now().toIso8601String(),
+            'articleCount': 0,
+            'readingMinutes': 0,
+          };
       todayData['articleCount'] = (todayData['articleCount'] as int) + 1;
       dailyData[today] = todayData;
       await box.put(_dailyDataKey, jsonEncode(dailyData));
 
       // Toplam istatistik güncelle
       final totalStats = _getTotalStats();
-      totalStats['totalArticlesRead'] = (totalStats['totalArticlesRead'] ?? 0) + 1;
+      totalStats['totalArticlesRead'] =
+          (totalStats['totalArticlesRead'] ?? 0) + 1;
       await box.put(_totalStatsKey, jsonEncode(totalStats));
 
       // Kategori istatistik güncelle
@@ -146,21 +146,26 @@ class ReadingStatsService {
       final startTime = DateTime.parse(startTimeStr.toString());
       final minutes = DateTime.now().difference(startTime).inMinutes;
 
-      if (minutes > 0 && minutes < 120) { // Max 2 saat
+      if (minutes > 0 && minutes < 120) {
+        // Max 2 saat
         final today = _todayKey();
         final dailyData = _getDailyDataMap();
-        final todayData = dailyData[today] ?? {
-          'date': DateTime.now().toIso8601String(),
-          'articleCount': 0,
-          'readingMinutes': 0,
-        };
-        todayData['readingMinutes'] = (todayData['readingMinutes'] as int) + minutes;
+        final todayData =
+            dailyData[today] ??
+            {
+              'date': DateTime.now().toIso8601String(),
+              'articleCount': 0,
+              'readingMinutes': 0,
+            };
+        todayData['readingMinutes'] =
+            (todayData['readingMinutes'] as int) + minutes;
         dailyData[today] = todayData;
         await box.put(_dailyDataKey, jsonEncode(dailyData));
 
         // Toplam süreyi güncelle
         final totalStats = _getTotalStats();
-        totalStats['totalReadingMinutes'] = (totalStats['totalReadingMinutes'] ?? 0) + minutes;
+        totalStats['totalReadingMinutes'] =
+            (totalStats['totalReadingMinutes'] ?? 0) + minutes;
         await box.put(_totalStatsKey, jsonEncode(totalStats));
       }
 
@@ -192,7 +197,9 @@ class ReadingStatsService {
 
       if (lastReadStr != null) {
         final lastRead = DateTime.parse(lastReadStr);
-        final diff = today.difference(DateTime(lastRead.year, lastRead.month, lastRead.day)).inDays;
+        final diff = today
+            .difference(DateTime(lastRead.year, lastRead.month, lastRead.day))
+            .inDays;
 
         if (diff == 1) {
           // Art arda gün - streak devam
@@ -226,7 +233,8 @@ class ReadingStatsService {
   /// Haftalık hedefi al
   int getWeeklyGoal() {
     try {
-      return HiveService.settingsBox.get(_weeklyGoalKey, defaultValue: 20) as int;
+      return HiveService.settingsBox.get(_weeklyGoalKey, defaultValue: 20)
+          as int;
     } catch (e) {
       return 20;
     }
@@ -262,7 +270,9 @@ class ReadingStatsService {
   // ─── İstatistik Özeti ────────────────────────────────────────────────────
 
   /// Tam istatistik özeti oluştur
-  ReadingStatsSummary getSummary({StatsTimeRange range = StatsTimeRange.weekly}) {
+  ReadingStatsSummary getSummary({
+    StatsTimeRange range = StatsTimeRange.weekly,
+  }) {
     try {
       final totalStats = _getTotalStats();
       final streakData = _getStreakData();
@@ -309,11 +319,15 @@ class ReadingStatsService {
       final key = _dateKey(date);
       final data = dailyDataMap[key];
 
-      result.add(DailyReadingData(
-        date: DateTime(date.year, date.month, date.day),
-        articleCount: data != null ? (data['articleCount'] as int? ?? 0) : 0,
-        readingMinutes: data != null ? (data['readingMinutes'] as int? ?? 0) : 0,
-      ));
+      result.add(
+        DailyReadingData(
+          date: DateTime(date.year, date.month, date.day),
+          articleCount: data != null ? (data['articleCount'] as int? ?? 0) : 0,
+          readingMinutes: data != null
+              ? (data['readingMinutes'] as int? ?? 0)
+              : 0,
+        ),
+      );
     }
 
     return result;
@@ -405,12 +419,11 @@ final readingStatsServiceProvider = Provider<ReadingStatsService>((ref) {
 });
 
 /// Okuma istatistikleri özeti provider
-final readingStatsSummaryProvider = Provider.family<ReadingStatsSummary, StatsTimeRange>(
-  (ref, range) {
-    final service = ref.watch(readingStatsServiceProvider);
-    return service.getSummary(range: range);
-  },
-);
+final readingStatsSummaryProvider =
+    Provider.family<ReadingStatsSummary, StatsTimeRange>((ref, range) {
+      final service = ref.watch(readingStatsServiceProvider);
+      return service.getSummary(range: range);
+    });
 
 /// Haftalık hedef provider
 final weeklyGoalProvider = Provider<int>((ref) {

@@ -39,7 +39,7 @@ class CrashlyticsService {
         debugPrint('Reason: $reason');
       }
     }
-    
+
     await _crashlytics.recordError(
       error,
       stackTrace,

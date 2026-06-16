@@ -58,7 +58,10 @@ class OfflineArticlesPage extends ConsumerWidget {
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(12),
@@ -194,10 +197,7 @@ class _OfflineArticleCard extends StatelessWidget {
   final Article article;
   final VoidCallback onDelete;
 
-  const _OfflineArticleCard({
-    required this.article,
-    required this.onDelete,
-  });
+  const _OfflineArticleCard({required this.article, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -212,10 +212,7 @@ class _OfflineArticleCard extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         color: colorScheme.error,
-        child: Icon(
-          Icons.delete_outline,
-          color: colorScheme.onError,
-        ),
+        child: Icon(Icons.delete_outline, color: colorScheme.onError),
       ),
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),

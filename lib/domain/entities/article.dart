@@ -99,16 +99,26 @@ class Article {
   /// Makale tarihinin gerçek zaman formatını döner (örn: "25 Kasım 2025, 14:30")
   String get formattedDateTime {
     final months = [
-      'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-      'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+      'Ocak',
+      'Şubat',
+      'Mart',
+      'Nisan',
+      'Mayıs',
+      'Haziran',
+      'Temmuz',
+      'Ağustos',
+      'Eylül',
+      'Ekim',
+      'Kasım',
+      'Aralık',
     ];
-    
+
     final day = publishedDate.day;
     final month = months[publishedDate.month - 1];
     final year = publishedDate.year;
     final hour = publishedDate.hour.toString().padLeft(2, '0');
     final minute = publishedDate.minute.toString().padLeft(2, '0');
-    
+
     return '$day $month $year, $hour:$minute';
   }
 
@@ -117,18 +127,32 @@ class Article {
   String get shortDateTime {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final articleDate = DateTime(publishedDate.year, publishedDate.month, publishedDate.day);
+    final articleDate = DateTime(
+      publishedDate.year,
+      publishedDate.month,
+      publishedDate.day,
+    );
     final difference = today.difference(articleDate).inDays;
-    
+
     final months = [
-      'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-      'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+      'Ocak',
+      'Şubat',
+      'Mart',
+      'Nisan',
+      'Mayıs',
+      'Haziran',
+      'Temmuz',
+      'Ağustos',
+      'Eylül',
+      'Ekim',
+      'Kasım',
+      'Aralık',
     ];
-    
+
     final hour = publishedDate.hour.toString().padLeft(2, '0');
     final minute = publishedDate.minute.toString().padLeft(2, '0');
     final time = '$hour:$minute';
-    
+
     if (difference == 0) {
       // Bugün
       return 'Bugün $time';
@@ -161,7 +185,7 @@ class Article {
     return '${title.substring(0, maxLength)}...';
   }
 
-  /// Makale açıklamasını kısaltır (UI için)  
+  /// Makale açıklamasını kısaltır (UI için)
   String get truncatedDescription {
     const maxLength = 120;
     if (description.length <= maxLength) return description;

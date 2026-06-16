@@ -7,7 +7,7 @@ class OptimizedApiService {
   final Dio _dio;
   final Map<String, DateTime> _lastRequestTimes = {};
   final Map<String, List<dynamic>> _batchQueue = {};
-  
+
   static const Duration _rateLimitWindow = Duration(seconds: 1);
   static const int _maxRequestsPerWindow = 10;
   static const Duration _batchDelay = Duration(milliseconds: 100);
@@ -20,14 +20,16 @@ class OptimizedApiService {
   void _configureDio() {
     // Response compression
     _dio.options.headers['Accept-Encoding'] = 'gzip, deflate';
-    
+
     // Timeout ayarları
     _dio.options.connectTimeout = const Duration(seconds: 30);
     _dio.options.receiveTimeout = const Duration(seconds: 30);
-    
+
     // Interceptors
     _dio.interceptors.add(_CompressionInterceptor());
-    _dio.interceptors.add(_RateLimitInterceptor(_rateLimitWindow, _maxRequestsPerWindow));
+    _dio.interceptors.add(
+      _RateLimitInterceptor(_rateLimitWindow, _maxRequestsPerWindow),
+    );
     _dio.interceptors.add(_LoggingInterceptor());
   }
 
@@ -64,18 +66,11 @@ class OptimizedApiService {
     required T Function(Map<String, dynamic>) fromJson,
     Map<String, dynamic>? queryParameters,
   }) async {
-    final params = {
-      'page': page,
-      'pageSize': pageSize,
-      ...?queryParameters,
-    };
+    final params = {'page': page, 'pageSize': pageSize, ...?queryParameters};
 
     debugPrint('📄 Fetching page $page (size: $pageSize) from $endpoint');
 
-    final response = await _dio.get(
-      endpoint,
-      queryParameters: params,
-    );
+    final response = await _dio.get(endpoint, queryParameters: params);
 
     final data = response.data as Map<String, dynamic>;
     final items = (data['items'] as List)
@@ -253,15 +248,17 @@ class CacheStrategy {
       final cached = await getFromCache();
       if (cached != null) {
         debugPrint('✅ Loaded from cache');
-        
+
         // Background refresh
-        getFromNetwork().then((data) {
-          saveToCache(data);
-          debugPrint('🔄 Cache refreshed in background');
-        }).catchError((e) {
-          debugPrint('⚠️ Background refresh failed: $e');
-        });
-        
+        getFromNetwork()
+            .then((data) {
+              saveToCache(data);
+              debugPrint('🔄 Cache refreshed in background');
+            })
+            .catchError((e) {
+              debugPrint('⚠️ Background refresh failed: $e');
+            });
+
         return cached;
       }
     } catch (e) {

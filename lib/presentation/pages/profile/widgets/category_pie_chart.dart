@@ -48,7 +48,11 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
                   color: Colors.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.pie_chart_rounded, color: Colors.purple, size: 20),
+                child: const Icon(
+                  Icons.pie_chart_rounded,
+                  color: Colors.purple,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -68,15 +72,9 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
               height: 200,
               child: Row(
                 children: [
-                  Expanded(
-                    flex: 3,
-                    child: _buildPieChart(),
-                  ),
+                  Expanded(flex: 3, child: _buildPieChart()),
                   const SizedBox(width: 16),
-                  Expanded(
-                    flex: 2,
-                    child: _buildLegend(),
-                  ),
+                  Expanded(flex: 2, child: _buildLegend()),
                 ],
               ),
             ),
@@ -100,7 +98,9 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
             Text(
               'Henüz favori kategori yok',
               style: widget.theme.textTheme.bodyMedium?.copyWith(
-                color: widget.theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                color: widget.theme.colorScheme.onSurface.withValues(
+                  alpha: 0.6,
+                ),
               ),
             ),
           ],
@@ -121,7 +121,8 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
                 touchedIndex = -1;
                 return;
               }
-              touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+              touchedIndex =
+                  pieTouchResponse.touchedSection!.touchedSectionIndex;
             });
           },
         ),
@@ -148,7 +149,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
       final isTouched = index == touchedIndex;
       final radius = isTouched ? 65.0 : 55.0;
       final fontSize = isTouched ? 16.0 : 12.0;
-      
+
       return PieChartSectionData(
         color: colors[index % colors.length],
         value: categories[index]['value'],
@@ -158,9 +159,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
           color: Colors.white,
-          shadows: const [
-            Shadow(color: Colors.black26, blurRadius: 2),
-          ],
+          shadows: const [Shadow(color: Colors.black26, blurRadius: 2)],
         ),
         badgeWidget: isTouched
             ? Container(
@@ -221,7 +220,9 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
                 child: Text(
                   categories[index]['name'],
                   style: widget.theme.textTheme.bodySmall?.copyWith(
-                    color: widget.theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                    color: widget.theme.colorScheme.onSurface.withValues(
+                      alpha: 0.8,
+                    ),
                     fontWeight: FontWeight.w600,
                     fontSize: 11,
                   ),

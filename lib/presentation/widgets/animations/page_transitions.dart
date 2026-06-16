@@ -4,24 +4,34 @@ import 'package:flutter/material.dart';
 enum PageTransitionType {
   /// Sağdan sola kayma
   slideRight,
+
   /// Soldan sağa kayma
   slideLeft,
+
   /// Alttan yukarı kayma
   slideUp,
+
   /// Üstten aşağı kayma
   slideDown,
+
   /// Fade efekti
   fade,
+
   /// Scale efekti
   scale,
+
   /// Fade + Scale kombinasyonu
   fadeScale,
+
   /// Slide + Fade kombinasyonu
   slideFade,
+
   /// Material tasarım geçişi
   material,
+
   /// iOS tarzı geçiş
   cupertino,
+
   /// Shared axis geçişi
   sharedAxis,
 }
@@ -44,21 +54,21 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
     this.reverseCurve = Curves.easeInCubic,
     super.settings,
   }) : super(
-          pageBuilder: (context, animation, secondaryAnimation) => page,
-          transitionDuration: duration,
-          reverseTransitionDuration: reverseDuration,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return _buildTransition(
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-              transitionType,
-              curve,
-              reverseCurve,
-            );
-          },
-        );
+         pageBuilder: (context, animation, secondaryAnimation) => page,
+         transitionDuration: duration,
+         reverseTransitionDuration: reverseDuration,
+         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           return _buildTransition(
+             context,
+             animation,
+             secondaryAnimation,
+             child,
+             transitionType,
+             curve,
+             reverseCurve,
+           );
+         },
+       );
 
   static Widget _buildTransition(
     BuildContext context,
@@ -113,10 +123,7 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
         );
 
       case PageTransitionType.fade:
-        return FadeTransition(
-          opacity: curvedAnimation,
-          child: child,
-        );
+        return FadeTransition(opacity: curvedAnimation, child: child);
 
       case PageTransitionType.scale:
         return ScaleTransition(
@@ -128,7 +135,10 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
         return FadeTransition(
           opacity: curvedAnimation,
           child: ScaleTransition(
-            scale: Tween<double>(begin: 0.92, end: 1.0).animate(curvedAnimation),
+            scale: Tween<double>(
+              begin: 0.92,
+              end: 1.0,
+            ).animate(curvedAnimation),
             child: child,
           ),
         );
@@ -139,10 +149,7 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
             begin: const Offset(0.1, 0.0),
             end: Offset.zero,
           ).animate(curvedAnimation),
-          child: FadeTransition(
-            opacity: curvedAnimation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: curvedAnimation, child: child),
         );
 
       case PageTransitionType.material:
@@ -188,10 +195,7 @@ class _MaterialPageTransition extends StatelessWidget {
         begin: const Offset(0.0, 0.05),
         end: Offset.zero,
       ).animate(animation),
-      child: FadeTransition(
-        opacity: animation,
-        child: child,
-      ),
+      child: FadeTransition(opacity: animation, child: child),
     );
   }
 }
@@ -211,23 +215,26 @@ class _CupertinoPageTransition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(1.0, 0.0),
-        end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: animation,
-        curve: Curves.linearToEaseOut,
-        reverseCurve: Curves.easeInToLinear,
-      )),
+      position: Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero)
+          .animate(
+            CurvedAnimation(
+              parent: animation,
+              curve: Curves.linearToEaseOut,
+              reverseCurve: Curves.easeInToLinear,
+            ),
+          ),
       child: SlideTransition(
-        position: Tween<Offset>(
-          begin: Offset.zero,
-          end: const Offset(-0.3, 0.0),
-        ).animate(CurvedAnimation(
-          parent: secondaryAnimation,
-          curve: Curves.linearToEaseOut,
-          reverseCurve: Curves.easeInToLinear,
-        )),
+        position:
+            Tween<Offset>(
+              begin: Offset.zero,
+              end: const Offset(-0.3, 0.0),
+            ).animate(
+              CurvedAnimation(
+                parent: secondaryAnimation,
+                curve: Curves.linearToEaseOut,
+                reverseCurve: Curves.easeInToLinear,
+              ),
+            ),
         child: DecoratedBox(
           decoration: BoxDecoration(
             boxShadow: [
@@ -301,25 +308,25 @@ class ModalBottomSheetRoute<T> extends PageRouteBuilder<T> {
     super.settings,
   }) : _barrierColorValue = barrierColor,
        super(
-          opaque: false,
-          barrierDismissible: isDismissible,
-          barrierColor: barrierColor ?? Colors.black54,
-          transitionDuration: const Duration(milliseconds: 350),
-          reverseTransitionDuration: const Duration(milliseconds: 300),
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return _ModalBottomSheetPage(
-              animation: animation,
-              page: page,
-              enableDrag: enableDrag,
-              initialChildSize: initialChildSize,
-              minChildSize: minChildSize,
-              maxChildSize: maxChildSize,
-            );
-          },
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return child;
-          },
-        );
+         opaque: false,
+         barrierDismissible: isDismissible,
+         barrierColor: barrierColor ?? Colors.black54,
+         transitionDuration: const Duration(milliseconds: 350),
+         reverseTransitionDuration: const Duration(milliseconds: 300),
+         pageBuilder: (context, animation, secondaryAnimation) {
+           return _ModalBottomSheetPage(
+             animation: animation,
+             page: page,
+             enableDrag: enableDrag,
+             initialChildSize: initialChildSize,
+             minChildSize: minChildSize,
+             maxChildSize: maxChildSize,
+           );
+         },
+         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           return child;
+         },
+       );
 }
 
 class _ModalBottomSheetPage extends StatelessWidget {
@@ -381,7 +388,9 @@ class _ModalBottomSheetPage extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -405,21 +414,19 @@ class _ModalBottomSheetPage extends StatelessWidget {
 class FadeThroughPageRoute<T> extends PageRouteBuilder<T> {
   final Widget page;
 
-  FadeThroughPageRoute({
-    required this.page,
-    super.settings,
-  }) : super(
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 250),
-          pageBuilder: (context, animation, secondaryAnimation) => page,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return _FadeThroughTransition(
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              child: child,
-            );
-          },
-        );
+  FadeThroughPageRoute({required this.page, super.settings})
+    : super(
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 250),
+        pageBuilder: (context, animation, secondaryAnimation) => page,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return _FadeThroughTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            child: child,
+          );
+        },
+      );
 }
 
 class _FadeThroughTransition extends StatelessWidget {
@@ -444,10 +451,7 @@ class _FadeThroughTransition extends StatelessWidget {
       ),
       child: ScaleTransition(
         scale: Tween<double>(begin: 0.92, end: 1.0).animate(
-          CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          ),
+          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
         ),
         child: child,
       ),

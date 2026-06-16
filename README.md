@@ -320,15 +320,15 @@ habermerkezim1/
 
 ---
 
-## 🤝 Katkıda Bulunma
+## 🤝 Katkıda Bulunma (Contributing)
 
-1. Fork yapın
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Lint kurallarına uyduğunuzdan emin olun (`dart analyze`)
-4. Testlerinizi yazın ve çalıştırın (`flutter test`)
-5. Değişikliklerinizi commit edin (`git commit -m 'feat: Add amazing feature'`)
-6. Branch'i push edin (`git push origin feature/amazing-feature`)
-7. Pull Request oluşturun
+Bu proje açık kaynaktır ve her türlü katkıya (hata düzeltmeleri, yeni özellikler, dokümantasyon güncellemeleri) açıktır! Lütfen katkıda bulunmadan önce [CONTRIBUTING.md](CONTRIBUTING.md) dosyasını ve davranış kurallarını inceleyin.
+
+1. Projeyi fork yapın.
+2. Yeni özelliğiniz için branch oluşturun (`git checkout -b feature/harika-ozellik`).
+3. Değişikliklerinizi commit edin (`git commit -m 'feat: harika bir özellik eklendi'`).
+4. Branch'inize push yapın (`git push origin feature/harika-ozellik`).
+5. Bir Pull Request açın.
 
 ### Commit Mesajı Formatı
 ```

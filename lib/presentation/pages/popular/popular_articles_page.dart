@@ -14,7 +14,8 @@ class PopularArticlesPage extends ConsumerStatefulWidget {
   const PopularArticlesPage({super.key});
 
   @override
-  ConsumerState<PopularArticlesPage> createState() => _PopularArticlesPageState();
+  ConsumerState<PopularArticlesPage> createState() =>
+      _PopularArticlesPageState();
 }
 
 class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
@@ -25,7 +26,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    
+
     // Popüler makaleleri yükle
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(popularArticlesProvider.notifier).loadPopularArticles();
@@ -135,7 +136,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
         itemBuilder: (context, index) {
           final popularity = popularityList[index];
           final article = popularity.findArticle(allArticles);
-          
+
           return _buildPopularArticleCard(
             context,
             popularity,
@@ -152,26 +153,16 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 80,
-            color: Colors.grey[400],
-          ),
+          Icon(icon, size: 80, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
             message,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           const SizedBox(height: 8),
           Text(
             'Haberleri okudukça burada görünecekler',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
         ],
       ),
@@ -189,9 +180,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: article != null
             ? () {
@@ -212,7 +201,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
               // Sıralama rozeti
               _buildRankBadge(rank),
               const SizedBox(width: 12),
-              
+
               // Görsel
               if (popularity.imageUrl != null)
                 ClipRRect(
@@ -246,9 +235,9 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
                   ),
                   child: const Icon(Icons.article, color: Colors.grey),
                 ),
-              
+
               const SizedBox(width: 12),
-              
+
               // İçerik
               Expanded(
                 child: Column(
@@ -264,7 +253,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    
+
                     // Kaynak ve kategori
                     Row(
                       children: [
@@ -288,7 +277,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
                       ],
                     ),
                     const SizedBox(height: 8),
-                    
+
                     // İstatistikler
                     Row(
                       children: [
@@ -314,7 +303,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
                         ],
                       ],
                     ),
-                    
+
                     // Trend rozeti
                     if (popularity.isTrending) ...[
                       const SizedBox(height: 8),
@@ -361,7 +350,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
   Widget _buildRankBadge(int rank) {
     Color badgeColor;
     IconData? icon;
-    
+
     switch (rank) {
       case 1:
         badgeColor = Colors.amber;
@@ -383,10 +372,7 @@ class _PopularArticlesPageState extends ConsumerState<PopularArticlesPage>
     return Container(
       width: 32,
       height: 32,
-      decoration: BoxDecoration(
-        color: badgeColor,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: badgeColor, shape: BoxShape.circle),
       child: Center(
         child: icon != null
             ? Icon(icon, size: 18, color: Colors.white)

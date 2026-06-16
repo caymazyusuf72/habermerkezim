@@ -51,10 +51,7 @@ class ShareService {
     try {
       final shareText = _buildShareText(article);
 
-      await Share.share(
-        shareText,
-        subject: article.title,
-      );
+      await Share.share(shareText, subject: article.title);
 
       // İstatistik kaydet
       await _recordShare(article.category, 'general');
@@ -73,10 +70,7 @@ class ShareService {
       final deepLink = _deepLinkService.createArticleWebUrl(article.id);
       final shareText = _buildShareTextWithLink(article, deepLink);
 
-      await Share.share(
-        shareText,
-        subject: article.title,
-      );
+      await Share.share(shareText, subject: article.title);
 
       await _recordShare(article.category, 'deep_link');
 
@@ -106,7 +100,7 @@ class ShareService {
     final buffer = StringBuffer();
     buffer.writeln(article.title);
     buffer.writeln();
-    
+
     if (article.description.isNotEmpty) {
       final shortDesc = article.description.length > 150
           ? '${article.description.substring(0, 147)}...'
@@ -114,7 +108,7 @@ class ShareService {
       buffer.writeln(shortDesc);
       buffer.writeln();
     }
-    
+
     buffer.writeln('📰 ${article.sourceName}');
     buffer.writeln('🔗 ${article.link}');
     buffer.writeln();
@@ -128,7 +122,7 @@ class ShareService {
     final buffer = StringBuffer();
     buffer.writeln(article.title);
     buffer.writeln();
-    
+
     if (article.description.isNotEmpty) {
       final shortDesc = article.description.length > 150
           ? '${article.description.substring(0, 147)}...'

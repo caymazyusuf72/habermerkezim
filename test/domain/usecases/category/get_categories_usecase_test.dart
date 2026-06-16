@@ -18,8 +18,9 @@ void main() {
     test('kategori listesi döndürmeli', () async {
       // Arrange
       final categories = createTestCategoryList(5);
-      when(() => mockRepository.getCategories())
-          .thenAnswer((_) async => categories);
+      when(
+        () => mockRepository.getCategories(),
+      ).thenAnswer((_) async => categories);
 
       // Act
       final result = await useCase.call();
@@ -32,8 +33,7 @@ void main() {
 
     test('boş liste döndürmeli - kategori yoksa', () async {
       // Arrange
-      when(() => mockRepository.getCategories())
-          .thenAnswer((_) async => []);
+      when(() => mockRepository.getCategories()).thenAnswer((_) async => []);
 
       // Act
       final result = await useCase.call();
@@ -44,8 +44,9 @@ void main() {
 
     test('repository hata fırlatırsa exception fırlatmalı', () async {
       // Arrange
-      when(() => mockRepository.getCategories())
-          .thenThrow(Exception('Kategori yükleme hatası'));
+      when(
+        () => mockRepository.getCategories(),
+      ).thenThrow(Exception('Kategori yükleme hatası'));
 
       // Act & Assert
       expect(() => useCase.call(), throwsException);

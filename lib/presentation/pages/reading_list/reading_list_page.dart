@@ -41,12 +41,13 @@ class _ReadingListPageState extends ConsumerState<ReadingListPage> {
     final result = await ModernDialogs.showDangerDialog(
       context: context,
       title: 'Tüm Okuma Listesini Temizle',
-      content: 'Tüm okuma listesi makalelerini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+      content:
+          'Tüm okuma listesi makalelerini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
       icon: Icons.bookmark_border_rounded,
       confirmText: 'Sil',
       cancelText: 'İptal',
     );
-    
+
     if (result == true && mounted) {
       ref.read(readingListProvider.notifier).clearReadingList();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -124,11 +125,13 @@ class _ReadingListPageState extends ConsumerState<ReadingListPage> {
     );
   }
 
-  Widget _buildBody(BuildContext context, ReadingListState readingListState, ThemeData theme) {
+  Widget _buildBody(
+    BuildContext context,
+    ReadingListState readingListState,
+    ThemeData theme,
+  ) {
     if (readingListState.isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (readingListState.hasError) {
@@ -142,10 +145,7 @@ class _ReadingListPageState extends ConsumerState<ReadingListPage> {
               color: theme.colorScheme.error,
             ),
             const SizedBox(height: 16),
-            Text(
-              'Bir hata oluştu',
-              style: theme.textTheme.titleLarge,
-            ),
+            Text('Bir hata oluştu', style: theme.textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
               readingListState.error ?? 'Bilinmeyen hata',
@@ -236,7 +236,7 @@ class _ReadingListPageState extends ConsumerState<ReadingListPage> {
   /// Sıralama bottom sheet
   Widget _buildSortBottomSheet() {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
@@ -310,18 +310,16 @@ class _ReadingListPageState extends ConsumerState<ReadingListPage> {
     return ListTile(
       leading: Icon(
         icon,
-        color: isSelected ? AppTheme.primaryBlue : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+        color: isSelected
+            ? AppTheme.primaryBlue
+            : theme.colorScheme.onSurface.withValues(alpha: 0.6),
       ),
       title: Text(title),
       subtitle: Text(subtitle),
       trailing: isSelected
-          ? Icon(
-              Icons.check_circle_rounded,
-              color: AppTheme.primaryBlue,
-            )
+          ? Icon(Icons.check_circle_rounded, color: AppTheme.primaryBlue)
           : null,
       onTap: onTap,
     );
   }
 }
-

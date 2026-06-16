@@ -39,9 +39,7 @@ void main() {
 
     test('fromJson null alanlarla varsayılan değerler kullanmalı', () {
       // Arrange
-      final json = {
-        'date': '2026-01-15T00:00:00.000',
-      };
+      final json = {'date': '2026-01-15T00:00:00.000'};
 
       // Act
       final data = DailyReadingData.fromJson(json);
@@ -89,18 +87,9 @@ void main() {
       // Arrange
       final summary = ReadingStatsSummary(
         dailyData: [
-          DailyReadingData(
-            date: DateTime(2026, 1, 1),
-            readingMinutes: 30,
-          ),
-          DailyReadingData(
-            date: DateTime(2026, 1, 2),
-            readingMinutes: 60,
-          ),
-          DailyReadingData(
-            date: DateTime(2026, 1, 3),
-            readingMinutes: 0,
-          ),
+          DailyReadingData(date: DateTime(2026, 1, 1), readingMinutes: 30),
+          DailyReadingData(date: DateTime(2026, 1, 2), readingMinutes: 60),
+          DailyReadingData(date: DateTime(2026, 1, 3), readingMinutes: 0),
         ],
       );
 
@@ -110,10 +99,7 @@ void main() {
 
     test('weeklyGoalProgress doğru hesaplamalı', () {
       // Arrange
-      const summary = ReadingStatsSummary(
-        weeklyGoal: 20,
-        weeklyProgress: 10,
-      );
+      const summary = ReadingStatsSummary(weeklyGoal: 20, weeklyProgress: 10);
 
       // Act & Assert
       expect(summary.weeklyGoalProgress, 0.5); // 10/20
@@ -121,10 +107,7 @@ void main() {
 
     test('weeklyGoalProgress 1.0 üstüne çıkmamalı', () {
       // Arrange
-      const summary = ReadingStatsSummary(
-        weeklyGoal: 10,
-        weeklyProgress: 20,
-      );
+      const summary = ReadingStatsSummary(weeklyGoal: 10, weeklyProgress: 20);
 
       // Act & Assert
       expect(summary.weeklyGoalProgress, 1.0);
@@ -132,10 +115,7 @@ void main() {
 
     test('weeklyGoalProgress sıfır hedef için 0 döndürmeli', () {
       // Arrange
-      const summary = ReadingStatsSummary(
-        weeklyGoal: 0,
-        weeklyProgress: 5,
-      );
+      const summary = ReadingStatsSummary(weeklyGoal: 0, weeklyProgress: 5);
 
       // Act & Assert
       expect(summary.weeklyGoalProgress, 0);

@@ -26,7 +26,9 @@ class NotificationService {
     tz.setLocalLocation(tz.getLocation('Europe/Istanbul'));
 
     // Android initialization settings
-    const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/launcher_icon',
+    );
 
     // iOS initialization settings
     const iosSettings = DarwinInitializationSettings(
@@ -87,12 +89,14 @@ class NotificationService {
 
     await _notifications
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(dailyNewsChannel);
 
     await _notifications
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(readingGoalChannel);
   }
 
@@ -101,15 +105,17 @@ class NotificationService {
     if (Platform.isAndroid) {
       final androidPlugin = _notifications
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
-      
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+
       final granted = await androidPlugin?.requestNotificationsPermission();
       return granted ?? false;
     } else if (Platform.isIOS) {
       final iosPlugin = _notifications
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>();
-      
+            IOSFlutterLocalNotificationsPlugin
+          >();
+
       final granted = await iosPlugin?.requestPermissions(
         alert: true,
         badge: true,
@@ -125,14 +131,16 @@ class NotificationService {
     if (Platform.isAndroid) {
       final androidPlugin = _notifications
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
-      
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+
       return await androidPlugin?.areNotificationsEnabled() ?? false;
     } else if (Platform.isIOS) {
       final iosPlugin = _notifications
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>();
-      
+            IOSFlutterLocalNotificationsPlugin
+          >();
+
       final settings = await iosPlugin?.checkPermissions();
       return settings?.isEnabled ?? false;
     }
@@ -169,9 +177,7 @@ class NotificationService {
           icon: '@mipmap/launcher_icon',
           largeIcon: DrawableResourceAndroidBitmap('@mipmap/launcher_icon'),
         ),
-        iOS: DarwinNotificationDetails(
-          sound: 'default',
-        ),
+        iOS: DarwinNotificationDetails(sound: 'default'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: 'daily_news_reminder',
@@ -179,7 +185,9 @@ class NotificationService {
     );
 
     if (kDebugMode) {
-      debugPrint('📱 Daily news reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
+      debugPrint(
+        '📱 Daily news reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}',
+      );
     }
   }
 
@@ -216,9 +224,7 @@ class NotificationService {
           icon: '@mipmap/launcher_icon',
           largeIcon: DrawableResourceAndroidBitmap('@mipmap/launcher_icon'),
         ),
-        iOS: DarwinNotificationDetails(
-          sound: 'default',
-        ),
+        iOS: DarwinNotificationDetails(sound: 'default'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: 'reading_goal_reminder',
@@ -226,7 +232,9 @@ class NotificationService {
     );
 
     if (kDebugMode) {
-      debugPrint('📱 Reading goal reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
+      debugPrint(
+        '📱 Reading goal reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}',
+      );
     }
   }
 
@@ -248,9 +256,7 @@ class NotificationService {
           icon: '@mipmap/launcher_icon',
           largeIcon: DrawableResourceAndroidBitmap('@mipmap/launcher_icon'),
         ),
-        iOS: DarwinNotificationDetails(
-          sound: 'default',
-        ),
+        iOS: DarwinNotificationDetails(sound: 'default'),
       ),
       payload: 'goal_achieved',
     );
@@ -282,9 +288,7 @@ class NotificationService {
           icon: '@mipmap/launcher_icon',
           largeIcon: DrawableResourceAndroidBitmap('@mipmap/launcher_icon'),
         ),
-        iOS: DarwinNotificationDetails(
-          sound: 'default',
-        ),
+        iOS: DarwinNotificationDetails(sound: 'default'),
       ),
       payload: 'breaking_news:${articleId ?? ''}',
     );
@@ -313,12 +317,19 @@ class NotificationService {
   /// Get next instance of specified time
   tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
     final now = tz.TZDateTime.now(tz.local);
-    var scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-    
+    var scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
-    
+
     return scheduledDate;
   }
 
@@ -342,9 +353,7 @@ class NotificationService {
           priority: Priority.defaultPriority,
           icon: '@mipmap/launcher_icon',
         ),
-        iOS: DarwinNotificationDetails(
-          sound: 'default',
-        ),
+        iOS: DarwinNotificationDetails(sound: 'default'),
       ),
       payload: 'test_notification',
     );
@@ -361,17 +370,17 @@ class NotificationService {
     required int endMinute,
   }) {
     if (!quietHoursEnabled) return false;
-    
+
     final now = DateTime.now();
     final currentMinutes = now.hour * 60 + now.minute;
     final startMinutes = startHour * 60 + startMinute;
     final endMinutes = endHour * 60 + endMinute;
-    
+
     // Gece yarısı geçişi kontrolü (örn: 22:00-08:00)
     if (startMinutes > endMinutes) {
       return currentMinutes >= startMinutes || currentMinutes < endMinutes;
     }
-    
+
     return currentMinutes >= startMinutes && currentMinutes < endMinutes;
   }
 
@@ -383,15 +392,16 @@ class NotificationService {
     required DateTime lastResetDate,
   }) {
     if (!dailyLimitEnabled) return true;
-    
+
     final today = DateTime.now();
-    final isSameDay = lastResetDate.day == today.day &&
-                      lastResetDate.month == today.month &&
-                      lastResetDate.year == today.year;
-    
+    final isSameDay =
+        lastResetDate.day == today.day &&
+        lastResetDate.month == today.month &&
+        lastResetDate.year == today.year;
+
     // Yeni gün, izin ver
     if (!isSameDay) return true;
-    
+
     // Aynı gün, limit kontrolü
     return todayNotificationCount < maxDailyNotifications;
   }
@@ -425,7 +435,7 @@ class NotificationService {
         }
         return false;
       }
-      
+
       // 2. Sessiz saatler kontrolü
       if (quietHoursEnabled == true &&
           quietHoursStartHour != null &&
@@ -445,7 +455,7 @@ class NotificationService {
           return false;
         }
       }
-      
+
       // 3. Günlük limit kontrolü
       if (dailyLimitEnabled == true &&
           maxDailyNotifications != null &&
@@ -458,18 +468,20 @@ class NotificationService {
           lastResetDate: lastResetDate,
         )) {
           if (kDebugMode) {
-            debugPrint('📱 Günlük limit aşıldı: $todayNotificationCount/$maxDailyNotifications');
+            debugPrint(
+              '📱 Günlük limit aşıldı: $todayNotificationCount/$maxDailyNotifications',
+            );
           }
           return false;
         }
       }
-      
+
       // 4. Öncelik seviyesine göre bildirim ayarları
       Importance importance;
       Priority androidPriority;
       String? sound;
       bool enableVibration;
-      
+
       switch (priority) {
         case 'critical':
           importance = Importance.max;
@@ -489,10 +501,10 @@ class NotificationService {
           sound = 'default';
           enableVibration = false;
       }
-      
+
       // 5. Bildirimi gönder
       final notificationId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-      
+
       await _notifications.show(
         notificationId,
         title,
@@ -505,21 +517,23 @@ class NotificationService {
             importance: importance,
             priority: androidPriority,
             icon: '@mipmap/launcher_icon',
-            largeIcon: const DrawableResourceAndroidBitmap('@mipmap/launcher_icon'),
-            sound: sound != null ? RawResourceAndroidNotificationSound(sound) : null,
+            largeIcon: const DrawableResourceAndroidBitmap(
+              '@mipmap/launcher_icon',
+            ),
+            sound: sound != null
+                ? RawResourceAndroidNotificationSound(sound)
+                : null,
             enableVibration: enableVibration,
           ),
-          iOS: DarwinNotificationDetails(
-            sound: sound,
-          ),
+          iOS: DarwinNotificationDetails(sound: sound),
         ),
         payload: 'category:$category${articleId != null ? ':$articleId' : ''}',
       );
-      
+
       if (kDebugMode) {
         debugPrint('📱 Smart notification sent: $category - $priority');
       }
-      
+
       return true;
     } catch (e) {
       if (kDebugMode) {

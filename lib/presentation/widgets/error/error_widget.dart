@@ -5,20 +5,12 @@ import '../../../core/utils/error_message_helper.dart';
 import '../../themes/app_theme.dart';
 
 /// Hata türleri enum - doğrudan hata türü belirtmek için
-enum ErrorType {
-  network,
-  server,
-  empty,
-  timeout,
-  rss,
-  cache,
-  general,
-}
+enum ErrorType { network, server, empty, timeout, rss, cache, general }
 
 /// Custom error widget - hataları kullanıcı dostu şekilde gösterir
 /// Farklı hata tiplerini farklı görsellerle sunar
 class CustomErrorWidget extends StatelessWidget {
-  final dynamic error;  // Failure veya Exception kabul eder
+  final dynamic error; // Failure veya Exception kabul eder
   final VoidCallback? onRetry;
   final bool showOfflineMessage;
   final bool isCompact;
@@ -47,7 +39,10 @@ class CustomErrorWidget extends StatelessWidget {
   }) {
     return CustomErrorWidget(
       key: key,
-      error: const NetworkFailure('İnternet bağlantısı yok', code: 'NO_INTERNET'),
+      error: const NetworkFailure(
+        'İnternet bağlantısı yok',
+        code: 'NO_INTERNET',
+      ),
       onRetry: onRetry,
       showOfflineMessage: true,
       errorType: ErrorType.network,
@@ -124,11 +119,7 @@ class CustomErrorWidget extends StatelessWidget {
                 color: errorInfo.color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                errorInfo.icon,
-                size: 40,
-                color: errorInfo.color,
-              ),
+              child: Icon(errorInfo.icon, size: 40, color: errorInfo.color),
             ),
 
             const SizedBox(height: 24),
@@ -153,14 +144,16 @@ class CustomErrorWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             // Önerilen aksiyon
             if (_getSuggestedAction() != null) ...[
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.5,
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -176,7 +169,9 @@ class CustomErrorWidget extends StatelessWidget {
                       child: Text(
                         _getSuggestedAction()!,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.8,
+                          ),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -194,16 +189,14 @@ class CustomErrorWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: Colors.orange.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.wifi_off,
-                      color: Colors.orange,
-                      size: 20,
-                    ),
+                    const Icon(Icons.wifi_off, color: Colors.orange, size: 20),
                     const SizedBox(width: 8),
                     Text(
                       'Offline moddasınız',
@@ -258,11 +251,7 @@ class CustomErrorWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            errorInfo.icon,
-            color: errorInfo.color,
-            size: 24,
-          ),
+          Icon(errorInfo.icon, color: errorInfo.color, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -289,10 +278,7 @@ class CustomErrorWidget extends StatelessWidget {
           if (onRetry != null)
             TextButton(
               onPressed: onRetry,
-              child: Text(
-                'Yenile',
-                style: TextStyle(color: errorInfo.color),
-              ),
+              child: Text('Yenile', style: TextStyle(color: errorInfo.color)),
             ),
         ],
       ),
@@ -308,7 +294,7 @@ class CustomErrorWidget extends StatelessWidget {
 
     if (error is NetworkFailure) {
       final networkError = error as NetworkFailure;
-      
+
       if (networkError.code == 'NO_INTERNET') {
         return ErrorInfo(
           icon: Icons.wifi_off,
@@ -437,7 +423,7 @@ class CustomErrorWidget extends StatelessWidget {
     if (error is Failure) {
       if (error is NetworkFailure) {
         final networkError = error as NetworkFailure;
-        
+
         switch (networkError.code) {
           case 'NO_INTERNET':
             return 'Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.';
@@ -456,11 +442,11 @@ class CustomErrorWidget extends StatelessWidget {
         return (error as Failure).message;
       }
     }
-    
+
     // Exception veya string ise ErrorMessageHelper kullan
     return ErrorMessageHelper.getErrorMessage(error);
   }
-  
+
   /// Önerilen aksiyon mesajı
   String? _getSuggestedAction() {
     if (error is Failure) {
@@ -468,7 +454,7 @@ class CustomErrorWidget extends StatelessWidget {
     }
     return ErrorMessageHelper.getSuggestedAction(error);
   }
-  
+
   /// Hatanın retry edilebilir olup olmadığını kontrol eder
   bool _isRetryable() {
     if (errorType == ErrorType.empty) return false;
@@ -505,7 +491,10 @@ class NoInternetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomErrorWidget(
-      error: const NetworkFailure('İnternet bağlantısı yok', code: 'NO_INTERNET'),
+      error: const NetworkFailure(
+        'İnternet bağlantısı yok',
+        code: 'NO_INTERNET',
+      ),
       onRetry: onRetry,
       showOfflineMessage: true,
     );
@@ -625,10 +614,7 @@ class EmptyResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomErrorWidget.empty(
-      customMessage: message,
-      onRetry: onRetry,
-    );
+    return CustomErrorWidget.empty(customMessage: message, onRetry: onRetry);
   }
 }
 
@@ -654,22 +640,14 @@ class ErrorSnackbarHelper {
       SnackBar(
         content: Row(
           children: [
-            Icon(
-              _getErrorIcon(error),
-              color: Colors.white,
-              size: 20,
-            ),
+            Icon(_getErrorIcon(error), color: Colors.white, size: 20),
             const SizedBox(width: 12),
-            Expanded(
-              child: Text(_getShortErrorMessage(error)),
-            ),
+            Expanded(child: Text(_getShortErrorMessage(error))),
           ],
         ),
         backgroundColor: _getErrorColor(error),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         duration: const Duration(seconds: 4),
         action: SnackBarAction(
           label: 'Tamam',

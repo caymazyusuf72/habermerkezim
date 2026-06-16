@@ -15,14 +15,15 @@ class AnalyticsPage extends ConsumerStatefulWidget {
   ConsumerState<AnalyticsPage> createState() => _AnalyticsPageState();
 }
 
-class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProviderStateMixin {
+class _AnalyticsPageState extends ConsumerState<AnalyticsPage>
+    with TickerProviderStateMixin {
   late TabController _tabController;
-  
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    
+
     // Sayfa açıldığında analytics verilerini yükle
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(analyticsProvider.notifier).loadAnalytics();
@@ -39,7 +40,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
   Widget build(BuildContext context) {
     final analyticsState = ref.watch(analyticsProvider);
     final baseFontSize = ref.watch(fontScaleProvider) * 16;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -93,33 +94,24 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(
-              text: 'Genel Bakış',
-              icon: const Icon(Icons.dashboard_rounded),
-            ),
-            Tab(
-              text: 'Grafikler',
-              icon: const Icon(Icons.bar_chart_rounded),
-            ),
-            Tab(
-              text: 'Detaylar',
-              icon: const Icon(Icons.analytics_rounded),
-            ),
+            Tab(text: 'Genel Bakış', icon: const Icon(Icons.dashboard_rounded)),
+            Tab(text: 'Grafikler', icon: const Icon(Icons.bar_chart_rounded)),
+            Tab(text: 'Detaylar', icon: const Icon(Icons.analytics_rounded)),
           ],
         ),
       ),
       body: analyticsState.isLoading
           ? const NewsListShimmer()
           : analyticsState.error != null
-              ? _buildErrorWidget(analyticsState.error!)
-              : TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildOverviewTab(),
-                    _buildChartsTab(),
-                    _buildDetailsTab(),
-                  ],
-                ),
+          ? _buildErrorWidget(analyticsState.error!)
+          : TabBarView(
+              controller: _tabController,
+              children: [
+                _buildOverviewTab(),
+                _buildChartsTab(),
+                _buildDetailsTab(),
+              ],
+            ),
     );
   }
 
@@ -128,11 +120,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline_rounded,
-            size: 64,
-            color: Colors.red[400],
-          ),
+          Icon(Icons.error_outline_rounded, size: 64, color: Colors.red[400]),
           const SizedBox(height: 16),
           Text(
             'Hata',
@@ -198,45 +186,84 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
               textAlign: TextAlign.center,
             ),
           ),
-          
+
           const SizedBox(height: 16),
 
           // Bugünkü istatistikler
-          _buildStatsCard(
-            'Bugün',
-            [
-              _StatItem('Okunan Makale', '${todayAnalytics.articlesRead}', Icons.article_rounded),
-              _StatItem('Geçirilen Süre', '${todayAnalytics.timeSpentMinutes} dk', Icons.access_time_rounded),
-              _StatItem('Favoriler', '${todayAnalytics.favoriteCount}', Icons.favorite_rounded),
-              _StatItem('Paylaşımlar', '${todayAnalytics.shareCount}', Icons.share_rounded),
-            ],
-          ),
+          _buildStatsCard('Bugün', [
+            _StatItem(
+              'Okunan Makale',
+              '${todayAnalytics.articlesRead}',
+              Icons.article_rounded,
+            ),
+            _StatItem(
+              'Geçirilen Süre',
+              '${todayAnalytics.timeSpentMinutes} dk',
+              Icons.access_time_rounded,
+            ),
+            _StatItem(
+              'Favoriler',
+              '${todayAnalytics.favoriteCount}',
+              Icons.favorite_rounded,
+            ),
+            _StatItem(
+              'Paylaşımlar',
+              '${todayAnalytics.shareCount}',
+              Icons.share_rounded,
+            ),
+          ]),
 
           const SizedBox(height: 16),
 
           // Haftalık istatistikler
-          _buildStatsCard(
-            'Bu Hafta',
-            [
-              _StatItem('Toplam Makale', '${weeklySummary.totalArticlesRead}', Icons.article_rounded),
-              _StatItem('Toplam Süre', '${weeklySummary.totalTimeSpent} dk', Icons.access_time_rounded),
-              _StatItem('Paylaşımlar', '${weeklySummary.totalShares}', Icons.share_rounded),
-              _StatItem('Okuma Serisi', '$streakDays gün', Icons.local_fire_department_rounded),
-            ],
-          ),
+          _buildStatsCard('Bu Hafta', [
+            _StatItem(
+              'Toplam Makale',
+              '${weeklySummary.totalArticlesRead}',
+              Icons.article_rounded,
+            ),
+            _StatItem(
+              'Toplam Süre',
+              '${weeklySummary.totalTimeSpent} dk',
+              Icons.access_time_rounded,
+            ),
+            _StatItem(
+              'Paylaşımlar',
+              '${weeklySummary.totalShares}',
+              Icons.share_rounded,
+            ),
+            _StatItem(
+              'Okuma Serisi',
+              '$streakDays gün',
+              Icons.local_fire_department_rounded,
+            ),
+          ]),
 
           const SizedBox(height: 16),
 
           // Aylık istatistikler
-          _buildStatsCard(
-            'Bu Ay',
-            [
-              _StatItem('Toplam Makale', '${monthlySummary.totalArticlesRead}', Icons.article_rounded),
-              _StatItem('Toplam Süre', '${monthlySummary.totalTimeSpent} dk', Icons.access_time_rounded),
-              _StatItem('En Çok Okunan', ref.watch(topCategoryProvider) ?? 'Yok', Icons.category_rounded),
-              _StatItem('En Çok Kaynak', ref.watch(topSourceProvider) ?? 'Yok', Icons.rss_feed_rounded),
-            ],
-          ),
+          _buildStatsCard('Bu Ay', [
+            _StatItem(
+              'Toplam Makale',
+              '${monthlySummary.totalArticlesRead}',
+              Icons.article_rounded,
+            ),
+            _StatItem(
+              'Toplam Süre',
+              '${monthlySummary.totalTimeSpent} dk',
+              Icons.access_time_rounded,
+            ),
+            _StatItem(
+              'En Çok Okunan',
+              ref.watch(topCategoryProvider) ?? 'Yok',
+              Icons.category_rounded,
+            ),
+            _StatItem(
+              'En Çok Kaynak',
+              ref.watch(topSourceProvider) ?? 'Yok',
+              Icons.rss_feed_rounded,
+            ),
+          ]),
 
           const SizedBox(height: 16),
 
@@ -250,7 +277,9 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
   Widget _buildChartsTab() {
     final weeklyAnalytics = ref.watch(analyticsProvider).weeklyAnalytics;
     final monthlyAnalytics = ref.watch(analyticsProvider).monthlyAnalytics;
-    final categoryBreakdown = ref.watch(weeklySummaryProvider).categoriesBreakdown;
+    final categoryBreakdown = ref
+        .watch(weeklySummaryProvider)
+        .categoriesBreakdown;
     final fontSize = ref.watch(fontScaleProvider) * 16;
 
     return SingleChildScrollView(
@@ -354,9 +383,9 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
           if (weeklySummary.categoriesBreakdown.isNotEmpty) ...[
             _buildDetailCard(
               'Kategori Detayları',
-              weeklySummary.categoriesBreakdown.entries.map((e) => 
-                _DetailItem(e.key, '${e.value} makale')
-              ).toList(),
+              weeklySummary.categoriesBreakdown.entries
+                  .map((e) => _DetailItem(e.key, '${e.value} makale'))
+                  .toList(),
             ),
             const SizedBox(height: 16),
           ],
@@ -365,49 +394,63 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
           if (weeklySummary.sourcesBreakdown.isNotEmpty) ...[
             _buildDetailCard(
               'Kaynak Detayları',
-              weeklySummary.sourcesBreakdown.entries.map((e) => 
-                _DetailItem(e.key, '${e.value} makale')
-              ).toList(),
+              weeklySummary.sourcesBreakdown.entries
+                  .map((e) => _DetailItem(e.key, '${e.value} makale'))
+                  .toList(),
             ),
             const SizedBox(height: 16),
           ],
 
           // Sosyal istatistikler
-          _buildDetailCard(
-            'Sosyal Aktivite',
-            [
-              _DetailItem('Toplam Paylaşım', '${weeklySummary.totalShares}'),
-              _DetailItem('Toplam Arama', '${weeklySummary.totalSearches}'),
-              _DetailItem('Toplam Favori', '${weeklySummary.totalFavorites}'),
-            ],
-          ),
+          _buildDetailCard('Sosyal Aktivite', [
+            _DetailItem('Toplam Paylaşım', '${weeklySummary.totalShares}'),
+            _DetailItem('Toplam Arama', '${weeklySummary.totalSearches}'),
+            _DetailItem('Toplam Favori', '${weeklySummary.totalFavorites}'),
+          ]),
 
           const SizedBox(height: 16),
 
           // Okuma alışkanlıkları
-          _buildDetailCard(
-            'Okuma Alışkanlıklarınız',
-            [
-              _DetailItem('Okuma Trendi', _getTrendText(readingTrend)),
-              _DetailItem('En Verimli Saat', productiveTime),
-              _DetailItem('Tutarlılık Puanı', '${ref.watch(consistencyScoreProvider).toInt()}/100'),
-              _DetailItem('Günlük Ortalama', '${(monthlySummary.totalArticlesRead / 30).toStringAsFixed(1)} makale'),
-              _DetailItem('Haftalık Ortalama', '${(monthlySummary.totalArticlesRead / 4).toStringAsFixed(1)} makale'),
-            ],
-          ),
+          _buildDetailCard('Okuma Alışkanlıklarınız', [
+            _DetailItem('Okuma Trendi', _getTrendText(readingTrend)),
+            _DetailItem('En Verimli Saat', productiveTime),
+            _DetailItem(
+              'Tutarlılık Puanı',
+              '${ref.watch(consistencyScoreProvider).toInt()}/100',
+            ),
+            _DetailItem(
+              'Günlük Ortalama',
+              '${(monthlySummary.totalArticlesRead / 30).toStringAsFixed(1)} makale',
+            ),
+            _DetailItem(
+              'Haftalık Ortalama',
+              '${(monthlySummary.totalArticlesRead / 4).toStringAsFixed(1)} makale',
+            ),
+          ]),
 
           const SizedBox(height: 16),
 
           // İstatistik özeti
-          _buildDetailCard(
-            'Genel Özet',
-            [
-              _DetailItem('Toplam Takip Edilen Gün', '${monthlySummary.dailyData.where((d) => d.articlesRead > 0).length} gün'),
-              _DetailItem('En Çok Okunan Gün', '${monthlySummary.dailyData.isNotEmpty ? monthlySummary.dailyData.map((d) => d.articlesRead).reduce((a, b) => a > b ? a : b) : 0} makale'),
-              _DetailItem('Toplam Okuma Süresi', '${(monthlySummary.totalTimeSpent / 60).toStringAsFixed(1)} saat'),
-              _DetailItem('Ortalama Makale Süresi', monthlySummary.totalArticlesRead > 0 ? '${(monthlySummary.totalTimeSpent / monthlySummary.totalArticlesRead).toStringAsFixed(1)} dk' : '0 dk'),
-            ],
-          ),
+          _buildDetailCard('Genel Özet', [
+            _DetailItem(
+              'Toplam Takip Edilen Gün',
+              '${monthlySummary.dailyData.where((d) => d.articlesRead > 0).length} gün',
+            ),
+            _DetailItem(
+              'En Çok Okunan Gün',
+              '${monthlySummary.dailyData.isNotEmpty ? monthlySummary.dailyData.map((d) => d.articlesRead).reduce((a, b) => a > b ? a : b) : 0} makale',
+            ),
+            _DetailItem(
+              'Toplam Okuma Süresi',
+              '${(monthlySummary.totalTimeSpent / 60).toStringAsFixed(1)} saat',
+            ),
+            _DetailItem(
+              'Ortalama Makale Süresi',
+              monthlySummary.totalArticlesRead > 0
+                  ? '${(monthlySummary.totalTimeSpent / monthlySummary.totalArticlesRead).toStringAsFixed(1)} dk'
+                  : '0 dk',
+            ),
+          ]),
         ],
       ),
     );
@@ -415,7 +458,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
 
   Widget _buildStatsCard(String title, List<_StatItem> stats) {
     final fontSize = ref.watch(fontScaleProvider) * 16;
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -448,7 +491,9 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outline.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Row(
@@ -468,17 +513,24 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
                             Text(
                               stat.value,
                               style: TextStyle(
-                                fontSize: (fontSize + 1).clamp(12.0, 18.0), // Max/min sınır
+                                fontSize: (fontSize + 1).clamp(
+                                  12.0,
+                                  18.0,
+                                ), // Max/min sınır
                                 fontWeight: FontWeight.bold,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 2), // Küçük spacing
-                            Flexible( // Flexible ile taşmayı engelle
+                            Flexible(
+                              // Flexible ile taşmayı engelle
                               child: Text(
                                 stat.label,
                                 style: TextStyle(
-                                  fontSize: (fontSize - 2).clamp(10.0, 14.0), // Max/min sınır
+                                  fontSize: (fontSize - 2).clamp(
+                                    10.0,
+                                    14.0,
+                                  ), // Max/min sınır
                                   color: Colors.grey[600],
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -521,13 +573,17 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
             _buildGoalItem(
               'Günlük Hedef (3 makale)',
               dailyGoal,
-              dailyGoal ? 'Tebrikler! Hedefi başardınız.' : 'Bugün 3 makale okumaya çalışın.',
+              dailyGoal
+                  ? 'Tebrikler! Hedefi başardınız.'
+                  : 'Bugün 3 makale okumaya çalışın.',
             ),
             const SizedBox(height: 8),
             _buildGoalItem(
               'Haftalık Hedef (21 makale)',
               weeklyGoal,
-              weeklyGoal ? 'Harika! Haftalık hedefinizi tutturdunuz.' : 'Bu hafta toplam 21 makale okumaya çalışın.',
+              weeklyGoal
+                  ? 'Harika! Haftalık hedefinizi tutturdunuz.'
+                  : 'Bu hafta toplam 21 makale okumaya çalışın.',
             ),
           ],
         ),
@@ -537,11 +593,13 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
 
   Widget _buildGoalItem(String title, bool achieved, String description) {
     final fontSize = ref.watch(fontScaleProvider) * 16;
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: achieved ? Colors.green.withValues(alpha: 0.1) : Colors.orange.withValues(alpha: 0.1),
+        color: achieved
+            ? Colors.green.withValues(alpha: 0.1)
+            : Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: achieved ? Colors.green : Colors.orange,
@@ -584,7 +642,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
 
   Widget _buildDetailCard(String title, List<_DetailItem> items) {
     final fontSize = ref.watch(fontScaleProvider) * 16;
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -599,27 +657,29 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
               ),
             ),
             const SizedBox(height: 12),
-            ...items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      item.label,
-                      style: TextStyle(fontSize: fontSize),
+            ...items.map(
+              (item) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.label,
+                        style: TextStyle(fontSize: fontSize),
+                      ),
                     ),
-                  ),
-                  Text(
-                    item.value,
-                    style: TextStyle(
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.w600,
+                    Text(
+                      item.value,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
@@ -628,17 +688,20 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
 
   Widget _buildWeeklyChart(List<ReadingAnalytics> weeklyData) {
     final primaryColor = Theme.of(context).primaryColor;
-    
+
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
-        maxY: weeklyData.isNotEmpty 
-            ? weeklyData.map((d) => d.articlesRead.toDouble()).reduce((a, b) => a > b ? a : b) + 2
+        maxY: weeklyData.isNotEmpty
+            ? weeklyData
+                      .map((d) => d.articlesRead.toDouble())
+                      .reduce((a, b) => a > b ? a : b) +
+                  2
             : 10,
         barTouchData: BarTouchData(
           touchTooltipData: BarTouchTooltipData(
             getTooltipColor: (group) => Colors.black87,
-            
+
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               return BarTooltipItem(
                 '${rod.toY.round()} makale\n',
@@ -662,18 +725,19 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
         ),
         titlesData: FlTitlesData(
           show: true,
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 return Text(
                   _getWeekDayAbbr(value.toInt()),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 );
               },
             ),
@@ -685,10 +749,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toInt().toString(),
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                 );
               },
             ),
@@ -728,11 +789,9 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
 
   Widget _buildMonthlyChart(List<ReadingAnalytics> monthlyData) {
     final primaryColor = Theme.of(context).primaryColor;
-    
+
     if (monthlyData.isEmpty) {
-      return const Center(
-        child: Text('Henüz veri yok'),
-      );
+      return const Center(child: Text('Henüz veri yok'));
     }
 
     // Son 30 günü 6 gruba böl (yaklaşık 5'er günlük)
@@ -747,7 +806,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
           .toDouble();
       groupedData.add(groupArticles);
     }
-    
+
     return LineChart(
       LineChartData(
         gridData: FlGridData(
@@ -763,22 +822,30 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
         ),
         titlesData: FlTitlesData(
           show: true,
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 30,
               interval: 1,
               getTitlesWidget: (value, meta) {
-                final weekNames = ['1. Hafta', '2. Hafta', '3. Hafta', '4. Hafta', '5. Hafta', '6. Hafta'];
+                final weekNames = [
+                  '1. Hafta',
+                  '2. Hafta',
+                  '3. Hafta',
+                  '4. Hafta',
+                  '5. Hafta',
+                  '6. Hafta',
+                ];
                 if (value.toInt() < weekNames.length) {
                   return Text(
                     weekNames[value.toInt()],
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                   );
                 }
                 return const Text('');
@@ -792,10 +859,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toInt().toString(),
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                 );
               },
             ),
@@ -808,7 +872,9 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
         minX: 0,
         maxX: 5,
         minY: 0,
-        maxY: groupedData.isNotEmpty ? groupedData.reduce((a, b) => a > b ? a : b) + 5 : 20,
+        maxY: groupedData.isNotEmpty
+            ? groupedData.reduce((a, b) => a > b ? a : b) + 5
+            : 20,
         lineBarsData: [
           LineChartBarData(
             spots: groupedData.asMap().entries.map((entry) {
@@ -847,7 +913,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
             getTooltipColor: (touchedSpot) => Colors.black87,
-            
+
             getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
               return touchedBarSpots.map((barSpot) {
                 return LineTooltipItem(
@@ -883,9 +949,10 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
     }
 
     final sections = categoriesData.entries.map((entry) {
-      final index = categoriesData.keys.toList().indexOf(entry.key) % colors.length;
+      final index =
+          categoriesData.keys.toList().indexOf(entry.key) % colors.length;
       final percentage = (entry.value / total * 100).toStringAsFixed(1);
-      
+
       return PieChartSectionData(
         color: colors[index],
         value: entry.value.toDouble(),
@@ -917,7 +984,9 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: categoriesData.entries.map((entry) {
-              final index = categoriesData.keys.toList().indexOf(entry.key) % colors.length;
+              final index =
+                  categoriesData.keys.toList().indexOf(entry.key) %
+                  colors.length;
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 2),
                 child: Row(
@@ -949,7 +1018,15 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
   }
 
   String _getWeekDayName(int index) {
-    final days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
+    final days = [
+      'Pazartesi',
+      'Salı',
+      'Çarşamba',
+      'Perşembe',
+      'Cuma',
+      'Cumartesi',
+      'Pazar',
+    ];
     return days[index % 7];
   }
 
@@ -972,7 +1049,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
   void _exportAnalytics() {
     // Analytics export işlemi
     final data = ref.read(analyticsProvider.notifier).exportAnalytics();
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('İstatistikler export edildi'),
@@ -985,12 +1062,13 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
     final result = await ModernDialogs.showDangerDialog(
       context: context,
       title: 'İstatistikleri Temizle',
-      content: 'Tüm okuma istatistikleriniz silinecek. Bu işlem geri alınamaz. Emin misiniz?',
+      content:
+          'Tüm okuma istatistikleriniz silinecek. Bu işlem geri alınamaz. Emin misiniz?',
       icon: Icons.analytics_rounded,
       confirmText: 'Temizle',
       cancelText: 'İptal',
     );
-    
+
     if (result == true && mounted) {
       ref.read(analyticsProvider.notifier).clearAllAnalytics();
       ScaffoldMessenger.of(context).showSnackBar(

@@ -26,7 +26,8 @@ class UpdateInfo {
       version: json['version'] as String,
       versionCode: json['versionCode'] as int,
       forceUpdate: json['forceUpdate'] as bool? ?? false,
-      message: json['message'] as String? ?? 'Yeni özellikler ve iyileştirmeler',
+      message:
+          json['message'] as String? ?? 'Yeni özellikler ve iyileştirmeler',
       downloadUrl: json['downloadUrl'] as String?,
     );
   }
@@ -46,11 +47,7 @@ class UpdateCheckResult {
   final UpdateInfo? updateInfo;
   final AppUpdateInfo? appUpdateInfo;
 
-  UpdateCheckResult({
-    required this.type,
-    this.updateInfo,
-    this.appUpdateInfo,
-  });
+  UpdateCheckResult({required this.type, this.updateInfo, this.appUpdateInfo});
 }
 
 /// Uygulama güncelleme servisi
@@ -70,7 +67,9 @@ class UpdateService {
     try {
       _packageInfo = await PackageInfo.fromPlatform();
       _isInitialized = true;
-      debugPrint('✅ UpdateService initialized: ${_packageInfo?.version} (${_packageInfo?.buildNumber})');
+      debugPrint(
+        '✅ UpdateService initialized: ${_packageInfo?.version} (${_packageInfo?.buildNumber})',
+      );
     } catch (e) {
       debugPrint('⚠️ UpdateService initialization hatası: $e');
     }
@@ -96,10 +95,11 @@ class UpdateService {
       if (!kIsWeb) {
         try {
           final appUpdateInfo = await InAppUpdate.checkForUpdate();
-          
-          if (appUpdateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+
+          if (appUpdateInfo.updateAvailability ==
+              UpdateAvailability.updateAvailable) {
             debugPrint('🔄 Google Play In-App Update mevcut');
-            
+
             // Zorunlu güncelleme kontrolü
             if (appUpdateInfo.immediateUpdateAllowed) {
               return UpdateCheckResult(
@@ -107,7 +107,7 @@ class UpdateService {
                 appUpdateInfo: appUpdateInfo,
               );
             }
-            
+
             // Esnek güncelleme kontrolü
             if (appUpdateInfo.flexibleUpdateAllowed) {
               return UpdateCheckResult(
@@ -153,21 +153,30 @@ class UpdateService {
       }
 
       final dio = Dio();
-      dio.options.connectTimeout = Duration(milliseconds: ApiEndpoints.connectTimeoutMs);
-      dio.options.receiveTimeout = Duration(milliseconds: ApiEndpoints.receiveTimeoutMs);
+      dio.options.connectTimeout = Duration(
+        milliseconds: ApiEndpoints.connectTimeoutMs,
+      );
+      dio.options.receiveTimeout = Duration(
+        milliseconds: ApiEndpoints.receiveTimeoutMs,
+      );
 
       final response = await dio.get(ApiEndpoints.versionCheckUrl);
-      
+
       if (response.statusCode == 200) {
         final updateInfo = UpdateInfo.fromJson(response.data);
-        final currentVersionCode = int.tryParse(currentVersion.buildNumber) ?? 0;
-        
+        final currentVersionCode =
+            int.tryParse(currentVersion.buildNumber) ?? 0;
+
         // Versiyon karşılaştırması
         if (updateInfo.versionCode > currentVersionCode) {
-          debugPrint('🔄 Yeni versiyon mevcut: ${updateInfo.version} (${updateInfo.versionCode}) > ${currentVersion.version} ($currentVersionCode)');
+          debugPrint(
+            '🔄 Yeni versiyon mevcut: ${updateInfo.version} (${updateInfo.versionCode}) > ${currentVersion.version} ($currentVersionCode)',
+          );
           return updateInfo;
         } else {
-          debugPrint('✅ Uygulama güncel: ${currentVersion.version} ($currentVersionCode)');
+          debugPrint(
+            '✅ Uygulama güncel: ${currentVersion.version} ($currentVersionCode)',
+          );
           return null;
         }
       }
@@ -187,13 +196,14 @@ class UpdateService {
       }
 
       final appUpdateInfo = await InAppUpdate.checkForUpdate();
-      
-      if (appUpdateInfo.updateAvailability == UpdateAvailability.updateAvailable &&
+
+      if (appUpdateInfo.updateAvailability ==
+              UpdateAvailability.updateAvailable &&
           appUpdateInfo.immediateUpdateAllowed) {
         await InAppUpdate.performImmediateUpdate();
         return true;
       }
-      
+
       return false;
     } catch (e) {
       debugPrint('⚠️ Zorunlu güncelleme başlatma hatası: $e');
@@ -210,13 +220,14 @@ class UpdateService {
       }
 
       final appUpdateInfo = await InAppUpdate.checkForUpdate();
-      
-      if (appUpdateInfo.updateAvailability == UpdateAvailability.updateAvailable &&
+
+      if (appUpdateInfo.updateAvailability ==
+              UpdateAvailability.updateAvailable &&
           appUpdateInfo.flexibleUpdateAllowed) {
         await InAppUpdate.startFlexibleUpdate();
         return true;
       }
-      
+
       return false;
     } catch (e) {
       debugPrint('⚠️ Esnek güncelleme başlatma hatası: $e');
@@ -235,4 +246,3 @@ class UpdateService {
     }
   }
 }
-

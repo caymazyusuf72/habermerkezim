@@ -3,13 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haber_merkezi/core/services/logger_service.dart';
 
 /// Uygulama başlatma aşaması
-enum StartupPhase {
-  initial,
-  coreServices,
-  dataServices,
-  uiServices,
-  completed,
-}
+enum StartupPhase { initial, coreServices, dataServices, uiServices, completed }
 
 /// Başlatma görevi tanımı
 class StartupTask {
@@ -42,8 +36,7 @@ class StartupMetrics {
 
   bool get isCompleted => endTime != null;
 
-  int get successCount =>
-      taskDurations.length - taskErrors.length;
+  int get successCount => taskDurations.length - taskErrors.length;
 
   int get failureCount => taskErrors.length;
 
@@ -60,21 +53,21 @@ class StartupMetrics {
   }
 
   Map<String, dynamic> toJson() => {
-        'totalDuration': totalDuration.inMilliseconds,
-        'tasks': taskDurations.map(
-          (k, v) => MapEntry(k, v.inMilliseconds),
-        ),
-        'errors': taskErrors,
-        'successCount': successCount,
-        'failureCount': failureCount,
-      };
+    'totalDuration': totalDuration.inMilliseconds,
+    'tasks': taskDurations.map((k, v) => MapEntry(k, v.inMilliseconds)),
+    'errors': taskErrors,
+    'successCount': successCount,
+    'failureCount': failureCount,
+  };
 
   @override
   String toString() {
     final buffer = StringBuffer();
     buffer.writeln('=== Startup Metrics ===');
     buffer.writeln('Total: ${totalDuration.inMilliseconds}ms');
-    buffer.writeln('Tasks: ${taskDurations.length} ($successCount OK, $failureCount failed)');
+    buffer.writeln(
+      'Tasks: ${taskDurations.length} ($successCount OK, $failureCount failed)',
+    );
     for (final entry in taskDurations.entries) {
       final status = taskErrors.containsKey(entry.key) ? '❌' : '✅';
       buffer.writeln('  $status ${entry.key}: ${entry.value.inMilliseconds}ms');
@@ -274,6 +267,6 @@ class LazyInitializer<T> {
 /// App startup provider
 final appStartupServiceProvider =
     StateNotifierProvider<AppStartupService, AppStartupState>((ref) {
-  final logger = LoggerService();
-  return AppStartupService(logger);
-});
+      final logger = LoggerService();
+      return AppStartupService(logger);
+    });

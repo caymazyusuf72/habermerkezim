@@ -41,7 +41,11 @@ class ReadingStatsChart extends StatelessWidget {
                   color: Colors.blue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.bar_chart_rounded, color: Colors.blue, size: 20),
+                child: const Icon(
+                  Icons.bar_chart_rounded,
+                  color: Colors.blue,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -54,10 +58,7 @@ class ReadingStatsChart extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 24),
-          SizedBox(
-            height: 200,
-            child: _buildBarChart(),
-          ),
+          SizedBox(height: 200, child: _buildBarChart()),
           const SizedBox(height: 16),
           _buildLegend(),
         ],
@@ -100,7 +101,9 @@ class ReadingStatsChart extends StatelessWidget {
                     child: Text(
                       days[value.toInt()],
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -128,8 +131,12 @@ class ReadingStatsChart extends StatelessWidget {
               },
             ),
           ),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         gridData: FlGridData(
           show: true,
@@ -152,7 +159,7 @@ class ReadingStatsChart extends StatelessWidget {
   List<BarChartGroupData> _getBarGroups() {
     // Simüle edilmiş haftalık veri (gerçek uygulamada backend'den gelecek)
     final weeklyData = _generateWeeklyData();
-    
+
     return List.generate(7, (index) {
       final value = weeklyData[index];
       return BarChartGroupData(
@@ -161,10 +168,7 @@ class ReadingStatsChart extends StatelessWidget {
           BarChartRodData(
             toY: value,
             gradient: LinearGradient(
-              colors: [
-                Colors.blue,
-                Colors.blue.withValues(alpha: 0.7),
-              ],
+              colors: [Colors.blue, Colors.blue.withValues(alpha: 0.7)],
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
             ),

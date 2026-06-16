@@ -18,7 +18,8 @@ import '../reading_list/reading_list_page.dart';
 import '../settings/settings_page.dart';
 
 /// CategoryTabs için PreferredSizeWidget wrapper
-class CategoryTabsWrapper extends StatelessWidget implements PreferredSizeWidget {
+class CategoryTabsWrapper extends StatelessWidget
+    implements PreferredSizeWidget {
   final Widget child;
 
   const CategoryTabsWrapper({super.key, required this.child});
@@ -43,10 +44,9 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage>
     with TickerProviderStateMixin {
-  
   TabController? _tabController;
   final Map<String, GlobalKey<NewsListState>> _newsListKeys = {};
-  
+
   @override
   void initState() {
     super.initState();
@@ -59,31 +59,30 @@ class _HomePageState extends ConsumerState<HomePage>
         _newsListKeys[category.id] = GlobalKey<NewsListState>();
       }
     }
-    
+
     // Eski controller'ı dispose et
     if (_tabController != null && _tabController!.length != categories.length) {
       _tabController!.removeListener(_onTabChanged);
       _tabController!.dispose();
     }
-    
+
     // Tab controller'ı başlat
-    _tabController = TabController(
-      length: categories.length,
-      vsync: this,
-    );
-    
+    _tabController = TabController(length: categories.length, vsync: this);
+
     // Tab değişikliklerini dinle
     _tabController!.addListener(_onTabChanged);
-    
+
     // İlk kategoriyi yükle (LAZY LOADING - sadece aktif kategori)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && _tabController != null) {
         final selectedCategory = categories[_tabController!.index];
         debugPrint('📱 İlk kategori yükleniyor: ${selectedCategory.id}');
-        ref.read(newsProvider.notifier).loadArticlesByCategory(
-          selectedCategory.id,
-          refresh: false // Cache'den al, arka planda yenile
-        );
+        ref
+            .read(newsProvider.notifier)
+            .loadArticlesByCategory(
+              selectedCategory.id,
+              refresh: false, // Cache'den al, arka planda yenile
+            );
       }
     });
   }
@@ -104,7 +103,6 @@ class _HomePageState extends ConsumerState<HomePage>
     }
   }
 
-
   /// Pull-to-refresh callback
   Future<void> _onRefresh() async {
     await ref.read(newsProvider.notifier).refreshArticles();
@@ -121,11 +119,11 @@ class _HomePageState extends ConsumerState<HomePage>
     final isConnected = connectivityState.isConnected;
     final isDarkMode = ref.watch(isDarkModeProvider);
     final categories = ref.watch(orderedCategoriesProvider);
-    
+
     // Responsive helper
     final responsive = ResponsiveHelper(context);
     final isTabletOrLarger = responsive.isTablet || responsive.isDesktop;
-    
+
     // İlk kez veya kategoriler değiştiğinde TabController'ı oluştur/güncelle
     if (_tabController == null || _tabController!.length != categories.length) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -136,7 +134,7 @@ class _HomePageState extends ConsumerState<HomePage>
         }
       });
     }
-    
+
     // Tablet ve desktop için NavigationRail layout
     if (isTabletOrLarger) {
       return _buildTabletLayout(
@@ -148,101 +146,106 @@ class _HomePageState extends ConsumerState<HomePage>
         responsive,
       );
     }
-    
+
     // Mobil layout - Bottom Navigation ile
     return Scaffold(
       // App Bar
-      appBar: _selectedNavIndex == 0 ? AppBar(
-        title: Row(
-          children: [
-            // Logo
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppTheme.oceanBlueDark, AppTheme.oceanBlueLight],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.dynamic_feed_rounded,
-                size: 16,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Flexible(
-              child: Text(
-                'Haber Merkezim',
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        
-        // App bar actions (sadece ana sayfada)
-        actions: [
-          // Bağlantı durumu göstergesi
-          if (!isConnected)
-            Container(
-              margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.orange,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.wifi_off, size: 16, color: Colors.white),
-                  SizedBox(width: 4),
-                  Text(
-                    'Offline',
-                    style: TextStyle(
+      appBar: _selectedNavIndex == 0
+          ? AppBar(
+              title: Row(
+                children: [
+                  // Logo
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.oceanBlueDark,
+                          AppTheme.oceanBlueLight,
+                        ],
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.dynamic_feed_rounded,
+                      size: 16,
                       color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: Text(
+                      'Haber Merkezim',
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
-            ),
-          
-          // Dark mode toggle
-          IconButton(
-            onPressed: () {
-              ref.read(themeProvider.notifier).toggleTheme();
-            },
-            icon: Icon(
-              isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-            ),
-            tooltip: isDarkMode ? 'Açık Tema' : 'Karanlık Tema',
-          ),
-        ],
-        
-        // Kategori tabları
-        bottom: _tabController != null
-            ? PreferredSize(
-                preferredSize: const Size.fromHeight(48),
-                child: CategoryTabs(
-                  tabController: _tabController!,
-                  categories: categories,
+
+              // App bar actions (sadece ana sayfada)
+              actions: [
+                // Bağlantı durumu göstergesi
+                if (!isConnected)
+                  Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(Icons.wifi_off, size: 16, color: Colors.white),
+                        SizedBox(width: 4),
+                        Text(
+                          'Offline',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                // Dark mode toggle
+                IconButton(
+                  onPressed: () {
+                    ref.read(themeProvider.notifier).toggleTheme();
+                  },
+                  icon: Icon(
+                    isDarkMode
+                        ? Icons.light_mode_rounded
+                        : Icons.dark_mode_rounded,
+                  ),
+                  tooltip: isDarkMode ? 'Açık Tema' : 'Karanlık Tema',
                 ),
-              )
-            : null,
-      ) : null,
+              ],
+
+              // Kategori tabları
+              bottom: _tabController != null
+                  ? PreferredSize(
+                      preferredSize: const Size.fromHeight(48),
+                      child: CategoryTabs(
+                        tabController: _tabController!,
+                        categories: categories,
+                      ),
+                    )
+                  : null,
+            )
+          : null,
 
       // Drawer (sadece ana sayfada)
       drawer: _selectedNavIndex == 0 ? const AppDrawer() : null,
 
       // Ana içerik - seçili sayfaya göre
-      body: _buildMobileContent(
-        context,
-        newsState,
-        isConnected,
-        categories,
-      ),
+      body: _buildMobileContent(context, newsState, isConnected, categories),
 
       // Bottom Navigation Bar
       bottomNavigationBar: NavigationBar(
@@ -285,7 +288,7 @@ class _HomePageState extends ConsumerState<HomePage>
                   final activeCategory = categories[_tabController!.index];
                   final newsListKey = _newsListKeys[activeCategory.id];
                   final newsListState = newsListKey?.currentState;
-                  
+
                   if (newsListState != null) {
                     newsListState.scrollToTop();
                   }
@@ -297,7 +300,7 @@ class _HomePageState extends ConsumerState<HomePage>
           : null,
     );
   }
-  
+
   /// Mobil içerik alanı - seçili sayfaya göre
   Widget _buildMobileContent(
     BuildContext context,
@@ -309,64 +312,64 @@ class _HomePageState extends ConsumerState<HomePage>
       case 0:
         // Ana sayfa - haberler
         return Column(
-        children: [
-          // Bildirim banner'ı
-          const NotificationBanner(),
-          
-          // İlgilendiğiniz Haberler bölümü - Devre dışı
-          // const PersonalizedNewsSection(),
-          
-          // Hata mesajı (varsa)
-          if (newsState.hasError && !newsState.isLoading)
-            Container(
-              width: double.infinity,
-              color: Colors.red.shade50,
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red.shade600,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      newsState.errorMessage ?? 'Bir hata oluştu',
-                      style: TextStyle(
-                        color: Colors.red.shade700,
-                        fontSize: 14,
+          children: [
+            // Bildirim banner'ı
+            const NotificationBanner(),
+
+            // İlgilendiğiniz Haberler bölümü - Devre dışı
+            // const PersonalizedNewsSection(),
+
+            // Hata mesajı (varsa)
+            if (newsState.hasError && !newsState.isLoading)
+              Container(
+                width: double.infinity,
+                color: Colors.red.shade50,
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      color: Colors.red.shade600,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        newsState.errorMessage ?? 'Bir hata oluştu',
+                        style: TextStyle(
+                          color: Colors.red.shade700,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      ref.read(newsProvider.notifier).clearError();
-                      _onRefresh();
-                    },
-                    child: const Text('Yeniden Dene'),
-                  ),
-                ],
+                    TextButton(
+                      onPressed: () {
+                        ref.read(newsProvider.notifier).clearError();
+                        _onRefresh();
+                      },
+                      child: const Text('Yeniden Dene'),
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-          // Haber listesi
-          Expanded(
-            child: _tabController != null
-                ? TabBarView(
-                    controller: _tabController!,
-                    children: categories.map((category) {
-                      return NewsList(
-                        key: _newsListKeys[category.id],
-                        category: category.id,
-                        onRefresh: _onRefresh,
-                      );
-                    }).toList(),
-                  )
-                : const Center(child: CircularProgressIndicator()),
-          ),
-        ],
-      );
+            // Haber listesi
+            Expanded(
+              child: _tabController != null
+                  ? TabBarView(
+                      controller: _tabController!,
+                      children: categories.map((category) {
+                        return NewsList(
+                          key: _newsListKeys[category.id],
+                          category: category.id,
+                          onRefresh: _onRefresh,
+                        );
+                      }).toList(),
+                    )
+                  : const Center(child: CircularProgressIndicator()),
+            ),
+          ],
+        );
       case 1:
         // Arama
         return const SearchPage();
@@ -381,7 +384,7 @@ class _HomePageState extends ConsumerState<HomePage>
           children: [
             // Bildirim banner'ı
             const NotificationBanner(),
-            
+
             // Hata mesajı (varsa)
             if (newsState.hasError && !newsState.isLoading)
               Container(
@@ -435,7 +438,7 @@ class _HomePageState extends ConsumerState<HomePage>
         );
     }
   }
-  
+
   /// Tablet ve Desktop için NavigationRail layout
   Widget _buildTabletLayout(
     BuildContext context,
@@ -468,7 +471,10 @@ class _HomePageState extends ConsumerState<HomePage>
                     height: 48,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppTheme.oceanBlueDark, AppTheme.oceanBlueLight],
+                        colors: [
+                          AppTheme.oceanBlueDark,
+                          AppTheme.oceanBlueLight,
+                        ],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -504,7 +510,9 @@ class _HomePageState extends ConsumerState<HomePage>
                           ref.read(themeProvider.notifier).toggleTheme();
                         },
                         icon: Icon(
-                          isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                          isDarkMode
+                              ? Icons.light_mode_rounded
+                              : Icons.dark_mode_rounded,
                         ),
                         tooltip: isDarkMode ? 'Açık Tema' : 'Karanlık Tema',
                       ),
@@ -549,10 +557,10 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
             ],
           ),
-          
+
           // Divider
           const VerticalDivider(thickness: 1, width: 1),
-          
+
           // Ana içerik
           Expanded(
             child: _buildTabletContent(
@@ -568,7 +576,7 @@ class _HomePageState extends ConsumerState<HomePage>
       ),
     );
   }
-  
+
   /// Tablet içerik alanı
   Widget _buildTabletContent(
     BuildContext context,
@@ -606,7 +614,7 @@ class _HomePageState extends ConsumerState<HomePage>
         );
     }
   }
-  
+
   /// Tablet haber içeriği
   Widget _buildTabletNewsContent(
     BuildContext context,
@@ -637,14 +645,17 @@ class _HomePageState extends ConsumerState<HomePage>
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              
+
               const Spacer(),
-              
+
               // Bağlantı durumu
               if (!isConnected)
                 Container(
                   margin: const EdgeInsets.only(right: 16),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.orange,
                     borderRadius: BorderRadius.circular(16),
@@ -665,7 +676,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     ],
                   ),
                 ),
-              
+
               // Yenile butonu
               IconButton(
                 onPressed: _onRefresh,
@@ -675,7 +686,7 @@ class _HomePageState extends ConsumerState<HomePage>
             ],
           ),
         ),
-        
+
         // Kategori tabları
         if (_tabController != null)
           Container(
@@ -685,10 +696,10 @@ class _HomePageState extends ConsumerState<HomePage>
               categories: categories,
             ),
           ),
-        
+
         // Bildirim banner'ı
         const NotificationBanner(),
-        
+
         // Hata mesajı
         if (newsState.hasError && !newsState.isLoading)
           Container(
@@ -697,19 +708,12 @@ class _HomePageState extends ConsumerState<HomePage>
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                Icon(
-                  Icons.error_outline,
-                  color: Colors.red.shade600,
-                  size: 20,
-                ),
+                Icon(Icons.error_outline, color: Colors.red.shade600, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     newsState.errorMessage ?? 'Bir hata oluştu',
-                    style: TextStyle(
-                      color: Colors.red.shade700,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.red.shade700, fontSize: 14),
                   ),
                 ),
                 TextButton(
@@ -722,7 +726,7 @@ class _HomePageState extends ConsumerState<HomePage>
               ],
             ),
           ),
-        
+
         // Haber listesi
         Expanded(
           child: _tabController != null

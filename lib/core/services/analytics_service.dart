@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/entities/reading_analytics.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Okuma analytics servisi
 class AnalyticsService {
   static const String _boxName = 'reading_analytics';
@@ -25,12 +26,12 @@ class AnalyticsService {
     try {
       final todayId = ReadingAnalytics.getTodayId();
       final map = _box!.get(todayId);
-      
+
       if (map != null) {
         final convertedMap = Map<String, dynamic>.from(map);
         return ReadingAnalytics.fromMap(convertedMap);
       }
-      
+
       // Bugün için analytics yoksa boş oluştur
       return ReadingAnalytics.empty();
     } catch (e) {
@@ -51,10 +52,18 @@ class AnalyticsService {
   }
 
   /// Makale okundu olayını kaydet
-  static Future<bool> recordArticleRead(String category, String source, {int timeSpent = 0}) async {
+  static Future<bool> recordArticleRead(
+    String category,
+    String source, {
+    int timeSpent = 0,
+  }) async {
     try {
       final today = getTodayAnalytics();
-      final updated = today.incrementArticleRead(category, source, timeSpent: timeSpent);
+      final updated = today.incrementArticleRead(
+        category,
+        source,
+        timeSpent: timeSpent,
+      );
       return await saveAnalytics(updated);
     } catch (e) {
       debugPrint('Makale okuma kaydı hatası: $e');
@@ -103,18 +112,20 @@ class AnalyticsService {
     try {
       final startDate = range.getStartDate();
       final endDate = DateTime.now();
-      
+
       final analytics = <ReadingAnalytics>[];
-      
+
       for (final map in _box!.values) {
         final convertedMap = Map<String, dynamic>.from(map);
         final analytic = ReadingAnalytics.fromMap(convertedMap);
-        if (analytic.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
+        if (analytic.date.isAfter(
+              startDate.subtract(const Duration(days: 1)),
+            ) &&
             analytic.date.isBefore(endDate.add(const Duration(days: 1)))) {
           analytics.add(analytic);
         }
       }
-      
+
       // Tarihe göre sırala
       analytics.sort((a, b) => a.date.compareTo(b.date));
       return analytics;
@@ -128,12 +139,12 @@ class AnalyticsService {
   static List<ReadingAnalytics> getAllAnalytics() {
     try {
       final analytics = <ReadingAnalytics>[];
-      
+
       for (final map in _box!.values) {
         final convertedMap = Map<String, dynamic>.from(map);
         analytics.add(ReadingAnalytics.fromMap(convertedMap));
       }
-      
+
       // Tarihe göre sırala
       analytics.sort((a, b) => a.date.compareTo(b.date));
       return analytics;
@@ -147,7 +158,7 @@ class AnalyticsService {
   static AnalyticsSummary createSummary(AnalyticsTimeRange range) {
     try {
       final analytics = getAnalyticsInRange(range);
-      
+
       if (analytics.isEmpty) {
         return AnalyticsSummary.empty;
       }
@@ -157,28 +168,29 @@ class AnalyticsService {
       int totalFavorites = 0;
       int totalSearches = 0;
       int totalShares = 0;
-      
+
       final Map<String, int> categoriesBreakdown = {};
       final Map<String, int> sourcesBreakdown = {};
-      
+
       for (final analytic in analytics) {
         totalArticlesRead += analytic.articlesRead;
         totalTimeSpent += analytic.timeSpentMinutes;
         totalFavorites += analytic.favoriteCount;
         totalSearches += analytic.searchCount;
         totalShares += analytic.shareCount;
-        
+
         // Kategorileri birleştir
         analytic.categoriesRead.forEach((category, count) {
-          categoriesBreakdown[category] = (categoriesBreakdown[category] ?? 0) + count;
+          categoriesBreakdown[category] =
+              (categoriesBreakdown[category] ?? 0) + count;
         });
-        
+
         // Kaynakları birleştir
         analytic.sourcesRead.forEach((source, count) {
           sourcesBreakdown[source] = (sourcesBreakdown[source] ?? 0) + count;
         });
       }
-      
+
       // Okuma streak'i hesapla
       final streakDays = _calculateReadingStreak(analytics);
 
@@ -202,24 +214,25 @@ class AnalyticsService {
   /// Okuma streak'i hesapla
   static int _calculateReadingStreak(List<ReadingAnalytics> analytics) {
     if (analytics.isEmpty) return 0;
-    
+
     // Son günden geriye doğru gidip streak'i hesapla
     int streak = 0;
     final today = DateTime.now();
-    
+
     for (int i = 0; i < 365; i++) {
       final checkDate = today.subtract(Duration(days: i));
-      final checkId = '${checkDate.year}-${checkDate.month.toString().padLeft(2, '0')}-${checkDate.day.toString().padLeft(2, '0')}';
-      
+      final checkId =
+          '${checkDate.year}-${checkDate.month.toString().padLeft(2, '0')}-${checkDate.day.toString().padLeft(2, '0')}';
+
       final dayAnalytic = analytics.where((a) => a.id == checkId).firstOrNull;
-      
+
       if (dayAnalytic != null && dayAnalytic.articlesRead > 0) {
         streak++;
       } else {
         break;
       }
     }
-    
+
     return streak;
   }
 
@@ -227,11 +240,12 @@ class AnalyticsService {
   static List<ReadingAnalytics> getLast7DaysAnalytics() {
     final analytics = <ReadingAnalytics>[];
     final today = DateTime.now();
-    
+
     for (int i = 6; i >= 0; i--) {
       final date = today.subtract(Duration(days: i));
-      final id = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-      
+      final id =
+          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
       try {
         final map = _box!.get(id);
         if (map != null) {
@@ -239,20 +253,14 @@ class AnalyticsService {
           analytics.add(ReadingAnalytics.fromMap(convertedMap));
         } else {
           // O gün için veri yoksa boş analytics ekle
-          analytics.add(ReadingAnalytics(
-            id: id,
-            date: date,
-          ));
+          analytics.add(ReadingAnalytics(id: id, date: date));
         }
       } catch (e) {
         // Hata durumunda boş analytics ekle
-        analytics.add(ReadingAnalytics(
-          id: id,
-          date: date,
-        ));
+        analytics.add(ReadingAnalytics(id: id, date: date));
       }
     }
-    
+
     return analytics;
   }
 
@@ -260,11 +268,12 @@ class AnalyticsService {
   static List<ReadingAnalytics> getLast30DaysAnalytics() {
     final analytics = <ReadingAnalytics>[];
     final today = DateTime.now();
-    
+
     for (int i = 29; i >= 0; i--) {
       final date = today.subtract(Duration(days: i));
-      final id = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-      
+      final id =
+          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
       try {
         final map = _box!.get(id);
         if (map != null) {
@@ -272,20 +281,14 @@ class AnalyticsService {
           analytics.add(ReadingAnalytics.fromMap(convertedMap));
         } else {
           // O gün için veri yoksa boş analytics ekle
-          analytics.add(ReadingAnalytics(
-            id: id,
-            date: date,
-          ));
+          analytics.add(ReadingAnalytics(id: id, date: date));
         }
       } catch (e) {
         // Hata durumunda boş analytics ekle
-        analytics.add(ReadingAnalytics(
-          id: id,
-          date: date,
-        ));
+        analytics.add(ReadingAnalytics(id: id, date: date));
       }
     }
-    
+
     return analytics;
   }
 
@@ -338,7 +341,7 @@ class AnalyticsService {
         'totalDays': allAnalytics.length,
         'analytics': allAnalytics.map((a) => a.toMap()).toList(),
       };
-      
+
       return exportData;
     } catch (e) {
       debugPrint('Analytics export hatası: $e');
@@ -351,14 +354,14 @@ class AnalyticsService {
     try {
       final analyticsData = data['analytics'] as List?;
       if (analyticsData == null) return false;
-      
+
       for (final analyticMap in analyticsData) {
         if (analyticMap is Map<String, dynamic>) {
           final analytics = ReadingAnalytics.fromMap(analyticMap);
           await saveAnalytics(analytics);
         }
       }
-      
+
       return true;
     } catch (e) {
       debugPrint('Analytics import hatası: $e');
@@ -372,32 +375,47 @@ class AnalyticsHelper {
   AnalyticsHelper._();
 
   /// Haftalık okuma hedefi kontrolü
-  static bool checkWeeklyReadingGoal(List<ReadingAnalytics> weeklyData, int goalArticles) {
-    final totalArticles = weeklyData.fold(0, (sum, day) => sum + day.articlesRead);
+  static bool checkWeeklyReadingGoal(
+    List<ReadingAnalytics> weeklyData,
+    int goalArticles,
+  ) {
+    final totalArticles = weeklyData.fold(
+      0,
+      (sum, day) => sum + day.articlesRead,
+    );
     return totalArticles >= goalArticles;
   }
 
   /// Günlük okuma hedefi kontrolü
-  static bool checkDailyReadingGoal(ReadingAnalytics dayData, int goalArticles) {
+  static bool checkDailyReadingGoal(
+    ReadingAnalytics dayData,
+    int goalArticles,
+  ) {
     return dayData.articlesRead >= goalArticles;
   }
 
   /// Okuma tutarlılığı puanı (0-100)
   static double calculateConsistencyScore(List<ReadingAnalytics> analytics) {
     if (analytics.isEmpty) return 0;
-    
-    final daysWithReading = analytics.where((day) => day.articlesRead > 0).length;
+
+    final daysWithReading = analytics
+        .where((day) => day.articlesRead > 0)
+        .length;
     return (daysWithReading / analytics.length) * 100;
   }
 
   /// Okuma trendini hesapla (+1: artış, 0: stabil, -1: azalış)
   static int calculateReadingTrend(List<ReadingAnalytics> analytics) {
     if (analytics.length < 2) return 0;
-    
+
     final halfPoint = analytics.length ~/ 2;
-    final firstHalf = analytics.take(halfPoint).fold(0, (sum, day) => sum + day.articlesRead);
-    final secondHalf = analytics.skip(halfPoint).fold(0, (sum, day) => sum + day.articlesRead);
-    
+    final firstHalf = analytics
+        .take(halfPoint)
+        .fold(0, (sum, day) => sum + day.articlesRead);
+    final secondHalf = analytics
+        .skip(halfPoint)
+        .fold(0, (sum, day) => sum + day.articlesRead);
+
     if (secondHalf > firstHalf) return 1;
     if (secondHalf < firstHalf) return -1;
     return 0;
@@ -411,7 +429,10 @@ class AnalyticsHelper {
   }
 
   /// Okuma motivasyonu mesajı
-  static String getMotivationMessage(ReadingAnalytics todayData, int streakDays) {
+  static String getMotivationMessage(
+    ReadingAnalytics todayData,
+    int streakDays,
+  ) {
     if (streakDays >= 7) {
       return '🔥 Muhteşem! $streakDays günlük okuma seriniz devam ediyor!';
     } else if (todayData.articlesRead >= 5) {

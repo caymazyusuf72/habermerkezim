@@ -61,4 +61,3 @@ class ReadingListLocalDataSourceImpl implements ReadingListLocalDataSource {
     }
   }
 }
-

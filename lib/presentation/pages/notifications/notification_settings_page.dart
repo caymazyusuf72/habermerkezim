@@ -24,7 +24,9 @@ class _NotificationSettingsPageState
       appBar: AppBar(
         title: const Text('Bildirim Ayarları'),
         backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
-        foregroundColor: isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface,
+        foregroundColor: isDark
+            ? AppTheme.darkOnSurface
+            : AppTheme.lightOnSurface,
         elevation: 0,
         actions: [
           if (notificationState.permissionsGranted)
@@ -52,31 +54,51 @@ class _NotificationSettingsPageState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Permission Status
-                  _buildPermissionCard(context, notificationState, notificationNotifier),
-                  
+                  _buildPermissionCard(
+                    context,
+                    notificationState,
+                    notificationNotifier,
+                  ),
+
                   const SizedBox(height: 24),
-                  
+
                   // Daily News Settings
-                  _buildDailyNewsCard(context, notificationState, notificationNotifier),
-                  
+                  _buildDailyNewsCard(
+                    context,
+                    notificationState,
+                    notificationNotifier,
+                  ),
+
                   const SizedBox(height: 16),
-                  
+
                   // Reading Goal Settings
-                  _buildReadingGoalCard(context, notificationState, notificationNotifier),
-                  
+                  _buildReadingGoalCard(
+                    context,
+                    notificationState,
+                    notificationNotifier,
+                  ),
+
                   const SizedBox(height: 16),
-                  
+
                   // Breaking News Settings
-                  _buildBreakingNewsCard(context, notificationState, notificationNotifier),
-                  
+                  _buildBreakingNewsCard(
+                    context,
+                    notificationState,
+                    notificationNotifier,
+                  ),
+
                   const SizedBox(height: 16),
-                  
+
                   // Quick Actions
                   _buildQuickActionsCard(context, notificationNotifier),
-                  
+
                   if (notificationState.error != null) ...[
                     const SizedBox(height: 16),
-                    _buildErrorCard(context, notificationState.error!, notificationNotifier),
+                    _buildErrorCard(
+                      context,
+                      notificationState.error!,
+                      notificationNotifier,
+                    ),
                   ],
                 ],
               ),
@@ -91,7 +113,7 @@ class _NotificationSettingsPageState
   ) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Card(
       elevation: 2,
       color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
@@ -103,11 +125,11 @@ class _NotificationSettingsPageState
             Row(
               children: [
                 Icon(
-                  state.permissionsGranted 
-                      ? Icons.notifications_active 
+                  state.permissionsGranted
+                      ? Icons.notifications_active
                       : Icons.notifications_off,
-                  color: state.permissionsGranted 
-                      ? Colors.green 
+                  color: state.permissionsGranted
+                      ? Colors.green
                       : Colors.orange,
                 ),
                 const SizedBox(width: 12),
@@ -119,7 +141,9 @@ class _NotificationSettingsPageState
                         'Bildirim İzni',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface,
+                          color: isDark
+                              ? AppTheme.darkOnSurface
+                              : AppTheme.lightOnSurface,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -128,8 +152,11 @@ class _NotificationSettingsPageState
                             ? 'Bildirimler aktif'
                             : 'Bildirimler için izin gerekli',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                              .withValues(alpha: 0.7),
+                          color:
+                              (isDark
+                                      ? AppTheme.darkOnSurface
+                                      : AppTheme.lightOnSurface)
+                                  .withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -160,7 +187,7 @@ class _NotificationSettingsPageState
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final settings = state.settings;
-    
+
     return Card(
       elevation: 2,
       color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
@@ -178,14 +205,17 @@ class _NotificationSettingsPageState
                     'Günlük Haber Hatırlatması',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface,
+                      color: isDark
+                          ? AppTheme.darkOnSurface
+                          : AppTheme.lightOnSurface,
                     ),
                   ),
                 ),
                 Switch(
                   value: settings.dailyNewsEnabled,
                   onChanged: state.permissionsGranted
-                      ? (value) => notifier.updateDailyNewsSettings(enabled: value)
+                      ? (value) =>
+                            notifier.updateDailyNewsSettings(enabled: value)
                       : null,
                   thumbColor: WidgetStateProperty.resolveWith((states) {
                     if (states.contains(WidgetState.selected)) {
@@ -202,25 +232,35 @@ class _NotificationSettingsPageState
                 'Hatırlatma Zamanı',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface,
+                  color: isDark
+                      ? AppTheme.darkOnSurface
+                      : AppTheme.lightOnSurface,
                 ),
               ),
               const SizedBox(height: 8),
               InkWell(
-                onTap: state.permissionsGranted ? () => _selectTime(
-                  context,
-                  TimeOfDay(hour: settings.dailyNewsHour, minute: settings.dailyNewsMinute),
-                  (time) => notifier.updateDailyNewsSettings(
-                    hour: time.hour,
-                    minute: time.minute,
-                  ),
-                ) : null,
+                onTap: state.permissionsGranted
+                    ? () => _selectTime(
+                        context,
+                        TimeOfDay(
+                          hour: settings.dailyNewsHour,
+                          minute: settings.dailyNewsMinute,
+                        ),
+                        (time) => notifier.updateDailyNewsSettings(
+                          hour: time.hour,
+                          minute: time.minute,
+                        ),
+                      )
+                    : null,
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                          .withValues(alpha: 0.3),
+                      color:
+                          (isDark
+                                  ? AppTheme.darkOnSurface
+                                  : AppTheme.lightOnSurface)
+                              .withValues(alpha: 0.3),
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -253,7 +293,7 @@ class _NotificationSettingsPageState
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final settings = state.settings;
-    
+
     return Card(
       elevation: 2,
       color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
@@ -271,14 +311,17 @@ class _NotificationSettingsPageState
                     'Okuma Hedefi Hatırlatması',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface,
+                      color: isDark
+                          ? AppTheme.darkOnSurface
+                          : AppTheme.lightOnSurface,
                     ),
                   ),
                 ),
                 Switch(
                   value: settings.readingGoalEnabled,
                   onChanged: state.permissionsGranted
-                      ? (value) => notifier.updateReadingGoalSettings(enabled: value)
+                      ? (value) =>
+                            notifier.updateReadingGoalSettings(enabled: value)
                       : null,
                   thumbColor: WidgetStateProperty.resolveWith((states) {
                     if (states.contains(WidgetState.selected)) {
@@ -307,10 +350,12 @@ class _NotificationSettingsPageState
                         Row(
                           children: [
                             IconButton(
-                              onPressed: state.permissionsGranted && settings.dailyReadingGoal > 1
+                              onPressed:
+                                  state.permissionsGranted &&
+                                      settings.dailyReadingGoal > 1
                                   ? () => notifier.updateReadingGoalSettings(
-                                        dailyGoal: settings.dailyReadingGoal - 1,
-                                      )
+                                      dailyGoal: settings.dailyReadingGoal - 1,
+                                    )
                                   : null,
                               icon: const Icon(Icons.remove_circle_outline),
                             ),
@@ -319,10 +364,12 @@ class _NotificationSettingsPageState
                               style: theme.textTheme.titleMedium,
                             ),
                             IconButton(
-                              onPressed: state.permissionsGranted && settings.dailyReadingGoal < 50
+                              onPressed:
+                                  state.permissionsGranted &&
+                                      settings.dailyReadingGoal < 50
                                   ? () => notifier.updateReadingGoalSettings(
-                                        dailyGoal: settings.dailyReadingGoal + 1,
-                                      )
+                                      dailyGoal: settings.dailyReadingGoal + 1,
+                                    )
                                   : null,
                               icon: const Icon(Icons.add_circle_outline),
                             ),
@@ -344,20 +391,28 @@ class _NotificationSettingsPageState
                         ),
                         const SizedBox(height: 8),
                         InkWell(
-                          onTap: state.permissionsGranted ? () => _selectTime(
-                            context,
-                            TimeOfDay(hour: settings.readingGoalHour, minute: settings.readingGoalMinute),
-                            (time) => notifier.updateReadingGoalSettings(
-                              hour: time.hour,
-                              minute: time.minute,
-                            ),
-                          ) : null,
+                          onTap: state.permissionsGranted
+                              ? () => _selectTime(
+                                  context,
+                                  TimeOfDay(
+                                    hour: settings.readingGoalHour,
+                                    minute: settings.readingGoalMinute,
+                                  ),
+                                  (time) => notifier.updateReadingGoalSettings(
+                                    hour: time.hour,
+                                    minute: time.minute,
+                                  ),
+                                )
+                              : null,
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                                    .withValues(alpha: 0.3),
+                                color:
+                                    (isDark
+                                            ? AppTheme.darkOnSurface
+                                            : AppTheme.lightOnSurface)
+                                        .withValues(alpha: 0.3),
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -387,7 +442,7 @@ class _NotificationSettingsPageState
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final settings = state.settings;
-    
+
     return Card(
       elevation: 2,
       color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
@@ -408,14 +463,19 @@ class _NotificationSettingsPageState
                         'Son Dakika Haberleri',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface,
+                          color: isDark
+                              ? AppTheme.darkOnSurface
+                              : AppTheme.lightOnSurface,
                         ),
                       ),
                       Text(
                         'Önemli haberler için anında bildirim',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                              .withValues(alpha: 0.7),
+                          color:
+                              (isDark
+                                      ? AppTheme.darkOnSurface
+                                      : AppTheme.lightOnSurface)
+                                  .withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -447,7 +507,7 @@ class _NotificationSettingsPageState
   ) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Card(
       elevation: 2,
       color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
@@ -460,7 +520,9 @@ class _NotificationSettingsPageState
               'Hızlı İşlemler',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface,
+                color: isDark
+                    ? AppTheme.darkOnSurface
+                    : AppTheme.lightOnSurface,
               ),
             ),
             const SizedBox(height: 16),
@@ -503,7 +565,7 @@ class _NotificationSettingsPageState
     NotificationNotifier notifier,
   ) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 2,
       color: Colors.red.shade50,
@@ -553,7 +615,7 @@ class _NotificationSettingsPageState
       context: context,
       initialTime: initialTime,
     );
-    
+
     if (time != null) {
       onTimeSelected(time);
     }

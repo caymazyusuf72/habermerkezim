@@ -27,8 +27,13 @@ class AppDrawer extends ConsumerWidget {
       child: Column(
         children: [
           // Drawer Header
-          _buildDrawerHeader(context, isDarkMode, isConnected, connectionType.toString()),
-          
+          _buildDrawerHeader(
+            context,
+            isDarkMode,
+            isConnected,
+            connectionType.toString(),
+          ),
+
           // Menu Items
           Expanded(
             child: ListView(
@@ -40,12 +45,14 @@ class AppDrawer extends ConsumerWidget {
                   child: Text(
                     'SAYFALAR',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-                
+
                 // Profil
                 _buildMenuTile(
                   context,
@@ -54,13 +61,11 @@ class AppDrawer extends ConsumerWidget {
                   onTap: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const ProfilePage(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const ProfilePage()),
                     );
                   },
                 ),
-                
+
                 // Trending
                 _buildMenuTile(
                   context,
@@ -69,13 +74,11 @@ class AppDrawer extends ConsumerWidget {
                   onTap: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const TrendingPage(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const TrendingPage()),
                     );
                   },
                 ),
-                
+
                 // Okuma Listesi
                 _buildMenuTile(
                   context,
@@ -91,26 +94,28 @@ class AppDrawer extends ConsumerWidget {
                     );
                   },
                 ),
-                
+
                 const Divider(),
-                
+
                 // AYARLAR BAŞLIĞI
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                   child: Text(
                     'ARAÇLAR',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-                
+
                 // Tema Ayarları
                 _buildThemeSection(context, ref, isDarkMode),
-                
+
                 const Divider(),
-                
+
                 // Ayarlar
                 _buildMenuTile(
                   context,
@@ -119,14 +124,11 @@ class AppDrawer extends ConsumerWidget {
                   onTap: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const SettingsPage(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const SettingsPage()),
                     );
                   },
                 ),
-                
-                
+
                 // Performans İzleme
                 _buildMenuTile(
                   context,
@@ -141,7 +143,7 @@ class AppDrawer extends ConsumerWidget {
                     );
                   },
                 ),
-                
+
                 // Cache Temizle
                 _buildMenuTile(
                   context,
@@ -149,16 +151,16 @@ class AppDrawer extends ConsumerWidget {
                   title: 'Önbelleği Temizle',
                   onTap: () => _showClearCacheDialog(context, ref),
                 ),
-                
+
                 const Divider(),
-                
+
                 // Debug Bilgileri (debug modda)
                 if (ref.read(debugModeProvider))
                   _buildDebugSection(context, ref, isConnected),
               ],
             ),
           ),
-          
+
           // Alt Bilgiler
           _buildFooter(context),
         ],
@@ -176,10 +178,7 @@ class AppDrawer extends ConsumerWidget {
     return DrawerHeader(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            AppTheme.primaryBlue,
-            AppTheme.secondaryBlue,
-          ],
+          colors: [AppTheme.primaryBlue, AppTheme.secondaryBlue],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -226,9 +225,9 @@ class AppDrawer extends ConsumerWidget {
               ),
             ],
           ),
-          
+
           const Spacer(),
-          
+
           // Bağlantı Durumu
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -286,11 +285,11 @@ class AppDrawer extends ConsumerWidget {
   /// Okuma listesi sayısı göstergesi
   Widget _buildReadingListCount(WidgetRef ref) {
     final readingListCount = ref.watch(readingListCountProvider);
-    
+
     if (readingListCount == 0) {
       return const SizedBox.shrink();
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
@@ -311,9 +310,9 @@ class AppDrawer extends ConsumerWidget {
   /// Favori sayısı göstergesi
   Widget _buildFavoriteCount(WidgetRef ref) {
     final favoritesCount = ref.watch(favoritesCountProvider);
-    
+
     if (favoritesCount == 0) return const SizedBox.shrink();
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
@@ -334,7 +333,11 @@ class AppDrawer extends ConsumerWidget {
   }
 
   /// Tema ayarları bölümü
-  Widget _buildThemeSection(BuildContext context, WidgetRef ref, bool isDarkMode) {
+  Widget _buildThemeSection(
+    BuildContext context,
+    WidgetRef ref,
+    bool isDarkMode,
+  ) {
     return Column(
       children: [
         ListTile(
@@ -354,9 +357,9 @@ class AppDrawer extends ConsumerWidget {
                 isSelected: !isDarkMode,
                 onTap: () => ref.read(themeProvider.notifier).setLightMode(),
               ),
-              
+
               const SizedBox(width: 8),
-              
+
               // Dark Mode
               _buildThemeOption(
                 context,
@@ -366,9 +369,8 @@ class AppDrawer extends ConsumerWidget {
                 isSelected: isDarkMode,
                 onTap: () => ref.read(themeProvider.notifier).setDarkMode(),
               ),
-              
+
               const SizedBox(width: 8),
-              
             ],
           ),
         ),
@@ -387,7 +389,7 @@ class AppDrawer extends ConsumerWidget {
     required VoidCallback onTap,
   }) {
     final themeData = Theme.of(context);
-    
+
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
@@ -400,7 +402,9 @@ class AppDrawer extends ConsumerWidget {
             borderRadius: BorderRadius.circular(8),
             border: isSelected
                 ? Border.all(color: themeData.colorScheme.primary)
-                : Border.all(color: themeData.colorScheme.outline.withValues(alpha: 0.3)),
+                : Border.all(
+                    color: themeData.colorScheme.outline.withValues(alpha: 0.3),
+                  ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -430,7 +434,11 @@ class AppDrawer extends ConsumerWidget {
   }
 
   /// Debug bilgileri bölümü
-  Widget _buildDebugSection(BuildContext context, WidgetRef ref, bool isConnected) {
+  Widget _buildDebugSection(
+    BuildContext context,
+    WidgetRef ref,
+    bool isConnected,
+  ) {
     return ExpansionTile(
       leading: const Icon(Icons.bug_report),
       title: const Text('Debug Bilgileri'),
@@ -446,7 +454,9 @@ class AppDrawer extends ConsumerWidget {
                 onPressed: () {
                   HiveService.printDebugInfo();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Debug bilgileri console\'a yazıldı')),
+                    const SnackBar(
+                      content: Text('Debug bilgileri console\'a yazıldı'),
+                    ),
                   );
                 },
                 child: const Text('Console\'a Yaz'),
@@ -461,7 +471,7 @@ class AppDrawer extends ConsumerWidget {
   /// Alt bilgiler
   Widget _buildFooter(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       child: Text(
@@ -473,7 +483,6 @@ class AppDrawer extends ConsumerWidget {
       ),
     );
   }
-
 
   /// Cache temizleme dialog'u
   void _showClearCacheDialog(BuildContext context, WidgetRef ref) {
@@ -493,18 +502,18 @@ class AppDrawer extends ConsumerWidget {
           ElevatedButton(
             onPressed: () async {
               Navigator.of(context).pop();
-              
+
               try {
                 await ref.read(newsProvider.notifier).clearCache();
                 await HiveService.clearAllData();
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Önbellek temizlendi')),
                 );
               } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Hata: $e')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Hata: $e')));
               }
             },
             style: ElevatedButton.styleFrom(

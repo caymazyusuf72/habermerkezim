@@ -15,7 +15,8 @@ class RecommendationsPage extends ConsumerStatefulWidget {
   const RecommendationsPage({super.key});
 
   @override
-  ConsumerState<RecommendationsPage> createState() => _RecommendationsPageState();
+  ConsumerState<RecommendationsPage> createState() =>
+      _RecommendationsPageState();
 }
 
 class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
@@ -162,31 +163,26 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
       child: CustomScrollView(
         slivers: [
           // Bilgilendirme banner'ı
-          SliverToBoxAdapter(
-            child: _buildInfoBanner(),
-          ),
+          SliverToBoxAdapter(child: _buildInfoBanner()),
 
           // Öneri kartları
           SliverPadding(
             padding: const EdgeInsets.all(16),
             sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final article = _recommendations[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: ArticleCard(
-                      article: article,
-                      onTap: () => _navigateToDetail(article),
-                      onFavoriteToggle: () {
-                        // Favori toggle işlemi - provider kullanılacak
-                      },
-                      showRecommendationBadge: true,
-                    ),
-                  );
-                },
-                childCount: _recommendations.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final article = _recommendations[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: ArticleCard(
+                    article: article,
+                    onTap: () => _navigateToDetail(article),
+                    onFavoriteToggle: () {
+                      // Favori toggle işlemi - provider kullanılacak
+                    },
+                    showRecommendationBadge: true,
+                  ),
+                );
+              }, childCount: _recommendations.length),
             ),
           ),
         ],
@@ -196,7 +192,7 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
 
   Widget _buildInfoBanner() {
     final theme = Theme.of(context);
-    
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
@@ -241,7 +237,9 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
                 Text(
                   'Okuma alışkanlıklarınıza göre seçildi',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+                    color: theme.colorScheme.onPrimaryContainer.withValues(
+                      alpha: 0.8,
+                    ),
                   ),
                 ),
               ],
@@ -300,9 +298,7 @@ class _RecommendationsPageState extends ConsumerState<RecommendationsPage> {
 
   void _navigateToDetail(Article article) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => ArticleDetailPage(article: article),
-      ),
+      MaterialPageRoute(builder: (_) => ArticleDetailPage(article: article)),
     );
   }
 }

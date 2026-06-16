@@ -3,12 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 
 /// Toast türleri
-enum ToastType {
-  success,
-  error,
-  warning,
-  info,
-}
+enum ToastType { success, error, warning, info }
 
 /// Toast mesajı widget'ı
 class ToastMessage extends StatefulWidget {
@@ -52,17 +47,15 @@ class _ToastMessageState extends State<ToastMessage>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, -1),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _controller.forward();
     _startDismissTimer();
@@ -102,7 +95,7 @@ class _ToastMessageState extends State<ToastMessage>
 
   IconData _getIcon() {
     if (widget.customIcon != null) return widget.customIcon!;
-    
+
     switch (widget.type) {
       case ToastType.success:
         return Icons.check_circle_rounded;
@@ -140,11 +133,7 @@ class _ToastMessageState extends State<ToastMessage>
             child: Row(
               children: [
                 if (widget.showIcon) ...[
-                  Icon(
-                    _getIcon(),
-                    color: Colors.white,
-                    size: 24,
-                  ),
+                  Icon(_getIcon(), color: Colors.white, size: 24),
                   const SizedBox(width: 12),
                 ],
                 Expanded(
@@ -170,9 +159,7 @@ class _ToastMessageState extends State<ToastMessage>
                     ),
                     child: Text(
                       widget.actionLabel!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ),
                 ],
@@ -218,7 +205,7 @@ class ToastOverlay {
     HapticFeedback.lightImpact();
 
     final overlay = Overlay.of(context);
-    
+
     _currentEntry = OverlayEntry(
       builder: (context) => Positioned(
         top: MediaQuery.of(context).padding.top + 8,
@@ -248,23 +235,67 @@ class ToastOverlay {
   }
 
   /// Başarı toast'u
-  static void success(BuildContext context, String message, {String? actionLabel, VoidCallback? onAction}) {
-    show(context, message: message, type: ToastType.success, actionLabel: actionLabel, onAction: onAction);
+  static void success(
+    BuildContext context,
+    String message, {
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
+    show(
+      context,
+      message: message,
+      type: ToastType.success,
+      actionLabel: actionLabel,
+      onAction: onAction,
+    );
   }
 
   /// Hata toast'u
-  static void error(BuildContext context, String message, {String? actionLabel, VoidCallback? onAction}) {
-    show(context, message: message, type: ToastType.error, actionLabel: actionLabel, onAction: onAction);
+  static void error(
+    BuildContext context,
+    String message, {
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
+    show(
+      context,
+      message: message,
+      type: ToastType.error,
+      actionLabel: actionLabel,
+      onAction: onAction,
+    );
   }
 
   /// Uyarı toast'u
-  static void warning(BuildContext context, String message, {String? actionLabel, VoidCallback? onAction}) {
-    show(context, message: message, type: ToastType.warning, actionLabel: actionLabel, onAction: onAction);
+  static void warning(
+    BuildContext context,
+    String message, {
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
+    show(
+      context,
+      message: message,
+      type: ToastType.warning,
+      actionLabel: actionLabel,
+      onAction: onAction,
+    );
   }
 
   /// Bilgi toast'u
-  static void info(BuildContext context, String message, {String? actionLabel, VoidCallback? onAction}) {
-    show(context, message: message, type: ToastType.info, actionLabel: actionLabel, onAction: onAction);
+  static void info(
+    BuildContext context,
+    String message, {
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
+    show(
+      context,
+      message: message,
+      type: ToastType.info,
+      actionLabel: actionLabel,
+      onAction: onAction,
+    );
   }
 }
 
@@ -287,11 +318,7 @@ class ModernSnackBar {
       content: Row(
         children: [
           if (showIcon) ...[
-            Icon(
-              customIcon ?? _getIcon(type),
-              color: Colors.white,
-              size: 20,
-            ),
+            Icon(customIcon ?? _getIcon(type), color: Colors.white, size: 20),
             const SizedBox(width: 12),
           ],
           Expanded(
@@ -309,9 +336,7 @@ class ModernSnackBar {
       backgroundColor: _getBackgroundColor(type),
       duration: duration,
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.all(16),
       action: actionLabel != null
           ? SnackBarAction(
@@ -354,23 +379,67 @@ class ModernSnackBar {
   }
 
   /// Başarı snackbar
-  static void success(BuildContext context, String message, {String? actionLabel, VoidCallback? onAction}) {
-    show(context, message: message, type: ToastType.success, actionLabel: actionLabel, onAction: onAction);
+  static void success(
+    BuildContext context,
+    String message, {
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
+    show(
+      context,
+      message: message,
+      type: ToastType.success,
+      actionLabel: actionLabel,
+      onAction: onAction,
+    );
   }
 
   /// Hata snackbar
-  static void error(BuildContext context, String message, {String? actionLabel, VoidCallback? onAction}) {
-    show(context, message: message, type: ToastType.error, actionLabel: actionLabel, onAction: onAction);
+  static void error(
+    BuildContext context,
+    String message, {
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
+    show(
+      context,
+      message: message,
+      type: ToastType.error,
+      actionLabel: actionLabel,
+      onAction: onAction,
+    );
   }
 
   /// Uyarı snackbar
-  static void warning(BuildContext context, String message, {String? actionLabel, VoidCallback? onAction}) {
-    show(context, message: message, type: ToastType.warning, actionLabel: actionLabel, onAction: onAction);
+  static void warning(
+    BuildContext context,
+    String message, {
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
+    show(
+      context,
+      message: message,
+      type: ToastType.warning,
+      actionLabel: actionLabel,
+      onAction: onAction,
+    );
   }
 
   /// Bilgi snackbar
-  static void info(BuildContext context, String message, {String? actionLabel, VoidCallback? onAction}) {
-    show(context, message: message, type: ToastType.info, actionLabel: actionLabel, onAction: onAction);
+  static void info(
+    BuildContext context,
+    String message, {
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
+    show(
+      context,
+      message: message,
+      type: ToastType.info,
+      actionLabel: actionLabel,
+      onAction: onAction,
+    );
   }
 }
 
@@ -528,15 +597,13 @@ class ConfirmationDialog {
     bool isDangerous = false,
   }) {
     final theme = Theme.of(context);
-    final effectiveConfirmColor = confirmColor ?? 
-        (isDangerous ? Colors.red : theme.colorScheme.primary);
+    final effectiveConfirmColor =
+        confirmColor ?? (isDangerous ? Colors.red : theme.colorScheme.primary);
 
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           title,
           style: theme.textTheme.titleLarge?.copyWith(

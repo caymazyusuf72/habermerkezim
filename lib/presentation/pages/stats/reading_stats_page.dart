@@ -20,9 +20,7 @@ class _ReadingStatsPageState extends ConsumerState<ReadingStatsPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Okuma Istatistikleri'),
-      ),
+      appBar: AppBar(title: const Text('Okuma Istatistikleri')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -57,7 +55,11 @@ class _ReadingStatsPageState extends ConsumerState<ReadingStatsPage> {
     );
   }
 
-  Widget _buildRangeChip(BuildContext context, String label, StatsTimeRange range) {
+  Widget _buildRangeChip(
+    BuildContext context,
+    String label,
+    StatsTimeRange range,
+  ) {
     final isSelected = _selectedRange == range;
     return ChoiceChip(
       label: Text(label),
@@ -144,7 +146,10 @@ class _ReadingStatsPageState extends ConsumerState<ReadingStatsPage> {
     );
   }
 
-  Widget _buildStreakSection(BuildContext context, ReadingStatsSummary summary) {
+  Widget _buildStreakSection(
+    BuildContext context,
+    ReadingStatsSummary summary,
+  ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -182,11 +187,7 @@ class _ReadingStatsPageState extends ConsumerState<ReadingStatsPage> {
                 ],
               ),
             ),
-            Container(
-              width: 1,
-              height: 60,
-              color: colorScheme.outlineVariant,
-            ),
+            Container(width: 1, height: 60, color: colorScheme.outlineVariant),
             Expanded(
               child: Column(
                 children: [
@@ -220,7 +221,10 @@ class _ReadingStatsPageState extends ConsumerState<ReadingStatsPage> {
     );
   }
 
-  Widget _buildWeeklyGoalSection(BuildContext context, ReadingStatsSummary summary) {
+  Widget _buildWeeklyGoalSection(
+    BuildContext context,
+    ReadingStatsSummary summary,
+  ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final progressText = '${summary.weeklyProgress}/${summary.weeklyGoal}';
@@ -312,7 +316,9 @@ class _ReadingStatsPageState extends ConsumerState<ReadingStatsPage> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: summary.dailyData.map((data) {
-                  final ratio = maxCount > 0 ? data.articleCount / maxCount : 0.0;
+                  final ratio = maxCount > 0
+                      ? data.articleCount / maxCount
+                      : 0.0;
                   final dayLabel = _getDayLabel(data.date);
 
                   return Expanded(
@@ -361,7 +367,10 @@ class _ReadingStatsPageState extends ConsumerState<ReadingStatsPage> {
     );
   }
 
-  Widget _buildCategorySectionWidget(BuildContext context, ReadingStatsSummary summary) {
+  Widget _buildCategorySectionWidget(
+    BuildContext context,
+    ReadingStatsSummary summary,
+  ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 

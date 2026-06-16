@@ -159,9 +159,10 @@ class PopularArticlesNotifier extends StateNotifier<PopularArticlesState> {
 }
 
 /// Popüler makaleler provider
-final popularArticlesProvider = StateNotifierProvider<PopularArticlesNotifier, PopularArticlesState>((ref) {
-  return PopularArticlesNotifier();
-});
+final popularArticlesProvider =
+    StateNotifierProvider<PopularArticlesNotifier, PopularArticlesState>((ref) {
+      return PopularArticlesNotifier();
+    });
 
 /// Trend makaleler provider (sadece okuma için)
 final trendingArticlesProvider = Provider<List<ArticlePopularity>>((ref) {
@@ -184,10 +185,11 @@ final selectedTimeRangeProvider = Provider<PopularTimeRange>((ref) {
 });
 
 /// Kategoriye göre popüler makaleler provider
-final popularByCategoryProvider = Provider.family<List<ArticlePopularity>, String>((ref, category) {
-  final notifier = ref.watch(popularArticlesProvider.notifier);
-  return notifier.getPopularByCategory(category);
-});
+final popularByCategoryProvider =
+    Provider.family<List<ArticlePopularity>, String>((ref, category) {
+      final notifier = ref.watch(popularArticlesProvider.notifier);
+      return notifier.getPopularByCategory(category);
+    });
 
 /// Toplam görüntülenme sayısı provider
 final totalViewsProvider = Provider<int>((ref) {

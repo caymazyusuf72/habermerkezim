@@ -15,7 +15,8 @@ class TrendingPage extends ConsumerStatefulWidget {
   ConsumerState<TrendingPage> createState() => _TrendingPageState();
 }
 
-class _TrendingPageState extends ConsumerState<TrendingPage> with SingleTickerProviderStateMixin {
+class _TrendingPageState extends ConsumerState<TrendingPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isLoading = true;
 
@@ -84,7 +85,10 @@ class _TrendingPageState extends ConsumerState<TrendingPage> with SingleTickerPr
 
   Widget _buildTrendingList(String timeRange, ThemeData theme) {
     return FutureBuilder<List<Article>>(
-      future: TrendingService.getTrendingArticles(timeRange: timeRange, limit: 50),
+      future: TrendingService.getTrendingArticles(
+        timeRange: timeRange,
+        limit: 50,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -115,7 +119,11 @@ class _TrendingPageState extends ConsumerState<TrendingPage> with SingleTickerPr
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.trending_up_rounded, size: 64, color: Colors.grey[400]),
+                Icon(
+                  Icons.trending_up_rounded,
+                  size: 64,
+                  color: Colors.grey[400],
+                ),
                 const SizedBox(height: 16),
                 Text(
                   'Henüz trend haber yok',
@@ -153,4 +161,3 @@ class _TrendingPageState extends ConsumerState<TrendingPage> with SingleTickerPr
     );
   }
 }
-

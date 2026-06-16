@@ -21,4 +21,3 @@ abstract class UserProfileRepository {
   /// İstatistikleri hesapla ve güncelle
   Future<UserStats> calculateStats();
 }
-

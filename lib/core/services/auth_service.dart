@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Firebase Authentication ve Google Sign In servisi
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -17,10 +18,10 @@ class AuthService {
   Future<UserCredential?> signInWithGoogle() async {
     try {
       debugPrint('🔐 Google Sign In başlatılıyor...');
-      
+
       // Google Sign In akışını başlat
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
+
       if (googleUser == null) {
         debugPrint('❌ Google Sign In iptal edildi');
         return null;
@@ -29,7 +30,8 @@ class AuthService {
       debugPrint('✅ Google hesabı seçildi: ${googleUser.email}');
 
       // Google kimlik bilgilerini al
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       debugPrint('🔑 Google authentication token alındı');
 
@@ -42,8 +44,10 @@ class AuthService {
       debugPrint('🔐 Firebase credential oluşturuldu');
 
       // Firebase ile giriş yap
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
-      
+      final UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
+
       debugPrint('✅ Firebase Authentication başarılı');
       debugPrint('👤 Kullanıcı: ${userCredential.user?.displayName}');
       debugPrint('📧 Email: ${userCredential.user?.email}');
@@ -59,12 +63,9 @@ class AuthService {
   Future<void> signOut() async {
     try {
       debugPrint('🔐 Çıkış yapılıyor...');
-      
-      await Future.wait([
-        _auth.signOut(),
-        _googleSignIn.signOut(),
-      ]);
-      
+
+      await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
+
       debugPrint('✅ Çıkış başarılı');
     } catch (e) {
       debugPrint('❌ Çıkış hatası: $e');
@@ -76,12 +77,10 @@ class AuthService {
   Future<UserCredential?> signInWithEmail(String email, String password) async {
     try {
       debugPrint('🔐 Email ile giriş yapılıyor: $email');
-      
-      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      
+
+      final UserCredential userCredential = await _auth
+          .signInWithEmailAndPassword(email: email, password: password);
+
       debugPrint('✅ Email ile giriş başarılı');
       return userCredential;
     } catch (e) {
@@ -91,15 +90,16 @@ class AuthService {
   }
 
   /// Email ile kayıt ol
-  Future<UserCredential?> registerWithEmail(String email, String password) async {
+  Future<UserCredential?> registerWithEmail(
+    String email,
+    String password,
+  ) async {
     try {
       debugPrint('🔐 Email ile kayıt olunuyor: $email');
-      
-      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      
+
+      final UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+
       debugPrint('✅ Email ile kayıt başarılı');
       return userCredential;
     } catch (e) {
@@ -112,9 +112,9 @@ class AuthService {
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       debugPrint('📧 Şifre sıfırlama emaili gönderiliyor: $email');
-      
+
       await _auth.sendPasswordResetEmail(email: email);
-      
+
       debugPrint('✅ Şifre sıfırlama emaili gönderildi');
     } catch (e) {
       debugPrint('❌ Şifre sıfırlama emaili gönderme hatası: $e');

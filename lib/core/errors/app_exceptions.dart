@@ -1,5 +1,5 @@
 /// Genişletilmiş Exception Sınıfları
-/// 
+///
 /// Mevcut [core/error/exceptions.dart] ile geriye uyumludur.
 /// Her exception'ın kullanıcı dostu mesaj döndüren [userMessage] getter'ı vardır.
 /// Yeni kodlarda bu dosyadaki exception'lar tercih edilmelidir.
@@ -22,7 +22,8 @@ abstract class AppException implements Exception {
   String get userMessage;
 
   @override
-  String toString() => '${runtimeType.toString()}: $message${code != null ? ' ($code)' : ''}';
+  String toString() =>
+      '${runtimeType.toString()}: $message${code != null ? ' ($code)' : ''}';
 }
 
 /// Network ile ilgili exception'lar
@@ -169,7 +170,10 @@ class ParseException extends AppException {
     );
   }
 
-  factory ParseException.invalidFormat({String? sourceUrl, Object? originalError}) {
+  factory ParseException.invalidFormat({
+    String? sourceUrl,
+    Object? originalError,
+  }) {
     return ParseException(
       'Geçersiz veri formatı',
       code: 'INVALID_FORMAT',
@@ -308,7 +312,10 @@ class ServerException extends AppException {
     this.statusCode,
   });
 
-  factory ServerException.internalError({int? statusCode, Object? originalError}) {
+  factory ServerException.internalError({
+    int? statusCode,
+    Object? originalError,
+  }) {
     return ServerException(
       'Sunucu hatası',
       code: 'SERVER_ERROR',

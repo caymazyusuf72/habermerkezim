@@ -33,17 +33,11 @@ class _AnimatedButtonState extends State<AnimatedButton>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: widget.scaleValue,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -74,10 +68,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
       onTapUp: _handleTapUp,
       onTapCancel: _handleTapCancel,
       onTap: widget.onTap,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: widget.child,
-      ),
+      child: ScaleTransition(scale: _scaleAnimation, child: widget.child),
     );
   }
 }
@@ -118,26 +109,14 @@ class _AnimatedFavoriteButtonState extends State<AnimatedFavoriteButton>
     );
 
     _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.3),
-        weight: 50,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.3, end: 1.0),
-        weight: 50,
-      ),
-    ]).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+      TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.3), weight: 50),
+      TweenSequenceItem(tween: Tween<double>(begin: 1.3, end: 1.0), weight: 50),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _rotationAnimation = Tween<double>(
       begin: 0.0,
       end: 0.1,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -156,7 +135,9 @@ class _AnimatedFavoriteButtonState extends State<AnimatedFavoriteButton>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final activeColor = widget.activeColor ?? Colors.red;
-    final inactiveColor = widget.inactiveColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.5);
+    final inactiveColor =
+        widget.inactiveColor ??
+        theme.colorScheme.onSurface.withValues(alpha: 0.5);
 
     return GestureDetector(
       onTap: _handleTap,
@@ -201,13 +182,14 @@ class RippleButton extends StatelessWidget {
           HapticFeedback.lightImpact();
           onTap?.call();
         },
-        splashColor: rippleColor ?? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-        highlightColor: rippleColor?.withValues(alpha: 0.1) ?? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+        splashColor:
+            rippleColor ??
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+        highlightColor:
+            rippleColor?.withValues(alpha: 0.1) ??
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         borderRadius: borderRadius ?? BorderRadius.circular(12),
-        child: Padding(
-          padding: padding ?? EdgeInsets.zero,
-          child: child,
-        ),
+        child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
       ),
     );
   }
@@ -238,16 +220,10 @@ class _BounceAnimationState extends State<BounceAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _animation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 0.9),
-        weight: 50,
-      ),
+      TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 0.9), weight: 50),
       TweenSequenceItem(
         tween: Tween<double>(begin: 0.9, end: 1.05),
         weight: 25,
@@ -256,10 +232,7 @@ class _BounceAnimationState extends State<BounceAnimation>
         tween: Tween<double>(begin: 1.05, end: 1.0),
         weight: 25,
       ),
-    ]).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -278,10 +251,7 @@ class _BounceAnimationState extends State<BounceAnimation>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _handleTap,
-      child: ScaleTransition(
-        scale: _animation,
-        child: widget.child,
-      ),
+      child: ScaleTransition(scale: _animation, child: widget.child),
     );
   }
 }
@@ -312,10 +282,8 @@ class _ShimmerEffectState extends State<ShimmerEffect>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    )..repeat();
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat();
   }
 
   @override
@@ -327,7 +295,8 @@ class _ShimmerEffectState extends State<ShimmerEffect>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final baseColor = widget.baseColor ?? theme.colorScheme.surfaceContainerHighest;
+    final baseColor =
+        widget.baseColor ?? theme.colorScheme.surfaceContainerHighest;
     final highlightColor = widget.highlightColor ?? theme.colorScheme.surface;
 
     return AnimatedBuilder(
@@ -338,11 +307,7 @@ class _ShimmerEffectState extends State<ShimmerEffect>
             return LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                baseColor,
-                highlightColor,
-                baseColor,
-              ],
+              colors: [baseColor, highlightColor, baseColor],
               stops: [
                 _controller.value - 0.3,
                 _controller.value,
@@ -362,11 +327,7 @@ class CustomRefreshIndicator extends StatelessWidget {
   final double value;
   final Color? color;
 
-  const CustomRefreshIndicator({
-    super.key,
-    required this.value,
-    this.color,
-  });
+  const CustomRefreshIndicator({super.key, required this.value, this.color});
 
   @override
   Widget build(BuildContext context) {

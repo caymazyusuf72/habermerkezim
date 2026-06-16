@@ -38,12 +38,10 @@ class HeroWrapper extends StatelessWidget {
     return Hero(
       tag: tag,
       createRectTween: createRectTween ?? _defaultCreateRectTween,
-      flightShuttleBuilder: flightShuttleBuilder ?? _defaultFlightShuttleBuilder,
+      flightShuttleBuilder:
+          flightShuttleBuilder ?? _defaultFlightShuttleBuilder,
       placeholderBuilder: placeholderBuilder,
-      child: Material(
-        type: MaterialType.transparency,
-        child: child,
-      ),
+      child: Material(type: MaterialType.transparency, child: child),
     );
   }
 
@@ -61,15 +59,16 @@ class HeroWrapper extends StatelessWidget {
     BuildContext toHeroContext,
   ) {
     final Hero toHero = toHeroContext.widget as Hero;
-    
+
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
         return FadeTransition(
           opacity: animation.drive(
-            Tween<double>(begin: 0.0, end: 1.0).chain(
-              CurveTween(curve: Curves.easeInOut),
-            ),
+            Tween<double>(
+              begin: 0.0,
+              end: 1.0,
+            ).chain(CurveTween(curve: Curves.easeInOut)),
           ),
           child: child,
         );
@@ -111,62 +110,62 @@ class ImageHeroWrapper extends StatelessWidget {
       createRectTween: (begin, end) {
         return MaterialRectCenterArcTween(begin: begin, end: end);
       },
-      flightShuttleBuilder: (
-        flightContext,
-        animation,
-        flightDirection,
-        fromHeroContext,
-        toHeroContext,
-      ) {
-        return AnimatedBuilder(
-          animation: animation,
-          builder: (context, _) {
-            final curvedAnimation = CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeInOutCubic,
-            );
-            
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.lerp(
-                  borderRadius ?? BorderRadius.circular(16),
-                  BorderRadius.zero,
-                  flightDirection == HeroFlightDirection.push
-                      ? curvedAnimation.value
-                      : 1 - curvedAnimation.value,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2 * (1 - curvedAnimation.value)),
-                    blurRadius: 20 * (1 - curvedAnimation.value),
-                    offset: Offset(0, 10 * (1 - curvedAnimation.value)),
+      flightShuttleBuilder:
+          (
+            flightContext,
+            animation,
+            flightDirection,
+            fromHeroContext,
+            toHeroContext,
+          ) {
+            return AnimatedBuilder(
+              animation: animation,
+              builder: (context, _) {
+                final curvedAnimation = CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeInOutCubic,
+                );
+
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.lerp(
+                      borderRadius ?? BorderRadius.circular(16),
+                      BorderRadius.zero,
+                      flightDirection == HeroFlightDirection.push
+                          ? curvedAnimation.value
+                          : 1 - curvedAnimation.value,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(
+                          alpha: 0.2 * (1 - curvedAnimation.value),
+                        ),
+                        blurRadius: 20 * (1 - curvedAnimation.value),
+                        offset: Offset(0, 10 * (1 - curvedAnimation.value)),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.lerp(
-                  borderRadius ?? BorderRadius.circular(16),
-                  BorderRadius.zero,
-                  flightDirection == HeroFlightDirection.push
-                      ? curvedAnimation.value
-                      : 1 - curvedAnimation.value,
-                )!,
-                child: child,
-              ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.lerp(
+                      borderRadius ?? BorderRadius.circular(16),
+                      BorderRadius.zero,
+                      flightDirection == HeroFlightDirection.push
+                          ? curvedAnimation.value
+                          : 1 - curvedAnimation.value,
+                    )!,
+                    child: child,
+                  ),
+                );
+              },
             );
           },
-        );
-      },
       child: _buildClippedChild(),
     );
   }
 
   Widget _buildClippedChild() {
     if (borderRadius != null) {
-      return ClipRRect(
-        borderRadius: borderRadius!,
-        child: child,
-      );
+      return ClipRRect(borderRadius: borderRadius!, child: child);
     }
     return child;
   }
@@ -197,36 +196,35 @@ class TitleHeroWrapper extends StatelessWidget {
 
     return Hero(
       tag: tag,
-      flightShuttleBuilder: (
-        flightContext,
-        animation,
-        flightDirection,
-        fromHeroContext,
-        toHeroContext,
-      ) {
-        final Hero toHero = toHeroContext.widget as Hero;
-        
-        return AnimatedBuilder(
-          animation: animation,
-          builder: (context, _) {
-            return FadeTransition(
-              opacity: animation.drive(
-                Tween<double>(begin: 0.5, end: 1.0).chain(
-                  CurveTween(curve: Curves.easeOut),
-                ),
-              ),
-              child: DefaultTextStyle(
-                style: DefaultTextStyle.of(toHeroContext).style,
-                child: toHero.child,
-              ),
+      flightShuttleBuilder:
+          (
+            flightContext,
+            animation,
+            flightDirection,
+            fromHeroContext,
+            toHeroContext,
+          ) {
+            final Hero toHero = toHeroContext.widget as Hero;
+
+            return AnimatedBuilder(
+              animation: animation,
+              builder: (context, _) {
+                return FadeTransition(
+                  opacity: animation.drive(
+                    Tween<double>(
+                      begin: 0.5,
+                      end: 1.0,
+                    ).chain(CurveTween(curve: Curves.easeOut)),
+                  ),
+                  child: DefaultTextStyle(
+                    style: DefaultTextStyle.of(toHeroContext).style,
+                    child: toHero.child,
+                  ),
+                );
+              },
             );
           },
-        );
-      },
-      child: Material(
-        type: MaterialType.transparency,
-        child: child,
-      ),
+      child: Material(type: MaterialType.transparency, child: child),
     );
   }
 }

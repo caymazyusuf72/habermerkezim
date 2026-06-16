@@ -59,7 +59,8 @@ class GlassmorphismCard extends StatelessWidget {
                 colors: gradientColors ?? defaultGradientColors,
               ),
               borderRadius: BorderRadius.circular(borderRadius),
-              border: border ??
+              border:
+                  border ??
                   Border.all(
                     color: Colors.white.withValues(alpha: 0.2),
                     width: 1.5,
@@ -135,7 +136,10 @@ class GlassmorphismArticleCard extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) => Container(
                   height: 180,
                   color: theme.colorScheme.surfaceContainerHighest,
-                  child: const Icon(Icons.image_not_supported_rounded, size: 48),
+                  child: const Icon(
+                    Icons.image_not_supported_rounded,
+                    size: 48,
+                  ),
                 ),
               ),
             ),

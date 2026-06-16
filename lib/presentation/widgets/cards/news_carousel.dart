@@ -41,11 +41,8 @@ class _NewsCarouselState extends State<NewsCarousel> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(
-      viewportFraction: 0.9,
-      initialPage: 0,
-    );
-    
+    _pageController = PageController(viewportFraction: 0.9, initialPage: 0);
+
     if (widget.autoPlay && widget.articles.length > 1) {
       _startAutoPlay();
     }
@@ -112,7 +109,7 @@ class _NewsCarouselState extends State<NewsCarousel> {
             ),
           ),
         ),
-        
+
         if (widget.showIndicators && widget.articles.length > 1)
           Padding(
             padding: const EdgeInsets.only(top: 16),
@@ -155,10 +152,7 @@ class _CarouselCard extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
-      margin: EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: isActive ? 0 : 12,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: isActive ? 0 : 12),
       child: Material(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
@@ -181,7 +175,9 @@ class _CarouselCard extends StatelessWidget {
                     child: Center(
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(categoryColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          categoryColor,
+                        ),
                       ),
                     ),
                   ),
@@ -253,9 +249,9 @@ class _CarouselCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // Başlık
                     Text(
                       article.title,
@@ -274,9 +270,9 @@ class _CarouselCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     // Tarih
                     Row(
                       children: [
@@ -310,10 +306,7 @@ class _CarouselCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        Colors.amber.shade600,
-                        Colors.orange.shade600,
-                      ],
+                      colors: [Colors.amber.shade600, Colors.orange.shade600],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
@@ -327,11 +320,7 @@ class _CarouselCard extends StatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.star_rounded,
-                        size: 14,
-                        color: Colors.white,
-                      ),
+                      Icon(Icons.star_rounded, size: 14, color: Colors.white),
                       SizedBox(width: 4),
                       Text(
                         'Öne Çıkan',
@@ -368,12 +357,12 @@ class _CarouselIndicators extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(count, (index) {
         final isActive = index == currentIndex;
-        
+
         return GestureDetector(
           onTap: () => onTap(index),
           child: AnimatedContainer(
@@ -449,10 +438,7 @@ class _MiniCarouselCard extends StatelessWidget {
   final Article article;
   final VoidCallback onTap;
 
-  const _MiniCarouselCard({
-    required this.article,
-    required this.onTap,
-  });
+  const _MiniCarouselCard({required this.article, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -484,10 +470,7 @@ class _MiniCarouselCard extends StatelessWidget {
                   ),
                   errorWidget: (context, url, error) => Container(
                     color: categoryColor.withValues(alpha: 0.3),
-                    child: Icon(
-                      Icons.article_rounded,
-                      color: categoryColor,
-                    ),
+                    child: Icon(Icons.article_rounded, color: categoryColor),
                   ),
                 )
               else

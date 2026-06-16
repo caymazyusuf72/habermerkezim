@@ -51,10 +51,7 @@ class CategoryTabBarShimmer extends StatelessWidget
     implements PreferredSizeWidget {
   final int itemCount;
 
-  const CategoryTabBarShimmer({
-    super.key,
-    this.itemCount = 5,
-  });
+  const CategoryTabBarShimmer({super.key, this.itemCount = 5});
 
   @override
   Size get preferredSize => const Size.fromHeight(48);

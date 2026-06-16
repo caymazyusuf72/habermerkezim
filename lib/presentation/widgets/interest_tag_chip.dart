@@ -31,14 +31,14 @@ class InterestTagChip extends StatelessWidget {
           color: isSelected
               ? _getColorFromHex(tag.color).withValues(alpha: 0.2)
               : isDark
-                  ? Colors.grey[800]
-                  : Colors.grey[200],
+              ? Colors.grey[800]
+              : Colors.grey[200],
           border: Border.all(
             color: isSelected
                 ? _getColorFromHex(tag.color)
                 : isDark
-                    ? Colors.grey[700]!
-                    : Colors.grey[300]!,
+                ? Colors.grey[700]!
+                : Colors.grey[300]!,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(24),
@@ -53,8 +53,8 @@ class InterestTagChip extends StatelessWidget {
               color: isSelected
                   ? _getColorFromHex(tag.color)
                   : isDark
-                      ? Colors.grey[400]
-                      : Colors.grey[700],
+                  ? Colors.grey[400]
+                  : Colors.grey[700],
             ),
             const SizedBox(width: 8),
             // Hashtag text
@@ -65,8 +65,8 @@ class InterestTagChip extends StatelessWidget {
                 color: isSelected
                     ? _getColorFromHex(tag.color)
                     : isDark
-                        ? Colors.grey[300]
-                        : Colors.grey[800],
+                    ? Colors.grey[300]
+                    : Colors.grey[800],
               ),
             ),
             // Seçili işareti
@@ -99,4 +99,3 @@ class InterestTagChip extends StatelessWidget {
     return AppTheme.primaryBlue;
   }
 }
-

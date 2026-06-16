@@ -36,7 +36,7 @@ class RssSource {
   /// Boş olup olmadığını kontrol et
   bool get isEmpty => id.isEmpty;
 
-  /// Boş olmadığını kontrol et  
+  /// Boş olmadığını kontrol et
   bool get isNotEmpty => !isEmpty;
 
   /// Aktif durumu
@@ -45,10 +45,10 @@ class RssSource {
   /// Son fetch durumu
   String get lastFetchStatus {
     if (lastFetchedAt == null) return 'Hiç güncellenmemiş';
-    
+
     final now = DateTime.now();
     final diff = now.difference(lastFetchedAt!);
-    
+
     if (diff.inMinutes < 1) {
       return 'Az önce güncellendi';
     } else if (diff.inHours < 1) {

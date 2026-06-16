@@ -82,4 +82,3 @@ class BreakingNewsService {
     return score.clamp(0, 100);
   }
 }
-

@@ -32,7 +32,8 @@ class ResponsiveAutoGrid extends StatelessWidget {
       builder: (context, constraints) {
         final width = constraints.maxWidth;
         final columns = (width / minItemWidth).floor().clamp(1, 6);
-        final effectiveAspectRatio = childAspectRatio ?? _calculateAspectRatio(columns);
+        final effectiveAspectRatio =
+            childAspectRatio ?? _calculateAspectRatio(columns);
 
         if (header != null) {
           return Column(
@@ -200,10 +201,7 @@ class ResponsiveNewsGrid extends StatelessWidget {
                 ),
               ),
               // Sidebar
-              SizedBox(
-                width: 300,
-                child: sidebar!,
-              ),
+              SizedBox(width: 300, child: sidebar!),
             ],
           );
         }

@@ -118,7 +118,8 @@ class AuthController extends StateNotifier<AsyncValue<void>> {
 }
 
 /// Auth Controller Provider
-final authControllerProvider = StateNotifierProvider<AuthController, AsyncValue<void>>((ref) {
-  final authService = ref.watch(authServiceProvider);
-  return AuthController(authService);
-});
+final authControllerProvider =
+    StateNotifierProvider<AuthController, AsyncValue<void>>((ref) {
+      final authService = ref.watch(authServiceProvider);
+      return AuthController(authService);
+    });

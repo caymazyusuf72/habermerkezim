@@ -198,17 +198,32 @@ class UserLevel {
   /// Seviye numarasından UserLevel oluştur
   factory UserLevel.fromLevel(int level) {
     final titles = [
-      'Yeni Okuyucu', 'Meraklı Okuyucu', 'Düzenli Okuyucu', 'Aktif Okuyucu',
-      'Tutkulu Okuyucu', 'Deneyimli Okuyucu', 'Uzman Okuyucu', 'Usta Okuyucu',
-      'Elit Okuyucu', 'Efsane Okuyucu', 'Haber Avcısı', 'Bilgi Uzmanı',
-      'Medya Analisti', 'Enformasyon Ustası', 'Haber Dehası', 'Bilgi Kaynağı',
-      'Medya Guru', 'Haber Efsanesi', 'Omniscient Reader', 'Haber Tanrısı'
+      'Yeni Okuyucu',
+      'Meraklı Okuyucu',
+      'Düzenli Okuyucu',
+      'Aktif Okuyucu',
+      'Tutkulu Okuyucu',
+      'Deneyimli Okuyucu',
+      'Uzman Okuyucu',
+      'Usta Okuyucu',
+      'Elit Okuyucu',
+      'Efsane Okuyucu',
+      'Haber Avcısı',
+      'Bilgi Uzmanı',
+      'Medya Analisti',
+      'Enformasyon Ustası',
+      'Haber Dehası',
+      'Bilgi Kaynağı',
+      'Medya Guru',
+      'Haber Efsanesi',
+      'Omniscient Reader',
+      'Haber Tanrısı',
     ];
-    
+
     final clampedLevel = level.clamp(1, 20);
     final title = titles[clampedLevel - 1];
     final requiredXP = 100 * clampedLevel;
-    
+
     return UserLevel(
       level: clampedLevel,
       title: title,
@@ -285,7 +300,8 @@ class GamificationState {
       userLevel: json['userLevel'] != null
           ? UserLevel.fromJson(json['userLevel'] as Map<String, dynamic>)
           : UserLevel.initial(),
-      badges: (json['badges'] as List<dynamic>?)
+      badges:
+          (json['badges'] as List<dynamic>?)
               ?.map((b) => Badge.fromJson(b as Map<String, dynamic>))
               .toList() ??
           [],

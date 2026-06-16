@@ -14,19 +14,19 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.easeInOutCubic,
   }) : super(
-          pageBuilder: (context, animation, secondaryAnimation) => page,
-          transitionDuration: duration,
-          reverseTransitionDuration: duration,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return _buildTransition(
-              transitionType,
-              animation,
-              secondaryAnimation,
-              child,
-              curve,
-            );
-          },
-        );
+         pageBuilder: (context, animation, secondaryAnimation) => page,
+         transitionDuration: duration,
+         reverseTransitionDuration: duration,
+         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           return _buildTransition(
+             transitionType,
+             animation,
+             secondaryAnimation,
+             child,
+             curve,
+           );
+         },
+       );
 
   static Widget _buildTransition(
     PageTransitionType type,
@@ -35,10 +35,7 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
     Widget child,
     Curve curve,
   ) {
-    final curvedAnimation = CurvedAnimation(
-      parent: animation,
-      curve: curve,
-    );
+    final curvedAnimation = CurvedAnimation(parent: animation, curve: curve);
 
     switch (type) {
       case PageTransitionType.slide:
@@ -51,33 +48,18 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
         );
 
       case PageTransitionType.fade:
-        return FadeTransition(
-          opacity: curvedAnimation,
-          child: child,
-        );
+        return FadeTransition(opacity: curvedAnimation, child: child);
 
       case PageTransitionType.scale:
         return ScaleTransition(
-          scale: Tween<double>(
-            begin: 0.8,
-            end: 1.0,
-          ).animate(curvedAnimation),
-          child: FadeTransition(
-            opacity: curvedAnimation,
-            child: child,
-          ),
+          scale: Tween<double>(begin: 0.8, end: 1.0).animate(curvedAnimation),
+          child: FadeTransition(opacity: curvedAnimation, child: child),
         );
 
       case PageTransitionType.rotation:
         return RotationTransition(
-          turns: Tween<double>(
-            begin: 0.0,
-            end: 1.0,
-          ).animate(curvedAnimation),
-          child: FadeTransition(
-            opacity: curvedAnimation,
-            child: child,
-          ),
+          turns: Tween<double>(begin: 0.0, end: 1.0).animate(curvedAnimation),
+          child: FadeTransition(opacity: curvedAnimation, child: child),
         );
 
       case PageTransitionType.slideUp:
@@ -102,10 +84,7 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
         return FadeTransition(
           opacity: curvedAnimation,
           child: ScaleTransition(
-            scale: Tween<double>(
-              begin: 0.9,
-              end: 1.0,
-            ).animate(curvedAnimation),
+            scale: Tween<double>(begin: 0.9, end: 1.0).animate(curvedAnimation),
             child: child,
           ),
         );
@@ -117,10 +96,7 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
             end: Offset.zero,
           ).animate(curvedAnimation),
           child: RotationTransition(
-            turns: Tween<double>(
-              begin: 0.1,
-              end: 0.0,
-            ).animate(curvedAnimation),
+            turns: Tween<double>(begin: 0.1, end: 0.0).animate(curvedAnimation),
             child: child,
           ),
         );
@@ -153,30 +129,30 @@ class ModalPageRoute<T> extends PageRouteBuilder<T> {
     this.barrierDismissible = true,
     this.barrierColor = Colors.black54,
   }) : super(
-          pageBuilder: (context, animation, secondaryAnimation) => page,
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 300),
-          opaque: false,
-          barrierDismissible: barrierDismissible,
-          barrierColor: barrierColor,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            final curvedAnimation = CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-            );
+         pageBuilder: (context, animation, secondaryAnimation) => page,
+         transitionDuration: const Duration(milliseconds: 300),
+         reverseTransitionDuration: const Duration(milliseconds: 300),
+         opaque: false,
+         barrierDismissible: barrierDismissible,
+         barrierColor: barrierColor,
+         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           final curvedAnimation = CurvedAnimation(
+             parent: animation,
+             curve: Curves.easeOutCubic,
+           );
 
-            return FadeTransition(
-              opacity: curvedAnimation,
-              child: ScaleTransition(
-                scale: Tween<double>(
-                  begin: 0.9,
-                  end: 1.0,
-                ).animate(curvedAnimation),
-                child: child,
-              ),
-            );
-          },
-        );
+           return FadeTransition(
+             opacity: curvedAnimation,
+             child: ScaleTransition(
+               scale: Tween<double>(
+                 begin: 0.9,
+                 end: 1.0,
+               ).animate(curvedAnimation),
+               child: child,
+             ),
+           );
+         },
+       );
 }
 
 /// Bottom sheet için özel route
@@ -185,32 +161,30 @@ class BottomSheetPageRoute<T> extends PageRouteBuilder<T> {
   @override
   final bool barrierDismissible;
 
-  BottomSheetPageRoute({
-    required this.page,
-    this.barrierDismissible = true,
-  }) : super(
-          pageBuilder: (context, animation, secondaryAnimation) => page,
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 200),
-          opaque: false,
-          barrierDismissible: barrierDismissible,
-          barrierColor: Colors.black54,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            final curvedAnimation = CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-              reverseCurve: Curves.easeInCubic,
-            );
+  BottomSheetPageRoute({required this.page, this.barrierDismissible = true})
+    : super(
+        pageBuilder: (context, animation, secondaryAnimation) => page,
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 200),
+        opaque: false,
+        barrierDismissible: barrierDismissible,
+        barrierColor: Colors.black54,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curvedAnimation = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+            reverseCurve: Curves.easeInCubic,
+          );
 
-            return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0.0, 1.0),
-                end: Offset.zero,
-              ).animate(curvedAnimation),
-              child: child,
-            );
-          },
-        );
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.0, 1.0),
+              end: Offset.zero,
+            ).animate(curvedAnimation),
+            child: child,
+          );
+        },
+      );
 }
 
 /// Navigation helper extension
@@ -218,44 +192,31 @@ extension NavigationExtension on BuildContext {
   /// Slide transition ile navigate
   Future<T?> pushWithSlide<T>(Widget page) {
     return Navigator.of(this).push<T>(
-      CustomPageRoute(
-        page: page,
-        transitionType: PageTransitionType.slide,
-      ),
+      CustomPageRoute(page: page, transitionType: PageTransitionType.slide),
     );
   }
 
   /// Fade transition ile navigate
   Future<T?> pushWithFade<T>(Widget page) {
     return Navigator.of(this).push<T>(
-      CustomPageRoute(
-        page: page,
-        transitionType: PageTransitionType.fade,
-      ),
+      CustomPageRoute(page: page, transitionType: PageTransitionType.fade),
     );
   }
 
   /// Scale transition ile navigate
   Future<T?> pushWithScale<T>(Widget page) {
     return Navigator.of(this).push<T>(
-      CustomPageRoute(
-        page: page,
-        transitionType: PageTransitionType.scale,
-      ),
+      CustomPageRoute(page: page, transitionType: PageTransitionType.scale),
     );
   }
 
   /// Modal olarak aç
   Future<T?> pushModal<T>(Widget page) {
-    return Navigator.of(this).push<T>(
-      ModalPageRoute(page: page),
-    );
+    return Navigator.of(this).push<T>(ModalPageRoute(page: page));
   }
 
   /// Bottom sheet olarak aç
   Future<T?> pushBottomSheet<T>(Widget page) {
-    return Navigator.of(this).push<T>(
-      BottomSheetPageRoute(page: page),
-    );
+    return Navigator.of(this).push<T>(BottomSheetPageRoute(page: page));
   }
 }

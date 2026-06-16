@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Connectivity State - internet bağlantısı durumunu tutar
 class ConnectivityState {
   final bool isConnected;
@@ -25,7 +26,7 @@ class ConnectivityState {
       lastChecked: lastChecked ?? this.lastChecked,
     );
   }
-  
+
   // Primary connectivity result (first in list)
   ConnectivityResult get primaryResult => connectivityResults.first;
 
@@ -33,22 +34,22 @@ class ConnectivityState {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is ConnectivityState &&
-           other.isConnected == isConnected &&
-           other.connectivityResults.toString() == connectivityResults.toString();
+        other.isConnected == isConnected &&
+        other.connectivityResults.toString() == connectivityResults.toString();
   }
 
   @override
   int get hashCode {
     return isConnected.hashCode ^
-           connectivityResults.hashCode ^
-           lastChecked.hashCode;
+        connectivityResults.hashCode ^
+        lastChecked.hashCode;
   }
 
   @override
   String toString() {
     return 'ConnectivityState(isConnected: $isConnected, '
-           'connectivityResults: $connectivityResults, '
-           'lastChecked: $lastChecked)';
+        'connectivityResults: $connectivityResults, '
+        'lastChecked: $lastChecked)';
   }
 }
 
@@ -78,7 +79,8 @@ class ConnectivityNotifier extends StateNotifier<ConnectivityState> {
 
   /// Bağlantı durumunu günceller
   void _updateConnectivityStatus(List<ConnectivityResult> results) {
-    final isConnected = !results.contains(ConnectivityResult.none) && results.isNotEmpty;
+    final isConnected =
+        !results.contains(ConnectivityResult.none) && results.isNotEmpty;
 
     state = state.copyWith(
       isConnected: isConnected,
@@ -111,9 +113,10 @@ class ConnectivityNotifier extends StateNotifier<ConnectivityState> {
 }
 
 /// Global connectivity provider
-final connectivityProvider = StateNotifierProvider<ConnectivityNotifier, ConnectivityState>((ref) {
-  return ConnectivityNotifier(Connectivity());
-});
+final connectivityProvider =
+    StateNotifierProvider<ConnectivityNotifier, ConnectivityState>((ref) {
+      return ConnectivityNotifier(Connectivity());
+    });
 
 /// Convenience provider for checking if connected
 final isConnectedProvider = Provider<bool>((ref) {
@@ -126,7 +129,7 @@ class ConnectivityUtils {
   static bool isNetworkAvailable(ConnectivityResult result) {
     return result != ConnectivityResult.none;
   }
-  
+
   static String getConnectionTypeString(ConnectivityResult result) {
     switch (result) {
       case ConnectivityResult.wifi:

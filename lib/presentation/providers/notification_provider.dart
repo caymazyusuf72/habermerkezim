@@ -14,21 +14,22 @@ class NotificationSettings {
   final int readingGoalMinute;
   final int dailyReadingGoal;
   final bool breakingNewsEnabled;
-  final Map<String, bool> categoryNotifications; // Kategori ID -> bildirim açık/kapalı
-  
+  final Map<String, bool>
+  categoryNotifications; // Kategori ID -> bildirim açık/kapalı
+
   // YENİ ALANLAR - Sessiz Saatler
   final bool quietHoursEnabled;
   final int quietHoursStartHour;
   final int quietHoursStartMinute;
   final int quietHoursEndHour;
   final int quietHoursEndMinute;
-  
+
   // YENİ ALANLAR - Bildirim Limiti
   final bool dailyLimitEnabled;
   final int maxDailyNotifications;
   final DateTime lastResetDate;
   final int todayNotificationCount;
-  
+
   // YENİ ALANLAR - Öncelik Ayarları
   final bool highPrioritySound;
   final bool highPriorityVibration;
@@ -90,18 +91,23 @@ class NotificationSettings {
       readingGoalMinute: readingGoalMinute ?? this.readingGoalMinute,
       dailyReadingGoal: dailyReadingGoal ?? this.dailyReadingGoal,
       breakingNewsEnabled: breakingNewsEnabled ?? this.breakingNewsEnabled,
-      categoryNotifications: categoryNotifications ?? this.categoryNotifications,
+      categoryNotifications:
+          categoryNotifications ?? this.categoryNotifications,
       quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,
       quietHoursStartHour: quietHoursStartHour ?? this.quietHoursStartHour,
-      quietHoursStartMinute: quietHoursStartMinute ?? this.quietHoursStartMinute,
+      quietHoursStartMinute:
+          quietHoursStartMinute ?? this.quietHoursStartMinute,
       quietHoursEndHour: quietHoursEndHour ?? this.quietHoursEndHour,
       quietHoursEndMinute: quietHoursEndMinute ?? this.quietHoursEndMinute,
       dailyLimitEnabled: dailyLimitEnabled ?? this.dailyLimitEnabled,
-      maxDailyNotifications: maxDailyNotifications ?? this.maxDailyNotifications,
+      maxDailyNotifications:
+          maxDailyNotifications ?? this.maxDailyNotifications,
       lastResetDate: lastResetDate ?? this.lastResetDate,
-      todayNotificationCount: todayNotificationCount ?? this.todayNotificationCount,
+      todayNotificationCount:
+          todayNotificationCount ?? this.todayNotificationCount,
       highPrioritySound: highPrioritySound ?? this.highPrioritySound,
-      highPriorityVibration: highPriorityVibration ?? this.highPriorityVibration,
+      highPriorityVibration:
+          highPriorityVibration ?? this.highPriorityVibration,
     );
   }
 
@@ -215,7 +221,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   static const String _settingsKey = 'notification_settings';
 
   NotificationNotifier(this._notificationService, this._ref)
-      : super(NotificationState()) {
+    : super(NotificationState()) {
     _initialize();
   }
 
@@ -266,7 +272,9 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       final savedMap = settingsBox.get(_settingsKey);
 
       if (savedMap != null && savedMap is Map) {
-        return NotificationSettings.fromMap(Map<String, dynamic>.from(savedMap));
+        return NotificationSettings.fromMap(
+          Map<String, dynamic>.from(savedMap),
+        );
       }
     } catch (e) {
       if (kDebugMode) {
@@ -294,11 +302,8 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       state = state.copyWith(loading: true);
 
       final granted = await _notificationService.requestPermissions();
-      
-      state = state.copyWith(
-        permissionsGranted: granted,
-        loading: false,
-      );
+
+      state = state.copyWith(permissionsGranted: granted, loading: false);
 
       if (granted) {
         await _updateNotificationSchedules(state.settings);
@@ -306,10 +311,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
 
       return granted;
     } catch (e) {
-      state = state.copyWith(
-        loading: false,
-        error: 'İzin alınamadı: $e',
-      );
+      state = state.copyWith(loading: false, error: 'İzin alınamadı: $e');
       return false;
     }
   }
@@ -328,7 +330,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       );
 
       await _saveSettings(newSettings);
-      
+
       if (state.permissionsGranted) {
         await _notificationService.scheduleDailyNewsReminder(
           hour: newSettings.dailyNewsHour,
@@ -363,7 +365,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       );
 
       await _saveSettings(newSettings);
-      
+
       if (state.permissionsGranted) {
         // Get current progress from analytics
         final currentProgress = _getCurrentReadingProgress();
@@ -389,9 +391,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   /// Update breaking news setting
   Future<void> updateBreakingNewsEnabled(bool enabled) async {
     try {
-      final newSettings = state.settings.copyWith(
-        breakingNewsEnabled: enabled,
-      );
+      final newSettings = state.settings.copyWith(breakingNewsEnabled: enabled);
 
       await _saveSettings(newSettings);
       state = state.copyWith(settings: newSettings);
@@ -405,7 +405,9 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   }
 
   /// Update notification schedules
-  Future<void> _updateNotificationSchedules(NotificationSettings settings) async {
+  Future<void> _updateNotificationSchedules(
+    NotificationSettings settings,
+  ) async {
     // Schedule daily news reminder
     await _notificationService.scheduleDailyNewsReminder(
       hour: settings.dailyNewsHour,
@@ -511,7 +513,9 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       state = state.copyWith(settings: newSettings);
 
       if (kDebugMode) {
-        debugPrint('📱 Quiet hours set: $startHour:$startMinute - $endHour:$endMinute');
+        debugPrint(
+          '📱 Quiet hours set: $startHour:$startMinute - $endHour:$endMinute',
+        );
       }
     } catch (e) {
       state = state.copyWith(error: 'Sessiz saatler zamanı ayarlanamadı: $e');
@@ -544,25 +548,35 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
         debugPrint('📱 Max daily notifications set to: $max');
       }
     } catch (e) {
-      state = state.copyWith(error: 'Maksimum bildirim sayısı ayarlanamadı: $e');
+      state = state.copyWith(
+        error: 'Maksimum bildirim sayısı ayarlanamadı: $e',
+      );
     }
   }
 
   /// Kategori bildirim toggle
   Future<void> toggleCategoryNotification(String category, bool enabled) async {
     try {
-      final newCategories = Map<String, bool>.from(state.settings.categoryNotifications);
+      final newCategories = Map<String, bool>.from(
+        state.settings.categoryNotifications,
+      );
       newCategories[category] = enabled;
-      
-      final newSettings = state.settings.copyWith(categoryNotifications: newCategories);
+
+      final newSettings = state.settings.copyWith(
+        categoryNotifications: newCategories,
+      );
       await _saveSettings(newSettings);
       state = state.copyWith(settings: newSettings);
 
       if (kDebugMode) {
-        debugPrint('📱 Category "$category" notifications ${enabled ? "enabled" : "disabled"}');
+        debugPrint(
+          '📱 Category "$category" notifications ${enabled ? "enabled" : "disabled"}',
+        );
       }
     } catch (e) {
-      state = state.copyWith(error: 'Kategori bildirim ayarı güncellenemedi: $e');
+      state = state.copyWith(
+        error: 'Kategori bildirim ayarı güncellenemedi: $e',
+      );
     }
   }
 
@@ -570,20 +584,25 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   Future<void> incrementNotificationCount() async {
     try {
       final today = DateTime.now();
-      final isSameDay = state.settings.lastResetDate.day == today.day &&
-                        state.settings.lastResetDate.month == today.month &&
-                        state.settings.lastResetDate.year == today.year;
-      
+      final isSameDay =
+          state.settings.lastResetDate.day == today.day &&
+          state.settings.lastResetDate.month == today.month &&
+          state.settings.lastResetDate.year == today.year;
+
       final newSettings = state.settings.copyWith(
-        todayNotificationCount: isSameDay ? state.settings.todayNotificationCount + 1 : 1,
+        todayNotificationCount: isSameDay
+            ? state.settings.todayNotificationCount + 1
+            : 1,
         lastResetDate: today,
       );
-      
+
       await _saveSettings(newSettings);
       state = state.copyWith(settings: newSettings);
 
       if (kDebugMode) {
-        debugPrint('📱 Notification count: ${newSettings.todayNotificationCount}');
+        debugPrint(
+          '📱 Notification count: ${newSettings.todayNotificationCount}',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
@@ -606,11 +625,15 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   /// Öncelik titreşim ayarı
   Future<void> toggleHighPriorityVibration(bool enabled) async {
     try {
-      final newSettings = state.settings.copyWith(highPriorityVibration: enabled);
+      final newSettings = state.settings.copyWith(
+        highPriorityVibration: enabled,
+      );
       await _saveSettings(newSettings);
       state = state.copyWith(settings: newSettings);
     } catch (e) {
-      state = state.copyWith(error: 'Öncelik titreşim ayarı güncellenemedi: $e');
+      state = state.copyWith(
+        error: 'Öncelik titreşim ayarı güncellenemedi: $e',
+      );
     }
   }
 }
@@ -618,9 +641,9 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
 /// Notification provider
 final notificationProvider =
     StateNotifierProvider<NotificationNotifier, NotificationState>((ref) {
-  final notificationService = NotificationService();
-  return NotificationNotifier(notificationService, ref);
-});
+      final notificationService = NotificationService();
+      return NotificationNotifier(notificationService, ref);
+    });
 
 /// Notification service provider
 final notificationServiceProvider = Provider<NotificationService>((ref) {

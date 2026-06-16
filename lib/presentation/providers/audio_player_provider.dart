@@ -4,6 +4,7 @@ import 'package:haber_merkezi/core/services/audio_player_service.dart';
 import 'package:haber_merkezi/core/services/podcast_service.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Audio Player State
 class AudioPlayerState {
   final bool isPlaying;
@@ -73,12 +74,13 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   Future<void> _initialize() async {
     try {
       await _audioService.initialize();
-      
+
       // Player state değişikliklerini dinle
       _audioService.playerStateStream.listen((playerState) {
         state = state.copyWith(
           isPlaying: playerState.playing,
-          isLoading: playerState.processingState == ProcessingState.loading ||
+          isLoading:
+              playerState.processingState == ProcessingState.loading ||
               playerState.processingState == ProcessingState.buffering,
         );
       });
@@ -164,10 +166,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   Future<void> stop() async {
     try {
       await _audioService.stop();
-      state = state.copyWith(
-        isPlaying: false,
-        position: Duration.zero,
-      );
+      state = state.copyWith(isPlaying: false, position: Duration.zero);
     } catch (e) {
       state = state.copyWith(error: 'Durdurma hatası: $e');
     }
@@ -244,9 +243,10 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 }
 
 /// Audio Player Provider
-final audioPlayerProvider = StateNotifierProvider<AudioPlayerNotifier, AudioPlayerState>((ref) {
-  return AudioPlayerNotifier(AudioPlayerService());
-});
+final audioPlayerProvider =
+    StateNotifierProvider<AudioPlayerNotifier, AudioPlayerState>((ref) {
+      return AudioPlayerNotifier(AudioPlayerService());
+    });
 
 /// Podcast Service Provider
 final podcastServiceProvider = Provider<PodcastService>((ref) {
@@ -254,7 +254,8 @@ final podcastServiceProvider = Provider<PodcastService>((ref) {
 });
 
 /// Podcast Episodes Provider (belirli bir feed için)
-final podcastEpisodesProvider = FutureProvider.family<List<PodcastEpisode>, String>((ref, feedUrl) async {
-  final podcastService = ref.watch(podcastServiceProvider);
-  return await podcastService.fetchPodcastFeed(feedUrl);
-});
+final podcastEpisodesProvider =
+    FutureProvider.family<List<PodcastEpisode>, String>((ref, feedUrl) async {
+      final podcastService = ref.watch(podcastServiceProvider);
+      return await podcastService.fetchPodcastFeed(feedUrl);
+    });

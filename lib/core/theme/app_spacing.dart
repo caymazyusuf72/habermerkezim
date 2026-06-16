@@ -128,50 +128,46 @@ class AppSpacing {
 /// Widget Extension'ları - kolay padding/margin ekleme
 extension SpacingExtension on Widget {
   /// Tüm yönlere padding ekle
-  Widget padAll(double value) => Padding(
-        padding: EdgeInsets.all(value),
-        child: this,
-      );
+  Widget padAll(double value) =>
+      Padding(padding: EdgeInsets.all(value), child: this);
 
   /// Yatay padding ekle
   Widget padHorizontal(double value) => Padding(
-        padding: EdgeInsets.symmetric(horizontal: value),
-        child: this,
-      );
+    padding: EdgeInsets.symmetric(horizontal: value),
+    child: this,
+  );
 
   /// Dikey padding ekle
   Widget padVertical(double value) => Padding(
-        padding: EdgeInsets.symmetric(vertical: value),
-        child: this,
-      );
+    padding: EdgeInsets.symmetric(vertical: value),
+    child: this,
+  );
 
   /// Sol padding ekle
   Widget padLeft(double value) => Padding(
-        padding: EdgeInsets.only(left: value),
-        child: this,
-      );
+    padding: EdgeInsets.only(left: value),
+    child: this,
+  );
 
   /// Sağ padding ekle
   Widget padRight(double value) => Padding(
-        padding: EdgeInsets.only(right: value),
-        child: this,
-      );
+    padding: EdgeInsets.only(right: value),
+    child: this,
+  );
 
   /// Üst padding ekle
   Widget padTop(double value) => Padding(
-        padding: EdgeInsets.only(top: value),
-        child: this,
-      );
+    padding: EdgeInsets.only(top: value),
+    child: this,
+  );
 
   /// Alt padding ekle
   Widget padBottom(double value) => Padding(
-        padding: EdgeInsets.only(bottom: value),
-        child: this,
-      );
+    padding: EdgeInsets.only(bottom: value),
+    child: this,
+  );
 
   /// EdgeInsets ile padding ekle
-  Widget withPadding(EdgeInsetsGeometry padding) => Padding(
-        padding: padding,
-        child: this,
-      );
+  Widget withPadding(EdgeInsetsGeometry padding) =>
+      Padding(padding: padding, child: this);
 }

@@ -33,7 +33,7 @@ class ReadingListRepositoryImpl implements ReadingListRepository {
 
       // Cache'den makaleleri al
       final allCachedArticles = await newsLocalDataSource.getCachedArticles();
-      
+
       // Okuma listesindeki ID'lere göre filtrele
       final readingListArticles = allCachedArticles
           .where((article) => readingListIds.contains(article.id))
@@ -62,4 +62,3 @@ class ReadingListRepositoryImpl implements ReadingListRepository {
     await localDataSource.clearReadingList();
   }
 }
-

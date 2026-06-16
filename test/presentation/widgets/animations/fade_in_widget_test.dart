@@ -8,12 +8,7 @@ void main() {
   group('FadeInWidget', () {
     testWidgets('child widget render edilmeli', (tester) async {
       // Act
-      await pumpApp(
-        tester,
-        const FadeInWidget(
-          child: Text('Fade In İçerik'),
-        ),
-      );
+      await pumpApp(tester, const FadeInWidget(child: Text('Fade In İçerik')));
 
       // Assert
       expect(find.byType(FadeInWidget), findsOneWidget);
@@ -135,9 +130,7 @@ void main() {
       // Act
       await pumpApp(
         tester,
-        const FadeInScaleWidget(
-          child: Text('Scale İçerik'),
-        ),
+        const FadeInScaleWidget(child: Text('Scale İçerik')),
       );
 
       // Assert

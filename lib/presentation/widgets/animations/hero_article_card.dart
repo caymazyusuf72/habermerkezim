@@ -19,7 +19,7 @@ class HeroArticleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -47,7 +47,9 @@ class HeroArticleCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.7,
+                        ),
                       ),
                     ),
                   const SizedBox(height: 12),
@@ -63,7 +65,7 @@ class HeroArticleCard extends StatelessWidget {
 
   Widget _buildHeroImage(BuildContext context) {
     final heroTag = 'article-image-${article.id}';
-    
+
     final imageWidget = ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       child: CachedNetworkImage(
@@ -74,9 +76,7 @@ class HeroArticleCard extends StatelessWidget {
         placeholder: (context, url) => Container(
           height: 200,
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: const Center(child: CircularProgressIndicator()),
         ),
         errorWidget: (context, url, error) => Container(
           height: 200,
@@ -86,17 +86,12 @@ class HeroArticleCard extends StatelessWidget {
       ),
     );
 
-    return showHero
-        ? Hero(
-            tag: heroTag,
-            child: imageWidget,
-          )
-        : imageWidget;
+    return showHero ? Hero(tag: heroTag, child: imageWidget) : imageWidget;
   }
 
   Widget _buildHeroTitle(ThemeData theme) {
     final heroTag = 'article-title-${article.id}';
-    
+
     final titleWidget = Text(
       article.title,
       maxLines: 3,
@@ -110,10 +105,7 @@ class HeroArticleCard extends StatelessWidget {
     return showHero
         ? Hero(
             tag: heroTag,
-            child: Material(
-              color: Colors.transparent,
-              child: titleWidget,
-            ),
+            child: Material(color: Colors.transparent, child: titleWidget),
           )
         : titleWidget;
   }

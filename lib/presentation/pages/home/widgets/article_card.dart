@@ -35,7 +35,9 @@ class ArticleCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return isCompact ? _buildCompactCard(context, ref) : _buildFullCard(context, ref);
+    return isCompact
+        ? _buildCompactCard(context, ref)
+        : _buildFullCard(context, ref);
   }
 
   /// Tam boyutlu kart - Modern ve profesyonel tasarım
@@ -85,8 +87,9 @@ class ArticleCard extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Görsel ve kategori badge'i
-              if (article.imageUrl != null) _buildImageSection(context, ref, categoryColor),
-              
+              if (article.imageUrl != null)
+                _buildImageSection(context, ref, categoryColor),
+
               // İçerik - Optimize edilmiş padding
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -97,10 +100,10 @@ class ArticleCard extends ConsumerWidget {
                     // Kategori badge (görsel yoksa)
                     if (article.imageUrl == null && showCategoryBadge)
                       _buildCategoryBadge(context, categoryColor),
-                    
+
                     if (article.imageUrl == null && showCategoryBadge)
                       const SizedBox(height: 10),
-                    
+
                     // Başlık - Daha büyük ve okunabilir
                     Text(
                       article.truncatedTitle,
@@ -109,21 +112,25 @@ class ArticleCard extends ConsumerWidget {
                         height: 1.35,
                         fontSize: 17,
                         color: article.isRead
-                            ? theme.colorScheme.onSurface.withValues(alpha: 0.55)
+                            ? theme.colorScheme.onSurface.withValues(
+                                alpha: 0.55,
+                              )
                             : theme.colorScheme.onSurface,
                         letterSpacing: -0.3,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     // Özet - Daha okunabilir
                     Text(
                       article.truncatedDescription,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.7,
+                        ),
                         height: 1.5,
                         fontSize: 14,
                         letterSpacing: 0.1,
@@ -131,9 +138,9 @@ class ArticleCard extends ConsumerWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // Alt bilgiler
                     _buildFooter(context),
                   ],
@@ -206,7 +213,10 @@ class ArticleCard extends ConsumerWidget {
                           if (showCategoryBadge)
                             Flexible(
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
                                 decoration: BoxDecoration(
                                   color: categoryColor.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(20),
@@ -228,12 +238,15 @@ class ArticleCard extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                          
+
                           // Öneri rozeti
                           if (showRecommendationBadge) ...[
                             if (showCategoryBadge) const SizedBox(width: 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
@@ -267,7 +280,7 @@ class ArticleCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    
+
                     // Action butonları - daha küçük ve modern
                     Row(
                       mainAxisSize: MainAxisSize.min,
@@ -292,9 +305,9 @@ class ArticleCard extends ConsumerWidget {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 // Görsel ve içerik
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,48 +315,52 @@ class ArticleCard extends ConsumerWidget {
                     // Küçük görsel - daha modern
                     if (article.imageUrl != null)
                       Container(
-                          width: 80,
-                          height: 80,
-                          margin: const EdgeInsets.only(right: 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.08),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: CachedNetworkImage(
-                              imageUrl: ArticleCardUtils.optimizeImageUrl(
-                                article.imageUrl,
-                                width: 80,
-                                height: 80,
-                              ) ?? article.imageUrl!,
-                              fit: BoxFit.cover,
-                              memCacheWidth: 60, // RAM için optimize edildi
-                              memCacheHeight: 60,
-                              placeholder: (context, url) => Container(
-                                color: theme.colorScheme.surfaceContainerHighest,
-                                child: const Center(
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                        width: 80,
+                        height: 80,
+                        margin: const EdgeInsets.only(right: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                ArticleCardUtils.optimizeImageUrl(
+                                  article.imageUrl,
+                                  width: 80,
+                                  height: 80,
+                                ) ??
+                                article.imageUrl!,
+                            fit: BoxFit.cover,
+                            memCacheWidth: 60, // RAM için optimize edildi
+                            memCacheHeight: 60,
+                            placeholder: (context, url) => Container(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
                                 ),
                               ),
-                              errorWidget: (context, url, error) => Container(
-                                color: theme.colorScheme.surfaceContainerHighest,
-                                child: Icon(
-                                  Icons.image_not_supported_rounded,
-                                  size: 24,
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                              child: Icon(
+                                Icons.image_not_supported_rounded,
+                                size: 24,
+                                color: theme.colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ),
                         ),
-                    
+                      ),
+
                     // İçerik
                     Expanded(
                       child: Column(
@@ -358,28 +375,34 @@ class ArticleCard extends ConsumerWidget {
                               height: 1.4,
                               fontSize: 15,
                               color: article.isRead
-                                  ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
+                                  ? theme.colorScheme.onSurface.withValues(
+                                      alpha: 0.6,
+                                    )
                                   : theme.colorScheme.onSurface,
                             ),
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          
+
                           const SizedBox(height: 8),
-                          
+
                           // Alt bilgiler - daha kompakt
                           Row(
                             children: [
                               Icon(
                                 Icons.access_time_rounded,
                                 size: 12,
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.5,
+                                ),
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 article.shortDateTime,
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                  color: theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
                                   fontSize: 11,
                                 ),
                               ),
@@ -426,7 +449,9 @@ class ArticleCard extends ConsumerWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.5,
+            ),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -440,9 +465,13 @@ class ArticleCard extends ConsumerWidget {
   }
 
   /// Görsel bölümü - Gradient overlay ile metin okunabilirliği artırıldı
-  Widget _buildImageSection(BuildContext context, WidgetRef ref, Color categoryColor) {
+  Widget _buildImageSection(
+    BuildContext context,
+    WidgetRef ref,
+    Color categoryColor,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Stack(
       children: [
         // Ana görsel - Sabit yükseklik ile
@@ -455,10 +484,12 @@ class ArticleCard extends ConsumerWidget {
             width: double.infinity,
             height: 200,
             child: CachedNetworkImage(
-              imageUrl: ArticleCardUtils.optimizeImageUrl(
-                article.imageUrl,
-                width: MediaQuery.of(context).size.width.toInt(),
-              ) ?? article.imageUrl!,
+              imageUrl:
+                  ArticleCardUtils.optimizeImageUrl(
+                    article.imageUrl,
+                    width: MediaQuery.of(context).size.width.toInt(),
+                  ) ??
+                  article.imageUrl!,
               fit: BoxFit.cover,
               memCacheWidth: 400, // RAM kullanımı için düşürüldü
               memCacheHeight: 150,
@@ -496,7 +527,7 @@ class ArticleCard extends ConsumerWidget {
             ),
           ),
         ),
-        
+
         // Gradient overlay - metin okunabilirliği için
         Positioned(
           top: 0,
@@ -520,7 +551,7 @@ class ArticleCard extends ConsumerWidget {
             ),
           ),
         ),
-        
+
         // Rozetler (görsel üstünde)
         Positioned(
           top: 12,
@@ -531,7 +562,7 @@ class ArticleCard extends ConsumerWidget {
               // Kategori badge - glassmorphism efekti
               if (showCategoryBadge)
                 _buildGlassmorphismCategoryBadge(context, categoryColor),
-              
+
               // Öneri rozeti - glassmorphism efekti
               if (showRecommendationBadge) ...[
                 if (showCategoryBadge) const SizedBox(width: 8),
@@ -540,7 +571,10 @@ class ArticleCard extends ConsumerWidget {
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
@@ -572,18 +606,21 @@ class ArticleCard extends ConsumerWidget {
                           const SizedBox(width: 4),
                           Text(
                             'Öneri',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 10,
-                              shadows: [
-                                Shadow(
-                                  offset: const Offset(0.5, 0.5),
-                                  blurRadius: 1.0,
-                                  color: Colors.black.withValues(alpha: 0.3),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 10,
+                                  shadows: [
+                                    Shadow(
+                                      offset: const Offset(0.5, 0.5),
+                                      blurRadius: 1.0,
+                                      color: Colors.black.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
                           ),
                         ],
                       ),
@@ -594,7 +631,7 @@ class ArticleCard extends ConsumerWidget {
             ],
           ),
         ),
-        
+
         // Action butonları (görsel üstünde)
         Positioned(
           top: 12,
@@ -608,7 +645,7 @@ class ArticleCard extends ConsumerWidget {
             ],
           ),
         ),
-        
+
         // Okundu göstergesi - Adaçayı yeşili, daha belirgin
         if (article.isRead)
           Positioned(
@@ -635,7 +672,7 @@ class ArticleCard extends ConsumerWidget {
   /// Kategori badge'i - Normal tasarım (görsel olmayan kartlar için)
   Widget _buildCategoryBadge(BuildContext context, Color categoryColor) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
@@ -659,7 +696,10 @@ class ArticleCard extends ConsumerWidget {
   }
 
   /// Glassmorphism kategori badge'i - Görsel üzerindeki badge'ler için
-  Widget _buildGlassmorphismCategoryBadge(BuildContext context, Color categoryColor) {
+  Widget _buildGlassmorphismCategoryBadge(
+    BuildContext context,
+    Color categoryColor,
+  ) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
@@ -715,7 +755,7 @@ class ArticleCard extends ConsumerWidget {
     // Favori durumunu provider'dan al
     final isFavorite = ref.watch(isFavoriteProvider(article.id));
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: isDark
@@ -744,15 +784,16 @@ class ArticleCard extends ConsumerWidget {
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               transitionBuilder: (child, animation) {
-                return ScaleTransition(
-                  scale: animation,
-                  child: child,
-                );
+                return ScaleTransition(scale: animation, child: child);
               },
               child: Icon(
-                isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                isFavorite
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
                 key: ValueKey(isFavorite),
-                color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onSurface,
+                color: isFavorite
+                    ? Colors.red
+                    : Theme.of(context).colorScheme.onSurface,
                 size: 20,
               ),
             ),
@@ -765,7 +806,7 @@ class ArticleCard extends ConsumerWidget {
   /// Paylaş butonu - İyileştirilmiş tasarım
   Widget _buildShareButton(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: isDark
@@ -806,12 +847,11 @@ class ArticleCard extends ConsumerWidget {
     );
   }
 
-
   /// Makaleyi paylaş
   void _shareArticle(BuildContext context) {
     final text = '${article.title}\n\n${article.link}';
     Share.share(text);
-    
+
     // Feedback göster
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -824,9 +864,7 @@ class ArticleCard extends ConsumerWidget {
         ),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
@@ -835,7 +873,7 @@ class ArticleCard extends ConsumerWidget {
   Widget _buildFooter(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Row(
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -844,7 +882,9 @@ class ArticleCard extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.5,
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -867,14 +907,16 @@ class ArticleCard extends ConsumerWidget {
             ],
           ),
         ),
-        
+
         const SizedBox(width: 8),
-        
+
         // Kaynak ikonu ve metni
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.5,
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -902,9 +944,9 @@ class ArticleCard extends ConsumerWidget {
             ],
           ),
         ),
-        
+
         const Spacer(),
-        
+
         // Okundu göstergesi
         if (article.isRead)
           Container(
@@ -945,25 +987,24 @@ class ArticleCard extends ConsumerWidget {
       ],
     );
   }
-
 }
 
 /// Article Card için utility sınıfı
 class ArticleCardUtils {
   ArticleCardUtils._();
-  
+
   /// Görsel aspect ratio
   static const double imageAspectRatio = 16 / 9;
-  
+
   /// Kompakt görsel boyutu
   static const double compactImageSize = 60.0;
-  
+
   /// Maksimum başlık satır sayısı
   static const int maxTitleLines = 2;
-  
+
   /// Maksimum özet satır sayısı
   static const int maxDescriptionLines = 3;
-  
+
   /// Kart yüksekliği hesaplar (tahmin)
   static double estimateCardHeight({
     required bool hasImage,
@@ -974,31 +1015,31 @@ class ArticleCardUtils {
     if (isCompact) {
       return 80.0; // Kompakt kart sabit yükseklik
     }
-    
+
     double height = 32.0; // Padding
-    
+
     if (hasImage) {
       height += 200.0; // Image height (16:9 ratio)
     }
-    
+
     height += 24.0; // Title height (2 lines)
     height += 60.0; // Description height (3 lines)
     height += 32.0; // Footer height
-    
+
     return height;
   }
-  
+
   /// Görsel URL'ini optimize eder
   /// WebP formatına çevirir ve boyutlandırır (desteklenen servisler için)
   static String? optimizeImageUrl(String? url, {int? width, int? height}) {
     if (url == null || url.isEmpty) return null;
-    
+
     // Bazı CDN'ler için otomatik optimizasyon
     // Cloudinary, ImageKit, Imgix gibi servisler için parametre ekleme
-    
+
     try {
       final uri = Uri.parse(url);
-      
+
       // Cloudinary için optimizasyon
       if (uri.host.contains('cloudinary.com')) {
         final params = <String, String>{};
@@ -1006,13 +1047,12 @@ class ArticleCardUtils {
         if (height != null) params['h'] = height.toString();
         params['f'] = 'auto'; // Format auto
         params['q'] = 'auto'; // Quality auto
-        
-        return uri.replace(queryParameters: {
-          ...uri.queryParameters,
-          ...params,
-        }).toString();
+
+        return uri
+            .replace(queryParameters: {...uri.queryParameters, ...params})
+            .toString();
       }
-      
+
       // ImageKit için optimizasyon
       if (uri.host.contains('ik.imagekit.io')) {
         final params = <String, String>{};
@@ -1020,13 +1060,12 @@ class ArticleCardUtils {
         if (height != null) params['h'] = height.toString();
         params['f'] = 'auto';
         params['q'] = '80';
-        
-        return uri.replace(queryParameters: {
-          ...uri.queryParameters,
-          ...params,
-        }).toString();
+
+        return uri
+            .replace(queryParameters: {...uri.queryParameters, ...params})
+            .toString();
       }
-      
+
       // Imgix için optimizasyon
       if (uri.host.contains('imgix.net')) {
         final params = <String, String>{};
@@ -1034,13 +1073,12 @@ class ArticleCardUtils {
         if (height != null) params['h'] = height.toString();
         params['auto'] = 'format,compress';
         params['q'] = '80';
-        
-        return uri.replace(queryParameters: {
-          ...uri.queryParameters,
-          ...params,
-        }).toString();
+
+        return uri
+            .replace(queryParameters: {...uri.queryParameters, ...params})
+            .toString();
       }
-      
+
       // Diğer URL'ler için orijinal URL'i döndür
       return url;
     } catch (e) {
@@ -1048,15 +1086,18 @@ class ArticleCardUtils {
       return url;
     }
   }
-  
+
   /// Görsel boyutunu hesaplar (ekran genişliğine göre)
-  static Size calculateImageSize(BuildContext context, {bool isCompact = false}) {
+  static Size calculateImageSize(
+    BuildContext context, {
+    bool isCompact = false,
+  }) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     if (isCompact) {
       return const Size(compactImageSize, compactImageSize);
     }
-    
+
     final imageHeight = screenWidth / imageAspectRatio;
     return Size(screenWidth, imageHeight);
   }

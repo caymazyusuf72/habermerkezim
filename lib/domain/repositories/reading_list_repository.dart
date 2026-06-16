@@ -18,4 +18,3 @@ abstract class ReadingListRepository {
   /// Okuma listesini temizle
   Future<void> clearReadingList();
 }
-

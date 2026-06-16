@@ -4,6 +4,7 @@ import '../../core/services/analytics_service.dart';
 import '../../domain/entities/reading_analytics.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Analytics state
 class AnalyticsState {
   final ReadingAnalytics todayAnalytics;
@@ -14,7 +15,7 @@ class AnalyticsState {
   final bool isLoading;
   final String? error;
   final int streakDays;
-  
+
   // Gamification için ek getter'lar
   int get totalSearches => weeklySummary.totalSearches;
   int get totalArticlesRead => weeklySummary.totalArticlesRead;
@@ -85,10 +86,14 @@ class AnalyticsNotifier extends StateNotifier<AnalyticsState> {
       final monthlyAnalytics = AnalyticsService.getLast30DaysAnalytics();
 
       // Haftalık özet
-      final weeklySummary = AnalyticsService.createSummary(AnalyticsTimeRange.week);
+      final weeklySummary = AnalyticsService.createSummary(
+        AnalyticsTimeRange.week,
+      );
 
       // Aylık özet
-      final monthlySummary = AnalyticsService.createSummary(AnalyticsTimeRange.month);
+      final monthlySummary = AnalyticsService.createSummary(
+        AnalyticsTimeRange.month,
+      );
 
       state = state.copyWith(
         todayAnalytics: todayAnalytics,
@@ -108,9 +113,17 @@ class AnalyticsNotifier extends StateNotifier<AnalyticsState> {
   }
 
   /// Makale okundu kaydet
-  Future<void> recordArticleRead(String category, String source, {int timeSpent = 0}) async {
+  Future<void> recordArticleRead(
+    String category,
+    String source, {
+    int timeSpent = 0,
+  }) async {
     try {
-      final success = await AnalyticsService.recordArticleRead(category, source, timeSpent: timeSpent);
+      final success = await AnalyticsService.recordArticleRead(
+        category,
+        source,
+        timeSpent: timeSpent,
+      );
       if (success) {
         await loadAnalytics(); // Verileri güncelle
       }
@@ -167,17 +180,26 @@ class AnalyticsNotifier extends StateNotifier<AnalyticsState> {
 
   /// Motivasyon mesajı al
   String getMotivationMessage() {
-    return AnalyticsHelper.getMotivationMessage(state.todayAnalytics, state.streakDays);
+    return AnalyticsHelper.getMotivationMessage(
+      state.todayAnalytics,
+      state.streakDays,
+    );
   }
 
   /// Günlük hedef kontrolü
   bool checkDailyGoal(int goalArticles) {
-    return AnalyticsHelper.checkDailyReadingGoal(state.todayAnalytics, goalArticles);
+    return AnalyticsHelper.checkDailyReadingGoal(
+      state.todayAnalytics,
+      goalArticles,
+    );
   }
 
   /// Haftalık hedef kontrolü
   bool checkWeeklyGoal(int goalArticles) {
-    return AnalyticsHelper.checkWeeklyReadingGoal(state.weeklyAnalytics, goalArticles);
+    return AnalyticsHelper.checkWeeklyReadingGoal(
+      state.weeklyAnalytics,
+      goalArticles,
+    );
   }
 
   /// Tutarlılık puanı hesapla
@@ -240,9 +262,10 @@ class AnalyticsNotifier extends StateNotifier<AnalyticsState> {
 }
 
 /// Analytics provider
-final analyticsProvider = StateNotifierProvider<AnalyticsNotifier, AnalyticsState>((ref) {
-  return AnalyticsNotifier();
-});
+final analyticsProvider =
+    StateNotifierProvider<AnalyticsNotifier, AnalyticsState>((ref) {
+      return AnalyticsNotifier();
+    });
 
 /// Bugünkü analytics provider (sadece okuma için)
 final todayAnalyticsProvider = Provider<ReadingAnalytics>((ref) {
@@ -313,7 +336,7 @@ final productiveReadingTimeProvider = Provider<String>((ref) {
 /// Analytics quick stats provider (ana sayfa için)
 final quickStatsProvider = Provider<Map<String, dynamic>>((ref) {
   final state = ref.watch(analyticsProvider);
-  
+
   return {
     'todayArticles': state.todayAnalytics.articlesRead,
     'weeklyArticles': state.weeklySummary.totalArticlesRead,
@@ -325,37 +348,37 @@ final quickStatsProvider = Provider<Map<String, dynamic>>((ref) {
 /// En çok okunan kategori provider
 final topCategoryProvider = Provider<String?>((ref) {
   final summary = ref.watch(weeklySummaryProvider);
-  
+
   if (summary.categoriesBreakdown.isEmpty) return null;
-  
+
   String? topCategory;
   int maxCount = 0;
-  
+
   for (final entry in summary.categoriesBreakdown.entries) {
     if (entry.value > maxCount) {
       maxCount = entry.value;
       topCategory = entry.key;
     }
   }
-  
+
   return topCategory;
 });
 
 /// En çok okunan kaynak provider
 final topSourceProvider = Provider<String?>((ref) {
   final summary = ref.watch(weeklySummaryProvider);
-  
+
   if (summary.sourcesBreakdown.isEmpty) return null;
-  
+
   String? topSource;
   int maxCount = 0;
-  
+
   for (final entry in summary.sourcesBreakdown.entries) {
     if (entry.value > maxCount) {
       maxCount = entry.value;
       topSource = entry.key;
     }
   }
-  
+
   return topSource;
 });

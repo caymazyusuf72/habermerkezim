@@ -19,10 +19,12 @@ class RelatedArticlesSection extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<RelatedArticlesSection> createState() => _RelatedArticlesSectionState();
+  ConsumerState<RelatedArticlesSection> createState() =>
+      _RelatedArticlesSectionState();
 }
 
-class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection> {
+class _RelatedArticlesSectionState
+    extends ConsumerState<RelatedArticlesSection> {
   List<Article>? _relatedArticles;
   bool _isLoading = true;
 
@@ -42,7 +44,7 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
         widget.currentArticle,
         limit: 5,
       );
-      
+
       setState(() {
         _relatedArticles = articles;
         _isLoading = false;
@@ -106,7 +108,7 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
             ],
           ),
         ),
-        
+
         SizedBox(
           height: 420,
           child: ListView.builder(
@@ -142,7 +144,7 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
       ],
     );
   }
-  
+
   /// Compact mod için dikey liste (tablet yan panel için)
   Widget _buildCompactList(ThemeData theme) {
     return ListView.separated(
@@ -156,7 +158,7 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
       },
     );
   }
-  
+
   /// Compact makale kartı
   Widget _buildCompactArticleCard(Article article, ThemeData theme) {
     return InkWell(
@@ -171,7 +173,9 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+          color: theme.colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.3,
+          ),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: theme.colorScheme.outline.withValues(alpha: 0.2),
@@ -200,9 +204,9 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
                   ),
                 ),
               ),
-            
+
             if (article.imageUrl != null) const SizedBox(width: 12),
-            
+
             // İçerik
             Expanded(
               child: Column(
@@ -218,9 +222,9 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // Kaynak ve tarih
                   Row(
                     children: [
@@ -261,4 +265,3 @@ class _RelatedArticlesSectionState extends ConsumerState<RelatedArticlesSection>
     return ArticleDetailPage(article: article);
   }
 }
-

@@ -8,27 +8,39 @@ void main() {
 
       expect(exception.code, 'NO_INTERNET');
       expect(exception.message, 'İnternet bağlantısı yok');
-      expect(exception.userMessage, 'İnternet bağlantınızı kontrol edin ve tekrar deneyin.');
+      expect(
+        exception.userMessage,
+        'İnternet bağlantınızı kontrol edin ve tekrar deneyin.',
+      );
     });
 
     test('timeout factory doğru userMessage döndürmeli', () {
       final exception = NetworkException.timeout();
 
       expect(exception.code, 'TIMEOUT');
-      expect(exception.userMessage, 'Bağlantı zaman aşımına uğradı. Lütfen tekrar deneyin.');
+      expect(
+        exception.userMessage,
+        'Bağlantı zaman aşımına uğradı. Lütfen tekrar deneyin.',
+      );
     });
 
     test('dnsError factory doğru userMessage döndürmeli', () {
       final exception = NetworkException.dnsError();
 
       expect(exception.code, 'DNS_ERROR');
-      expect(exception.userMessage, 'Sunucuya ulaşılamıyor. İnternet bağlantınızı kontrol edin.');
+      expect(
+        exception.userMessage,
+        'Sunucuya ulaşılamıyor. İnternet bağlantınızı kontrol edin.',
+      );
     });
 
     test('bilinmeyen kod için varsayılan userMessage döndürmeli', () {
       const exception = NetworkException('Bilinmeyen hata');
 
-      expect(exception.userMessage, 'Bağlantı hatası oluştu. Lütfen tekrar deneyin.');
+      expect(
+        exception.userMessage,
+        'Bağlantı hatası oluştu. Lütfen tekrar deneyin.',
+      );
     });
 
     test('toString() doğru format döndürmeli', () {
@@ -92,12 +104,16 @@ void main() {
     });
 
     test('rssError factory doğru userMessage döndürmeli', () {
-      final exception = ParseException.rssError(sourceUrl: 'https://rss.com/feed');
+      final exception = ParseException.rssError(
+        sourceUrl: 'https://rss.com/feed',
+      );
 
       expect(exception.code, 'RSS_PARSE_ERROR');
       expect(exception.sourceUrl, 'https://rss.com/feed');
-      expect(exception.userMessage,
-          'Haber kaynağı okunamadı. Kaynak geçici olarak kullanılamıyor olabilir.');
+      expect(
+        exception.userMessage,
+        'Haber kaynağı okunamadı. Kaynak geçici olarak kullanılamıyor olabilir.',
+      );
     });
 
     test('invalidFormat factory doğru userMessage döndürmeli', () {
@@ -120,7 +136,10 @@ void main() {
       final exception = AuthException.tokenExpired();
 
       expect(exception.code, 'TOKEN_EXPIRED');
-      expect(exception.userMessage, 'Oturumunuz sona erdi. Lütfen tekrar giriş yapın.');
+      expect(
+        exception.userMessage,
+        'Oturumunuz sona erdi. Lütfen tekrar giriş yapın.',
+      );
     });
 
     test('invalidCredentials factory doğru userMessage döndürmeli', () {
@@ -152,23 +171,30 @@ void main() {
 
       expect(exception.code, 'TOO_MANY_REQUESTS');
       expect(exception.retryAfter, const Duration(seconds: 30));
-      expect(exception.userMessage,
-          'Çok fazla istek gönderildi. 30 saniye sonra tekrar deneyin.');
+      expect(
+        exception.userMessage,
+        'Çok fazla istek gönderildi. 30 saniye sonra tekrar deneyin.',
+      );
     });
 
     test('apiQuotaExceeded doğru userMessage döndürmeli', () {
       final exception = RateLimitException.apiQuotaExceeded();
 
       expect(exception.code, 'API_QUOTA_EXCEEDED');
-      expect(exception.userMessage,
-          'Günlük istek limiti aşıldı. Lütfen daha sonra tekrar deneyin.');
+      expect(
+        exception.userMessage,
+        'Günlük istek limiti aşıldı. Lütfen daha sonra tekrar deneyin.',
+      );
     });
 
     test('retryAfter olmadan varsayılan mesaj döndürmeli', () {
       final exception = RateLimitException.tooManyRequests();
 
       expect(exception.retryAfter, isNull);
-      expect(exception.userMessage, 'Çok fazla istek gönderildi. Lütfen biraz bekleyin.');
+      expect(
+        exception.userMessage,
+        'Çok fazla istek gönderildi. Lütfen biraz bekleyin.',
+      );
     });
   });
 
@@ -178,8 +204,10 @@ void main() {
 
       expect(exception.code, 'SERVER_ERROR');
       expect(exception.statusCode, 500);
-      expect(exception.userMessage,
-          'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.');
+      expect(
+        exception.userMessage,
+        'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.',
+      );
     });
 
     test('serviceUnavailable factory doğru değerler döndürmeli', () {
@@ -187,8 +215,10 @@ void main() {
 
       expect(exception.code, 'SERVICE_UNAVAILABLE');
       expect(exception.statusCode, 503);
-      expect(exception.userMessage,
-          'Servis geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.');
+      expect(
+        exception.userMessage,
+        'Servis geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.',
+      );
     });
 
     test('varsayılan statusCode 500 olmalı', () {
@@ -202,7 +232,10 @@ void main() {
     test('code varsa parantez içinde göstermeli', () {
       final exception = NetworkException.noInternet();
 
-      expect(exception.toString(), 'NetworkException: İnternet bağlantısı yok (NO_INTERNET)');
+      expect(
+        exception.toString(),
+        'NetworkException: İnternet bağlantısı yok (NO_INTERNET)',
+      );
     });
 
     test('code yoksa parantez olmamalı', () {

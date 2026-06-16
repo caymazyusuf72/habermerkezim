@@ -8,12 +8,7 @@ void main() {
   group('CustomErrorWidget', () {
     testWidgets('network error gösterimi', (tester) async {
       // Act
-      await pumpApp(
-        tester,
-        CustomErrorWidget.network(
-          onRetry: () {},
-        ),
-      );
+      await pumpApp(tester, CustomErrorWidget.network(onRetry: () {}));
 
       // Assert
       expect(find.byType(CustomErrorWidget), findsOneWidget);
@@ -23,12 +18,7 @@ void main() {
 
     testWidgets('server error gösterimi', (tester) async {
       // Act
-      await pumpApp(
-        tester,
-        CustomErrorWidget.server(
-          onRetry: () {},
-        ),
-      );
+      await pumpApp(tester, CustomErrorWidget.server(onRetry: () {}));
 
       // Assert
       expect(find.byType(CustomErrorWidget), findsOneWidget);
@@ -40,9 +30,7 @@ void main() {
       // Act
       await pumpApp(
         tester,
-        CustomErrorWidget.empty(
-          customMessage: 'Sonuç bulunamadı',
-        ),
+        CustomErrorWidget.empty(customMessage: 'Sonuç bulunamadı'),
       );
 
       // Assert
@@ -53,12 +41,7 @@ void main() {
 
     testWidgets('timeout error gösterimi', (tester) async {
       // Act
-      await pumpApp(
-        tester,
-        CustomErrorWidget.timeout(
-          onRetry: () {},
-        ),
-      );
+      await pumpApp(tester, CustomErrorWidget.timeout(onRetry: () {}));
 
       // Assert
       expect(find.byType(CustomErrorWidget), findsOneWidget);
@@ -72,9 +55,7 @@ void main() {
 
       await pumpApp(
         tester,
-        CustomErrorWidget.network(
-          onRetry: () => retryCalled = true,
-        ),
+        CustomErrorWidget.network(onRetry: () => retryCalled = true),
       );
 
       // Act - retry butonunu bul ve tıkla
@@ -167,10 +148,7 @@ void main() {
   group('NoInternetWidget', () {
     testWidgets('render edilmeli', (tester) async {
       // Act
-      await pumpApp(
-        tester,
-        NoInternetWidget(onRetry: () {}),
-      );
+      await pumpApp(tester, NoInternetWidget(onRetry: () {}));
 
       // Assert
       expect(find.byType(CustomErrorWidget), findsOneWidget);

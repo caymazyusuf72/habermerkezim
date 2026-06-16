@@ -13,7 +13,12 @@ void main(List<String> args) async {
     toolParams = jsonDecode(args[1]) as Map<String, dynamic>;
   }
 
-  final process = await Process.start('dart', ['pub', 'global', 'run', 'marionette_mcp']);
+  final process = await Process.start('dart', [
+    'pub',
+    'global',
+    'run',
+    'marionette_mcp',
+  ]);
 
   // Buffer for stdout
   final stdoutBuffer = StringBuffer();
@@ -38,8 +43,8 @@ void main(List<String> args) async {
     'params': {
       'protocolVersion': '2024-11-05',
       'capabilities': {},
-      'clientInfo': {'name': 'marionette-client', 'version': '1.0.0'}
-    }
+      'clientInfo': {'name': 'marionette-client', 'version': '1.0.0'},
+    },
   };
   process.stdin.writeln(jsonEncode(initRequest));
 
@@ -53,10 +58,7 @@ void main(List<String> args) async {
     'jsonrpc': '2.0',
     'id': 2,
     'method': 'tools/call',
-    'params': {
-      'name': toolName,
-      'arguments': toolParams
-    }
+    'params': {'name': toolName, 'arguments': toolParams},
   };
   process.stdin.writeln(jsonEncode(toolRequest));
 

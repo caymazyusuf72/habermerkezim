@@ -5,6 +5,7 @@ import '../../domain/entities/article.dart';
 import 'hive_service.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Gelişmiş arama servisi
 /// Tam metin arama, autocomplete, popüler aramalar ve arama skorlama sistemi
 class SearchService {
@@ -14,7 +15,7 @@ class SearchService {
 
   /// Popüler aramalar cache key
   static const String _popularSearchesKey = 'popular_searches';
-  
+
   /// Arama sayaçları cache key
   static const String _searchCountsKey = 'search_counts';
 
@@ -22,7 +23,7 @@ class SearchService {
   Timer? _debounceTimer;
 
   /// Gelişmiş arama - tam metin arama ile skorlama
-  /// 
+  ///
   /// Arama algoritması:
   /// 1. Başlık eşleşmesi: +10 puan
   /// 2. Açıklama eşleşmesi: +5 puan
@@ -35,21 +36,30 @@ class SearchService {
     if (query.trim().isEmpty) return [];
 
     final normalizedQuery = _normalizeText(query);
-    final queryWords = normalizedQuery.split(' ').where((w) => w.length > 1).toList();
-    
+    final queryWords = normalizedQuery
+        .split(' ')
+        .where((w) => w.length > 1)
+        .toList();
+
     if (queryWords.isEmpty) return [];
 
     final results = <SearchResult>[];
 
     for (final article in articles) {
       final score = _calculateSearchScore(article, normalizedQuery, queryWords);
-      
+
       if (score > 0) {
-        results.add(SearchResult(
-          article: article,
-          score: score,
-          matchedFields: _getMatchedFields(article, normalizedQuery, queryWords),
-        ));
+        results.add(
+          SearchResult(
+            article: article,
+            score: score,
+            matchedFields: _getMatchedFields(
+              article,
+              normalizedQuery,
+              queryWords,
+            ),
+          ),
+        );
       }
     }
 
@@ -60,7 +70,11 @@ class SearchService {
   }
 
   /// Arama skorunu hesapla
-  double _calculateSearchScore(Article article, String query, List<String> queryWords) {
+  double _calculateSearchScore(
+    Article article,
+    String query,
+    List<String> queryWords,
+  ) {
     double score = 0;
 
     final normalizedTitle = _normalizeText(article.title);
@@ -77,19 +91,19 @@ class SearchService {
         score += 3;
       }
     }
-    
+
     if (normalizedDescription.contains(query)) {
       score += 5;
     }
-    
+
     if (normalizedContent.contains(query)) {
       score += 3;
     }
-    
+
     if (normalizedSource.contains(query)) {
       score += 2;
     }
-    
+
     if (normalizedCategory.contains(query)) {
       score += 1;
     }
@@ -98,26 +112,28 @@ class SearchService {
     for (final word in queryWords) {
       // Tam kelime eşleşmesi kontrolü (regex ile)
       final wordRegex = RegExp(r'\b' + RegExp.escape(word) + r'\b');
-      
+
       if (wordRegex.hasMatch(normalizedTitle)) {
         score += 5; // Tam kelime bonus
       } else if (normalizedTitle.contains(word)) {
         score += 2;
       }
-      
+
       if (wordRegex.hasMatch(normalizedDescription)) {
         score += 3;
       } else if (normalizedDescription.contains(word)) {
         score += 1;
       }
-      
+
       if (normalizedContent.contains(word)) {
         score += 0.5;
       }
     }
 
     // Güncellik bonusu (son 24 saat içindeki haberler)
-    final hoursSincePublished = DateTime.now().difference(article.publishedDate).inHours;
+    final hoursSincePublished = DateTime.now()
+        .difference(article.publishedDate)
+        .inHours;
     if (hoursSincePublished < 24) {
       score += 2;
     } else if (hoursSincePublished < 72) {
@@ -128,7 +144,11 @@ class SearchService {
   }
 
   /// Eşleşen alanları bul
-  List<String> _getMatchedFields(Article article, String query, List<String> queryWords) {
+  List<String> _getMatchedFields(
+    Article article,
+    String query,
+    List<String> queryWords,
+  ) {
     final matchedFields = <String>[];
 
     final normalizedTitle = _normalizeText(article.title);
@@ -136,19 +156,23 @@ class SearchService {
     final normalizedContent = _normalizeText(article.content ?? '');
     final normalizedSource = _normalizeText(article.sourceName);
 
-    if (normalizedTitle.contains(query) || queryWords.any((w) => normalizedTitle.contains(w))) {
+    if (normalizedTitle.contains(query) ||
+        queryWords.any((w) => normalizedTitle.contains(w))) {
       matchedFields.add('title');
     }
-    
-    if (normalizedDescription.contains(query) || queryWords.any((w) => normalizedDescription.contains(w))) {
+
+    if (normalizedDescription.contains(query) ||
+        queryWords.any((w) => normalizedDescription.contains(w))) {
       matchedFields.add('description');
     }
-    
-    if (normalizedContent.contains(query) || queryWords.any((w) => normalizedContent.contains(w))) {
+
+    if (normalizedContent.contains(query) ||
+        queryWords.any((w) => normalizedContent.contains(w))) {
       matchedFields.add('content');
     }
-    
-    if (normalizedSource.contains(query) || queryWords.any((w) => normalizedSource.contains(w))) {
+
+    if (normalizedSource.contains(query) ||
+        queryWords.any((w) => normalizedSource.contains(w))) {
       matchedFields.add('source');
     }
 
@@ -186,7 +210,7 @@ class SearchService {
     final searchHistory = await _getSearchHistory();
     for (final historyItem in searchHistory) {
       final normalizedHistory = _normalizeText(historyItem);
-      if (normalizedHistory.startsWith(normalizedQuery) || 
+      if (normalizedHistory.startsWith(normalizedQuery) ||
           normalizedHistory.contains(normalizedQuery)) {
         suggestions[historyItem] = (suggestions[historyItem] ?? 0) + 10;
       }
@@ -196,7 +220,7 @@ class SearchService {
     final popularSearches = await getPopularSearches();
     for (final popular in popularSearches) {
       final normalizedPopular = _normalizeText(popular);
-      if (normalizedPopular.startsWith(normalizedQuery) || 
+      if (normalizedPopular.startsWith(normalizedQuery) ||
           normalizedPopular.contains(normalizedQuery)) {
         suggestions[popular] = (suggestions[popular] ?? 0) + 5;
       }
@@ -205,15 +229,16 @@ class SearchService {
     // Makale başlıklarından öneriler
     for (final article in articles) {
       final normalizedTitle = _normalizeText(article.title);
-      
+
       // Başlıkta query geçiyorsa
       if (normalizedTitle.contains(normalizedQuery)) {
         // Başlıktan anlamlı kelimeler çıkar
-        final words = article.title.split(' ')
+        final words = article.title
+            .split(' ')
             .where((w) => w.length > 3)
             .take(3)
             .join(' ');
-        
+
         if (words.isNotEmpty) {
           suggestions[words] = (suggestions[words] ?? 0) + 1;
         }
@@ -222,13 +247,15 @@ class SearchService {
       // Kaynak adı önerisi
       final normalizedSource = _normalizeText(article.sourceName);
       if (normalizedSource.contains(normalizedQuery)) {
-        suggestions[article.sourceName] = (suggestions[article.sourceName] ?? 0) + 2;
+        suggestions[article.sourceName] =
+            (suggestions[article.sourceName] ?? 0) + 2;
       }
 
       // Kategori önerisi
       final normalizedCategory = _normalizeText(article.category);
       if (normalizedCategory.contains(normalizedQuery)) {
-        suggestions[article.category] = (suggestions[article.category] ?? 0) + 3;
+        suggestions[article.category] =
+            (suggestions[article.category] ?? 0) + 3;
       }
     }
 
@@ -236,10 +263,7 @@ class SearchService {
     final sortedSuggestions = suggestions.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
-    return sortedSuggestions
-        .take(maxSuggestions)
-        .map((e) => e.key)
-        .toList();
+    return sortedSuggestions.take(maxSuggestions).map((e) => e.key).toList();
   }
 
   /// Debounced autocomplete
@@ -260,17 +284,17 @@ class SearchService {
   Future<List<String>> getPopularSearches({int limit = 10}) async {
     try {
       final box = HiveService.settingsBox;
-      final searchCounts = box.get(_searchCountsKey, defaultValue: <String, dynamic>{});
-      
+      final searchCounts = box.get(
+        _searchCountsKey,
+        defaultValue: <String, dynamic>{},
+      );
+
       if (searchCounts is! Map) return [];
 
       final sortedSearches = searchCounts.entries.toList()
         ..sort((a, b) => (b.value as int).compareTo(a.value as int));
 
-      return sortedSearches
-          .take(limit)
-          .map((e) => e.key as String)
-          .toList();
+      return sortedSearches.take(limit).map((e) => e.key as String).toList();
     } catch (e) {
       debugPrint('❌ Popüler aramalar alınamadı: $e');
       return [];
@@ -286,10 +310,10 @@ class SearchService {
       final searchCounts = Map<String, dynamic>.from(
         box.get(_searchCountsKey, defaultValue: <String, dynamic>{}) as Map,
       );
-      
+
       final normalizedQuery = query.trim().toLowerCase();
       searchCounts[normalizedQuery] = (searchCounts[normalizedQuery] ?? 0) + 1;
-      
+
       await box.put(_searchCountsKey, searchCounts);
     } catch (e) {
       debugPrint('❌ Arama sayacı güncellenemedi: $e');
@@ -300,7 +324,7 @@ class SearchService {
   Future<List<TrendingSearch>> getTrendingSearches({int limit = 5}) async {
     try {
       final popularSearches = await getPopularSearches(limit: limit * 2);
-      
+
       // Basit trend hesaplama - popüler aramalara rastgele trend skoru ekle
       final random = math.Random();
       final trending = popularSearches.map((search) {
@@ -312,7 +336,7 @@ class SearchService {
       }).toList();
 
       trending.sort((a, b) => b.trendScore.compareTo(a.trendScore));
-      
+
       return trending.take(limit).toList();
     } catch (e) {
       debugPrint('❌ Trend aramalar alınamadı: $e');
@@ -325,7 +349,7 @@ class SearchService {
     try {
       final box = HiveService.settingsBox;
       final history = box.get('search_history', defaultValue: <String>[]);
-      
+
       if (history is List) {
         return history.cast<String>();
       }
@@ -344,20 +368,20 @@ class SearchService {
       final history = List<String>.from(
         box.get('search_history', defaultValue: <String>[]) as List,
       );
-      
+
       // Zaten varsa kaldır (en üste eklemek için)
       history.remove(query);
-      
+
       // En üste ekle
       history.insert(0, query);
-      
+
       // Maksimum 50 kayıt tut
       if (history.length > 50) {
         history.removeRange(50, history.length);
       }
-      
+
       await box.put('search_history', history);
-      
+
       // Arama sayacını da artır
       await incrementSearchCount(query);
     } catch (e) {
@@ -382,7 +406,7 @@ class SearchService {
       final history = List<String>.from(
         box.get('search_history', defaultValue: <String>[]) as List,
       );
-      
+
       history.remove(query);
       await box.put('search_history', history);
     } catch (e) {
@@ -399,7 +423,10 @@ class SearchService {
 
     final normalizedQuery = _normalizeText(query);
     final normalizedText = _normalizeText(text);
-    final queryWords = normalizedQuery.split(' ').where((w) => w.length > 1).toList();
+    final queryWords = normalizedQuery
+        .split(' ')
+        .where((w) => w.length > 1)
+        .toList();
 
     final highlights = <HighlightedText>[];
     var currentIndex = 0;
@@ -408,24 +435,30 @@ class SearchService {
     final queryIndex = normalizedText.indexOf(normalizedQuery);
     if (queryIndex != -1) {
       if (queryIndex > 0) {
-        highlights.add(HighlightedText(
-          text: text.substring(0, queryIndex),
-          isHighlighted: false,
-        ));
+        highlights.add(
+          HighlightedText(
+            text: text.substring(0, queryIndex),
+            isHighlighted: false,
+          ),
+        );
       }
-      
-      highlights.add(HighlightedText(
-        text: text.substring(queryIndex, queryIndex + query.length),
-        isHighlighted: true,
-      ));
-      
+
+      highlights.add(
+        HighlightedText(
+          text: text.substring(queryIndex, queryIndex + query.length),
+          isHighlighted: true,
+        ),
+      );
+
       if (queryIndex + query.length < text.length) {
-        highlights.add(HighlightedText(
-          text: text.substring(queryIndex + query.length),
-          isHighlighted: false,
-        ));
+        highlights.add(
+          HighlightedText(
+            text: text.substring(queryIndex + query.length),
+            isHighlighted: false,
+          ),
+        );
       }
-      
+
       return highlights;
     }
 
@@ -477,8 +510,5 @@ class HighlightedText {
   final String text;
   final bool isHighlighted;
 
-  const HighlightedText({
-    required this.text,
-    required this.isHighlighted,
-  });
+  const HighlightedText({required this.text, required this.isHighlighted});
 }

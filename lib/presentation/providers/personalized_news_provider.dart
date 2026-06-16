@@ -57,9 +57,7 @@ final personalizedNewsProvider = Provider<PersonalizedNewsState>((ref) {
 
   // Hata varsa error state döndür
   if (newsState.hasError) {
-    return PersonalizedNewsState(
-      errorMessage: newsState.errorMessage,
-    );
+    return PersonalizedNewsState(errorMessage: newsState.errorMessage);
   }
 
   // Haberler yoksa boş döndür
@@ -80,9 +78,7 @@ final personalizedNewsProvider = Provider<PersonalizedNewsState>((ref) {
     interestTags,
   );
 
-  return PersonalizedNewsState(
-    articles: sortedArticles,
-  );
+  return PersonalizedNewsState(articles: sortedArticles);
 });
 
 /// Kişiselleştirilmiş haberleri yenile
@@ -91,4 +87,3 @@ final refreshPersonalizedNewsProvider = FutureProvider<void>((ref) async {
   await ref.read(newsProvider.notifier).refreshArticles();
   // PersonalizedNewsProvider otomatik olarak güncellenecek
 });
-

@@ -9,13 +9,13 @@ class DynamicColorState {
   final ColorScheme? lightDynamic;
   final ColorScheme? darkDynamic;
   final bool isSupported;
-  
+
   const DynamicColorState({
     this.lightDynamic,
     this.darkDynamic,
     this.isSupported = false,
   });
-  
+
   DynamicColorState copyWith({
     ColorScheme? lightDynamic,
     ColorScheme? darkDynamic,
@@ -32,7 +32,7 @@ class DynamicColorState {
 /// Dynamic color state notifier
 class DynamicColorNotifier extends StateNotifier<DynamicColorState> {
   DynamicColorNotifier() : super(const DynamicColorState());
-  
+
   /// Dynamic color şemalarını ayarla
   void setDynamicColors(ColorScheme? light, ColorScheme? dark) {
     state = state.copyWith(
@@ -41,15 +41,16 @@ class DynamicColorNotifier extends StateNotifier<DynamicColorState> {
       isSupported: light != null && dark != null,
     );
   }
-  
+
   /// Dynamic color desteğini kontrol et
   bool get isSupported => state.isSupported;
 }
 
 /// Dynamic color provider
-final dynamicColorProvider = StateNotifierProvider<DynamicColorNotifier, DynamicColorState>((ref) {
-  return DynamicColorNotifier();
-});
+final dynamicColorProvider =
+    StateNotifierProvider<DynamicColorNotifier, DynamicColorState>((ref) {
+      return DynamicColorNotifier();
+    });
 
 /// Dynamic color destekli mi provider
 final isDynamicColorSupportedProvider = Provider<bool>((ref) {
@@ -62,7 +63,7 @@ class ThemeState {
   final bool isDarkMode;
   final double fontScale;
   final ColorTheme colorTheme;
-  
+
   const ThemeState({
     this.themeMode = ThemeMode.light,
     this.isDarkMode = false,
@@ -95,7 +96,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
   static const String _themeKey = 'theme_mode';
   static const String _fontScaleKey = 'font_scale';
   static const String _colorThemeKey = 'color_theme';
-  
+
   ThemeNotifier() : super(const ThemeState()) {
     _loadThemeFromStorage();
   }
@@ -103,13 +104,19 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
   /// Local storage'dan tema ayarını yükler
   Future<void> _loadThemeFromStorage() async {
     try {
-      final savedTheme = HiveService.settingsBox.get(_themeKey, defaultValue: 'light') as String;
-      final savedFontScale = HiveService.settingsBox.get(_fontScaleKey, defaultValue: 1.0) as double;
-      final savedColorTheme = HiveService.settingsBox.get(_colorThemeKey, defaultValue: 'default') as String;
-      
+      final savedTheme =
+          HiveService.settingsBox.get(_themeKey, defaultValue: 'light')
+              as String;
+      final savedFontScale =
+          HiveService.settingsBox.get(_fontScaleKey, defaultValue: 1.0)
+              as double;
+      final savedColorTheme =
+          HiveService.settingsBox.get(_colorThemeKey, defaultValue: 'default')
+              as String;
+
       final themeMode = _stringToThemeMode(savedTheme);
       final colorTheme = _stringToColorTheme(savedColorTheme);
-      
+
       // System mode için sistem temasını kontrol et
       bool isDarkMode = false;
       if (themeMode == ThemeMode.system) {
@@ -117,7 +124,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
       } else {
         isDarkMode = themeMode == ThemeMode.dark;
       }
-      
+
       state = state.copyWith(
         themeMode: themeMode,
         isDarkMode: isDarkMode,
@@ -152,14 +159,17 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
   /// Renk temasını ayarlar
   Future<void> setColorTheme(ColorTheme colorTheme) async {
     state = state.copyWith(colorTheme: colorTheme);
-    
+
     try {
-      await HiveService.settingsBox.put(_colorThemeKey, _colorThemeToString(colorTheme));
+      await HiveService.settingsBox.put(
+        _colorThemeKey,
+        _colorThemeToString(colorTheme),
+      );
     } catch (e) {
       debugPrint('Color theme kaydetme hatası: $e');
     }
   }
-  
+
   /// ColorTheme'u string'e çevirir
   String _colorThemeToString(ColorTheme colorTheme) {
     switch (colorTheme) {
@@ -177,7 +187,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
         return 'dynamic';
     }
   }
-  
+
   /// String'i ColorTheme'a çevirir
   ColorTheme _stringToColorTheme(String themeString) {
     switch (themeString) {
@@ -213,9 +223,9 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
   Future<void> setFontScale(double scale) async {
     // Font scale değerini 0.8 - 1.6 arasında sınırla
     final clampedScale = scale.clamp(0.8, 1.6);
-    
+
     state = state.copyWith(fontScale: clampedScale);
-    
+
     try {
       await HiveService.settingsBox.put(_fontScaleKey, clampedScale);
     } catch (e) {
@@ -245,13 +255,13 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
 
   /// Theme'i günceller ve storage'a kaydeder
   Future<void> _updateTheme(ThemeMode themeMode, bool isDarkMode) async {
-    state = state.copyWith(
-      themeMode: themeMode,
-      isDarkMode: isDarkMode,
-    );
+    state = state.copyWith(themeMode: themeMode, isDarkMode: isDarkMode);
 
     try {
-      await HiveService.settingsBox.put(_themeKey, _themeModeToString(themeMode));
+      await HiveService.settingsBox.put(
+        _themeKey,
+        _themeModeToString(themeMode),
+      );
     } catch (e) {
       debugPrint('Theme kaydetme hatası: $e');
     }
@@ -298,17 +308,18 @@ final currentThemeModeProvider = Provider<ThemeMode>((ref) {
 /// Is dark mode provider - sistem temasını da kontrol eder
 final isDarkModeProvider = Provider<bool>((ref) {
   final themeState = ref.watch(themeProvider);
-  
+
   // System mode ise sistem temasını kontrol et
   if (themeState.themeMode == ThemeMode.system) {
     try {
-      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      final brightness =
+          WidgetsBinding.instance.platformDispatcher.platformBrightness;
       return brightness == Brightness.dark;
     } catch (e) {
       return false; // Default to light
     }
   }
-  
+
   return themeState.isDarkMode;
 });
 

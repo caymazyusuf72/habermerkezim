@@ -44,7 +44,9 @@ class MemoryUtils {
     return {
       'currentSize': cache.currentSize,
       'currentSizeBytes': cache.currentSizeBytes,
-      'currentSizeMb': (cache.currentSizeBytes / 1024 / 1024).toStringAsFixed(2),
+      'currentSizeMb': (cache.currentSizeBytes / 1024 / 1024).toStringAsFixed(
+        2,
+      ),
     };
   }
 
@@ -97,7 +99,10 @@ class MemoryUtils {
 
   /// Memory baskısı durumunda kaynakları serbest bırak
   static void onMemoryPressure() {
-    _logger.warning('Memory pressure algılandı! Kaynaklar serbest bırakılıyor...', tag: 'MEMORY');
+    _logger.warning(
+      'Memory pressure algılandı! Kaynaklar serbest bırakılıyor...',
+      tag: 'MEMORY',
+    );
 
     // Image cache temizle
     clearImageCache();

@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/entities/rss_source.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// RSS kaynakları yönetim servisi
 class RssSourcesService {
   static const String _boxName = 'rss_sources';
@@ -29,11 +30,9 @@ class RssSourcesService {
   static Future<void> _initializeDefaultSources() async {
     final sources = DefaultRssSources.sources;
     final now = DateTime.now();
-    
+
     for (final source in sources) {
-      final sourceWithDate = source.copyWith(
-        createdAt: now,
-      );
+      final sourceWithDate = source.copyWith(createdAt: now);
       await _box!.put(source.id, sourceWithDate.toMap());
     }
   }
@@ -42,13 +41,13 @@ class RssSourcesService {
   static List<RssSource> getAllSources() {
     try {
       final sources = <RssSource>[];
-      
+
       for (final map in _box!.values) {
         // Type casting için
         final convertedMap = Map<String, dynamic>.from(map);
         sources.add(RssSource.fromMap(convertedMap));
       }
-      
+
       // ID'ye göre sırala
       sources.sort((a, b) => a.id.compareTo(b.id));
       return sources;
@@ -146,7 +145,10 @@ class RssSourcesService {
   }
 
   /// RSS kaynağının son güncelleme tarihini güncelle
-  static Future<bool> updateLastFetchedTime(String id, {int? articleCount}) async {
+  static Future<bool> updateLastFetchedTime(
+    String id, {
+    int? articleCount,
+  }) async {
     try {
       final source = getSourceById(id);
       if (source != null) {
@@ -190,9 +192,9 @@ class RssSourcesService {
   static bool isValidRssUrl(String url) {
     try {
       final uri = Uri.parse(url);
-      return uri.hasScheme && 
-             (uri.scheme == 'http' || uri.scheme == 'https') &&
-             uri.hasAuthority;
+      return uri.hasScheme &&
+          (uri.scheme == 'http' || uri.scheme == 'https') &&
+          uri.hasAuthority;
     } catch (e) {
       return false;
     }
@@ -206,7 +208,7 @@ class RssSourcesService {
         .replaceAll(RegExp(r'[^a-z0-9]'), '_')
         .replaceAll(RegExp(r'_+'), '_')
         .replaceAll(RegExp(r'^_|_$'), '');
-    
+
     return '${cleanName}_$timestamp';
   }
 
@@ -226,10 +228,10 @@ class RssSourcesService {
     for (final source in getAllSources()) {
       categories.add(source.category);
     }
-    
+
     // Varsayılan kategorileri de ekle
     categories.addAll(DefaultRssSources.categories);
-    
+
     final sortedCategories = categories.toList()..sort();
     return sortedCategories;
   }
@@ -237,22 +239,22 @@ class RssSourcesService {
   /// Kategoriye göre kaynak sayısını al
   static Map<String, int> getSourceCountByCategory() {
     final counts = <String, int>{};
-    
+
     for (final source in getAllSources()) {
       counts[source.category] = (counts[source.category] ?? 0) + 1;
     }
-    
+
     return counts;
   }
 
   /// Aktif kategoriye göre kaynak sayısını al
   static Map<String, int> getActiveSourceCountByCategory() {
     final counts = <String, int>{};
-    
+
     for (final source in getActiveSources()) {
       counts[source.category] = (counts[source.category] ?? 0) + 1;
     }
-    
+
     return counts;
   }
 
@@ -268,7 +270,7 @@ class RssSourcesService {
           lastFetchedAt: null,
           articleCount: null,
         );
-        
+
         final success = await addSource(duplicatedSource);
         return success ? duplicatedSource : null;
       }
@@ -298,11 +300,14 @@ class RssSourcesHelper {
       final uri = Uri.parse(url);
       final domain = uri.host.replaceAll('www.', '');
       final parts = domain.split('.');
-      
+
       if (parts.isNotEmpty) {
-        return parts.first.replaceFirst(parts.first[0], parts.first[0].toUpperCase());
+        return parts.first.replaceFirst(
+          parts.first[0],
+          parts.first[0].toUpperCase(),
+        );
       }
-      
+
       return 'RSS Kaynağı';
     } catch (e) {
       return 'RSS Kaynağı';
@@ -312,7 +317,7 @@ class RssSourcesHelper {
   /// URL'den kategori tahmin et
   static String predictCategoryFromUrl(String url) {
     final lowerUrl = url.toLowerCase();
-    
+
     if (lowerUrl.contains('teknoloji') || lowerUrl.contains('tech')) {
       return 'teknoloji';
     } else if (lowerUrl.contains('spor') || lowerUrl.contains('sport')) {
@@ -326,7 +331,7 @@ class RssSourcesHelper {
     } else if (lowerUrl.contains('egitim') || lowerUrl.contains('edu')) {
       return 'eğitim';
     }
-    
+
     return 'genel';
   }
 

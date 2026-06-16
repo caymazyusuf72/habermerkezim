@@ -29,11 +29,9 @@ class ModernAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: Container(
@@ -59,7 +57,9 @@ class ModernAlertDialog extends StatelessWidget {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: (iconColor ?? AppTheme.primaryBlue).withValues(alpha: 0.1),
+                  color: (iconColor ?? AppTheme.primaryBlue).withValues(
+                    alpha: 0.1,
+                  ),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -70,7 +70,7 @@ class ModernAlertDialog extends StatelessWidget {
               ),
               const SizedBox(height: 16),
             ],
-            
+
             // Title
             Text(
               title,
@@ -80,9 +80,9 @@ class ModernAlertDialog extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Content
             Text(
               content,
@@ -92,9 +92,9 @@ class ModernAlertDialog extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Action buttons
             Row(
               children: [
@@ -114,24 +114,26 @@ class ModernAlertDialog extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                
-                if ((onCancel != null || cancelText != null) && 
+
+                if ((onCancel != null || cancelText != null) &&
                     (onConfirm != null || confirmText != null))
                   const SizedBox(width: 12),
-                
+
                 // Confirm button
                 if (onConfirm != null || confirmText != null)
                   Expanded(
                     child: ElevatedButton(
                       onPressed: onConfirm ?? () => Navigator.of(context).pop(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isDangerous 
-                            ? Colors.red 
+                        backgroundColor: isDangerous
+                            ? Colors.red
                             : AppTheme.primaryBlue,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -160,7 +162,6 @@ class ModernAlertDialog extends StatelessWidget {
 
 /// Hızlı kullanım için helper function'lar
 class ModernDialogs {
-  
   /// Onay dialog'u göster
   static Future<bool?> showConfirmDialog({
     required BuildContext context,
@@ -187,7 +188,7 @@ class ModernDialogs {
       ),
     );
   }
-  
+
   /// Bilgi dialog'u göster
   static Future<void> showInfoDialog({
     required BuildContext context,
@@ -209,7 +210,7 @@ class ModernDialogs {
       ),
     );
   }
-  
+
   /// Hata dialog'u göster
   static Future<void> showErrorDialog({
     required BuildContext context,
@@ -229,7 +230,7 @@ class ModernDialogs {
       ),
     );
   }
-  
+
   /// Başarı dialog'u göster
   static Future<void> showSuccessDialog({
     required BuildContext context,

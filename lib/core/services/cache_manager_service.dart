@@ -11,17 +11,17 @@ class CacheEntry<T> {
   final DateTime createdAt;
   final Duration ttl;
 
-  CacheEntry({
-    required this.value,
-    required this.ttl,
-  }) : createdAt = DateTime.now();
+  CacheEntry({required this.value, required this.ttl})
+    : createdAt = DateTime.now();
 
   bool get isExpired => DateTime.now().difference(createdAt) > ttl;
 
   DateTime get expiresAt => createdAt.add(ttl);
 
-  int get remainingMs =>
-      expiresAt.difference(DateTime.now()).inMilliseconds.clamp(0, ttl.inMilliseconds);
+  int get remainingMs => expiresAt
+      .difference(DateTime.now())
+      .inMilliseconds
+      .clamp(0, ttl.inMilliseconds);
 }
 
 /// Cache istatistikleri
@@ -41,13 +41,13 @@ class CacheStats {
   }
 
   Map<String, dynamic> toJson() => {
-        'hits': hits,
-        'misses': misses,
-        'evictions': evictions,
-        'hitRate': '${(hitRate * 100).toStringAsFixed(1)}%',
-        'memoryItems': memoryItems,
-        'diskItems': diskItems,
-      };
+    'hits': hits,
+    'misses': misses,
+    'evictions': evictions,
+    'hitRate': '${(hitRate * 100).toStringAsFixed(1)}%',
+    'memoryItems': memoryItems,
+    'diskItems': diskItems,
+  };
 
   @override
   String toString() =>
@@ -56,7 +56,7 @@ class CacheStats {
 }
 
 /// Multi-level cache yöneticisi
-/// 
+///
 /// Memory → Disk şeklinde iki katmanlı cache sunar.
 /// - LRU eviction ile bellek yönetimi
 /// - TTL bazlı otomatik invalidation
@@ -93,7 +93,7 @@ class CacheManagerService {
 
   /// Cache'e veri yaz (memory + disk)
   Future<void> put<T>(
-    String key, 
+    String key,
     T value, {
     Duration? ttl,
     bool persistToDisk = true,
@@ -106,7 +106,11 @@ class CacheManagerService {
     stats.memoryItems = _memoryCache.length;
 
     // Disk cache'e yaz
-    if (persistToDisk && value is Map || value is List || value is String || value is num || value is bool) {
+    if (persistToDisk && value is Map ||
+        value is List ||
+        value is String ||
+        value is num ||
+        value is bool) {
       try {
         final prefs = await _preferences;
         final wrapper = {
@@ -116,11 +120,17 @@ class CacheManagerService {
         };
         await prefs.setString('$_diskPrefix$key', jsonEncode(wrapper));
       } catch (e) {
-        _logger.warning('Disk cache yazma hatası: $key - $e', tag: 'CacheManager');
+        _logger.warning(
+          'Disk cache yazma hatası: $key - $e',
+          tag: 'CacheManager',
+        );
       }
     }
 
-    _logger.debug('Cache PUT: $key (TTL: ${effectiveTtl.inSeconds}s)', tag: 'CacheManager');
+    _logger.debug(
+      'Cache PUT: $key (TTL: ${effectiveTtl.inSeconds}s)',
+      tag: 'CacheManager',
+    );
   }
 
   /// Cache'den veri oku (memory → disk sırasıyla)
@@ -148,7 +158,9 @@ class CacheManagerService {
       final raw = prefs.getString('$_diskPrefix$key');
       if (raw != null) {
         final wrapper = jsonDecode(raw) as Map<String, dynamic>;
-        final createdAt = DateTime.fromMillisecondsSinceEpoch(wrapper['createdAt'] as int);
+        final createdAt = DateTime.fromMillisecondsSinceEpoch(
+          wrapper['createdAt'] as int,
+        );
         final ttl = Duration(milliseconds: wrapper['ttl'] as int);
 
         if (DateTime.now().difference(createdAt) <= ttl) {
@@ -166,7 +178,10 @@ class CacheManagerService {
         }
       }
     } catch (e) {
-      _logger.warning('Disk cache okuma hatası: $key - $e', tag: 'CacheManager');
+      _logger.warning(
+        'Disk cache okuma hatası: $key - $e',
+        tag: 'CacheManager',
+      );
     }
 
     stats.misses++;
@@ -231,7 +246,10 @@ class CacheManagerService {
 
     try {
       final prefs = await _preferences;
-      final diskKeys = prefs.getKeys().where((k) => k.startsWith(_diskPrefix)).toList();
+      final diskKeys = prefs
+          .getKeys()
+          .where((k) => k.startsWith(_diskPrefix))
+          .toList();
       for (final key in diskKeys) {
         await prefs.remove(key);
       }
@@ -274,7 +292,9 @@ class CacheManagerService {
         if (raw != null) {
           try {
             final wrapper = jsonDecode(raw) as Map<String, dynamic>;
-            final createdAt = DateTime.fromMillisecondsSinceEpoch(wrapper['createdAt'] as int);
+            final createdAt = DateTime.fromMillisecondsSinceEpoch(
+              wrapper['createdAt'] as int,
+            );
             final ttl = Duration(milliseconds: wrapper['ttl'] as int);
             if (DateTime.now().difference(createdAt) > ttl) {
               await prefs.remove(diskKey);
@@ -287,12 +307,18 @@ class CacheManagerService {
         }
       }
     } catch (e) {
-      _logger.warning('Expired cache temizleme hatası: $e', tag: 'CacheManager');
+      _logger.warning(
+        'Expired cache temizleme hatası: $e',
+        tag: 'CacheManager',
+      );
     }
 
     stats.evictions += evicted;
     if (evicted > 0) {
-      _logger.info('$evicted expired cache girişi temizlendi', tag: 'CacheManager');
+      _logger.info(
+        '$evicted expired cache girişi temizlendi',
+        tag: 'CacheManager',
+      );
     }
   }
 

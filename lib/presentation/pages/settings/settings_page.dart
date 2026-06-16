@@ -26,9 +26,7 @@ class SettingsPage extends ConsumerWidget {
     final debugMode = ref.watch(debugModeProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ayarlar'),
-      ),
+      appBar: AppBar(title: const Text('Ayarlar')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -43,12 +41,20 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // Okuma Modu
-          _buildSectionHeader(context, 'Okuma Modu', Icons.chrome_reader_mode_rounded),
+          _buildSectionHeader(
+            context,
+            'Okuma Modu',
+            Icons.chrome_reader_mode_rounded,
+          ),
           _buildReadingModeSection(context, ref),
           const SizedBox(height: 24),
 
           // Haber Kaynakları
-          _buildSectionHeader(context, 'Haber Kaynakları', Icons.rss_feed_rounded),
+          _buildSectionHeader(
+            context,
+            'Haber Kaynakları',
+            Icons.rss_feed_rounded,
+          ),
           _buildRssSourcesSection(context, ref),
           const SizedBox(height: 24),
 
@@ -58,17 +64,29 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // İstatistikler
-          _buildSectionHeader(context, 'İstatistikler', Icons.analytics_rounded),
+          _buildSectionHeader(
+            context,
+            'İstatistikler',
+            Icons.analytics_rounded,
+          ),
           _buildAnalyticsSection(context, ref),
           const SizedBox(height: 24),
 
           // Rozetler ve Başarılar
-          _buildSectionHeader(context, 'Rozetler ve Başarılar', Icons.emoji_events_rounded),
+          _buildSectionHeader(
+            context,
+            'Rozetler ve Başarılar',
+            Icons.emoji_events_rounded,
+          ),
           _buildGamificationSection(context, ref),
           const SizedBox(height: 24),
 
           // Bildirimler
-          _buildSectionHeader(context, 'Bildirimler', Icons.notifications_rounded),
+          _buildSectionHeader(
+            context,
+            'Bildirimler',
+            Icons.notifications_rounded,
+          ),
           _buildNotificationSection(context, ref),
           const SizedBox(height: 24),
 
@@ -90,16 +108,16 @@ class SettingsPage extends ConsumerWidget {
   }
 
   /// Bölüm başlığı
-  Widget _buildSectionHeader(BuildContext context, String title, IconData icon) {
+  Widget _buildSectionHeader(
+    BuildContext context,
+    String title,
+    IconData icon,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: AppTheme.primaryBlue,
-          ),
+          Icon(icon, size: 20, color: AppTheme.primaryBlue),
           const SizedBox(width: 8),
           Text(
             title,
@@ -114,9 +132,13 @@ class SettingsPage extends ConsumerWidget {
   }
 
   /// Tema bölümü
-  Widget _buildThemeSection(BuildContext context, WidgetRef ref, bool isDarkMode) {
+  Widget _buildThemeSection(
+    BuildContext context,
+    WidgetRef ref,
+    bool isDarkMode,
+  ) {
     final fontScale = ref.watch(fontScaleProvider);
-    
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -128,9 +150,7 @@ class SettingsPage extends ConsumerWidget {
       child: Column(
         children: [
           SwitchListTile(
-            secondary: Icon(
-              isDarkMode ? Icons.dark_mode : Icons.light_mode,
-            ),
+            secondary: Icon(isDarkMode ? Icons.dark_mode : Icons.light_mode),
             title: const Text('Karanlık Tema'),
             subtitle: Text(
               isDarkMode ? 'Karanlık tema aktif' : 'Açık tema aktif',
@@ -152,7 +172,9 @@ class SettingsPage extends ConsumerWidget {
               'Renk teması seçin',
               style: TextStyle(
                 fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             initiallyExpanded: false,
@@ -313,21 +335,21 @@ class SettingsPage extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected
-            ? AppTheme.primaryBlue
-            : Theme.of(context).colorScheme.surfaceContainerHighest,
+              ? AppTheme.primaryBlue
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-              ? AppTheme.primaryBlue
-              : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                ? AppTheme.primaryBlue
+                : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           ),
         ),
         child: Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: isSelected
-              ? Colors.white
-              : Theme.of(context).colorScheme.onSurfaceVariant,
+                ? Colors.white
+                : Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             fontSize: 11 * scale, // Font boyutunu önizleme için
           ),
@@ -348,7 +370,7 @@ class SettingsPage extends ConsumerWidget {
   /// Okuma modu bölümü
   Widget _buildReadingModeSection(BuildContext context, WidgetRef ref) {
     final readingMode = ref.watch(readingModeProvider);
-    
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -374,7 +396,9 @@ class SettingsPage extends ConsumerWidget {
               ),
             ),
             title: const Text('Okuma Ayarları'),
-            subtitle: Text('${readingMode.backgroundColorName} • ${(readingMode.fontSize * 100).toInt()}%'),
+            subtitle: Text(
+              '${readingMode.backgroundColorName} • ${(readingMode.fontSize * 100).toInt()}%',
+            ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               ReadingModeBottomSheet.show(context);
@@ -384,7 +408,9 @@ class SettingsPage extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.text_fields),
             title: const Text('Font Boyutu'),
-            subtitle: Text('${(readingMode.fontSize * 100).toInt()}% boyutunda'),
+            subtitle: Text(
+              '${(readingMode.fontSize * 100).toInt()}% boyutunda',
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -434,13 +460,14 @@ class SettingsPage extends ConsumerWidget {
               final result = await ModernDialogs.showConfirmDialog(
                 context: context,
                 title: 'Varsayılana Dön',
-                content: 'Tüm okuma modu ayarları varsayılan değerlere döndürülecek. Devam etmek istiyor musunuz?',
+                content:
+                    'Tüm okuma modu ayarları varsayılan değerlere döndürülecek. Devam etmek istiyor musunuz?',
                 icon: Icons.refresh,
                 iconColor: Colors.orange,
                 confirmText: 'Sıfırla',
                 cancelText: 'İptal',
               );
-              
+
               if (result == true) {
                 ref.read(readingModeProvider.notifier).resetToDefaults();
                 if (context.mounted) {
@@ -448,7 +475,11 @@ class SettingsPage extends ConsumerWidget {
                     SnackBar(
                       content: const Row(
                         children: [
-                          Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+                          Icon(
+                            Icons.check_circle_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                           SizedBox(width: 8),
                           Text('Okuma modu varsayılana döndürüldü'),
                         ],
@@ -473,7 +504,7 @@ class SettingsPage extends ConsumerWidget {
   Widget _buildLanguageSection(BuildContext context, WidgetRef ref) {
     final localeState = ref.watch(localeProvider);
     final currentLanguage = localeState.language;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -520,10 +551,7 @@ class SettingsPage extends ConsumerWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
-          child: Text(
-            language.flag,
-            style: const TextStyle(fontSize: 24),
-          ),
+          child: Text(language.flag, style: const TextStyle(fontSize: 24)),
         ),
       ),
       title: Text(
@@ -541,11 +569,7 @@ class SettingsPage extends ConsumerWidget {
         ),
       ),
       trailing: isSelected
-          ? Icon(
-              Icons.check_circle,
-              color: AppTheme.primaryBlue,
-              size: 24,
-            )
+          ? Icon(Icons.check_circle, color: AppTheme.primaryBlue, size: 24)
           : const Icon(Icons.circle_outlined, size: 24),
       onTap: () {
         ref.read(localeProvider.notifier).setLanguage(language);
@@ -666,13 +690,13 @@ class SettingsPage extends ConsumerWidget {
               ),
             ),
             title: const Text('Okuma İstatistikleri'),
-            subtitle: const Text('Okuma alışkanlıklarınızı ve grafiklerini görüntüleyin'),
+            subtitle: const Text(
+              'Okuma alışkanlıklarınızı ve grafiklerini görüntüleyin',
+            ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AnalyticsPage(),
-                ),
+                MaterialPageRoute(builder: (context) => const AnalyticsPage()),
               );
             },
           ),
@@ -692,13 +716,13 @@ class SettingsPage extends ConsumerWidget {
               ),
             ),
             title: const Text('Okuma Hedefleri'),
-            subtitle: const Text('Günlük ve haftalık okuma hedeflerinizi takip edin'),
+            subtitle: const Text(
+              'Günlük ve haftalık okuma hedeflerinizi takip edin',
+            ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AnalyticsPage(),
-                ),
+                MaterialPageRoute(builder: (context) => const AnalyticsPage()),
               );
             },
           ),
@@ -718,13 +742,13 @@ class SettingsPage extends ConsumerWidget {
               ),
             ),
             title: const Text('Okuma Trendleri'),
-            subtitle: const Text('Kategori dağılımı ve okuma trendlerinizi analiz edin'),
+            subtitle: const Text(
+              'Kategori dağılımı ve okuma trendlerinizi analiz edin',
+            ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AnalyticsPage(),
-                ),
+                MaterialPageRoute(builder: (context) => const AnalyticsPage()),
               );
             },
           ),
@@ -740,7 +764,7 @@ class SettingsPage extends ConsumerWidget {
     final dailyStreak = ref.watch(dailyStreakProvider);
     final unlockedBadgesCount = ref.watch(unlockedBadgesCountProvider);
     final allBadges = ref.watch(allBadgesProvider);
-    
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -808,9 +832,8 @@ class SettingsPage extends ConsumerWidget {
                     children: [
                       Text(
                         userLevel.title,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       // XP progress bar
@@ -819,7 +842,9 @@ class SettingsPage extends ConsumerWidget {
                         child: LinearProgressIndicator(
                           value: userLevel.progressToNextLevel,
                           backgroundColor: Colors.grey.withValues(alpha: 0.2),
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.amber,
+                          ),
                           minHeight: 6,
                         ),
                       ),
@@ -827,7 +852,9 @@ class SettingsPage extends ConsumerWidget {
                       Text(
                         '${userLevel.currentXP} / ${userLevel.xpForNextLevel} XP',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -888,9 +915,7 @@ class SettingsPage extends ConsumerWidget {
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const BadgesPage(),
-                ),
+                MaterialPageRoute(builder: (context) => const BadgesPage()),
               );
             },
           ),
@@ -913,14 +938,16 @@ class SettingsPage extends ConsumerWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -958,9 +985,7 @@ class SettingsPage extends ConsumerWidget {
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const RssSourcesPage(),
-                ),
+                MaterialPageRoute(builder: (context) => const RssSourcesPage()),
               );
             },
           ),
@@ -983,14 +1008,16 @@ class SettingsPage extends ConsumerWidget {
             subtitle: const Text('Özel RSS kaynağı ekle'),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const RssSourcesPage(),
-                ),
-              ).then((_) {
-                // RSS Sources sayfası açıldıktan sonra FAB'a basılmasını simüle et
-                // Bu otomatik açılmayacak, kullanıcı manuel olarak + butonuna basacak
-              });
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                      builder: (context) => const RssSourcesPage(),
+                    ),
+                  )
+                  .then((_) {
+                    // RSS Sources sayfası açıldıktan sonra FAB'a basılmasını simüle et
+                    // Bu otomatik açılmayacak, kullanıcı manuel olarak + butonuna basacak
+                  });
             },
           ),
           const Divider(height: 1),
@@ -1118,10 +1145,13 @@ class SettingsPage extends ConsumerWidget {
                   ? '${settings.dailyNewsHour.toString().padLeft(2, '0')}:${settings.dailyNewsMinute.toString().padLeft(2, '0')}'
                   : 'Kapalı',
             ),
-            value: settings.dailyNewsEnabled && notificationState.permissionsGranted,
+            value:
+                settings.dailyNewsEnabled &&
+                notificationState.permissionsGranted,
             onChanged: notificationState.permissionsGranted
                 ? (value) {
-                    ref.read(notificationProvider.notifier)
+                    ref
+                        .read(notificationProvider.notifier)
                         .updateDailyNewsSettings(enabled: value);
                   }
                 : null,
@@ -1139,9 +1169,7 @@ class SettingsPage extends ConsumerWidget {
               ),
               child: Icon(
                 Icons.track_changes_rounded,
-                color: settings.readingGoalEnabled
-                    ? Colors.green
-                    : Colors.grey,
+                color: settings.readingGoalEnabled ? Colors.green : Colors.grey,
                 size: 20,
               ),
             ),
@@ -1151,10 +1179,13 @@ class SettingsPage extends ConsumerWidget {
                   ? '${settings.dailyReadingGoal} haber/gün - ${settings.readingGoalHour.toString().padLeft(2, '0')}:${settings.readingGoalMinute.toString().padLeft(2, '0')}'
                   : 'Kapalı',
             ),
-            value: settings.readingGoalEnabled && notificationState.permissionsGranted,
+            value:
+                settings.readingGoalEnabled &&
+                notificationState.permissionsGranted,
             onChanged: notificationState.permissionsGranted
                 ? (value) {
-                    ref.read(notificationProvider.notifier)
+                    ref
+                        .read(notificationProvider.notifier)
                         .updateReadingGoalSettings(enabled: value);
                   }
                 : null,
@@ -1172,9 +1203,7 @@ class SettingsPage extends ConsumerWidget {
               ),
               child: Icon(
                 Icons.flash_on_rounded,
-                color: settings.breakingNewsEnabled
-                    ? Colors.red
-                    : Colors.grey,
+                color: settings.breakingNewsEnabled ? Colors.red : Colors.grey,
                 size: 20,
               ),
             ),
@@ -1184,10 +1213,13 @@ class SettingsPage extends ConsumerWidget {
                   ? 'Önemli haberler için anında bildirim'
                   : 'Kapalı',
             ),
-            value: settings.breakingNewsEnabled && notificationState.permissionsGranted,
+            value:
+                settings.breakingNewsEnabled &&
+                notificationState.permissionsGranted,
             onChanged: notificationState.permissionsGranted
                 ? (value) {
-                    ref.read(notificationProvider.notifier)
+                    ref
+                        .read(notificationProvider.notifier)
                         .updateBreakingNewsEnabled(value);
                   }
                 : null,
@@ -1243,9 +1275,7 @@ class SettingsPage extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.orange.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -1274,13 +1304,14 @@ class SettingsPage extends ConsumerWidget {
     final result = await ModernDialogs.showConfirmDialog(
       context: context,
       title: 'Önbelleği Temizle',
-      content: 'Tüm kaydedilmiş haberler silinecek. Favoriler korunacak. Devam etmek istiyor musunuz?',
+      content:
+          'Tüm kaydedilmiş haberler silinecek. Favoriler korunacak. Devam etmek istiyor musunuz?',
       icon: Icons.cleaning_services_rounded,
       iconColor: Colors.orange,
       confirmText: 'Temizle',
       cancelText: 'İptal',
     );
-    
+
     if (result == true && context.mounted) {
       try {
         final repository = ref.read(newsRepositoryProvider);
@@ -1290,7 +1321,11 @@ class SettingsPage extends ConsumerWidget {
             SnackBar(
               content: const Row(
                 children: [
-                  Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+                  Icon(
+                    Icons.check_circle_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                   SizedBox(width: 8),
                   Text('Önbellek temizlendi'),
                 ],
@@ -1320,12 +1355,13 @@ class SettingsPage extends ConsumerWidget {
     final result = await ModernDialogs.showDangerDialog(
       context: context,
       title: 'Favorileri Temizle',
-      content: 'Tüm favori haberler silinecek. Bu işlem geri alınamaz. Devam etmek istiyor musunuz?',
+      content:
+          'Tüm favori haberler silinecek. Bu işlem geri alınamaz. Devam etmek istiyor musunuz?',
       icon: Icons.favorite_border_rounded,
       confirmText: 'Sil',
       cancelText: 'İptal',
     );
-    
+
     if (result == true && context.mounted) {
       ref.read(favoritesProvider.notifier).clearAllFavorites();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1348,7 +1384,10 @@ class SettingsPage extends ConsumerWidget {
   }
 
   /// Arama geçmişini temizle dialog
-  void _showClearSearchHistoryDialog(BuildContext context, WidgetRef ref) async {
+  void _showClearSearchHistoryDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     final result = await ModernDialogs.showConfirmDialog(
       context: context,
       title: 'Arama Geçmişini Sil',
@@ -1358,7 +1397,7 @@ class SettingsPage extends ConsumerWidget {
       confirmText: 'Sil',
       cancelText: 'İptal',
     );
-    
+
     if (result == true && context.mounted) {
       ref.read(searchProvider.notifier).clearSearchHistory();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1383,13 +1422,11 @@ class SettingsPage extends ConsumerWidget {
   /// Hakkında dialog
   void _showAboutDialog(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1426,7 +1463,9 @@ class SettingsPage extends ConsumerWidget {
                       Text(
                         'Versiyon 1.0.0',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
                         ),
                       ),
                     ],
@@ -1435,14 +1474,14 @@ class SettingsPage extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Açıklama
             Text(
               'Haber Merkezim, Türkiye\'nin önde gelen haber kaynaklarından güncel haberleri takip etmenizi sağlayan modern bir haber uygulamasıdır.',
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 16),
-            
+
             // Özellikler
             Text(
               '• RSS tabanlı güncel haber akışı\n'
@@ -1528,7 +1567,7 @@ class SettingsPage extends ConsumerWidget {
   ) {
     final currentTheme = ref.watch(themeProvider).colorTheme;
     final isSelected = currentTheme == theme;
-    
+
     return ListTile(
       leading: Container(
         width: 40,
@@ -1541,20 +1580,12 @@ class SettingsPage extends ConsumerWidget {
             width: 2,
           ),
         ),
-        child: Icon(
-          icon,
-          color: themeColor,
-          size: 20,
-        ),
+        child: Icon(icon, color: themeColor, size: 20),
       ),
       title: Text(title),
       subtitle: Text(subtitle),
       trailing: isSelected
-          ? Icon(
-              Icons.check_circle,
-              color: themeColor,
-              size: 24,
-            )
+          ? Icon(Icons.check_circle, color: themeColor, size: 24)
           : const Icon(Icons.circle_outlined, size: 24),
       onTap: () {
         ref.read(themeProvider.notifier).setColorTheme(theme);
@@ -1581,9 +1612,7 @@ class SettingsPage extends ConsumerWidget {
             content: const Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Cache bilgileri geliştirme aşamasında...'),
-              ],
+              children: [Text('Cache bilgileri geliştirme aşamasında...')],
             ),
             actions: [
               TextButton(
@@ -1622,26 +1651,31 @@ class SettingsPage extends ConsumerWidget {
     final result = await ModernDialogs.showDangerDialog(
       context: context,
       title: 'Kaynakları Sıfırla',
-      content: 'Tüm özel RSS kaynakları silinecek ve varsayılan kaynaklar yüklenecek. Bu işlem geri alınamaz. Devam etmek istiyor musunuz?',
+      content:
+          'Tüm özel RSS kaynakları silinecek ve varsayılan kaynaklar yüklenecek. Bu işlem geri alınamaz. Devam etmek istiyor musunuz?',
       icon: Icons.refresh_rounded,
       confirmText: 'Sıfırla',
       cancelText: 'İptal',
     );
-    
+
     if (result == true && context.mounted) {
       try {
         // RSS kaynaklarını varsayılana sıfırla
         await RssSourcesService.resetToDefaults();
-        
+
         // Haberleri yeniden yükle
         ref.read(newsProvider.notifier).refreshArticles();
-        
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Row(
                 children: [
-                  Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+                  Icon(
+                    Icons.check_circle_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                   SizedBox(width: 8),
                   Text('RSS kaynakları varsayılana sıfırlandı'),
                 ],
@@ -1659,7 +1693,8 @@ class SettingsPage extends ConsumerWidget {
           ModernDialogs.showErrorDialog(
             context: context,
             title: 'Hata Oluştu',
-            content: 'RSS kaynakları sıfırlanırken hata oluştu: ${e.toString()}',
+            content:
+                'RSS kaynakları sıfırlanırken hata oluştu: ${e.toString()}',
           );
         }
       }

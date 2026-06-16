@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Makale popülerlik verisi
 class ArticlePopularity {
   final String articleId;
@@ -33,10 +34,10 @@ class ArticlePopularity {
   double get popularityScore {
     final now = DateTime.now();
     final hoursSinceLastView = now.difference(lastViewed).inHours;
-    
+
     // Temel puan
     double baseScore = viewCount * 1.0 + shareCount * 3.0 + favoriteCount * 2.0;
-    
+
     // Zaman faktörü (son 24 saat içinde görüntülendiyse bonus)
     if (hoursSinceLastView < 24) {
       baseScore *= 1.5;
@@ -46,7 +47,7 @@ class ArticlePopularity {
       // 1 haftadan eski ise azalt
       baseScore *= 0.7;
     }
-    
+
     return baseScore;
   }
 
@@ -143,7 +144,9 @@ class ArticlePopularityService {
       final now = DateTime.now();
 
       if (existing != null) {
-        final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(existing));
+        final popularity = ArticlePopularity.fromMap(
+          Map<String, dynamic>.from(existing),
+        );
         final updated = popularity.copyWith(
           viewCount: popularity.viewCount + 1,
           lastViewed: now,
@@ -178,7 +181,9 @@ class ArticlePopularityService {
     try {
       final existing = _box!.get(articleId);
       if (existing != null) {
-        final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(existing));
+        final popularity = ArticlePopularity.fromMap(
+          Map<String, dynamic>.from(existing),
+        );
         final updated = popularity.copyWith(
           shareCount: popularity.shareCount + 1,
           lastViewed: DateTime.now(),
@@ -198,7 +203,9 @@ class ArticlePopularityService {
     try {
       final existing = _box!.get(articleId);
       if (existing != null) {
-        final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(existing));
+        final popularity = ArticlePopularity.fromMap(
+          Map<String, dynamic>.from(existing),
+        );
         final updated = popularity.copyWith(
           favoriteCount: popularity.favoriteCount + 1,
           lastViewed: DateTime.now(),
@@ -238,13 +245,15 @@ class ArticlePopularityService {
       final now = DateTime.now();
 
       for (final map in _box!.values) {
-        final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(map));
-        
+        final popularity = ArticlePopularity.fromMap(
+          Map<String, dynamic>.from(map),
+        );
+
         // Kategori filtresi
         if (category != null && popularity.category != category) {
           continue;
         }
-        
+
         // Zaman aralığı filtresi
         if (timeRange != null) {
           final cutoffDate = now.subtract(timeRange);
@@ -252,12 +261,14 @@ class ArticlePopularityService {
             continue;
           }
         }
-        
+
         allPopularity.add(popularity);
       }
 
       // Popülerlik puanına göre sırala
-      allPopularity.sort((a, b) => b.popularityScore.compareTo(a.popularityScore));
+      allPopularity.sort(
+        (a, b) => b.popularityScore.compareTo(a.popularityScore),
+      );
 
       return allPopularity.take(limit).toList();
     } catch (e) {
@@ -273,16 +284,21 @@ class ArticlePopularityService {
       final cutoffDate = DateTime.now().subtract(const Duration(hours: 24));
 
       for (final map in _box!.values) {
-        final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(map));
-        
+        final popularity = ArticlePopularity.fromMap(
+          Map<String, dynamic>.from(map),
+        );
+
         // Son 24 saat içinde görüntülenen ve en az 2 görüntülenme
-        if (popularity.lastViewed.isAfter(cutoffDate) && popularity.viewCount >= 2) {
+        if (popularity.lastViewed.isAfter(cutoffDate) &&
+            popularity.viewCount >= 2) {
           allPopularity.add(popularity);
         }
       }
 
       // Popülerlik puanına göre sırala
-      allPopularity.sort((a, b) => b.popularityScore.compareTo(a.popularityScore));
+      allPopularity.sort(
+        (a, b) => b.popularityScore.compareTo(a.popularityScore),
+      );
 
       return allPopularity.take(limit).toList();
     } catch (e) {
@@ -292,16 +308,16 @@ class ArticlePopularityService {
   }
 
   /// Kategoriye göre popüler makaleleri al
-  static List<ArticlePopularity> getPopularByCategory(String category, {int limit = 10}) {
+  static List<ArticlePopularity> getPopularByCategory(
+    String category, {
+    int limit = 10,
+  }) {
     return getPopularArticles(limit: limit, category: category);
   }
 
   /// Son 7 günün popüler makaleleri
   static List<ArticlePopularity> getWeeklyPopular({int limit = 20}) {
-    return getPopularArticles(
-      limit: limit,
-      timeRange: const Duration(days: 7),
-    );
+    return getPopularArticles(limit: limit, timeRange: const Duration(days: 7));
   }
 
   /// Son 30 günün popüler makaleleri
@@ -341,7 +357,9 @@ class ArticlePopularityService {
       final keysToDelete = <String>[];
 
       for (final entry in _box!.toMap().entries) {
-        final popularity = ArticlePopularity.fromMap(Map<String, dynamic>.from(entry.value));
+        final popularity = ArticlePopularity.fromMap(
+          Map<String, dynamic>.from(entry.value),
+        );
         if (popularity.lastViewed.isBefore(cutoffDate)) {
           keysToDelete.add(entry.key.toString());
         }

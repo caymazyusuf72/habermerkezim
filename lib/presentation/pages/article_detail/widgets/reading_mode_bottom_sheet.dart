@@ -146,7 +146,9 @@ class ReadingModeBottomSheet extends ConsumerWidget {
                   activeTrackColor: AppTheme.primaryBlue,
                   thumbColor: AppTheme.primaryBlue,
                   overlayColor: AppTheme.primaryBlue.withValues(alpha: 0.2),
-                  inactiveTrackColor: theme.colorScheme.outline.withValues(alpha: 0.2),
+                  inactiveTrackColor: theme.colorScheme.outline.withValues(
+                    alpha: 0.2,
+                  ),
                 ),
                 child: Slider(
                   value: readingMode.fontSize,
@@ -224,7 +226,9 @@ class ReadingModeBottomSheet extends ConsumerWidget {
 
             return GestureDetector(
               onTap: () {
-                ref.read(readingModeProvider.notifier).setBackgroundColor(color);
+                ref
+                    .read(readingModeProvider.notifier)
+                    .setBackgroundColor(color);
               },
               child: Container(
                 width: 70,
@@ -233,7 +237,9 @@ class ReadingModeBottomSheet extends ConsumerWidget {
                   color: colorValue,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: isSelected ? Colors.purple : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    color: isSelected
+                        ? Colors.purple
+                        : theme.colorScheme.outline.withValues(alpha: 0.3),
                     width: isSelected ? 3 : 1,
                   ),
                   boxShadow: isSelected
@@ -272,7 +278,9 @@ class ReadingModeBottomSheet extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: 11,
                         color: _getTextColor(color),
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -321,7 +329,9 @@ class ReadingModeBottomSheet extends ConsumerWidget {
               selected: isSelected,
               onSelected: (selected) {
                 if (selected) {
-                  ref.read(readingModeProvider.notifier).setLineSpacing(spacing);
+                  ref
+                      .read(readingModeProvider.notifier)
+                      .setLineSpacing(spacing);
                 }
               },
               selectedColor: Colors.orange.withValues(alpha: 0.3),
@@ -331,7 +341,9 @@ class ReadingModeBottomSheet extends ConsumerWidget {
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
               side: BorderSide(
-                color: isSelected ? Colors.orange : theme.colorScheme.outline.withValues(alpha: 0.3),
+                color: isSelected
+                    ? Colors.orange
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
                 width: isSelected ? 2 : 1,
               ),
             );
@@ -376,9 +388,7 @@ class ReadingModeBottomSheet extends ConsumerWidget {
         subtitle: Text(
           'Karanlık arka plan ile rahat okuma',
           style: TextStyle(
-            color: readingMode.nightModeEnabled
-                ? Colors.grey.shade400
-                : null,
+            color: readingMode.nightModeEnabled ? Colors.grey.shade400 : null,
           ),
         ),
         value: readingMode.nightModeEnabled,
@@ -411,7 +421,7 @@ class ReadingModeBottomSheet extends ConsumerWidget {
   }
 
   Color _getTextColor(ReadingBackgroundColor color) {
-    if (color == ReadingBackgroundColor.black || 
+    if (color == ReadingBackgroundColor.black ||
         color == ReadingBackgroundColor.nightMode) {
       return Colors.white;
     }

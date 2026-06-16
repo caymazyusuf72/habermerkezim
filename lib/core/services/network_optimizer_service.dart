@@ -178,7 +178,10 @@ class NetworkOptimizerService {
 
         // Exponential backoff: her denemede süreyi 2x artır
         delay = Duration(
-          milliseconds: (delay.inMilliseconds * 2).clamp(0, maxDelay.inMilliseconds),
+          milliseconds: (delay.inMilliseconds * 2).clamp(
+            0,
+            maxDelay.inMilliseconds,
+          ),
         );
       }
     }
@@ -197,7 +200,8 @@ class NetworkOptimizerService {
 
     if (state.isOpen) {
       // Cooldown süresi dolduysa half-open durumuna geç
-      if (DateTime.now().difference(state.lastFailure) > _circuitBreakerCooldown) {
+      if (DateTime.now().difference(state.lastFailure) >
+          _circuitBreakerCooldown) {
         state.isOpen = false;
         state.failureCount = 0;
         _logger.info('Circuit breaker HALF-OPEN: $endpoint', tag: 'CIRCUIT');
@@ -264,16 +268,11 @@ class NetworkOptimizerService {
   ) {
     final priorityValue = priority.index;
     _requestQueue.putIfAbsent(priorityValue, () => []);
-    _requestQueue[priorityValue]!.add(_PriorityRequest(
-      action: action,
-      label: label,
-      addedAt: DateTime.now(),
-    ));
-
-    _logger.debug(
-      'Kuyruğa eklendi [${priority.name}]: $label',
-      tag: 'QUEUE',
+    _requestQueue[priorityValue]!.add(
+      _PriorityRequest(action: action, label: label, addedAt: DateTime.now()),
     );
+
+    _logger.debug('Kuyruğa eklendi [${priority.name}]: $label', tag: 'QUEUE');
 
     _processQueue();
   }
@@ -315,11 +314,11 @@ class NetworkOptimizerService {
   // ==================== Connection Quality ====================
 
   void _startConnectivityMonitoring() {
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
-      (results) {
-        _updateConnectionQuality(results);
-      },
-    );
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+      results,
+    ) {
+      _updateConnectionQuality(results);
+    });
 
     // İlk durumu kontrol et
     Connectivity().checkConnectivity().then(_updateConnectionQuality);
@@ -372,10 +371,8 @@ class NetworkOptimizerService {
       'pendingRequests': _pendingRequests.length,
       'activeDebounces': _debounceTimers.length,
       'circuitBreakers': _circuitBreakers.map(
-        (k, v) => MapEntry(k, {
-          'isOpen': v.isOpen,
-          'failureCount': v.failureCount,
-        }),
+        (k, v) =>
+            MapEntry(k, {'isOpen': v.isOpen, 'failureCount': v.failureCount}),
       ),
       'queueSize': _requestQueue.values.fold<int>(
         0,

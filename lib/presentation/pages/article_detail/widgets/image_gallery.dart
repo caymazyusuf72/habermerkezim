@@ -62,9 +62,7 @@ class _ImageGalleryState extends State<ImageGallery> {
                     imageUrl: widget.imageUrls[index],
                     fit: BoxFit.contain,
                     placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
+                      child: CircularProgressIndicator(color: Colors.white),
                     ),
                     errorWidget: (context, url, error) => const Center(
                       child: Icon(
@@ -128,7 +126,10 @@ class _ImageGalleryState extends State<ImageGallery> {
               top: 40,
               left: 20,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(16),
@@ -171,10 +172,8 @@ class ImageGalleryButton extends StatelessWidget {
         showDialog(
           context: context,
           barrierColor: Colors.black,
-          builder: (context) => ImageGallery(
-            imageUrls: imageUrls,
-            initialIndex: 0,
-          ),
+          builder: (context) =>
+              ImageGallery(imageUrls: imageUrls, initialIndex: 0),
         );
       },
       child: Container(
@@ -206,4 +205,3 @@ class ImageGalleryButton extends StatelessWidget {
     );
   }
 }
-

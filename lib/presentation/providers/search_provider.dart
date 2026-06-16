@@ -44,7 +44,8 @@ class SearchState {
       searchQuery: searchQuery ?? this.searchQuery,
       isSearching: isSearching ?? this.isSearching,
       searchHistory: searchHistory ?? this.searchHistory,
-      autocompleteSuggestions: autocompleteSuggestions ?? this.autocompleteSuggestions,
+      autocompleteSuggestions:
+          autocompleteSuggestions ?? this.autocompleteSuggestions,
       popularSearches: popularSearches ?? this.popularSearches,
       trendingSearches: trendingSearches ?? this.trendingSearches,
       error: error,
@@ -55,15 +56,15 @@ class SearchState {
   bool get hasResults => searchResults.isNotEmpty;
   bool get hasError => error != null;
   bool get hasSuggestions => autocompleteSuggestions.isNotEmpty;
-  
+
   /// Arama sonuçlarını Article listesi olarak döndür
   List<Article> get articles => searchResults.map((r) => r.article).toList();
-  
+
   /// Toplam sonuç sayısı
   int get resultCount => searchResults.length;
-  
+
   /// Yüksek kaliteli sonuç sayısı
-  int get highQualityResultCount => 
+  int get highQualityResultCount =>
       searchResults.where((r) => r.matchQuality == 'high').length;
 }
 
@@ -135,18 +136,15 @@ class SearchNotifier extends StateNotifier<SearchState> {
       // Tüm makaleleri al
       final repository = _ref.read(newsRepositoryProvider);
       final allArticles = await repository.getAllArticles();
-      
+
       // Gelişmiş arama ile skorlama
       final searchResults = _searchService.searchArticles(allArticles, query);
-      
-      state = state.copyWith(
-        searchResults: searchResults,
-        isSearching: false,
-      );
+
+      state = state.copyWith(searchResults: searchResults, isSearching: false);
 
       // Arama geçmişine ekle
       await _addToSearchHistory(query);
-      
+
       // Popüler aramaları güncelle
       await _loadPopularSearches();
     } catch (e) {
@@ -170,12 +168,12 @@ class SearchNotifier extends StateNotifier<SearchState> {
     try {
       final repository = _ref.read(newsRepositoryProvider);
       final allArticles = await repository.getAllArticles();
-      
+
       final suggestions = await _searchService.getAutocompleteSuggestions(
         query,
         allArticles,
       );
-      
+
       state = state.copyWith(
         autocompleteSuggestions: suggestions,
         showSuggestions: suggestions.isNotEmpty,
@@ -188,18 +186,16 @@ class SearchNotifier extends StateNotifier<SearchState> {
   /// Debounced autocomplete
   void getAutocompleteSuggestionsDebounced(String query) {
     _ref.read(newsRepositoryProvider).getAllArticles().then((articles) {
-      _searchService.getAutocompleteSuggestionsDebounced(
-        query,
-        articles,
-        (suggestions) {
-          if (mounted) {
-            state = state.copyWith(
-              autocompleteSuggestions: suggestions,
-              showSuggestions: suggestions.isNotEmpty && query.isNotEmpty,
-            );
-          }
-        },
-      );
+      _searchService.getAutocompleteSuggestionsDebounced(query, articles, (
+        suggestions,
+      ) {
+        if (mounted) {
+          state = state.copyWith(
+            autocompleteSuggestions: suggestions,
+            showSuggestions: suggestions.isNotEmpty && query.isNotEmpty,
+          );
+        }
+      });
     });
   }
 
@@ -219,7 +215,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
   Future<void> _addToSearchHistory(String query) async {
     try {
       await _searchService.addToSearchHistory(query);
-      
+
       // State'i güncelle
       final updatedHistory = List<String>.from(state.searchHistory);
       if (!updatedHistory.contains(query)) {
@@ -249,7 +245,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
   Future<void> removeFromSearchHistory(String query) async {
     try {
       await _searchService.removeFromSearchHistory(query);
-      
+
       final updatedHistory = List<String>.from(state.searchHistory);
       updatedHistory.remove(query);
       state = state.copyWith(searchHistory: updatedHistory);
@@ -293,7 +289,9 @@ class SearchNotifier extends StateNotifier<SearchState> {
 }
 
 /// Search provider'ı
-final searchProvider = StateNotifierProvider<SearchNotifier, SearchState>((ref) {
+final searchProvider = StateNotifierProvider<SearchNotifier, SearchState>((
+  ref,
+) {
   return SearchNotifier(ref);
 });
 
@@ -304,7 +302,9 @@ final popularSearchesProvider = FutureProvider<List<String>>((ref) async {
 });
 
 /// Trend aramalar provider'ı
-final trendingSearchesProvider = FutureProvider<List<TrendingSearch>>((ref) async {
+final trendingSearchesProvider = FutureProvider<List<TrendingSearch>>((
+  ref,
+) async {
   final searchService = SearchService();
   return searchService.getTrendingSearches();
 });

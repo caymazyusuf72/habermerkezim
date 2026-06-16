@@ -5,6 +5,7 @@ import '../../../domain/entities/user_profile.dart';
 import '../../models/user_profile_model.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Kullanıcı profil verilerini yerel olarak saklayan data source
 /// Hive database kullanır
 abstract class UserProfileLocalDataSource {
@@ -40,12 +41,12 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
     try {
       debugPrint('💾 Profil okunuyor...');
       final model = _box.get(_profileKey);
-      
+
       if (model == null) {
         debugPrint('⚠️ Profil bulunamadı, varsayılan profil döndürülüyor');
         return null;
       }
-      
+
       final profile = model.toEntity();
       debugPrint('✅ Profil başarıyla okundu: ${profile.id}');
       return profile;
@@ -85,7 +86,7 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
     try {
       debugPrint('📊 İstatistikler güncelleniyor...');
       final currentModel = _box.get(_profileKey);
-      
+
       if (currentModel == null) {
         // Profil yoksa varsayılan profil oluştur
         final defaultProfile = UserProfile.defaultProfile.copyWith(
@@ -94,7 +95,7 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
         await saveProfile(defaultProfile);
         return;
       }
-      
+
       final currentProfile = currentModel.toEntity();
       final updatedProfile = currentProfile.copyWith(stats: stats);
       await updateProfile(updatedProfile);
@@ -110,7 +111,7 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
     try {
       debugPrint('⚙️ Tercihler güncelleniyor...');
       final currentModel = _box.get(_profileKey);
-      
+
       if (currentModel == null) {
         // Profil yoksa varsayılan profil oluştur
         final defaultProfile = UserProfile.defaultProfile.copyWith(
@@ -119,7 +120,7 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
         await saveProfile(defaultProfile);
         return;
       }
-      
+
       final currentProfile = currentModel.toEntity();
       final updatedProfile = currentProfile.copyWith(preferences: preferences);
       await updateProfile(updatedProfile);
@@ -130,4 +131,3 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
     }
   }
 }
-

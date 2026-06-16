@@ -16,7 +16,7 @@ class AvatarService {
   AvatarService._internal();
 
   final ImagePicker _picker = ImagePicker();
-  
+
   /// Avatar dizin adı
   static const String _avatarDirName = 'avatars';
 
@@ -70,17 +70,13 @@ class AvatarService {
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
             hideBottomControls: false,
-            aspectRatioPresets: [
-              CropAspectRatioPreset.square,
-            ],
+            aspectRatioPresets: [CropAspectRatioPreset.square],
           ),
           IOSUiSettings(
             title: 'Fotoğrafı Kırp',
             aspectRatioLockEnabled: true,
             resetAspectRatioEnabled: false,
-            aspectRatioPresets: [
-              CropAspectRatioPreset.square,
-            ],
+            aspectRatioPresets: [CropAspectRatioPreset.square],
           ),
         ],
         compressQuality: 70,
@@ -101,8 +97,10 @@ class AvatarService {
     try {
       // Avatar dizinini oluştur
       final Directory appDir = await getApplicationDocumentsDirectory();
-      final Directory avatarDir = Directory(path.join(appDir.path, _avatarDirName));
-      
+      final Directory avatarDir = Directory(
+        path.join(appDir.path, _avatarDirName),
+      );
+
       if (!await avatarDir.exists()) {
         await avatarDir.create(recursive: true);
       }
@@ -115,7 +113,7 @@ class AvatarService {
 
       // Dosyayı kopyala
       final File savedFile = await imageFile.copy(newPath);
-      
+
       // Eski avatar'ı sil (varsa)
       await _deleteOldAvatar(userId);
 
@@ -131,10 +129,10 @@ class AvatarService {
   Future<bool> updateUserAvatar(String userId, String avatarPath) async {
     try {
       final userBox = HiveService.userProfileBox;
-      
+
       // Mevcut profili al veya yeni oluştur
       UserProfileModel? currentProfile = userBox.get(userId);
-      
+
       if (currentProfile == null) {
         // Yeni profil oluştur
         currentProfile = UserProfileModel(
@@ -175,7 +173,7 @@ class AvatarService {
       // User profile'dan avatar URL'i kaldır
       final userBox = HiveService.userProfileBox;
       UserProfileModel? currentProfile = userBox.get(userId);
-      
+
       if (currentProfile != null) {
         final updatedProfile = UserProfileModel(
           id: currentProfile.id,
@@ -186,7 +184,7 @@ class AvatarService {
           stats: currentProfile.stats,
           preferences: currentProfile.preferences,
         );
-        
+
         await userBox.put(userId, updatedProfile);
       }
 
@@ -203,7 +201,7 @@ class AvatarService {
     try {
       final userBox = HiveService.userProfileBox;
       final UserProfileModel? currentProfile = userBox.get(userId);
-      
+
       if (currentProfile?.avatarUrl != null) {
         final File oldFile = File(currentProfile!.avatarUrl!);
         if (await oldFile.exists()) {
@@ -221,7 +219,7 @@ class AvatarService {
     try {
       final userBox = HiveService.userProfileBox;
       final UserProfileModel? profile = userBox.get(userId);
-      
+
       if (profile?.avatarUrl != null) {
         final File file = File(profile!.avatarUrl!);
         if (await file.exists()) {
@@ -263,8 +261,10 @@ class AvatarService {
   Future<void> clearAllAvatars() async {
     try {
       final Directory appDir = await getApplicationDocumentsDirectory();
-      final Directory avatarDir = Directory(path.join(appDir.path, _avatarDirName));
-      
+      final Directory avatarDir = Directory(
+        path.join(appDir.path, _avatarDirName),
+      );
+
       if (await avatarDir.exists()) {
         await avatarDir.delete(recursive: true);
         debugPrint('🗑️ Tüm avatar dosyaları silindi');

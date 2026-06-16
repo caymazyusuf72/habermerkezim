@@ -100,41 +100,47 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
         return _EmptyStateData(
           icon: Icons.article_outlined,
           title: 'Henüz haber yok',
-          description: 'Haberler yüklenirken bir sorun oluştu veya henüz haber bulunmuyor.',
+          description:
+              'Haberler yüklenirken bir sorun oluştu veya henüz haber bulunmuyor.',
           actionText: 'Yenile',
         );
       case EmptyStateType.noFavorites:
         return _EmptyStateData(
           icon: Icons.favorite_border_rounded,
           title: 'Favori haberiniz yok',
-          description: 'Beğendiğiniz haberleri favorilere ekleyerek daha sonra kolayca ulaşabilirsiniz.',
+          description:
+              'Beğendiğiniz haberleri favorilere ekleyerek daha sonra kolayca ulaşabilirsiniz.',
           actionText: 'Haberlere Göz At',
         );
       case EmptyStateType.noBookmarks:
         return _EmptyStateData(
           icon: Icons.bookmark_border_rounded,
           title: 'Okuma listeniz boş',
-          description: 'Daha sonra okumak istediğiniz haberleri okuma listesine ekleyin.',
+          description:
+              'Daha sonra okumak istediğiniz haberleri okuma listesine ekleyin.',
           actionText: 'Haberlere Göz At',
         );
       case EmptyStateType.noSearchResults:
         return _EmptyStateData(
           icon: Icons.search_off_rounded,
           title: 'Sonuç bulunamadı',
-          description: 'Aramanızla eşleşen haber bulunamadı. Farklı anahtar kelimeler deneyin.',
+          description:
+              'Aramanızla eşleşen haber bulunamadı. Farklı anahtar kelimeler deneyin.',
           actionText: 'Aramayı Temizle',
         );
       case EmptyStateType.noNotifications:
         return _EmptyStateData(
           icon: Icons.notifications_off_outlined,
           title: 'Bildirim yok',
-          description: 'Henüz bildiriminiz bulunmuyor. Yeni haberler geldiğinde burada göreceksiniz.',
+          description:
+              'Henüz bildiriminiz bulunmuyor. Yeni haberler geldiğinde burada göreceksiniz.',
         );
       case EmptyStateType.offline:
         return _EmptyStateData(
           icon: Icons.wifi_off_rounded,
           title: 'Çevrimdışısınız',
-          description: 'İnternet bağlantınızı kontrol edin. Önbelleğe alınmış haberler gösteriliyor.',
+          description:
+              'İnternet bağlantınızı kontrol edin. Önbelleğe alınmış haberler gösteriliyor.',
           actionText: 'Tekrar Dene',
         );
       case EmptyStateType.error:
@@ -189,7 +195,8 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
                     child: child,
                   );
                 },
-                child: widget.customIllustration ??
+                child:
+                    widget.customIllustration ??
                     _buildIconIllustration(context, effectiveIcon),
               ),
 
@@ -227,7 +234,8 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
                   icon: _getActionIcon(),
                 ),
 
-              if (widget.secondaryActionText != null && widget.onSecondaryAction != null) ...[
+              if (widget.secondaryActionText != null &&
+                  widget.onSecondaryAction != null) ...[
                 const SizedBox(height: 12),
                 TertiaryButton(
                   text: widget.secondaryActionText!,
@@ -402,7 +410,8 @@ class NoSearchResultsEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyStateWidget(
       type: EmptyStateType.noSearchResults,
-      description: '"$searchQuery" için sonuç bulunamadı. Farklı anahtar kelimeler deneyin.',
+      description:
+          '"$searchQuery" için sonuç bulunamadı. Farklı anahtar kelimeler deneyin.',
       onAction: onClear,
     );
   }
@@ -475,17 +484,14 @@ class ErrorEmptyState extends StatelessWidget {
   final String? errorMessage;
   final VoidCallback? onRetry;
 
-  const ErrorEmptyState({
-    super.key,
-    this.errorMessage,
-    this.onRetry,
-  });
+  const ErrorEmptyState({super.key, this.errorMessage, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return EmptyStateWidget(
       type: EmptyStateType.error,
-      description: errorMessage ?? 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.',
+      description:
+          errorMessage ?? 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.',
       onAction: onRetry,
       customIllustration: _buildErrorIllustration(context),
     );
@@ -543,7 +549,7 @@ class NoBookmarksEmptyState extends StatelessWidget {
 
   Widget _buildBookmarkIllustration(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return SizedBox(
       width: 140,
       height: 140,
@@ -603,8 +609,6 @@ class NoNotificationsEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const EmptyStateWidget(
-      type: EmptyStateType.noNotifications,
-    );
+    return const EmptyStateWidget(type: EmptyStateType.noNotifications);
   }
 }

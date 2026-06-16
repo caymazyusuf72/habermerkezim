@@ -30,7 +30,7 @@ class FavoritesState {
   bool get hasFavorites => favoriteArticles.isNotEmpty;
   bool get hasError => error != null;
   int get favoritesCount => favoriteArticles.length;
-  
+
   // Export/Import için ek getter
   List<Article> get articles => favoriteArticles;
 
@@ -55,11 +55,8 @@ class FavoritesNotifier extends StateNotifier<FavoritesState> {
     try {
       final repository = _ref.read(newsRepositoryProvider);
       final favorites = await repository.getFavoriteArticles();
-      
-      state = state.copyWith(
-        favoriteArticles: favorites,
-        isLoading: false,
-      );
+
+      state = state.copyWith(favoriteArticles: favorites, isLoading: false);
     } catch (e) {
       state = state.copyWith(
         error: 'Favoriler yüklenirken hata oluştu: ${e.toString()}',
@@ -78,15 +75,12 @@ class FavoritesNotifier extends StateNotifier<FavoritesState> {
     try {
       final repository = _ref.read(newsRepositoryProvider);
       await repository.toggleFavorite(article.id);
-      
+
       // State'i güncelle
       final updatedFavorites = List<Article>.from(state.favoriteArticles);
       updatedFavorites.insert(0, article); // En başa ekle
-      
-      state = state.copyWith(
-        favoriteArticles: updatedFavorites,
-        error: null,
-      );
+
+      state = state.copyWith(favoriteArticles: updatedFavorites, error: null);
     } catch (e) {
       state = state.copyWith(
         error: 'Favorilere eklenirken hata oluştu: ${e.toString()}',
@@ -99,16 +93,13 @@ class FavoritesNotifier extends StateNotifier<FavoritesState> {
     try {
       final repository = _ref.read(newsRepositoryProvider);
       await repository.toggleFavorite(articleId);
-      
+
       // State'i güncelle
       final updatedFavorites = state.favoriteArticles
           .where((article) => article.id != articleId)
           .toList();
-      
-      state = state.copyWith(
-        favoriteArticles: updatedFavorites,
-        error: null,
-      );
+
+      state = state.copyWith(favoriteArticles: updatedFavorites, error: null);
     } catch (e) {
       state = state.copyWith(
         error: 'Favorilerden çıkarılırken hata oluştu: ${e.toString()}',
@@ -129,16 +120,13 @@ class FavoritesNotifier extends StateNotifier<FavoritesState> {
   Future<void> clearAllFavorites() async {
     try {
       final repository = _ref.read(newsRepositoryProvider);
-      
+
       // Tüm favori makaleleri tek tek kaldır
       for (final article in state.favoriteArticles) {
         await repository.toggleFavorite(article.id);
       }
-      
-      state = state.copyWith(
-        favoriteArticles: [],
-        error: null,
-      );
+
+      state = state.copyWith(favoriteArticles: [], error: null);
     } catch (e) {
       state = state.copyWith(
         error: 'Favoriler temizlenirken hata oluştu: ${e.toString()}',
@@ -161,7 +149,7 @@ class FavoritesNotifier extends StateNotifier<FavoritesState> {
   void sortFavoritesByDate() {
     final sortedFavorites = List<Article>.from(state.favoriteArticles);
     sortedFavorites.sort((a, b) => b.publishedDate.compareTo(a.publishedDate));
-    
+
     state = state.copyWith(favoriteArticles: sortedFavorites);
   }
 
@@ -169,7 +157,7 @@ class FavoritesNotifier extends StateNotifier<FavoritesState> {
   void sortFavoritesByTitle() {
     final sortedFavorites = List<Article>.from(state.favoriteArticles);
     sortedFavorites.sort((a, b) => a.title.compareTo(b.title));
-    
+
     state = state.copyWith(favoriteArticles: sortedFavorites);
   }
 
@@ -177,15 +165,16 @@ class FavoritesNotifier extends StateNotifier<FavoritesState> {
   void sortFavoritesBySource() {
     final sortedFavorites = List<Article>.from(state.favoriteArticles);
     sortedFavorites.sort((a, b) => a.sourceName.compareTo(b.sourceName));
-    
+
     state = state.copyWith(favoriteArticles: sortedFavorites);
   }
 }
 
 /// Favorites provider'ı
-final favoritesProvider = StateNotifierProvider<FavoritesNotifier, FavoritesState>((ref) {
-  return FavoritesNotifier(ref);
-});
+final favoritesProvider =
+    StateNotifierProvider<FavoritesNotifier, FavoritesState>((ref) {
+      return FavoritesNotifier(ref);
+    });
 
 /// Tek bir makalenin favori durumunu kontrol eden provider
 final isFavoriteProvider = Provider.family<bool, String>((ref, articleId) {

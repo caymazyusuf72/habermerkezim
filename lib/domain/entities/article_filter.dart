@@ -4,7 +4,8 @@ class ArticleFilter {
   final DateTime? endDate;
   final List<String> selectedSources;
   final List<String> selectedCategories;
-  final bool? isRead; // null = hepsi, true = sadece okunmuş, false = sadece okunmamış
+  final bool?
+  isRead; // null = hepsi, true = sadece okunmuş, false = sadece okunmamış
   final String? searchQuery; // Kelime bazlı arama
 
   const ArticleFilter({
@@ -54,29 +55,23 @@ class ArticleFilter {
   static ArticleFilter today() {
     final now = DateTime.now();
     final startOfDay = DateTime(now.year, now.month, now.day);
-    return ArticleFilter(
-      startDate: startOfDay,
-      endDate: now,
-    );
+    return ArticleFilter(startDate: startOfDay, endDate: now);
   }
 
   static ArticleFilter thisWeek() {
     final now = DateTime.now();
     final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    final startOfDay = DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day);
-    return ArticleFilter(
-      startDate: startOfDay,
-      endDate: now,
+    final startOfDay = DateTime(
+      startOfWeek.year,
+      startOfWeek.month,
+      startOfWeek.day,
     );
+    return ArticleFilter(startDate: startOfDay, endDate: now);
   }
 
   static ArticleFilter thisMonth() {
     final now = DateTime.now();
     final startOfMonth = DateTime(now.year, now.month, 1);
-    return ArticleFilter(
-      startDate: startOfMonth,
-      endDate: now,
-    );
+    return ArticleFilter(startDate: startOfMonth, endDate: now);
   }
 }
-

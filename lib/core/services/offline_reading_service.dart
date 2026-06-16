@@ -11,7 +11,8 @@ import 'hive_service.dart';
 /// Offline okuma servisi
 /// Haberlerin cihaza kaydedilmesi, yönetimi ve connectivity kontrolü
 class OfflineReadingService {
-  static final OfflineReadingService _instance = OfflineReadingService._internal();
+  static final OfflineReadingService _instance =
+      OfflineReadingService._internal();
   factory OfflineReadingService() => _instance;
   OfflineReadingService._internal();
 
@@ -126,9 +127,7 @@ class OfflineReadingService {
   /// Kaydedilmiş haberleri listele
   List<Article> getSavedArticles() {
     try {
-      final articles = _box.values
-          .map((model) => model.toEntity())
-          .toList();
+      final articles = _box.values.map((model) => model.toEntity()).toList();
 
       // Kaydetme tarihine göre sırala (yeniden eskiye)
       articles.sort((a, b) {
@@ -209,7 +208,8 @@ class OfflineReadingService {
   /// Otomatik temizleme gün sayısını al
   int get autoCleanDays {
     try {
-      return _meta.get(_autoCleanDaysKey, defaultValue: _defaultAutoCleanDays) as int;
+      return _meta.get(_autoCleanDaysKey, defaultValue: _defaultAutoCleanDays)
+          as int;
     } catch (e) {
       return _defaultAutoCleanDays;
     }
@@ -279,10 +279,11 @@ final offlineReadingServiceProvider = Provider<OfflineReadingService>((ref) {
 });
 
 /// Kaydedilmiş haberler state provider
-final savedArticlesProvider = StateNotifierProvider<SavedArticlesNotifier, List<Article>>((ref) {
-  final service = ref.watch(offlineReadingServiceProvider);
-  return SavedArticlesNotifier(service);
-});
+final savedArticlesProvider =
+    StateNotifierProvider<SavedArticlesNotifier, List<Article>>((ref) {
+      final service = ref.watch(offlineReadingServiceProvider);
+      return SavedArticlesNotifier(service);
+    });
 
 /// İnternet bağlantısı durumu provider
 final connectivityProvider = StreamProvider<bool>((ref) {

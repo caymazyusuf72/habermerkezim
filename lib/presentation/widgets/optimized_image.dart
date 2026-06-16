@@ -61,11 +61,11 @@ class OptimizedImage extends StatelessWidget {
 
     // Device pixel ratio
     final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
-    
+
     // Memory cache optimization - adaptive boyutlar
     // Düşük bellek cihazlar için daha küçük cache boyutları
     final adaptiveRatio = devicePixelRatio > 2.5 ? 2.0 : devicePixelRatio;
-    
+
     final memWidth = enableMemoryCache && width != null
         ? (width! * adaptiveRatio).toInt().clamp(100, 600)
         : null;
@@ -95,7 +95,8 @@ class OptimizedImage extends StatelessWidget {
         }
         return placeholder ?? _defaultPlaceholder(context);
       },
-      errorWidget: (context, url, error) => errorWidget ?? _defaultErrorWidget(context),
+      errorWidget: (context, url, error) =>
+          errorWidget ?? _defaultErrorWidget(context),
       // Smooth transitions - optimize edilmiş süreler
       fadeInDuration: const Duration(milliseconds: 250),
       fadeOutDuration: const Duration(milliseconds: 150),
@@ -113,10 +114,7 @@ class OptimizedImage extends StatelessWidget {
 
     // Border radius varsa uygula
     if (borderRadius != null) {
-      imageWidget = ClipRRect(
-        borderRadius: borderRadius!,
-        child: imageWidget,
-      );
+      imageWidget = ClipRRect(borderRadius: borderRadius!, child: imageWidget);
     }
 
     return imageWidget;
@@ -147,9 +145,12 @@ class OptimizedImage extends StatelessWidget {
   /// Performans için TweenAnimationBuilder yerine AnimatedContainer kullanıldı
   Widget _buildProgressivePlaceholder(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = shimmerBaseColor ?? (isDark ? Colors.grey[800]! : Colors.grey[300]!);
-    final highlightColor = shimmerHighlightColor ?? (isDark ? Colors.grey[700]! : Colors.grey[100]!);
-    
+    final baseColor =
+        shimmerBaseColor ?? (isDark ? Colors.grey[800]! : Colors.grey[300]!);
+    final highlightColor =
+        shimmerHighlightColor ??
+        (isDark ? Colors.grey[700]! : Colors.grey[100]!);
+
     return _ShimmerPlaceholder(
       width: width,
       height: height,
@@ -206,10 +207,11 @@ class _ShimmerPlaceholderState extends State<_ShimmerPlaceholder>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat();
-    
-    _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+
+    _animation = Tween<double>(
+      begin: -1.0,
+      end: 2.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -309,4 +311,3 @@ class OptimizedHeroImage extends StatelessWidget {
     );
   }
 }
-

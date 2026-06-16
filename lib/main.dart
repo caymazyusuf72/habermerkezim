@@ -31,7 +31,7 @@ Future<void> main() async {
   } else {
     WidgetsFlutterBinding.ensureInitialized();
   }
-  
+
   // System UI overlay'i ayarla
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -40,7 +40,7 @@ Future<void> main() async {
       systemNavigationBarColor: Colors.white,
     ),
   );
-  
+
   try {
     // === ADIM 1: Firebase (diğer servisler için gerekli) ===
     AppLogger.info('Firebase initialize ediliyor...');
@@ -52,7 +52,7 @@ Future<void> main() async {
     } else {
       AppLogger.info('Firebase zaten initialize edilmiş');
     }
-    
+
     // === ADIM 2: Senkron ayarlar (Crashlytics + Memory Cache) ===
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
     PlatformDispatcher.instance.onError = (error, stack) {
@@ -60,11 +60,11 @@ Future<void> main() async {
       return true;
     };
     AppLogger.success('Firebase Crashlytics callback\'leri ayarlandı');
-    
+
     PaintingBinding.instance.imageCache.maximumSize = 50;
     PaintingBinding.instance.imageCache.maximumSizeBytes = 25 * 1024 * 1024;
     AppLogger.success('Memory cache optimize edildi');
-    
+
     // === ADIM 3: Bağımsız servisleri paralel başlat ===
     // Hive, EnvConfig, ImageCache, Notification, Widget birbirinden bağımsız
     AppLogger.info('Bağımsız servisler paralel başlatılıyor...');
@@ -76,7 +76,7 @@ Future<void> main() async {
       WidgetService.initialize(),
     ]);
     AppLogger.success('Bağımsız servisler başarıyla initialize edildi');
-    
+
     // === ADIM 4: Hive'a bağımlı servisleri paralel başlat ===
     // Hive artık hazır, Hive box kullanan servisleri paralel başlat
     AppLogger.info('Hive-bağımlı servisler paralel başlatılıyor...');
@@ -88,23 +88,18 @@ Future<void> main() async {
       GamificationService.instance.init(),
     ]);
     AppLogger.success('Hive-bağımlı servisler başarıyla initialize edildi');
-    
+
     // === ADIM 5: Periyodik görevleri başlat ===
     RssHealthCheckService().startPeriodicHealthCheck(
       interval: const Duration(hours: 6),
     );
     AppLogger.success('RSS Health Check service başlatıldı');
-    
+
     // Uygulamayı başlat
-    runApp(
-      const ProviderScope(
-        child: HaberMerkeziApp(),
-      ),
-    );
-    
+    runApp(const ProviderScope(child: HaberMerkeziApp()));
   } catch (e) {
     AppLogger.error('Uygulama başlatma hatası', e);
-    
+
     // Hata durumunda basit hata ekranıyla uygulamayı başlat
     runApp(
       MaterialApp(
@@ -114,11 +109,7 @@ Future<void> main() async {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: Colors.red,
-                ),
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
                 const SizedBox(height: 16),
                 const Text(
                   'Uygulama başlatılamadı',

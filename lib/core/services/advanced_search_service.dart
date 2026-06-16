@@ -53,11 +53,7 @@ class SearchFilters {
 }
 
 /// Arama sıralama türleri
-enum SearchSortType {
-  relevance,
-  dateNewest,
-  dateOldest,
-}
+enum SearchSortType { relevance, dateNewest, dateOldest }
 
 /// Gelişmiş arama sonucu
 class AdvancedSearchResult {
@@ -79,7 +75,8 @@ class AdvancedSearchResult {
 /// Gelişmiş Arama Servisi
 /// Full-text search, filtreler, arama geçmişi ve öneriler
 class AdvancedSearchService {
-  static final AdvancedSearchService _instance = AdvancedSearchService._internal();
+  static final AdvancedSearchService _instance =
+      AdvancedSearchService._internal();
   factory AdvancedSearchService() => _instance;
   AdvancedSearchService._internal();
 
@@ -108,7 +105,10 @@ class AdvancedSearchService {
     if (query.trim().isEmpty) {
       results = filteredArticles;
     } else {
-      final searchResults = _searchService.searchArticles(filteredArticles, query);
+      final searchResults = _searchService.searchArticles(
+        filteredArticles,
+        query,
+      );
       results = searchResults.map((r) => r.article).toList();
     }
 
@@ -132,36 +132,44 @@ class AdvancedSearchService {
 
     // Tarih aralığı filtresi
     if (filters.startDate != null) {
-      result = result.where((a) =>
-        a.publishedDate.isAfter(filters.startDate!) ||
-        a.publishedDate.isAtSameMomentAs(filters.startDate!)
-      ).toList();
+      result = result
+          .where(
+            (a) =>
+                a.publishedDate.isAfter(filters.startDate!) ||
+                a.publishedDate.isAtSameMomentAs(filters.startDate!),
+          )
+          .toList();
     }
     if (filters.endDate != null) {
       final endOfDay = DateTime(
         filters.endDate!.year,
         filters.endDate!.month,
         filters.endDate!.day,
-        23, 59, 59,
+        23,
+        59,
+        59,
       );
-      result = result.where((a) =>
-        a.publishedDate.isBefore(endOfDay) ||
-        a.publishedDate.isAtSameMomentAs(endOfDay)
-      ).toList();
+      result = result
+          .where(
+            (a) =>
+                a.publishedDate.isBefore(endOfDay) ||
+                a.publishedDate.isAtSameMomentAs(endOfDay),
+          )
+          .toList();
     }
 
     // Kaynak filtresi
     if (filters.sources.isNotEmpty) {
-      result = result.where((a) =>
-        filters.sources.contains(a.sourceName)
-      ).toList();
+      result = result
+          .where((a) => filters.sources.contains(a.sourceName))
+          .toList();
     }
 
     // Kategori filtresi
     if (filters.categories.isNotEmpty) {
-      result = result.where((a) =>
-        filters.categories.contains(a.category)
-      ).toList();
+      result = result
+          .where((a) => filters.categories.contains(a.category))
+          .toList();
     }
 
     // Sadece favoriler
@@ -356,10 +364,11 @@ class SearchState {
 }
 
 /// Arama StateNotifier
-final advancedSearchProvider = StateNotifierProvider<AdvancedSearchNotifier, SearchState>((ref) {
-  final service = ref.watch(advancedSearchServiceProvider);
-  return AdvancedSearchNotifier(service);
-});
+final advancedSearchProvider =
+    StateNotifierProvider<AdvancedSearchNotifier, SearchState>((ref) {
+      final service = ref.watch(advancedSearchServiceProvider);
+      return AdvancedSearchNotifier(service);
+    });
 
 class AdvancedSearchNotifier extends StateNotifier<SearchState> {
   final AdvancedSearchService _service;

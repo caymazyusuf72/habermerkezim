@@ -5,16 +5,18 @@ import '../../core/services/analytics_service.dart';
 import 'recommendation_service.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// ML tabanlı gelişmiş öneri servisi
 /// Kullanıcı davranış analizi, içerik bazlı filtreleme ve hibrit öneri sistemi
 class MLRecommendationService {
   /// Singleton instance
-  static final MLRecommendationService _instance = MLRecommendationService._internal();
+  static final MLRecommendationService _instance =
+      MLRecommendationService._internal();
   factory MLRecommendationService() => _instance;
   MLRecommendationService._internal();
 
   /// Gelişmiş öneri algoritması - hibrit yaklaşım
-  /// 
+  ///
   /// Combines:
   /// 1. Content-based filtering (benzer içerikler)
   /// 2. Collaborative filtering (davranış bazlı)
@@ -74,7 +76,9 @@ class MLRecommendationService {
 
     for (final analytics in monthlyAnalytics) {
       totalReads += analytics.articlesRead;
-      totalTimeSpent += analytics.articlesRead * 5; // Ortalama 5 dakika okuma süresi varsayımı
+      totalTimeSpent +=
+          analytics.articlesRead *
+          5; // Ortalama 5 dakika okuma süresi varsayımı
 
       // Kategori ağırlıkları (normalize edilmiş)
       for (final entry in analytics.categoriesRead.entries) {
@@ -90,19 +94,19 @@ class MLRecommendationService {
     }
 
     // Normalize weights (0-1 arası)
-    final maxCategoryWeight = categoryWeights.values.isEmpty 
-        ? 1.0 
+    final maxCategoryWeight = categoryWeights.values.isEmpty
+        ? 1.0
         : categoryWeights.values.reduce(max);
     categoryWeights.updateAll((key, value) => value / maxCategoryWeight);
 
-    final maxSourceWeight = sourceWeights.values.isEmpty 
-        ? 1.0 
+    final maxSourceWeight = sourceWeights.values.isEmpty
+        ? 1.0
         : sourceWeights.values.reduce(max);
     sourceWeights.updateAll((key, value) => value / maxSourceWeight);
 
     // Okuma hızı analizi (ortalama)
-    final avgReadingSpeed = totalReads > 0 
-        ? totalTimeSpent / totalReads 
+    final avgReadingSpeed = totalReads > 0
+        ? totalTimeSpent / totalReads
         : 5.0; // default 5 dakika
 
     return _UserProfile(
@@ -207,7 +211,8 @@ class MLRecommendationService {
       return 60.0;
     } else if (hoursSincePublished < 72) {
       return 40.0;
-    } else if (hoursSincePublished < 168) { // 1 hafta
+    } else if (hoursSincePublished < 168) {
+      // 1 hafta
       return 20.0;
     } else {
       return 0.0;
@@ -261,7 +266,7 @@ class MLRecommendationService {
 
     // Kalan %30'da çeşitlilik ekle
     final remainingArticles = articles.skip(topCount).toList();
-    
+
     for (final article in remainingArticles) {
       // Yeni kategori veya kaynak mı?
       final isNewCategory = !seenCategories.contains(article.article.category);
@@ -270,10 +275,9 @@ class MLRecommendationService {
       if (isNewCategory || isNewSource) {
         // Diversity boost
         final boostedScore = article.score * (1 + diversityFactor);
-        diversified.add(_ScoredArticle(
-          article: article.article,
-          score: boostedScore,
-        ));
+        diversified.add(
+          _ScoredArticle(article: article.article, score: boostedScore),
+        );
 
         seenCategories.add(article.article.category);
         seenSources.add(article.article.sourceName);
@@ -297,13 +301,13 @@ class MLRecommendationService {
   /// Haber metnini birleştir
   String _getArticleText(Article article) {
     final parts = <String>[];
-    
+
     parts.add(article.title);
     if (article.description.isNotEmpty) {
       parts.add(article.description);
     }
     if (article.content != null && article.content!.isNotEmpty) {
-      final content = article.content!.length > 500 
+      final content = article.content!.length > 500
           ? article.content!.substring(0, 500)
           : article.content!;
       parts.add(content);
@@ -355,8 +359,5 @@ class _ScoredArticle {
   final Article article;
   final double score;
 
-  _ScoredArticle({
-    required this.article,
-    required this.score,
-  });
+  _ScoredArticle({required this.article, required this.score});
 }

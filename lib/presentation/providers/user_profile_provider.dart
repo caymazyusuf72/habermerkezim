@@ -47,14 +47,14 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
     try {
       // Mevcut profili al
       final currentProfile = await _repository.getProfile();
-      
+
       // Firebase'den gelen bilgilerle güncelle
       final updatedProfile = currentProfile.copyWith(
         name: firebaseUser.displayName ?? currentProfile.name,
         email: firebaseUser.email ?? currentProfile.email,
         avatarUrl: firebaseUser.photoURL ?? currentProfile.avatarUrl,
       );
-      
+
       // Profili kaydet
       await _repository.updateProfile(updatedProfile);
       state = state.copyWith(profile: updatedProfile);
@@ -70,7 +70,7 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
 
     try {
       final profile = await _repository.getProfile();
-      
+
       // Firebase User varsa bilgileri senkronize et
       if (firebaseUser != null) {
         final syncedProfile = profile.copyWith(
@@ -78,7 +78,7 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
           email: firebaseUser.email ?? profile.email,
           avatarUrl: firebaseUser.photoURL ?? profile.avatarUrl,
         );
-        
+
         // Eğer değişiklik varsa kaydet
         if (syncedProfile.name != profile.name ||
             syncedProfile.email != profile.email ||
@@ -104,10 +104,7 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
     }
   }
 
@@ -136,7 +133,7 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
   Future<void> updatePreferences(UserPreferences preferences) async {
     try {
       await _repository.updatePreferences(preferences);
-      
+
       // Mevcut profili güncelle
       if (state.profile != null) {
         final updatedProfile = state.profile!.copyWith(
@@ -161,7 +158,9 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
     }
 
     try {
-      final updatedProfile = state.profile!.copyWith(name: name.isEmpty ? null : name);
+      final updatedProfile = state.profile!.copyWith(
+        name: name.isEmpty ? null : name,
+      );
       await _repository.updateProfile(updatedProfile);
       state = state.copyWith(profile: updatedProfile);
     } catch (e) {
@@ -177,7 +176,9 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
     }
 
     try {
-      final updatedProfile = state.profile!.copyWith(email: email.isEmpty ? null : email);
+      final updatedProfile = state.profile!.copyWith(
+        email: email.isEmpty ? null : email,
+      );
       await _repository.updateProfile(updatedProfile);
       state = state.copyWith(profile: updatedProfile);
     } catch (e) {
@@ -205,8 +206,8 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
 }
 
 /// UserProfile provider - StateNotifierProvider
-final userProfileProvider = StateNotifierProvider<UserProfileNotifier, UserProfileState>((ref) {
-  final repository = ref.read(userProfileRepositoryProvider);
-  return UserProfileNotifier(repository);
-});
-
+final userProfileProvider =
+    StateNotifierProvider<UserProfileNotifier, UserProfileState>((ref) {
+      final repository = ref.read(userProfileRepositoryProvider);
+      return UserProfileNotifier(repository);
+    });

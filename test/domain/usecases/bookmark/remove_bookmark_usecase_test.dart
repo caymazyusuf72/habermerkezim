@@ -16,8 +16,9 @@ void main() {
   group('RemoveBookmarkUseCase', () {
     test('başarılı bookmark silme', () async {
       // Arrange
-      when(() => mockRepository.removeBookmark('article-123'))
-          .thenAnswer((_) async {});
+      when(
+        () => mockRepository.removeBookmark('article-123'),
+      ).thenAnswer((_) async {});
 
       // Act
       await useCase.call('article-123');
@@ -28,8 +29,9 @@ void main() {
 
     test('repository hata fırlatırsa exception fırlatmalı', () async {
       // Arrange
-      when(() => mockRepository.removeBookmark(any()))
-          .thenThrow(Exception('Silme hatası'));
+      when(
+        () => mockRepository.removeBookmark(any()),
+      ).thenThrow(Exception('Silme hatası'));
 
       // Act & Assert
       expect(() => useCase.call('article-123'), throwsException);

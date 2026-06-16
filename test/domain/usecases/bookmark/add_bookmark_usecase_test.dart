@@ -16,8 +16,9 @@ void main() {
   group('AddBookmarkUseCase', () {
     test('başarılı bookmark ekleme', () async {
       // Arrange
-      when(() => mockRepository.addBookmark('article-123'))
-          .thenAnswer((_) async {});
+      when(
+        () => mockRepository.addBookmark('article-123'),
+      ).thenAnswer((_) async {});
 
       // Act
       await useCase.call('article-123');
@@ -28,14 +29,12 @@ void main() {
 
     test('repository hata fırlatırsa exception fırlatmalı', () async {
       // Arrange
-      when(() => mockRepository.addBookmark(any()))
-          .thenThrow(Exception('Bookmark ekleme hatası'));
+      when(
+        () => mockRepository.addBookmark(any()),
+      ).thenThrow(Exception('Bookmark ekleme hatası'));
 
       // Act & Assert
-      expect(
-        () => useCase.call('article-123'),
-        throwsException,
-      );
+      expect(() => useCase.call('article-123'), throwsException);
     });
 
     test('boş articleId ile çağrılabilmeli', () async {

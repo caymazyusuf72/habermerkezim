@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Slide yönleri
-enum SlideDirection {
-  up,
-  down,
-  left,
-  right,
-}
+enum SlideDirection { up, down, left, right }
 
 /// Slide animasyonu ile widget gösterme
 /// Yön parametresi ile yukarı, aşağı, sol, sağ slide destekler
@@ -43,27 +38,18 @@ class _SlideInWidgetState extends State<SlideInWidget>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     final beginOffset = _getBeginOffset();
     _slideAnimation = Tween<Offset>(
       begin: beginOffset,
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
 
     _fadeAnimation = Tween<double>(
       begin: widget.fadeIn ? 0.0 : 1.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     if (widget.delay == Duration.zero) {
       _controller.forward();
@@ -101,10 +87,7 @@ class _SlideInWidgetState extends State<SlideInWidget>
     );
 
     if (widget.fadeIn) {
-      child = FadeTransition(
-        opacity: _fadeAnimation,
-        child: child,
-      );
+      child = FadeTransition(opacity: _fadeAnimation, child: child);
     }
 
     return child;

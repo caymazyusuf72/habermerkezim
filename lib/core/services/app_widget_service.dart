@@ -10,14 +10,19 @@ import '../../domain/entities/article.dart';
 enum WidgetType {
   /// Banner widget - marquee ile kayan tek haber
   banner,
+
   /// Small (2x1) - Tek haber başlığı, gradient arka plan
   small,
+
   /// Medium (4x2) - 3 haber listesi, resimler
   medium,
+
   /// Large (4x4) - Büyük ana haber kartı + alt haberler
   large,
+
   /// Headlines (4x1) - ViewFlipper ile kayan başlıklar
   headlines,
+
   /// Haber listesi (mevcut eski widget)
   newsList,
 }
@@ -88,7 +93,10 @@ class AppWidgetService {
   }
 
   /// Belirli widget türlerini güncelle
-  static Future<void> updateWidgets(List<Article> articles, List<WidgetType> types) async {
+  static Future<void> updateWidgets(
+    List<Article> articles,
+    List<WidgetType> types,
+  ) async {
     try {
       if (articles.isEmpty) return;
 
@@ -125,7 +133,10 @@ class AppWidgetService {
   /// Son dakika haberi flag'ini ayarla
   static Future<void> setBreakingNews(bool isBreaking) async {
     try {
-      await HomeWidget.saveWidgetData<String>(_isBreakingKey, isBreaking.toString());
+      await HomeWidget.saveWidgetData<String>(
+        _isBreakingKey,
+        isBreaking.toString(),
+      );
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('flutter.$_isBreakingKey', isBreaking.toString());
       await prefs.setString(_isBreakingKey, isBreaking.toString());
@@ -157,9 +168,9 @@ class AppWidgetService {
     await _saveToAll(prefs, _currentIndexKey, '0');
 
     // Tüm haberler — pipe-separated format
-    final articlesString = articles.map((a) =>
-      '${a.title}|${a.description}|${a.link}|${a.imageUrl ?? ""}'
-    ).join('|||');
+    final articlesString = articles
+        .map((a) => '${a.title}|${a.description}|${a.link}|${a.imageUrl ?? ""}')
+        .join('|||');
     await _saveToAll(prefs, _articlesKey, articlesString);
 
     // Kaynak adları
@@ -168,26 +179,32 @@ class AppWidgetService {
 
     // Zaman bilgileri
     final timeFormatter = DateFormat('HH:mm', 'tr');
-    final timesString = articles.map((a) {
-      final now = DateTime.now();
-      final diff = now.difference(a.publishedDate);
-      if (diff.inMinutes < 60) {
-        return '${diff.inMinutes} dk önce';
-      } else if (diff.inHours < 24) {
-        return '${diff.inHours} sa önce';
-      } else if (diff.inDays == 1) {
-        return 'Dün ${timeFormatter.format(a.publishedDate)}';
-      } else {
-        return DateFormat('dd MMM', 'tr').format(a.publishedDate);
-      }
-    }).join('|||');
+    final timesString = articles
+        .map((a) {
+          final now = DateTime.now();
+          final diff = now.difference(a.publishedDate);
+          if (diff.inMinutes < 60) {
+            return '${diff.inMinutes} dk önce';
+          } else if (diff.inHours < 24) {
+            return '${diff.inHours} sa önce';
+          } else if (diff.inDays == 1) {
+            return 'Dün ${timeFormatter.format(a.publishedDate)}';
+          } else {
+            return DateFormat('dd MMM', 'tr').format(a.publishedDate);
+          }
+        })
+        .join('|||');
     await _saveToAll(prefs, _timesKey, timesString);
 
     debugPrint('✅ Widget verileri kaydedildi: ${articles.length} haber');
   }
 
   /// Veriyi hem HomeWidget hem de SharedPreferences'a kaydet
-  static Future<void> _saveToAll(SharedPreferences prefs, String key, String value) async {
+  static Future<void> _saveToAll(
+    SharedPreferences prefs,
+    String key,
+    String value,
+  ) async {
     await HomeWidget.saveWidgetData<String>(key, value);
     await prefs.setString('flutter.$key', value);
     await prefs.setString(key, value);
@@ -196,9 +213,7 @@ class AppWidgetService {
   /// Belirli bir Android widget'ını güncelle
   static Future<void> _updateWidget(String androidName) async {
     try {
-      await HomeWidget.updateWidget(
-        androidName: androidName,
-      );
+      await HomeWidget.updateWidget(androidName: androidName);
     } catch (e) {
       debugPrint('⚠️ Widget güncelleme hatası ($androidName): $e');
     }
@@ -208,9 +223,18 @@ class AppWidgetService {
   static Future<void> _clearAllWidgetData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final keys = [_titleKey, _descriptionKey, _linkKey, _imageUrlKey,
-                    _countKey, _currentIndexKey, _articlesKey, _sourcesKey,
-                    _timesKey, _isBreakingKey];
+      final keys = [
+        _titleKey,
+        _descriptionKey,
+        _linkKey,
+        _imageUrlKey,
+        _countKey,
+        _currentIndexKey,
+        _articlesKey,
+        _sourcesKey,
+        _timesKey,
+        _isBreakingKey,
+      ];
 
       for (final key in keys) {
         await HomeWidget.saveWidgetData<String>(key, '');

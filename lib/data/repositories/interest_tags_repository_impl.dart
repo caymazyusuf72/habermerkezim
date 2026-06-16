@@ -37,4 +37,3 @@ class InterestTagsRepositoryImpl implements InterestTagsRepository {
     await prefs.remove(_userInterestTagsKey);
   }
 }
-

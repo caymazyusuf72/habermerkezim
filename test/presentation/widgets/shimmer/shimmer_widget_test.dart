@@ -11,11 +11,7 @@ void main() {
       await pumpApp(
         tester,
         ShimmerWidget(
-          child: Container(
-            width: 200,
-            height: 100,
-            color: Colors.white,
-          ),
+          child: Container(width: 200, height: 100, color: Colors.white),
         ),
       );
 
@@ -60,13 +56,7 @@ void main() {
 
     testWidgets('rectangular factory doğru çalışmalı', (tester) async {
       // Act
-      await pumpApp(
-        tester,
-        ShimmerWidget.rectangular(
-          width: 200,
-          height: 20,
-        ),
-      );
+      await pumpApp(tester, ShimmerWidget.rectangular(width: 200, height: 20));
 
       // Assert
       expect(find.byType(ShimmerWidget), findsOneWidget);
@@ -74,10 +64,7 @@ void main() {
 
     testWidgets('circular factory doğru çalışmalı', (tester) async {
       // Act
-      await pumpApp(
-        tester,
-        ShimmerWidget.circular(size: 50),
-      );
+      await pumpApp(tester, ShimmerWidget.circular(size: 50));
 
       // Assert
       expect(find.byType(ShimmerWidget), findsOneWidget);

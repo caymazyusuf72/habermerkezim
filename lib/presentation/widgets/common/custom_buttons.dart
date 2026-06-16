@@ -3,26 +3,28 @@ import 'package:flutter/services.dart';
 import '../../themes/app_theme.dart';
 
 /// Buton boyutları
-enum ButtonSize {
-  small,
-  medium,
-  large,
-}
+enum ButtonSize { small, medium, large }
 
 /// Buton varyantları
 enum ButtonVariant {
   /// Dolu arka plan, birincil renk
   primary,
+
   /// Dolu arka plan, ikincil renk
   secondary,
+
   /// Sadece kenarlık
   outlined,
+
   /// Sadece metin
   text,
+
   /// Tehlike/silme işlemleri için
   danger,
+
   /// Başarı işlemleri için
   success,
+
   /// Glassmorphism efekti
   glass,
 }
@@ -65,9 +67,10 @@ class _PrimaryButtonState extends State<PrimaryButton>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -135,10 +138,7 @@ class _PrimaryButtonState extends State<PrimaryButton>
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: GestureDetector(
         onTapDown: _onTapDown,
@@ -155,18 +155,19 @@ class _PrimaryButtonState extends State<PrimaryButton>
                 : LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      primaryColor,
-                      primaryColor.withValues(alpha: 0.8),
-                    ],
+                    colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
                   ),
-            color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.12) : null,
+            color: isDisabled
+                ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
+                : null,
             borderRadius: BorderRadius.circular(12),
             boxShadow: isDisabled
                 ? null
                 : [
                     BoxShadow(
-                      color: primaryColor.withValues(alpha: _isPressed ? 0.4 : 0.3),
+                      color: primaryColor.withValues(
+                        alpha: _isPressed ? 0.4 : 0.3,
+                      ),
                       blurRadius: _isPressed ? 12 : 8,
                       offset: Offset(0, _isPressed ? 6 : 4),
                       spreadRadius: _isPressed ? 1 : 0,
@@ -174,7 +175,9 @@ class _PrimaryButtonState extends State<PrimaryButton>
                   ],
           ),
           child: Row(
-            mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisSize: widget.fullWidth
+                ? MainAxisSize.max
+                : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (widget.isLoading)
@@ -184,7 +187,9 @@ class _PrimaryButtonState extends State<PrimaryButton>
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : Colors.white,
+                      isDisabled
+                          ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
+                          : Colors.white,
                     ),
                   ),
                 )
@@ -192,16 +197,21 @@ class _PrimaryButtonState extends State<PrimaryButton>
                 Icon(
                   widget.icon,
                   size: _getIconSize(),
-                  color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : Colors.white,
+                  color: isDisabled
+                      ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
+                      : Colors.white,
                 ),
-              if ((widget.icon != null || widget.isLoading) && widget.text.isNotEmpty)
+              if ((widget.icon != null || widget.isLoading) &&
+                  widget.text.isNotEmpty)
                 const SizedBox(width: 8),
               Text(
                 widget.text,
                 style: TextStyle(
                   fontSize: _getFontSize(),
                   fontWeight: FontWeight.w600,
-                  color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : Colors.white,
+                  color: isDisabled
+                      ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
+                      : Colors.white,
                   letterSpacing: 0.3,
                 ),
               ),
@@ -252,9 +262,10 @@ class _SecondaryButtonState extends State<SecondaryButton>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -322,10 +333,7 @@ class _SecondaryButtonState extends State<SecondaryButton>
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: MouseRegion(
         onEnter: (_) => setState(() => _isHovered = true),
@@ -352,7 +360,9 @@ class _SecondaryButtonState extends State<SecondaryButton>
               ),
             ),
             child: Row(
-              mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+              mainAxisSize: widget.fullWidth
+                  ? MainAxisSize.max
+                  : MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (widget.isLoading)
@@ -362,7 +372,11 @@ class _SecondaryButtonState extends State<SecondaryButton>
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
+                        isDisabled
+                            ? theme.colorScheme.onSurface.withValues(
+                                alpha: 0.38,
+                              )
+                            : primaryColor,
                       ),
                     ),
                   )
@@ -370,16 +384,21 @@ class _SecondaryButtonState extends State<SecondaryButton>
                   Icon(
                     widget.icon,
                     size: _getIconSize(),
-                    color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
+                    color: isDisabled
+                        ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
+                        : primaryColor,
                   ),
-                if ((widget.icon != null || widget.isLoading) && widget.text.isNotEmpty)
+                if ((widget.icon != null || widget.isLoading) &&
+                    widget.text.isNotEmpty)
                   const SizedBox(width: 8),
                 Text(
                   widget.text,
                   style: TextStyle(
                     fontSize: _getFontSize(),
                     fontWeight: FontWeight.w600,
-                    color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
+                    color: isDisabled
+                        ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
+                        : primaryColor,
                     letterSpacing: 0.3,
                   ),
                 ),
@@ -490,7 +509,9 @@ class _TertiaryButtonState extends State<TertiaryButton> {
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
+                      isDisabled
+                          ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
+                          : primaryColor,
                     ),
                   ),
                 )
@@ -498,16 +519,21 @@ class _TertiaryButtonState extends State<TertiaryButton> {
                 Icon(
                   widget.icon,
                   size: _getIconSize(),
-                  color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
+                  color: isDisabled
+                      ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
+                      : primaryColor,
                 ),
-              if ((widget.icon != null || widget.isLoading) && widget.text.isNotEmpty)
+              if ((widget.icon != null || widget.isLoading) &&
+                  widget.text.isNotEmpty)
                 const SizedBox(width: 6),
               Text(
                 widget.text,
                 style: TextStyle(
                   fontSize: _getFontSize(),
                   fontWeight: FontWeight.w600,
-                  color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.38) : primaryColor,
+                  color: isDisabled
+                      ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
+                      : primaryColor,
                   letterSpacing: 0.2,
                 ),
               ),
@@ -557,9 +583,10 @@ class _DangerButtonState extends State<DangerButton>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -627,10 +654,7 @@ class _DangerButtonState extends State<DangerButton>
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: GestureDetector(
         onTapDown: _onTapDown,
@@ -647,16 +671,15 @@ class _DangerButtonState extends State<DangerButton>
                 : LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      dangerColor,
-                      dangerColor.withValues(alpha: 0.85),
-                    ],
+                    colors: [dangerColor, dangerColor.withValues(alpha: 0.85)],
                   ),
             color: isDisabled
                 ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
                 : widget.outlined
-                    ? (_isPressed ? dangerColor.withValues(alpha: 0.08) : Colors.transparent)
-                    : null,
+                ? (_isPressed
+                      ? dangerColor.withValues(alpha: 0.08)
+                      : Colors.transparent)
+                : null,
             borderRadius: BorderRadius.circular(12),
             border: widget.outlined
                 ? Border.all(
@@ -670,14 +693,18 @@ class _DangerButtonState extends State<DangerButton>
                 ? null
                 : [
                     BoxShadow(
-                      color: dangerColor.withValues(alpha: _isPressed ? 0.4 : 0.3),
+                      color: dangerColor.withValues(
+                        alpha: _isPressed ? 0.4 : 0.3,
+                      ),
                       blurRadius: _isPressed ? 12 : 8,
                       offset: Offset(0, _isPressed ? 6 : 4),
                     ),
                   ],
           ),
           child: Row(
-            mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisSize: widget.fullWidth
+                ? MainAxisSize.max
+                : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (widget.isLoading)
@@ -698,10 +725,11 @@ class _DangerButtonState extends State<DangerButton>
                   color: isDisabled
                       ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
                       : widget.outlined
-                          ? dangerColor
-                          : Colors.white,
+                      ? dangerColor
+                      : Colors.white,
                 ),
-              if ((widget.icon != null || widget.isLoading) && widget.text.isNotEmpty)
+              if ((widget.icon != null || widget.isLoading) &&
+                  widget.text.isNotEmpty)
                 const SizedBox(width: 8),
               Text(
                 widget.text,
@@ -711,8 +739,8 @@ class _DangerButtonState extends State<DangerButton>
                   color: isDisabled
                       ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
                       : widget.outlined
-                          ? dangerColor
-                          : Colors.white,
+                      ? dangerColor
+                      : Colors.white,
                   letterSpacing: 0.3,
                 ),
               ),
@@ -762,9 +790,10 @@ class _ModernIconButtonState extends State<ModernIconButton>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.9,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -777,16 +806,15 @@ class _ModernIconButtonState extends State<ModernIconButton>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final iconColor = widget.color ?? theme.colorScheme.onSurface;
-    final bgColor = widget.backgroundColor ?? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
+    final bgColor =
+        widget.backgroundColor ??
+        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
     final isDisabled = widget.onPressed == null;
 
     Widget button = AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: MouseRegion(
         onEnter: (_) => setState(() => _isHovered = true),
@@ -835,10 +863,7 @@ class _ModernIconButtonState extends State<ModernIconButton>
     );
 
     if (widget.tooltip != null) {
-      return Tooltip(
-        message: widget.tooltip!,
-        child: button,
-      );
+      return Tooltip(message: widget.tooltip!, child: button);
     }
 
     return button;
@@ -881,9 +906,10 @@ class _ModernFABState extends State<ModernFAB>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -901,10 +927,7 @@ class _ModernFABState extends State<ModernFAB>
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: MouseRegion(
         onEnter: (_) => setState(() => _isHovered = true),
@@ -926,10 +949,7 @@ class _ModernFABState extends State<ModernFAB>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  bgColor,
-                  bgColor.withValues(alpha: 0.85),
-                ],
+                colors: [bgColor, bgColor.withValues(alpha: 0.85)],
               ),
               borderRadius: BorderRadius.circular(widget.extended ? 28 : 16),
               boxShadow: [
@@ -944,11 +964,7 @@ class _ModernFABState extends State<ModernFAB>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  widget.icon,
-                  size: 24,
-                  color: fgColor,
-                ),
+                Icon(widget.icon, size: 24, color: fgColor),
                 if (widget.extended && widget.label != null) ...[
                   const SizedBox(width: 12),
                   Text(
@@ -1014,8 +1030,8 @@ class _ChipButtonState extends State<ChipButton> {
             color: widget.isSelected
                 ? selectedColor.withValues(alpha: 0.15)
                 : _isHovered
-                    ? theme.colorScheme.surfaceContainerHighest
-                    : Colors.transparent,
+                ? theme.colorScheme.surfaceContainerHighest
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: widget.isSelected
@@ -1041,7 +1057,9 @@ class _ChipButtonState extends State<ChipButton> {
                 widget.label,
                 style: TextStyle(
                   fontSize: 13,
-                  fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
+                  fontWeight: widget.isSelected
+                      ? FontWeight.w600
+                      : FontWeight.w500,
                   color: widget.isSelected
                       ? selectedColor
                       : theme.colorScheme.onSurface.withValues(alpha: 0.8),
@@ -1049,11 +1067,7 @@ class _ChipButtonState extends State<ChipButton> {
               ),
               if (widget.isSelected) ...[
                 const SizedBox(width: 6),
-                Icon(
-                  Icons.check_rounded,
-                  size: 14,
-                  color: selectedColor,
-                ),
+                Icon(Icons.check_rounded, size: 14, color: selectedColor),
               ],
             ],
           ),
@@ -1099,9 +1113,10 @@ class _GradientButtonState extends State<GradientButton>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -1118,10 +1133,7 @@ class _GradientButtonState extends State<GradientButton>
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: GestureDetector(
         onTapDown: (_) {
@@ -1152,13 +1164,17 @@ class _GradientButtonState extends State<GradientButton>
                     end: Alignment.bottomRight,
                     colors: widget.gradientColors,
                   ),
-            color: isDisabled ? theme.colorScheme.onSurface.withValues(alpha: 0.12) : null,
+            color: isDisabled
+                ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
+                : null,
             borderRadius: BorderRadius.circular(14),
             boxShadow: isDisabled
                 ? null
                 : [
                     BoxShadow(
-                      color: widget.gradientColors.first.withValues(alpha: _isPressed ? 0.5 : 0.35),
+                      color: widget.gradientColors.first.withValues(
+                        alpha: _isPressed ? 0.5 : 0.35,
+                      ),
                       blurRadius: _isPressed ? 16 : 10,
                       offset: Offset(0, _isPressed ? 8 : 5),
                       spreadRadius: _isPressed ? 2 : 0,
@@ -1166,7 +1182,9 @@ class _GradientButtonState extends State<GradientButton>
                   ],
           ),
           child: Row(
-            mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisSize: widget.fullWidth
+                ? MainAxisSize.max
+                : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (widget.isLoading)
@@ -1179,12 +1197,9 @@ class _GradientButtonState extends State<GradientButton>
                   ),
                 )
               else if (widget.icon != null)
-                Icon(
-                  widget.icon,
-                  size: 20,
-                  color: Colors.white,
-                ),
-              if ((widget.icon != null || widget.isLoading) && widget.text.isNotEmpty)
+                Icon(widget.icon, size: 20, color: Colors.white),
+              if ((widget.icon != null || widget.isLoading) &&
+                  widget.text.isNotEmpty)
                 const SizedBox(width: 10),
               Text(
                 widget.text,

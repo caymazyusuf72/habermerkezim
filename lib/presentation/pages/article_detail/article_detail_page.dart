@@ -28,10 +28,7 @@ import 'widgets/reading_mode_bottom_sheet.dart';
 class ArticleDetailPage extends ConsumerStatefulWidget {
   final Article article;
 
-  const ArticleDetailPage({
-    super.key,
-    required this.article,
-  });
+  const ArticleDetailPage({super.key, required this.article});
 
   @override
   ConsumerState<ArticleDetailPage> createState() => _ArticleDetailPageState();
@@ -40,7 +37,7 @@ class ArticleDetailPage extends ConsumerStatefulWidget {
 class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isImageExpanded = false;
-  
+
   // Tam içerik yükleme state'leri
   ArticleContent? _fullContent;
   bool _isLoadingFullContent = false;
@@ -50,21 +47,26 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   @override
   void initState() {
     super.initState();
-    
+
     // Makaleyi okundu olarak işaretle
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(newsProvider.notifier).markAsRead(widget.article.id);
-      
+
       // Analytics kaydı - makale okundu
-      ref.read(analyticsProvider.notifier).recordArticleRead(
-        widget.article.category,
-        widget.article.sourceName,
-        timeSpent: 0, // Başlangıçta 0, gerçek süre daha sonra hesaplanabilir
-      );
-      
+      ref
+          .read(analyticsProvider.notifier)
+          .recordArticleRead(
+            widget.article.category,
+            widget.article.sourceName,
+            timeSpent:
+                0, // Başlangıçta 0, gerçek süre daha sonra hesaplanabilir
+          );
+
       // Popülerlik kaydı - makale görüntülendi
-      ref.read(popularArticlesProvider.notifier).recordArticleView(widget.article);
-      
+      ref
+          .read(popularArticlesProvider.notifier)
+          .recordArticleView(widget.article);
+
       // Gamification kaydı - makale okundu
       _recordGamificationArticleRead();
     });
@@ -76,20 +78,24 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
       // Toplam okunan makale sayısını al
       final analyticsState = ref.read(analyticsProvider);
       final totalArticlesRead = analyticsState.totalArticlesRead;
-      
+
       // Gamification kaydı
-      final unlockedBadges = await ref.read(gamificationProvider.notifier).recordArticleRead(
-        category: widget.article.category,
-        totalArticlesRead: totalArticlesRead,
-      );
-      
+      final unlockedBadges = await ref
+          .read(gamificationProvider.notifier)
+          .recordArticleRead(
+            category: widget.article.category,
+            totalArticlesRead: totalArticlesRead,
+          );
+
       // Açılan rozetleri göster
       if (unlockedBadges.isNotEmpty && mounted) {
         _showUnlockedBadges(unlockedBadges);
       }
-      
+
       // XP ekle
-      final xpResult = await ref.read(gamificationProvider.notifier).addXP(10, 'Makale okuma');
+      final xpResult = await ref
+          .read(gamificationProvider.notifier)
+          .addXP(10, 'Makale okuma');
       if (xpResult != null && xpResult.leveledUp && mounted) {
         _showLevelUpDialog(xpResult.newLevel);
       }
@@ -113,7 +119,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     final gamificationState = ref.read(gamificationProvider);
     final oldLevel = gamificationState.userLevel.level;
     final newLevel = UserLevel.fromLevel(newLevelNumber);
-    
+
     showDialog(
       context: context,
       builder: (context) => LevelUpDialog(
@@ -141,8 +147,10 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
 
     try {
       final contentService = ArticleContentService();
-      final result = await contentService.getFullArticleContent(widget.article.link);
-      
+      final result = await contentService.getFullArticleContent(
+        widget.article.link,
+      );
+
       if (result != null && result.hasContent) {
         setState(() {
           _fullContent = result;
@@ -191,7 +199,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         slivers: [
           // App Bar (Collapsible)
           _buildSliverAppBar(context, categoryColor),
-          
+
           // İçerik
           SliverToBoxAdapter(
             child: _buildContent(context, theme, categoryColor),
@@ -201,7 +209,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
       // FAB kaldırıldı - Okuma modu artık overflow menüde
     );
   }
-  
+
   /// Tablet ve Desktop için yan panel layout
   Widget _buildTabletLayout(
     BuildContext context,
@@ -210,7 +218,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     ResponsiveHelper responsive,
   ) {
     final contentWidth = responsive.isDesktop ? 0.65 : 0.6;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -224,33 +232,39 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           Consumer(
             builder: (context, ref, child) {
               final newsState = ref.watch(newsProvider);
-              final article = newsState.articles
-                  .where((a) => a.id == widget.article.id)
-                  .firstOrNull ?? widget.article;
-              
+              final article =
+                  newsState.articles
+                      .where((a) => a.id == widget.article.id)
+                      .firstOrNull ??
+                  widget.article;
+
               return IconButton(
                 onPressed: () => _toggleFavorite(),
                 icon: Icon(
                   article.isFavorite ? Icons.favorite : Icons.favorite_border,
                   color: article.isFavorite ? Colors.red : null,
                 ),
-                tooltip: article.isFavorite ? 'Favorilerden Çıkar' : 'Favorilere Ekle',
+                tooltip: article.isFavorite
+                    ? 'Favorilerden Çıkar'
+                    : 'Favorilere Ekle',
               );
             },
           ),
-          
+
           // Paylaş butonu - AppBar'da kalacak
           IconButton(
             onPressed: () => _shareArticle(),
             icon: const Icon(Icons.share),
             tooltip: 'Paylaş',
           ),
-          
+
           // Overflow Menü - Diğer eylemler
           PopupMenuButton<String>(
             onSelected: _handleMenuSelection,
             itemBuilder: (context) {
-              final isInReadingList = ref.watch(isInReadingListProvider(widget.article.id));
+              final isInReadingList = ref.watch(
+                isInReadingListProvider(widget.article.id),
+              );
               return [
                 // Okuma listesi
                 PopupMenuItem(
@@ -258,7 +272,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                   child: Row(
                     children: [
                       Icon(
-                        isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                        isInReadingList
+                            ? Icons.bookmark_rounded
+                            : Icons.bookmark_border_rounded,
                       ),
                       const SizedBox(width: 12),
                       Text(isInReadingList ? 'Listeden Çıkar' : 'Listeye Ekle'),
@@ -330,19 +346,26 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                               imageUrl: widget.article.imageUrl!,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Container(
-                                color: theme.colorScheme.surfaceContainerHighest,
-                                child: const Center(child: CircularProgressIndicator()),
+                                color:
+                                    theme.colorScheme.surfaceContainerHighest,
+                                child: const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
                               ),
                               errorWidget: (context, url, error) => Container(
-                                color: theme.colorScheme.surfaceContainerHighest,
-                                child: const Icon(Icons.image_not_supported, size: 48),
+                                color:
+                                    theme.colorScheme.surfaceContainerHighest,
+                                child: const Icon(
+                                  Icons.image_not_supported,
+                                  size: 48,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Kategori ve kaynak
                       Row(
                         children: [
@@ -351,14 +374,16 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                           Text(
                             widget.article.formattedDateTime,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Başlık
                       Text(
                         widget.article.title,
@@ -369,32 +394,32 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Kaynak atfı
                       _buildSourceAttribution(context, theme, categoryColor),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // İçerik
                       _buildArticleContent(context, theme),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Disclaimer
                       _buildContentDisclaimer(context, theme),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Eylem butonları
                       _buildActionButtons(context, theme),
-                      
+
                       const SizedBox(height: 32),
-                      
+
                       // TTS Kontrolleri
                       TtsControls(article: widget.article),
-                      
+
                       const SizedBox(height: 48),
                     ],
                   ),
@@ -402,16 +427,13 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               ),
             ),
           ),
-          
+
           // Yan panel - İlgili haberler
           Container(
             width: MediaQuery.of(context).size.width * (1 - contentWidth),
             decoration: BoxDecoration(
               border: Border(
-                left: BorderSide(
-                  color: theme.dividerColor,
-                  width: 1,
-                ),
+                left: BorderSide(color: theme.dividerColor, width: 1),
               ),
               color: theme.colorScheme.surface,
             ),
@@ -437,17 +459,17 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // İlgili haberler listesi
                   RelatedArticlesSection(
                     currentArticle: widget.article,
                     isCompact: true,
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Kaynak butonu
                   _buildSourceButton(context, theme),
                 ],
@@ -479,33 +501,39 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         Consumer(
           builder: (context, ref, child) {
             final newsState = ref.watch(newsProvider);
-            final article = newsState.articles
-                .where((a) => a.id == widget.article.id)
-                .firstOrNull ?? widget.article;
-            
+            final article =
+                newsState.articles
+                    .where((a) => a.id == widget.article.id)
+                    .firstOrNull ??
+                widget.article;
+
             return IconButton(
               onPressed: () => _toggleFavorite(),
               icon: Icon(
                 article.isFavorite ? Icons.favorite : Icons.favorite_border,
                 color: article.isFavorite ? Colors.red : null,
               ),
-              tooltip: article.isFavorite ? 'Favorilerden Çıkar' : 'Favorilere Ekle',
+              tooltip: article.isFavorite
+                  ? 'Favorilerden Çıkar'
+                  : 'Favorilere Ekle',
             );
           },
         ),
-        
+
         // Paylaş butonu - AppBar'da kalacak
         IconButton(
           onPressed: () => _shareArticle(),
           icon: const Icon(Icons.share),
           tooltip: 'Paylaş',
         ),
-        
+
         // Overflow Menü - Diğer eylemler
         PopupMenuButton<String>(
           onSelected: _handleMenuSelection,
           itemBuilder: (context) {
-            final isInReadingList = ref.watch(isInReadingListProvider(widget.article.id));
+            final isInReadingList = ref.watch(
+              isInReadingListProvider(widget.article.id),
+            );
             return [
               // Okuma listesi
               PopupMenuItem(
@@ -513,7 +541,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                 child: Row(
                   children: [
                     Icon(
-                      isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                      isInReadingList
+                          ? Icons.bookmark_rounded
+                          : Icons.bookmark_border_rounded,
                     ),
                     const SizedBox(width: 12),
                     Text(isInReadingList ? 'Listeden Çıkar' : 'Listeye Ekle'),
@@ -561,7 +591,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   Widget _buildHeaderImage(BuildContext context) {
     // Görselleri topla (ana görsel + content'ten çıkarılan görseller)
     final imageUrls = _extractImageUrls();
-    
+
     return Stack(
       children: [
         // Görsel - Hero kaldırıldı (çakışma sorunu)
@@ -572,10 +602,8 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               showDialog(
                 context: context,
                 barrierColor: Colors.black,
-                builder: (context) => ImageGallery(
-                  imageUrls: imageUrls,
-                  initialIndex: 0,
-                ),
+                builder: (context) =>
+                    ImageGallery(imageUrls: imageUrls, initialIndex: 0),
               );
             } else {
               // Tek görsel varsa eski davranış
@@ -599,7 +627,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
             ),
           ),
         ),
-        
+
         // Galeri butonu (birden fazla görsel varsa)
         if (imageUrls.length > 1)
           Positioned(
@@ -613,22 +641,28 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
       ],
     );
   }
-  
+
   /// Content'ten görsel URL'lerini çıkarır
   List<String> _extractImageUrls() {
     final imageUrls = <String>[];
-    
+
     // Ana görseli ekle
-    if (widget.article.imageUrl != null && widget.article.imageUrl!.isNotEmpty) {
+    if (widget.article.imageUrl != null &&
+        widget.article.imageUrl!.isNotEmpty) {
       imageUrls.add(widget.article.imageUrl!);
     }
-    
+
     // Content'ten img tag'lerini çıkar
     if (widget.article.content != null) {
       final content = widget.article.content!;
-      final imgRegex = RegExp(r'<img[^>]+src=(["''])([^"'']+)1', caseSensitive: false);
+      final imgRegex = RegExp(
+        r'<img[^>]+src=(["'
+        '])([^"'
+        ']+)1',
+        caseSensitive: false,
+      );
       final matches = imgRegex.allMatches(content);
-      
+
       for (final match in matches) {
         final url = match.group(2);
         if (url != null && url.isNotEmpty && !imageUrls.contains(url)) {
@@ -636,7 +670,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         }
       }
     }
-    
+
     return imageUrls;
   }
 
@@ -653,18 +687,16 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           end: Alignment.bottomCenter,
         ),
       ),
-      child: Center(
-        child: Icon(
-          Icons.article,
-          size: 48,
-          color: Colors.white,
-        ),
-      ),
+      child: Center(child: Icon(Icons.article, size: 48, color: Colors.white)),
     );
   }
 
   /// Ana içerik
-  Widget _buildContent(BuildContext context, ThemeData theme, Color categoryColor) {
+  Widget _buildContent(
+    BuildContext context,
+    ThemeData theme,
+    Color categoryColor,
+  ) {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
@@ -677,14 +709,14 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         children: [
           // Kategori badge
           _buildCategoryBadge(context, categoryColor),
-          
+
           const SizedBox(height: 12),
-          
+
           // Kaynak Atfı - Belirgin Badge
           _buildSourceAttribution(context, theme, categoryColor),
-          
+
           const SizedBox(height: 16),
-          
+
           // Başlık
           Text(
             widget.article.title,
@@ -695,42 +727,42 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Meta bilgiler
           _buildMetaInfo(context, theme),
-          
+
           const SizedBox(height: 24),
-          
+
           // İçerik
           _buildArticleContent(context, theme),
-          
+
           const SizedBox(height: 24),
-          
+
           // Disclaimer - İçerik Uyarısı
           _buildContentDisclaimer(context, theme),
-          
+
           const SizedBox(height: 16),
-          
+
           // Kaynak butonu - Daha belirgin
           _buildSourceButton(context, theme),
-          
+
           const SizedBox(height: 24),
-          
+
           // Alt eylem butonları (yukarı taşındı)
           _buildActionButtons(context, theme),
-          
+
           const SizedBox(height: 32),
-          
+
           // TTS Kontrolleri
           TtsControls(article: widget.article),
-          
+
           const SizedBox(height: 32),
-          
+
           // İlgili haberler bölümü
           RelatedArticlesSection(currentArticle: widget.article),
-          
+
           const SizedBox(height: 32), // Alt padding
         ],
       ),
@@ -757,7 +789,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   }
 
   /// Kaynak atfı badge'i - Daha belirgin
-  Widget _buildSourceAttribution(BuildContext context, ThemeData theme, Color categoryColor) {
+  Widget _buildSourceAttribution(
+    BuildContext context,
+    ThemeData theme,
+    Color categoryColor,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -783,11 +819,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               color: categoryColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              Icons.source_rounded,
-              color: categoryColor,
-              size: 24,
-            ),
+            child: Icon(Icons.source_rounded, color: categoryColor, size: 24),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -812,11 +844,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               ],
             ),
           ),
-          Icon(
-            Icons.verified_rounded,
-            color: categoryColor,
-            size: 20,
-          ),
+          Icon(Icons.verified_rounded, color: categoryColor, size: 20),
         ],
       ),
     );
@@ -931,7 +959,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   /// Makale içeriği
   Widget _buildArticleContent(BuildContext context, ThemeData theme) {
     final readingMode = ref.watch(readingModeProvider);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -940,11 +968,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: theme.dividerColor,
+              color: theme.colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.5,
               ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: theme.dividerColor),
             ),
             child: Text(
               widget.article.description,
@@ -957,11 +985,13 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               ),
             ),
           ),
-        
+
         const SizedBox(height: 20),
-        
+
         // Ana içerik (RSS'den gelen kısa içerik veya tam içerik)
-        if (widget.article.content != null && widget.article.content!.isNotEmpty && !_showFullContent)
+        if (widget.article.content != null &&
+            widget.article.content!.isNotEmpty &&
+            !_showFullContent)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -979,7 +1009,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               _buildFullContentButton(context, theme),
             ],
           ),
-        
+
         // Tam içerik
         if (_showFullContent && _fullContent != null)
           Column(
@@ -987,11 +1017,17 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
             children: [
               // İçerik türü badge'i
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: theme.colorScheme.primary, width: 1),
+                  border: Border.all(
+                    color: theme.colorScheme.primary,
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1013,10 +1049,12 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Tam içerik metni
               Text(
-                _formatContentForReading(_fullContent!.content ?? 'İçerik bulunamadı'),
+                _formatContentForReading(
+                  _fullContent!.content ?? 'İçerik bulunamadı',
+                ),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontSize: 17 * readingMode.fontSize,
                   height: readingMode.lineSpacingValue,
@@ -1024,14 +1062,16 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                   letterSpacing: 0.3,
                 ),
               ),
-              
+
               // İçerik kalitesi ve kaynak bilgisi
               if (_fullContent!.hasContent)
                 Container(
                   margin: const EdgeInsets.only(top: 16),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                    color: theme.colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.3,
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -1039,27 +1079,31 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                       Icon(
                         Icons.info_outline,
                         size: 16,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'Web scraping ile çıkarıldı • ${_fullContent!.wordCount ?? 0} kelime • ${_fullContent!.readingTimeMinutes ?? 1} dk okuma',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.6,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              
+
               const SizedBox(height: 20),
               // Orijinal içeriği göster butonu
               _buildOriginalContentButton(context, theme),
             ],
           ),
-        
+
         // Tam içerik yükleme hatası
         if (_fullContentError != null)
           Container(
@@ -1072,11 +1116,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 20,
-                ),
+                const Icon(Icons.error_outline, color: Colors.red, size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -1124,7 +1164,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                 ),
               )
             : const Icon(Icons.download_rounded),
-        label: Text(_isLoadingFullContent ? 'Yükleniyor...' : 'Tam İçeriği Yükle'),
+        label: Text(
+          _isLoadingFullContent ? 'Yükleniyor...' : 'Tam İçeriği Yükle',
+        ),
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           backgroundColor: theme.colorScheme.primary,
@@ -1150,10 +1192,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          side: BorderSide(
-            color: theme.colorScheme.outline,
-            width: 1.5,
-          ),
+          side: BorderSide(color: theme.colorScheme.outline, width: 1.5),
         ),
       ),
     );
@@ -1172,10 +1211,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          side: BorderSide(
-            color: theme.colorScheme.primary,
-            width: 2,
-          ),
+          side: BorderSide(color: theme.colorScheme.primary, width: 2),
         ),
       ),
     );
@@ -1197,16 +1233,24 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           // Okuma listesi butonu
           Consumer(
             builder: (context, ref, child) {
-              final isInReadingList = ref.watch(isInReadingListProvider(widget.article.id));
+              final isInReadingList = ref.watch(
+                isInReadingListProvider(widget.article.id),
+              );
               return Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    ref.read(readingListProvider.notifier).toggleReadingList(widget.article);
+                    ref
+                        .read(readingListProvider.notifier)
+                        .toggleReadingList(widget.article);
                   },
                   icon: Icon(
-                    isInReadingList ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                    isInReadingList
+                        ? Icons.bookmark_rounded
+                        : Icons.bookmark_border_rounded,
                   ),
-                  label: Text(isInReadingList ? 'Listeden Çıkar' : 'Listeye Ekle'),
+                  label: Text(
+                    isInReadingList ? 'Listeden Çıkar' : 'Listeye Ekle',
+                  ),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -1217,9 +1261,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               );
             },
           ),
-          
+
           const SizedBox(width: 12),
-          
+
           // Paylaş butonu
           Expanded(
             child: OutlinedButton.icon(
@@ -1234,9 +1278,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
               ),
             ),
           ),
-          
+
           const SizedBox(width: 12),
-          
+
           // Tarayıcıda aç butonu
           Expanded(
             child: OutlinedButton.icon(
@@ -1260,26 +1304,32 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   void _shareArticle() async {
     final text = '${widget.article.title}\n\n${widget.article.link}';
     await Share.share(text, subject: widget.article.title);
-    
+
     // Analytics kaydı - paylaşım yapıldı
     ref.read(analyticsProvider.notifier).recordSharePerformed();
-    
+
     // Popülerlik kaydı - paylaşım yapıldı
-    ref.read(popularArticlesProvider.notifier).recordArticleShare(widget.article.id);
-    
+    ref
+        .read(popularArticlesProvider.notifier)
+        .recordArticleShare(widget.article.id);
+
     // Gamification kaydı - paylaşım yapıldı
     try {
       final analyticsState = ref.read(analyticsProvider);
       final totalShares = analyticsState.totalShares;
-      
-      final unlockedBadges = await ref.read(gamificationProvider.notifier).recordShare(totalShares);
-      
+
+      final unlockedBadges = await ref
+          .read(gamificationProvider.notifier)
+          .recordShare(totalShares);
+
       if (unlockedBadges.isNotEmpty && mounted) {
         _showUnlockedBadges(unlockedBadges);
       }
-      
+
       // XP ekle
-      final xpResult = await ref.read(gamificationProvider.notifier).addXP(15, 'Makale paylaşma');
+      final xpResult = await ref
+          .read(gamificationProvider.notifier)
+          .addXP(15, 'Makale paylaşma');
       if (xpResult != null && xpResult.leveledUp && mounted) {
         _showLevelUpDialog(xpResult.newLevel);
       }
@@ -1290,40 +1340,58 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
 
   /// Favori durumunu toggle et
   void _toggleFavorite() async {
-    final wasAlreadyFavorite = ref.read(newsProvider).articles
-        .where((a) => a.id == widget.article.id)
-        .firstOrNull?.isFavorite ?? false;
-        
+    final wasAlreadyFavorite =
+        ref
+            .read(newsProvider)
+            .articles
+            .where((a) => a.id == widget.article.id)
+            .firstOrNull
+            ?.isFavorite ??
+        false;
+
     ref.read(newsProvider.notifier).toggleFavorite(widget.article.id);
-    
+
     // Haptic feedback
     HapticFeedback.lightImpact();
-    
+
     // Snackbar göster
-    final isFavorite = ref.read(newsProvider).articles
-        .where((a) => a.id == widget.article.id)
-        .firstOrNull?.isFavorite ?? false;
-    
+    final isFavorite =
+        ref
+            .read(newsProvider)
+            .articles
+            .where((a) => a.id == widget.article.id)
+            .firstOrNull
+            ?.isFavorite ??
+        false;
+
     // Analytics kaydı - sadece favori eklendiğinde
     if (!wasAlreadyFavorite && isFavorite) {
       ref.read(analyticsProvider.notifier).recordFavoriteAdded();
-      
+
       // Popülerlik kaydı - favori eklendi
-      ref.read(popularArticlesProvider.notifier).recordArticleFavorite(widget.article.id);
-      
+      ref
+          .read(popularArticlesProvider.notifier)
+          .recordArticleFavorite(widget.article.id);
+
       // Gamification kaydı - favori eklendi
       try {
         final newsState = ref.read(newsProvider);
-        final totalFavorites = newsState.articles.where((a) => a.isFavorite).length;
-        
-        final unlockedBadges = await ref.read(gamificationProvider.notifier).recordFavoriteAdded(totalFavorites);
-        
+        final totalFavorites = newsState.articles
+            .where((a) => a.isFavorite)
+            .length;
+
+        final unlockedBadges = await ref
+            .read(gamificationProvider.notifier)
+            .recordFavoriteAdded(totalFavorites);
+
         if (unlockedBadges.isNotEmpty && mounted) {
           _showUnlockedBadges(unlockedBadges);
         }
-        
+
         // XP ekle
-        final xpResult = await ref.read(gamificationProvider.notifier).addXP(5, 'Favori ekleme');
+        final xpResult = await ref
+            .read(gamificationProvider.notifier)
+            .addXP(5, 'Favori ekleme');
         if (xpResult != null && xpResult.leveledUp && mounted) {
           _showLevelUpDialog(xpResult.newLevel);
         }
@@ -1331,19 +1399,15 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         debugPrint('❌ Gamification favorite error: $e');
       }
     }
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          isFavorite
-              ? 'Favorilere eklendi'
-              : 'Favorilerden çıkarıldı',
+          isFavorite ? 'Favorilere eklendi' : 'Favorilerden çıkarıldı',
         ),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
@@ -1353,40 +1417,33 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     try {
       // URL'yi temizle ve validate et
       String url = widget.article.link.trim();
-      
+
       // Eğer URL http:// veya https:// ile başlamıyorsa ekle
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
         url = 'https://$url';
       }
-      
+
       final uri = Uri.parse(url);
-      
+
       // Önce externalApplication modunu dene
       bool launched = await launchUrl(
         uri,
         mode: LaunchMode.externalApplication,
       );
-      
+
       // Eğer açılamadıysa, platformDefault modunu dene
       if (!launched) {
-        launched = await launchUrl(
-          uri,
-          mode: LaunchMode.platformDefault,
-        );
+        launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
       }
-      
+
       // Hala açılamadıysa, inAppWebView modunu dene
       if (!launched) {
-        launched = await launchUrl(
-          uri,
-          mode: LaunchMode.inAppWebView,
-        );
+        launched = await launchUrl(uri, mode: LaunchMode.inAppWebView);
       }
-      
+
       if (!launched) {
         throw 'URL açılamadı: $url';
       }
-      
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1418,7 +1475,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
     setState(() {
       _isImageExpanded = !_isImageExpanded;
     });
-    
+
     if (_isImageExpanded) {
       // Full screen image dialog
       showDialog(
@@ -1442,11 +1499,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
                 right: 20,
                 child: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 28,
-                  ),
+                  icon: const Icon(Icons.close, color: Colors.white, size: 28),
                 ),
               ),
             ],
@@ -1460,7 +1513,9 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   void _handleMenuSelection(String value) {
     switch (value) {
       case 'reading_list':
-        ref.read(readingListProvider.notifier).toggleReadingList(widget.article);
+        ref
+            .read(readingListProvider.notifier)
+            .toggleReadingList(widget.article);
         final isInList = ref.read(isInReadingListProvider(widget.article.id));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1469,11 +1524,11 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           ),
         );
         break;
-        
+
       case 'reading_mode':
         ReadingModeBottomSheet.show(context);
         break;
-        
+
       case 'copy_link':
         Clipboard.setData(ClipboardData(text: widget.article.link));
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1483,7 +1538,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
           ),
         );
         break;
-        
+
       case 'open_browser':
         _openInBrowser();
         break;
@@ -1493,7 +1548,7 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
   /// İçeriği okumak için formatla - Paragraflar arası boşluk ekle
   String _formatContentForReading(String content) {
     if (content.isEmpty) return content;
-    
+
     // HTML tag'lerini temizle
     String cleaned = content
         .replaceAll(RegExp(r'<[^>]*>'), '')
@@ -1502,27 +1557,28 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         .replaceAll(RegExp(r'&amp;'), '&')
         .replaceAll(RegExp(r'&lt;'), '<')
         .replaceAll(RegExp(r'&gt;'), '>');
-    
+
     // Birden fazla boşluğu tek boşluğa çevir
     cleaned = cleaned.replaceAll(RegExp(r'\s+'), ' ');
-    
+
     // Cümleleri ayır ve paragraf boşlukları ekle
     // Nokta, soru işareti veya ünlem işaretinden sonra büyük harfle başlayan cümleleri ayır
     final sentences = <String>[];
     final buffer = StringBuffer();
-    
+
     for (int i = 0; i < cleaned.length; i++) {
       buffer.write(cleaned[i]);
-      
+
       // Cümle sonu kontrolü
       if ((cleaned[i] == '.' || cleaned[i] == '!' || cleaned[i] == '?') &&
           i + 1 < cleaned.length) {
         // Sonraki karakterler boşluk ve büyük harf mi?
         int nextCharIndex = i + 1;
-        while (nextCharIndex < cleaned.length && cleaned[nextCharIndex] == ' ') {
+        while (nextCharIndex < cleaned.length &&
+            cleaned[nextCharIndex] == ' ') {
           nextCharIndex++;
         }
-        
+
         if (nextCharIndex < cleaned.length &&
             cleaned[nextCharIndex] == cleaned[nextCharIndex].toUpperCase() &&
             cleaned[nextCharIndex] != cleaned[nextCharIndex].toLowerCase()) {
@@ -1531,26 +1587,26 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         }
       }
     }
-    
+
     // Kalan içeriği ekle
     if (buffer.isNotEmpty) {
       sentences.add(buffer.toString().trim());
     }
-    
+
     // Her 3-4 cümlede bir paragraf oluştur
     final paragraphs = <String>[];
     final currentParagraph = StringBuffer();
     int sentenceCount = 0;
-    
+
     for (final sentence in sentences) {
       if (sentence.isEmpty) continue;
-      
+
       if (currentParagraph.isNotEmpty) {
         currentParagraph.write(' ');
       }
       currentParagraph.write(sentence);
       sentenceCount++;
-      
+
       // Her 3-4 cümlede bir paragraf oluştur
       if (sentenceCount >= 3 || sentence.length > 150) {
         paragraphs.add(currentParagraph.toString());
@@ -1558,12 +1614,12 @@ class _ArticleDetailPageState extends ConsumerState<ArticleDetailPage> {
         sentenceCount = 0;
       }
     }
-    
+
     // Kalan cümleleri ekle
     if (currentParagraph.isNotEmpty) {
       paragraphs.add(currentParagraph.toString());
     }
-    
+
     // Paragrafları birleştir - aralarında çift satır sonu ekle
     return paragraphs.join('\n\n');
   }

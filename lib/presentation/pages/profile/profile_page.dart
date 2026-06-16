@@ -25,7 +25,7 @@ class ProfilePage extends ConsumerStatefulWidget {
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends ConsumerState<ProfilePage> 
+class _ProfilePageState extends ConsumerState<ProfilePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -34,27 +34,29 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-    
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
-    
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+        );
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Firebase User bilgilerini al
       final firebaseUser = ref.read(currentUserProvider);
-      
+
       // Profili Firebase bilgileri ile yükle
-      ref.read(userProfileProvider.notifier).loadProfile(firebaseUser: firebaseUser);
+      ref
+          .read(userProfileProvider.notifier)
+          .loadProfile(firebaseUser: firebaseUser);
       ref.read(userProfileProvider.notifier).refreshStats();
       _animationController.forward();
     });
@@ -75,10 +77,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
       body: profileState.isLoading
           ? const NewsListShimmer()
           : profileState.isError
-              ? _buildErrorWidget(profileState.errorMessage ?? 'Bilinmeyen hata')
-              : profileState.hasData && profileState.profile != null
-                  ? _buildProfileContent(context, profileState.profile!, theme)
-                  : _buildEmptyState(context),
+          ? _buildErrorWidget(profileState.errorMessage ?? 'Bilinmeyen hata')
+          : profileState.hasData && profileState.profile != null
+          ? _buildProfileContent(context, profileState.profile!, theme)
+          : _buildEmptyState(context),
     );
   }
 
@@ -89,12 +91,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
         children: [
           Icon(Icons.error_outline_rounded, size: 64, color: Colors.red[400]),
           const SizedBox(height: 16),
-          const Text('Hata', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            'Hata',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
-          Text(error, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600])),
+          Text(
+            error,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey[600]),
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () => ref.read(userProfileProvider.notifier).loadProfile(),
+            onPressed: () =>
+                ref.read(userProfileProvider.notifier).loadProfile(),
             child: const Text('Tekrar Dene'),
           ),
         ],
@@ -109,15 +119,25 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
         children: [
           Icon(Icons.person_outline_rounded, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
-          const Text('Profil bulunamadı', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            'Profil bulunamadı',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
-          Text('Profil oluşturuluyor...', style: TextStyle(color: Colors.grey[600])),
+          Text(
+            'Profil oluşturuluyor...',
+            style: TextStyle(color: Colors.grey[600]),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildProfileContent(BuildContext context, UserProfile profile, ThemeData theme) {
+  Widget _buildProfileContent(
+    BuildContext context,
+    UserProfile profile,
+    ThemeData theme,
+  ) {
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
@@ -136,13 +156,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   const SizedBox(height: 24),
                   ReadingStatsChart(stats: profile.stats, theme: theme),
                   const SizedBox(height: 24),
-                  CategoryPieChart(preferences: profile.preferences, theme: theme),
+                  CategoryPieChart(
+                    preferences: profile.preferences,
+                    theme: theme,
+                  ),
                   const SizedBox(height: 24),
                   _buildAchievementsSection(context, profile, theme),
                   const SizedBox(height: 24),
                   _buildReadingHeatmap(context, profile.stats, theme),
                   const SizedBox(height: 24),
-                  _buildModernInterestsSection(context, profile.preferences, theme),
+                  _buildModernInterestsSection(
+                    context,
+                    profile.preferences,
+                    theme,
+                  ),
                   const SizedBox(height: 24),
                   _buildModernPreferencesSection(context, profile, theme),
                   const SizedBox(height: 32),
@@ -155,9 +182,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
   }
 
-  Widget _buildModernAppBar(BuildContext context, UserProfile profile, ThemeData theme) {
+  Widget _buildModernAppBar(
+    BuildContext context,
+    UserProfile profile,
+    ThemeData theme,
+  ) {
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return SliverAppBar(
       expandedHeight: 120,
       floating: false,
@@ -169,7 +200,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isDark
-                ? [theme.colorScheme.surface, theme.colorScheme.surfaceContainerHighest]
+                ? [
+                    theme.colorScheme.surface,
+                    theme.colorScheme.surfaceContainerHighest,
+                  ]
                 : [AppTheme.primaryBlue, AppTheme.secondaryBlue],
           ),
         ),
@@ -205,7 +239,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
   }
 
-  Widget _buildHeroProfileSection(BuildContext context, UserProfile profile, ThemeData theme) {
+  Widget _buildHeroProfileSection(
+    BuildContext context,
+    UserProfile profile,
+    ThemeData theme,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       transform: Matrix4.translationValues(0, -30, 0),
@@ -243,13 +281,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.email_rounded, size: 14,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                      Icon(
+                        Icons.email_rounded,
+                        size: 14,
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         profile.email!,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
                         ),
                       ),
                     ],
@@ -265,77 +310,92 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
   }
 
-  Widget _buildAvatarWithRing(BuildContext context, UserProfile profile, ThemeData theme) {
+  Widget _buildAvatarWithRing(
+    BuildContext context,
+    UserProfile profile,
+    ThemeData theme,
+  ) {
     final completionPercent = _calculateProfileCompletion(profile);
-    
+
     return Stack(
-        alignment: Alignment.center,
-        children: [
-          SizedBox(
-            width: 120,
-            height: 120,
-            child: CircularProgressIndicator(
-              value: completionPercent / 100,
-              strokeWidth: 4,
-              backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                _getLevelColor(profile.stats.totalArticlesRead),
-              ),
+      alignment: Alignment.center,
+      children: [
+        SizedBox(
+          width: 120,
+          height: 120,
+          child: CircularProgressIndicator(
+            value: completionPercent / 100,
+            strokeWidth: 4,
+            backgroundColor: theme.colorScheme.surfaceContainerHighest,
+            valueColor: AlwaysStoppedAnimation<Color>(
+              _getLevelColor(profile.stats.totalArticlesRead),
             ),
           ),
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  _getLevelColor(profile.stats.totalArticlesRead),
-                  _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.7),
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.4),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
+        ),
+        Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                _getLevelColor(profile.stats.totalArticlesRead),
+                _getLevelColor(
+                  profile.stats.totalArticlesRead,
+                ).withValues(alpha: 0.7),
               ],
             ),
-            child: profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty
-                ? ClipOval(
-                    child: profile.avatarUrl!.startsWith('http')
-                        ? CachedNetworkImage(
-                            imageUrl: profile.avatarUrl!,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) =>
-                              const Icon(Icons.person_rounded, size: 50, color: Colors.white),
-                          )
-                        : Image.file(
-                            File(profile.avatarUrl!),
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.person_rounded, size: 50, color: Colors.white),
-                          ),
-                  )
-                : const Icon(Icons.person_rounded, size: 50, color: Colors.white),
-          ),
-          if (completionPercent == 100)
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: theme.colorScheme.surface, width: 2),
-                ),
-                child: const Icon(Icons.check, size: 12, color: Colors.white),
+            boxShadow: [
+              BoxShadow(
+                color: _getLevelColor(
+                  profile.stats.totalArticlesRead,
+                ).withValues(alpha: 0.4),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
               ),
+            ],
+          ),
+          child: profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty
+              ? ClipOval(
+                  child: profile.avatarUrl!.startsWith('http')
+                      ? CachedNetworkImage(
+                          imageUrl: profile.avatarUrl!,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.person_rounded,
+                            size: 50,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Image.file(
+                          File(profile.avatarUrl!),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(
+                                Icons.person_rounded,
+                                size: 50,
+                                color: Colors.white,
+                              ),
+                        ),
+                )
+              : const Icon(Icons.person_rounded, size: 50, color: Colors.white),
+        ),
+        if (completionPercent == 100)
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.green,
+                shape: BoxShape.circle,
+                border: Border.all(color: theme.colorScheme.surface, width: 2),
+              ),
+              child: const Icon(Icons.check, size: 12, color: Colors.white),
             ),
+          ),
       ],
     );
   }
@@ -344,16 +404,40 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildQuickStat('Okunan', '${stats.totalArticlesRead}', Icons.article_rounded, Colors.blue, theme),
+        _buildQuickStat(
+          'Okunan',
+          '${stats.totalArticlesRead}',
+          Icons.article_rounded,
+          Colors.blue,
+          theme,
+        ),
         Container(width: 1, height: 40, color: theme.dividerColor),
-        _buildQuickStat('Favoriler', '${stats.totalFavorites}', Icons.favorite_rounded, Colors.red, theme),
+        _buildQuickStat(
+          'Favoriler',
+          '${stats.totalFavorites}',
+          Icons.favorite_rounded,
+          Colors.red,
+          theme,
+        ),
         Container(width: 1, height: 40, color: theme.dividerColor),
-        _buildQuickStat('Seri', '${stats.streakDays}🔥', Icons.local_fire_department_rounded, Colors.orange, theme),
+        _buildQuickStat(
+          'Seri',
+          '${stats.streakDays}🔥',
+          Icons.local_fire_department_rounded,
+          Colors.orange,
+          theme,
+        ),
       ],
     );
   }
 
-  Widget _buildQuickStat(String label, String value, IconData icon, Color color, ThemeData theme) {
+  Widget _buildQuickStat(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+    ThemeData theme,
+  ) {
     return Column(
       children: [
         Icon(icon, color: color, size: 24),
@@ -376,24 +460,36 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
   }
 
-  Widget _buildLevelSection(BuildContext context, UserProfile profile, ThemeData theme) {
+  Widget _buildLevelSection(
+    BuildContext context,
+    UserProfile profile,
+    ThemeData theme,
+  ) {
     final level = _getUserLevel(profile.stats.totalArticlesRead);
-    final nextLevelThreshold = _getNextLevelThreshold(profile.stats.totalArticlesRead);
+    final nextLevelThreshold = _getNextLevelThreshold(
+      profile.stats.totalArticlesRead,
+    );
     final progress = profile.stats.totalArticlesRead / nextLevelThreshold;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.1),
-            _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.05),
+            _getLevelColor(
+              profile.stats.totalArticlesRead,
+            ).withValues(alpha: 0.1),
+            _getLevelColor(
+              profile.stats.totalArticlesRead,
+            ).withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.3),
+          color: _getLevelColor(
+            profile.stats.totalArticlesRead,
+          ).withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -401,13 +497,18 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: _getLevelColor(profile.stats.totalArticlesRead),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: _getLevelColor(profile.stats.totalArticlesRead).withValues(alpha: 0.3),
+                      color: _getLevelColor(
+                        profile.stats.totalArticlesRead,
+                      ).withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -479,7 +580,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
   }
 
-  Widget _buildEnhancedStatsGrid(BuildContext context, UserStats stats, ThemeData theme) {
+  Widget _buildEnhancedStatsGrid(
+    BuildContext context,
+    UserStats stats,
+    ThemeData theme,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -493,7 +598,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.analytics_rounded, color: AppTheme.primaryBlue, size: 20),
+                child: const Icon(
+                  Icons.analytics_rounded,
+                  color: AppTheme.primaryBlue,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -636,9 +745,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
   }
 
-  Widget _buildAchievementsSection(BuildContext context, UserProfile profile, ThemeData theme) {
+  Widget _buildAchievementsSection(
+    BuildContext context,
+    UserProfile profile,
+    ThemeData theme,
+  ) {
     final achievements = _getAchievements(profile.stats);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -652,7 +765,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   color: Colors.amber.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.emoji_events_rounded, color: Colors.amber, size: 20),
+                child: const Icon(
+                  Icons.emoji_events_rounded,
+                  color: Colors.amber,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -689,18 +806,23 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
   }
 
-  Widget _buildAchievementCard(Map<String, dynamic> achievement, ThemeData theme) {
+  Widget _buildAchievementCard(
+    Map<String, dynamic> achievement,
+    ThemeData theme,
+  ) {
     final isUnlocked = achievement['unlocked'] as bool;
     final icon = achievement['icon'] as IconData;
     final title = achievement['title'] as String;
     final description = achievement['description'] as String;
     final color = achievement['color'] as Color;
-    
+
     return Container(
       width: 120,
       margin: const EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
-        color: isUnlocked ? color.withValues(alpha: 0.1) : theme.colorScheme.surfaceContainerHighest,
+        color: isUnlocked
+            ? color.withValues(alpha: 0.1)
+            : theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isUnlocked ? color.withValues(alpha: 0.3) : theme.dividerColor,
@@ -716,12 +838,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isUnlocked ? color.withValues(alpha: 0.2) : theme.colorScheme.surface,
+                color: isUnlocked
+                    ? color.withValues(alpha: 0.2)
+                    : theme.colorScheme.surface,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
-                color: isUnlocked ? color : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                color: isUnlocked
+                    ? color
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                 size: 28,
               ),
             ),
@@ -732,7 +858,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   fontSize: 11,
-                  color: isUnlocked ? color : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  color: isUnlocked
+                      ? color
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -758,7 +886,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
   }
 
-  Widget _buildReadingHeatmap(BuildContext context, UserStats stats, ThemeData theme) {
+  Widget _buildReadingHeatmap(
+    BuildContext context,
+    UserStats stats,
+    ThemeData theme,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -772,7 +904,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.calendar_month_rounded, color: Colors.green, size: 20),
+                child: const Icon(
+                  Icons.calendar_month_rounded,
+                  color: Colors.green,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -816,7 +952,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(7, (index) {
-                    final intensity = (stats.totalArticlesRead / 10).clamp(0, 4).toInt();
+                    final intensity = (stats.totalArticlesRead / 10)
+                        .clamp(0, 4)
+                        .toInt();
                     return _buildHeatmapDay(
                       ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pa'][index],
                       index <= intensity ? intensity : 0,
@@ -836,7 +974,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     final color = intensity == 0
         ? theme.colorScheme.surfaceContainerHighest
         : Colors.green.withValues(alpha: 0.2 + (intensity * 0.2));
-    
+
     return Column(
       children: [
         Container(
@@ -846,7 +984,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
             color: color,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: intensity > 0 ? Colors.green.withValues(alpha: 0.3) : theme.dividerColor,
+              color: intensity > 0
+                  ? Colors.green.withValues(alpha: 0.3)
+                  : theme.dividerColor,
             ),
           ),
           child: Center(
@@ -855,7 +995,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: intensity > 2 ? Colors.white : theme.colorScheme.onSurface,
+                color: intensity > 2
+                    ? Colors.white
+                    : theme.colorScheme.onSurface,
               ),
             ),
           ),
@@ -872,7 +1014,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
   }
 
-  Widget _buildModernInterestsSection(BuildContext context, UserPreferences preferences, ThemeData theme) {
+  Widget _buildModernInterestsSection(
+    BuildContext context,
+    UserPreferences preferences,
+    ThemeData theme,
+  ) {
     final interestTags = preferences.interestTags;
 
     return Container(
@@ -894,7 +1040,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   color: Colors.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.interests_rounded, color: Colors.purple, size: 20),
+                child: const Icon(
+                  Icons.interests_rounded,
+                  color: Colors.purple,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -909,7 +1059,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const EditInterestsPage()),
+                    MaterialPageRoute(
+                      builder: (_) => const EditInterestsPage(),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.edit_rounded, size: 16),
@@ -933,7 +1085,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                     Text(
                       'Henüz ilgi alanı seçilmemiş',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
                       ),
                     ),
                   ],
@@ -950,7 +1104,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   orElse: () => InterestTags.allTags.first,
                 );
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -961,7 +1118,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: _getColorFromHex(tag.color).withValues(alpha: 0.3),
+                        color: _getColorFromHex(
+                          tag.color,
+                        ).withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -970,11 +1129,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        tag.icon,
-                        color: Colors.white,
-                        size: 16,
-                      ),
+                      Icon(tag.icon, color: Colors.white, size: 16),
                       const SizedBox(width: 8),
                       Text(
                         tag.name,
@@ -994,7 +1149,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
   }
 
-  Widget _buildModernPreferencesSection(BuildContext context, UserProfile profile, ThemeData theme) {
+  Widget _buildModernPreferencesSection(
+    BuildContext context,
+    UserProfile profile,
+    ThemeData theme,
+  ) {
     final preferences = profile.preferences;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -1015,7 +1174,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                   color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.settings_rounded, color: AppTheme.primaryBlue, size: 20),
+                child: const Icon(
+                  Icons.settings_rounded,
+                  color: AppTheme.primaryBlue,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -1031,7 +1194,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
           _buildPreferenceItem(
             'Bildirimler',
             preferences.enableNotifications ? 'Açık' : 'Kapalı',
-            preferences.enableNotifications ? Icons.notifications_active_rounded : Icons.notifications_off_rounded,
+            preferences.enableNotifications
+                ? Icons.notifications_active_rounded
+                : Icons.notifications_off_rounded,
             preferences.enableNotifications ? Colors.green : Colors.grey,
             theme,
           ),
@@ -1109,14 +1274,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
   }
 
   // Yardımcı Fonksiyonlar
-  
+
   double _calculateProfileCompletion(UserProfile profile) {
     int completedItems = 0;
     const int totalItems = 5;
 
     if (profile.name != null && profile.name!.isNotEmpty) completedItems++;
     if (profile.email != null && profile.email!.isNotEmpty) completedItems++;
-    if (profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty) completedItems++;
+    if (profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty)
+      completedItems++;
     if (profile.preferences.interestTags.isNotEmpty) completedItems++;
     if (profile.stats.totalArticlesRead > 0) completedItems++;
 
@@ -1267,7 +1433,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               if (name.isNotEmpty) {
                 await ref.read(userProfileProvider.notifier).updateName(name);
               }
-              
+
               if (email.isNotEmpty) {
                 await ref.read(userProfileProvider.notifier).updateEmail(email);
               }
@@ -1312,10 +1478,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               const SizedBox(height: 20),
               const Text(
                 'Profil Fotoğrafı',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 24),
               Row(
@@ -1326,16 +1489,19 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
                     icon: Icons.camera_alt_rounded,
                     label: 'Kamera',
                     color: Colors.blue,
-                    onTap: () => _pickAndCropAvatar(context, profile, fromCamera: true),
+                    onTap: () =>
+                        _pickAndCropAvatar(context, profile, fromCamera: true),
                   ),
                   _buildAvatarOption(
                     context,
                     icon: Icons.photo_library_rounded,
                     label: 'Galeri',
                     color: Colors.green,
-                    onTap: () => _pickAndCropAvatar(context, profile, fromCamera: false),
+                    onTap: () =>
+                        _pickAndCropAvatar(context, profile, fromCamera: false),
                   ),
-                  if (profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty)
+                  if (profile.avatarUrl != null &&
+                      profile.avatarUrl!.isNotEmpty)
                     _buildAvatarOption(
                       context,
                       icon: Icons.delete_rounded,
@@ -1375,10 +1541,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
           children: [
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               child: Icon(icon, color: Colors.white, size: 28),
             ),
             const SizedBox(height: 8),
@@ -1402,7 +1565,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     required bool fromCamera,
   }) async {
     Navigator.pop(context); // Bottom sheet'i kapat
-    
+
     // Loading dialog göster
     showDialog(
       context: context,
@@ -1427,15 +1590,17 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
 
     try {
       final avatarService = AvatarService();
-      
+
       // Fotoğraf seç (timeout ile)
       File? imageFile;
       if (fromCamera) {
-        imageFile = await avatarService.pickImageFromCamera()
-            .timeout(const Duration(seconds: 30));
+        imageFile = await avatarService.pickImageFromCamera().timeout(
+          const Duration(seconds: 30),
+        );
       } else {
-        imageFile = await avatarService.pickImageFromGallery()
-            .timeout(const Duration(seconds: 30));
+        imageFile = await avatarService.pickImageFromGallery().timeout(
+          const Duration(seconds: 30),
+        );
       }
 
       if (imageFile == null) {
@@ -1444,18 +1609,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
       }
 
       // Fotoğrafı kırp (timeout ile)
-      final croppedFile = await avatarService.cropImage(imageFile)
+      final croppedFile = await avatarService
+          .cropImage(imageFile)
           .timeout(const Duration(seconds: 30));
-      
+
       if (croppedFile == null) {
         if (context.mounted) Navigator.pop(context);
         return;
       }
 
       // Avatar'ı kaydet (timeout ile)
-      final savedPath = await avatarService.saveAvatar(croppedFile, profile.id)
+      final savedPath = await avatarService
+          .saveAvatar(croppedFile, profile.id)
           .timeout(const Duration(seconds: 10));
-      
+
       if (savedPath == null) {
         if (context.mounted) {
           Navigator.pop(context);
@@ -1471,19 +1638,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
       }
 
       // User profile'ı güncelle (timeout ile)
-      final success = await avatarService.updateUserAvatar(profile.id, savedPath)
+      final success = await avatarService
+          .updateUserAvatar(profile.id, savedPath)
           .timeout(const Duration(seconds: 5));
-      
+
       if (context.mounted) {
         Navigator.pop(context);
-        
+
         if (success) {
           // Avatar URL'ini provider'a güncelle
           await ref.read(userProfileProvider.notifier).updateAvatar(savedPath);
-          
+
           // Profili yeniden yükle
           await ref.read(userProfileProvider.notifier).loadProfile();
-          
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Avatar başarıyla güncellendi! 🎉'),
@@ -1517,7 +1685,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hata: ${e.toString().length > 50 ? "${e.toString().substring(0, 50)}..." : e.toString()}'),
+            content: Text(
+              'Hata: ${e.toString().length > 50 ? "${e.toString().substring(0, 50)}..." : e.toString()}',
+            ),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),
@@ -1528,12 +1698,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
 
   Future<void> _deleteAvatar(BuildContext context, UserProfile profile) async {
     Navigator.pop(context); // Bottom sheet'i kapat
-    
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Avatar Sil'),
-        content: const Text('Profil fotoğrafınızı silmek istediğinize emin misiniz?'),
+        content: const Text(
+          'Profil fotoğrafınızı silmek istediğinize emin misiniz?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -1554,22 +1726,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      builder: (context) => const Center(child: CircularProgressIndicator()),
     );
 
     try {
       final avatarService = AvatarService();
       final success = await avatarService.deleteAvatar(profile.id);
-      
+
       if (context.mounted) {
         Navigator.pop(context); // Loading'i kapat
-        
+
         if (success) {
           // Profili yeniden yükle
           ref.read(userProfileProvider.notifier).loadProfile();
-          
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Avatar başarıyla silindi'),
@@ -1589,17 +1759,27 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
       if (context.mounted) {
         Navigator.pop(context); // Loading'i kapat
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Hata: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Hata: $e'), backgroundColor: Colors.red),
         );
       }
     }
   }
 
   String _formatDate(DateTime date) {
-    final months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    final months = [
+      'Oca',
+      'Şub',
+      'Mar',
+      'Nis',
+      'May',
+      'Haz',
+      'Tem',
+      'Ağu',
+      'Eyl',
+      'Eki',
+      'Kas',
+      'Ara',
+    ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
@@ -1608,7 +1788,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Çıkış Yap'),
-        content: const Text('Hesabınızdan çıkış yapmak istediğinize emin misiniz?'),
+        content: const Text(
+          'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -1627,7 +1809,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
       try {
         // Çıkış işlemini gerçekleştir
         await ref.read(authControllerProvider.notifier).signOut();
-        
+
         // Başarılı mesajı göster
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -13,7 +13,7 @@ class BadgesPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final gamificationState = ref.watch(gamificationProvider);
     final userLevel = gamificationState.userLevel;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rozetler ve Başarılar'),
@@ -49,36 +49,37 @@ class BadgesPage extends ConsumerWidget {
           SliverToBoxAdapter(
             child: _buildLevelCard(context, userLevel, gamificationState),
           ),
-          
+
           // İstatistikler
-          SliverToBoxAdapter(
-            child: _buildStatsRow(context, gamificationState),
-          ),
-          
+          SliverToBoxAdapter(child: _buildStatsRow(context, gamificationState)),
+
           // Rozet kategorileri
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
                 'Rozetler',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
           ),
-          
+
           // Rozet kategorileri listesi
           SliverList(
             delegate: SliverChildListDelegate([
               for (final category in BadgeCategory.values)
-                _buildCategorySection(context, ref, category, gamificationState),
+                _buildCategorySection(
+                  context,
+                  ref,
+                  category,
+                  gamificationState,
+                ),
             ]),
           ),
-          
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 32),
-          ),
+
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ],
       ),
     );
@@ -153,7 +154,7 @@ class BadgesPage extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Seviye bilgileri
               Expanded(
                 child: Column(
@@ -176,14 +177,16 @@ class BadgesPage extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    
+
                     // XP progress bar
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: LinearProgressIndicator(
                         value: userLevel.progress,
                         backgroundColor: Colors.white.withValues(alpha: 0.2),
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          Colors.white,
+                        ),
                         minHeight: 8,
                       ),
                     ),
@@ -192,9 +195,9 @@ class BadgesPage extends ConsumerWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Seri bilgisi
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -205,11 +208,7 @@ class BadgesPage extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStreakItem(
-                  '🔥',
-                  '${state.dailyStreak}',
-                  'Günlük Seri',
-                ),
+                _buildStreakItem('🔥', '${state.dailyStreak}', 'Günlük Seri'),
                 Container(
                   width: 1,
                   height: 30,
@@ -320,9 +319,7 @@ class BadgesPage extends ConsumerWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -339,7 +336,9 @@ class BadgesPage extends ConsumerWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -356,9 +355,9 @@ class BadgesPage extends ConsumerWidget {
   ) {
     final badges = state.badges.where((b) => b.category == category).toList();
     if (badges.isEmpty) return const SizedBox.shrink();
-    
+
     final unlockedCount = badges.where((b) => b.isUnlocked).length;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -376,10 +375,7 @@ class BadgesPage extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Text(
-                  category.emoji,
-                  style: const TextStyle(fontSize: 24),
-                ),
+                Text(category.emoji, style: const TextStyle(fontSize: 24)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -387,14 +383,15 @@ class BadgesPage extends ConsumerWidget {
                     children: [
                       Text(
                         category.displayName,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         '$unlockedCount / ${badges.length} rozet açıldı',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -407,17 +404,22 @@ class BadgesPage extends ConsumerWidget {
                   child: Stack(
                     children: [
                       CircularProgressIndicator(
-                        value: badges.isNotEmpty ? unlockedCount / badges.length : 0,
-                        backgroundColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryBlue),
+                        value: badges.isNotEmpty
+                            ? unlockedCount / badges.length
+                            : 0,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.outline.withValues(alpha: 0.2),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppTheme.primaryBlue,
+                        ),
                         strokeWidth: 4,
                       ),
                       Center(
                         child: Text(
                           '${((unlockedCount / badges.length) * 100).toInt()}%',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
@@ -426,16 +428,18 @@ class BadgesPage extends ConsumerWidget {
               ],
             ),
           ),
-          
+
           const Divider(height: 1),
-          
+
           // Rozetler grid
           Padding(
             padding: const EdgeInsets.all(12),
             child: Wrap(
               spacing: 12,
               runSpacing: 12,
-              children: badges.map((badge) => _buildBadgeItem(context, badge)).toList(),
+              children: badges
+                  .map((badge) => _buildBadgeItem(context, badge))
+                  .toList(),
             ),
           ),
         ],
@@ -446,7 +450,7 @@ class BadgesPage extends ConsumerWidget {
   /// Rozet öğesi
   Widget _buildBadgeItem(BuildContext context, Badge badge) {
     final tierColor = Color(badge.tier.color);
-    
+
     return GestureDetector(
       onTap: () => _showBadgeDetails(context, badge),
       child: Container(
@@ -479,10 +483,7 @@ class BadgesPage extends ConsumerWidget {
               ),
               child: Center(
                 child: badge.isUnlocked
-                    ? Text(
-                        badge.icon,
-                        style: const TextStyle(fontSize: 24),
-                      )
+                    ? Text(badge.icon, style: const TextStyle(fontSize: 24))
                     : Icon(
                         Icons.lock_rounded,
                         color: Colors.grey.withValues(alpha: 0.5),
@@ -491,7 +492,7 @@ class BadgesPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 6),
-            
+
             // Rozet adı
             Text(
               badge.name,
@@ -499,13 +500,15 @@ class BadgesPage extends ConsumerWidget {
                 fontWeight: FontWeight.w600,
                 color: badge.isUnlocked
                     ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                    : Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            
+
             // İlerleme çubuğu (kilitli rozetler için)
             if (!badge.isUnlocked && badge.progress > 0) ...[
               const SizedBox(height: 4),
@@ -528,7 +531,7 @@ class BadgesPage extends ConsumerWidget {
   /// Rozet detayları dialog
   void _showBadgeDetails(BuildContext context, Badge badge) {
     final tierColor = Color(badge.tier.color);
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -546,12 +549,14 @@ class BadgesPage extends ConsumerWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Rozet ikonu
             Container(
               width: 100,
@@ -568,10 +573,7 @@ class BadgesPage extends ConsumerWidget {
               ),
               child: Center(
                 child: badge.isUnlocked
-                    ? Text(
-                        badge.icon,
-                        style: const TextStyle(fontSize: 48),
-                      )
+                    ? Text(badge.icon, style: const TextStyle(fontSize: 48))
                     : Icon(
                         Icons.lock_rounded,
                         color: Colors.grey.withValues(alpha: 0.5),
@@ -580,16 +582,16 @@ class BadgesPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Rozet adı
             Text(
               badge.name,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            
+
             // Tier badge
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -607,17 +609,19 @@ class BadgesPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Açıklama
             Text(
               badge.description,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            
+
             // İlerleme veya açılma tarihi
             if (badge.isUnlocked && badge.unlockedAt != null) ...[
               Row(
@@ -631,9 +635,9 @@ class BadgesPage extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Text(
                     'Açıldı: ${_formatDate(badge.unlockedAt!)}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.green,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.green),
                   ),
                 ],
               ),
@@ -670,7 +674,7 @@ class BadgesPage extends ConsumerWidget {
                 ],
               ),
             ],
-            
+
             const SizedBox(height: 24),
           ],
         ),

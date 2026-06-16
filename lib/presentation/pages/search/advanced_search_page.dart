@@ -57,9 +57,7 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
             smallSize: 8,
             child: IconButton(
               icon: Icon(
-                _showFilters
-                    ? Icons.filter_list_off
-                    : Icons.filter_list,
+                _showFilters ? Icons.filter_list_off : Icons.filter_list,
               ),
               tooltip: 'Filtreler',
               onPressed: () {
@@ -74,13 +72,10 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
       body: Column(
         children: [
           // Filtre bölümü
-          if (_showFilters)
-            _buildFilterSection(context, searchState),
+          if (_showFilters) _buildFilterSection(context, searchState),
 
           // İçerik
-          Expanded(
-            child: _buildContent(context, searchState),
-          ),
+          Expanded(child: _buildContent(context, searchState)),
         ],
       ),
     );
@@ -96,7 +91,10 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
       decoration: InputDecoration(
         hintText: 'Haberlerde ara...',
         border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(
                 icon: const Icon(Icons.clear, size: 20),
@@ -110,7 +108,9 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
       ),
       onChanged: (value) {
         setState(() {});
-        ref.read(advancedSearchProvider.notifier).getSuggestions(_articles, value);
+        ref
+            .read(advancedSearchProvider.notifier)
+            .getSuggestions(_articles, value);
         // Önerileri güncelle
         final service = ref.read(advancedSearchServiceProvider);
         service.getSuggestionsDebounced(value, _articles, (suggestions) {
@@ -200,21 +200,27 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
                 spacing: 8,
                 runSpacing: 4,
                 children: sources.map((source) {
-                  final isSelected = searchState.filters.sources.contains(source);
+                  final isSelected = searchState.filters.sources.contains(
+                    source,
+                  );
                   return FilterChip(
                     label: Text(source, style: const TextStyle(fontSize: 12)),
                     selected: isSelected,
                     onSelected: (selected) {
-                      final newSources = List<String>.from(searchState.filters.sources);
+                      final newSources = List<String>.from(
+                        searchState.filters.sources,
+                      );
                       if (selected) {
                         newSources.add(source);
                       } else {
                         newSources.remove(source);
                       }
-                      ref.read(advancedSearchProvider.notifier).updateFilters(
-                        _articles,
-                        searchState.filters.copyWith(sources: newSources),
-                      );
+                      ref
+                          .read(advancedSearchProvider.notifier)
+                          .updateFilters(
+                            _articles,
+                            searchState.filters.copyWith(sources: newSources),
+                          );
                     },
                   );
                 }).toList(),
@@ -230,21 +236,29 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
                 spacing: 8,
                 runSpacing: 4,
                 children: categories.map((category) {
-                  final isSelected = searchState.filters.categories.contains(category);
+                  final isSelected = searchState.filters.categories.contains(
+                    category,
+                  );
                   return FilterChip(
                     label: Text(category, style: const TextStyle(fontSize: 12)),
                     selected: isSelected,
                     onSelected: (selected) {
-                      final newCategories = List<String>.from(searchState.filters.categories);
+                      final newCategories = List<String>.from(
+                        searchState.filters.categories,
+                      );
                       if (selected) {
                         newCategories.add(category);
                       } else {
                         newCategories.remove(category);
                       }
-                      ref.read(advancedSearchProvider.notifier).updateFilters(
-                        _articles,
-                        searchState.filters.copyWith(categories: newCategories),
-                      );
+                      ref
+                          .read(advancedSearchProvider.notifier)
+                          .updateFilters(
+                            _articles,
+                            searchState.filters.copyWith(
+                              categories: newCategories,
+                            ),
+                          );
                     },
                   );
                 }).toList(),
@@ -271,7 +285,10 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
                     items: const [
                       DropdownMenuItem(
                         value: SearchSortType.relevance,
-                        child: Text('İlgililik', style: TextStyle(fontSize: 13)),
+                        child: Text(
+                          'İlgililik',
+                          style: TextStyle(fontSize: 13),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: SearchSortType.dateNewest,
@@ -284,10 +301,12 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
                     ],
                     onChanged: (value) {
                       if (value != null) {
-                        ref.read(advancedSearchProvider.notifier).updateFilters(
-                          _articles,
-                          searchState.filters.copyWith(sortType: value),
-                        );
+                        ref
+                            .read(advancedSearchProvider.notifier)
+                            .updateFilters(
+                              _articles,
+                              searchState.filters.copyWith(sortType: value),
+                            );
                       }
                     },
                   ),
@@ -301,13 +320,18 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
                         : Icons.favorite_border,
                     size: 16,
                   ),
-                  label: const Text('Favoriler', style: TextStyle(fontSize: 12)),
+                  label: const Text(
+                    'Favoriler',
+                    style: TextStyle(fontSize: 12),
+                  ),
                   selected: searchState.filters.onlyFavorites,
                   onSelected: (selected) {
-                    ref.read(advancedSearchProvider.notifier).updateFilters(
-                      _articles,
-                      searchState.filters.copyWith(onlyFavorites: selected),
-                    );
+                    ref
+                        .read(advancedSearchProvider.notifier)
+                        .updateFilters(
+                          _articles,
+                          searchState.filters.copyWith(onlyFavorites: selected),
+                        );
                   },
                 ),
               ],
@@ -322,7 +346,9 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
                   icon: const Icon(Icons.clear_all, size: 18),
                   label: const Text('Filtreleri Temizle'),
                   onPressed: () {
-                    ref.read(advancedSearchProvider.notifier).clearFilters(_articles);
+                    ref
+                        .read(advancedSearchProvider.notifier)
+                        .clearFilters(_articles);
                   },
                 ),
               ),
@@ -335,7 +361,9 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
   /// İçerik alanı
   Widget _buildContent(BuildContext context, SearchState searchState) {
     // Öneriler göster
-    if (_showSuggestions && _searchController.text.isNotEmpty && _suggestions.isNotEmpty) {
+    if (_showSuggestions &&
+        _searchController.text.isNotEmpty &&
+        _suggestions.isNotEmpty) {
       return _buildSuggestionsList(context, _suggestions);
     }
 
@@ -375,7 +403,9 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
             _searchController.selection = TextSelection.fromPosition(
               TextPosition(offset: suggestion.length),
             );
-            ref.read(advancedSearchProvider.notifier).search(_articles, suggestion);
+            ref
+                .read(advancedSearchProvider.notifier)
+                .search(_articles, suggestion);
             setState(() {
               _showSuggestions = false;
             });
@@ -433,13 +463,17 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
                     color: colorScheme.onSurfaceVariant,
                   ),
                   onPressed: () {
-                    ref.read(advancedSearchProvider.notifier).removeFromHistory(query);
+                    ref
+                        .read(advancedSearchProvider.notifier)
+                        .removeFromHistory(query);
                   },
                 ),
                 dense: true,
                 onTap: () {
                   _searchController.text = query;
-                  ref.read(advancedSearchProvider.notifier).search(_articles, query);
+                  ref
+                      .read(advancedSearchProvider.notifier)
+                      .search(_articles, query);
                   _focusNode.unfocus();
                 },
               );
@@ -571,14 +605,18 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
   }
 
   /// Tarih seçici
-  Future<void> _selectDate(BuildContext context, {required bool isStart}) async {
+  Future<void> _selectDate(
+    BuildContext context, {
+    required bool isStart,
+  }) async {
     final searchState = ref.read(advancedSearchProvider);
     final now = DateTime.now();
 
     final date = await showDatePicker(
       context: context,
       initialDate: isStart
-          ? (searchState.filters.startDate ?? now.subtract(const Duration(days: 7)))
+          ? (searchState.filters.startDate ??
+                now.subtract(const Duration(days: 7)))
           : (searchState.filters.endDate ?? now),
       firstDate: DateTime(2020),
       lastDate: now,
@@ -589,7 +627,9 @@ class _AdvancedSearchPageState extends ConsumerState<AdvancedSearchPage> {
       final newFilters = isStart
           ? searchState.filters.copyWith(startDate: date)
           : searchState.filters.copyWith(endDate: date);
-      ref.read(advancedSearchProvider.notifier).updateFilters(_articles, newFilters);
+      ref
+          .read(advancedSearchProvider.notifier)
+          .updateFilters(_articles, newFilters);
     }
   }
 

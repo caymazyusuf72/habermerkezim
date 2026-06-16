@@ -11,7 +11,8 @@ import 'package:haber_merkezi/core/services/logger_service.dart';
 class ImageOptimizationService {
   ImageOptimizationService._();
 
-  static final ImageOptimizationService _instance = ImageOptimizationService._();
+  static final ImageOptimizationService _instance =
+      ImageOptimizationService._();
   factory ImageOptimizationService() => _instance;
 
   final LoggerService _logger = LoggerService();
@@ -35,7 +36,11 @@ class ImageOptimizationService {
   // ==================== Resim Boyutu Optimizasyonu ====================
 
   /// Ekran boyutuna göre optimize edilmiş resim boyutunu hesapla
-  Size getOptimalImageSize(BuildContext context, {double? maxWidth, double? maxHeight}) {
+  Size getOptimalImageSize(
+    BuildContext context, {
+    double? maxWidth,
+    double? maxHeight,
+  }) {
     final screenSize = MediaQuery.of(context).size;
     final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
 
@@ -55,7 +60,11 @@ class ImageOptimizationService {
   /// - WordPress (wp-content): boyut parametresi ekler
   /// - Imgur: thumbnail suffix ekler
   /// - Genel: width/height query parametresi ekler
-  String getThumbnailUrl(String originalUrl, {int width = 400, int height = 300}) {
+  String getThumbnailUrl(
+    String originalUrl, {
+    int width = 400,
+    int height = 300,
+  }) {
     if (originalUrl.isEmpty) return originalUrl;
 
     try {
@@ -101,10 +110,7 @@ class ImageOptimizationService {
     try {
       final uri = Uri.parse(imageUrl);
       final newUri = uri.replace(
-        queryParameters: {
-          ...uri.queryParameters,
-          'fm': 'webp',
-        },
+        queryParameters: {...uri.queryParameters, 'fm': 'webp'},
       );
       return newUri.toString();
     } catch (e) {
@@ -115,21 +121,13 @@ class ImageOptimizationService {
   // ==================== Placeholder & Error Widgets ====================
 
   /// Yükleme placeholder widget'ı
-  Widget buildPlaceholder({
-    double? width,
-    double? height,
-    Color? color,
-  }) {
+  Widget buildPlaceholder({double? width, double? height, Color? color}) {
     return Container(
       width: width,
       height: height ?? 200,
       color: color ?? Colors.grey[200],
       child: Center(
-        child: Icon(
-          Icons.image_outlined,
-          size: 48,
-          color: Colors.grey[400],
-        ),
+        child: Icon(Icons.image_outlined, size: 48, color: Colors.grey[400]),
       ),
     );
   }
@@ -147,19 +145,12 @@ class ImageOptimizationService {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.broken_image_outlined,
-            size: 48,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.broken_image_outlined, size: 48, color: Colors.grey[400]),
           if (errorMessage != null) ...[
             const SizedBox(height: 8),
             Text(
               errorMessage,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
           ],
@@ -182,7 +173,11 @@ class ImageOptimizationService {
     int thumbnailHeight = 300,
   }) {
     final url = useThumbnail
-        ? getThumbnailUrl(imageUrl, width: thumbnailWidth, height: thumbnailHeight)
+        ? getThumbnailUrl(
+            imageUrl,
+            width: thumbnailWidth,
+            height: thumbnailHeight,
+          )
         : imageUrl;
 
     final imageWidget = CachedNetworkImage(
@@ -190,14 +185,10 @@ class ImageOptimizationService {
       width: width,
       height: height,
       fit: fit,
-      placeholder: (context, url) => buildPlaceholder(
-        width: width,
-        height: height,
-      ),
-      errorWidget: (context, url, error) => buildErrorWidget(
-        width: width,
-        height: height,
-      ),
+      placeholder: (context, url) =>
+          buildPlaceholder(width: width, height: height),
+      errorWidget: (context, url, error) =>
+          buildErrorWidget(width: width, height: height),
       memCacheWidth: width?.toInt(),
       memCacheHeight: height?.toInt(),
       fadeInDuration: const Duration(milliseconds: 200),
@@ -205,10 +196,7 @@ class ImageOptimizationService {
     );
 
     if (borderRadius != null) {
-      return ClipRRect(
-        borderRadius: borderRadius,
-        child: imageWidget,
-      );
+      return ClipRRect(borderRadius: borderRadius, child: imageWidget);
     }
 
     return imageWidget;
@@ -261,7 +249,8 @@ class ImageOptimizationService {
     return {
       'currentSize': imageCache.currentSize,
       'currentSizeBytes': imageCache.currentSizeBytes,
-      'currentSizeMb': (imageCache.currentSizeBytes / 1024 / 1024).toStringAsFixed(2),
+      'currentSizeMb': (imageCache.currentSizeBytes / 1024 / 1024)
+          .toStringAsFixed(2),
       'maxSize': _maxCacheCount,
       'maxSizeMb': _maxCacheSizeMb,
     };

@@ -38,15 +38,13 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   final InterestTagsRepository _tagsRepository;
   final UserProfileRepository _profileRepository;
 
-  OnboardingNotifier(
-    this._tagsRepository,
-    this._profileRepository,
-  ) : super(const OnboardingState());
+  OnboardingNotifier(this._tagsRepository, this._profileRepository)
+    : super(const OnboardingState());
 
   /// Hashtag seç/seçimi kaldır
   void toggleTag(String tagId) {
     final current = List<String>.from(state.selectedTagIds);
-    
+
     if (current.contains(tagId)) {
       current.remove(tagId);
     } else {
@@ -59,9 +57,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   /// Onboarding'i tamamla ve seçilen tag'leri kaydet
   Future<bool> completeOnboarding() async {
     if (!state.canProceed) {
-      state = state.copyWith(
-        errorMessage: 'Lütfen en az 3 ilgi alanı seçin',
-      );
+      state = state.copyWith(errorMessage: 'Lütfen en az 3 ilgi alanı seçin');
       return false;
     }
 
@@ -99,15 +95,15 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 }
 
 /// Onboarding provider
-final onboardingProvider = StateNotifierProvider<OnboardingNotifier, OnboardingState>((ref) {
-  return OnboardingNotifier(
-    InterestTagsRepositoryImpl(),
-    ref.read(userProfileRepositoryProvider),
-  );
-});
+final onboardingProvider =
+    StateNotifierProvider<OnboardingNotifier, OnboardingState>((ref) {
+      return OnboardingNotifier(
+        InterestTagsRepositoryImpl(),
+        ref.read(userProfileRepositoryProvider),
+      );
+    });
 
 /// Onboarding tamamlanmış mı kontrol provider'ı
 final hasCompletedOnboardingProvider = FutureProvider<bool>((ref) async {
   return await OnboardingService.hasCompletedOnboarding();
 });
-

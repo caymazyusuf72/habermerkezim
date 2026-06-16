@@ -22,7 +22,8 @@ ArticleModel createTestArticleModel({
   return ArticleModel(
     id: id ?? 'test-article-${DateTime.now().microsecondsSinceEpoch}',
     title: title ?? 'Test Haber Başlığı',
-    description: description ?? 'Test haber açıklaması içeriği burada yer alır.',
+    description:
+        description ?? 'Test haber açıklaması içeriği burada yer alır.',
     content: content ?? 'Test haber içeriği detaylı açıklama.',
     link: link ?? 'https://example.com/test-article',
     imageUrl: imageUrl ?? 'https://example.com/images/test.jpg',
@@ -52,7 +53,8 @@ Article createTestArticle({
   return Article(
     id: id ?? 'test-article-${DateTime.now().microsecondsSinceEpoch}',
     title: title ?? 'Test Haber Başlığı',
-    description: description ?? 'Test haber açıklaması içeriği burada yer alır.',
+    description:
+        description ?? 'Test haber açıklaması içeriği burada yer alır.',
     content: content ?? 'Test haber içeriği detaylı açıklama.',
     link: link ?? 'https://example.com/test-article',
     imageUrl: imageUrl ?? 'https://example.com/images/test.jpg',
@@ -134,11 +136,7 @@ List<Category> createTestCategoryList(int count) {
 
 /// MaterialApp wrapper ile widget test - widget'ı MaterialApp içinde pump eder
 Future<void> pumpApp(WidgetTester tester, Widget widget) async {
-  await tester.pumpWidget(
-    MaterialApp(
-      home: Scaffold(body: widget),
-    ),
-  );
+  await tester.pumpWidget(MaterialApp(home: Scaffold(body: widget)));
 }
 
 /// MaterialApp wrapper (tema destekli) ile widget test
@@ -150,7 +148,8 @@ Future<void> pumpAppWithTheme(
 }) async {
   await tester.pumpWidget(
     MaterialApp(
-      theme: theme ??
+      theme:
+          theme ??
           ThemeData(
             brightness: brightness,
             colorSchemeSeed: Colors.blue,

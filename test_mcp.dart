@@ -3,7 +3,12 @@ import 'dart:io';
 
 void main() async {
   print('Starting marionette_mcp process...');
-  final process = await Process.start('dart', ['pub', 'global', 'run', 'marionette_mcp']);
+  final process = await Process.start('dart', [
+    'pub',
+    'global',
+    'run',
+    'marionette_mcp',
+  ]);
 
   // Listen to stdout
   process.stdout.transform(utf8.decoder).listen((data) {
@@ -26,8 +31,8 @@ void main() async {
     'params': {
       'protocolVersion': '2024-11-05',
       'capabilities': {},
-      'clientInfo': {'name': 'test-client', 'version': '1.0.0'}
-    }
+      'clientInfo': {'name': 'test-client', 'version': '1.0.0'},
+    },
   };
 
   print('Sending initialize request...');
@@ -40,7 +45,7 @@ void main() async {
     'jsonrpc': '2.0',
     'id': 2,
     'method': 'tools/list',
-    'params': {}
+    'params': {},
   };
 
   print('Sending tools/list request...');

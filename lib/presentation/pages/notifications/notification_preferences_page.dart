@@ -15,10 +15,7 @@ class NotificationPreferencesPage extends ConsumerWidget {
     final settings = notificationState.settings;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bildirim Tercihleri'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Bildirim Tercihleri'), elevation: 0),
       body: notificationState.loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
@@ -88,7 +85,9 @@ class NotificationPreferencesPage extends ConsumerWidget {
               'Kategori Bildirimleri',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: const Text('Hangi kategorilerden bildirim almak istersiniz?'),
+            subtitle: const Text(
+              'Hangi kategorilerden bildirim almak istersiniz?',
+            ),
           ),
           const Divider(height: 1),
           ...categories.map((category) {
@@ -139,11 +138,7 @@ class NotificationPreferencesPage extends ConsumerWidget {
                 color: Colors.purple.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(
-                Icons.bedtime,
-                color: Colors.purple,
-                size: 24,
-              ),
+              child: const Icon(Icons.bedtime, color: Colors.purple, size: 24),
             ),
             title: const Text(
               'Sessiz Saatler',
@@ -276,7 +271,9 @@ class NotificationPreferencesPage extends ConsumerWidget {
               subtitle: Text(
                 'Bugün: ${settings.todayNotificationCount}/${settings.maxDailyNotifications}',
                 style: TextStyle(
-                  color: settings.todayNotificationCount >= settings.maxDailyNotifications
+                  color:
+                      settings.todayNotificationCount >=
+                          settings.maxDailyNotifications
                       ? Colors.red
                       : null,
                 ),
@@ -285,10 +282,10 @@ class NotificationPreferencesPage extends ConsumerWidget {
                 value: settings.maxDailyNotifications,
                 underline: Container(),
                 items: [5, 10, 15, 20, 25, 30]
-                    .map((count) => DropdownMenuItem(
-                          value: count,
-                          child: Text('$count'),
-                        ))
+                    .map(
+                      (count) =>
+                          DropdownMenuItem(value: count, child: Text('$count')),
+                    )
                     .toList(),
                 onChanged: (value) {
                   if (value != null) {
@@ -375,9 +372,12 @@ class NotificationPreferencesPage extends ConsumerWidget {
     bool isStart,
     NotificationSettings settings,
   ) async {
-    final initialHour = isStart ? settings.quietHoursStartHour : settings.quietHoursEndHour;
-    final initialMinute =
-        isStart ? settings.quietHoursStartMinute : settings.quietHoursEndMinute;
+    final initialHour = isStart
+        ? settings.quietHoursStartHour
+        : settings.quietHoursEndHour;
+    final initialMinute = isStart
+        ? settings.quietHoursStartMinute
+        : settings.quietHoursEndMinute;
 
     final time = await showTimePicker(
       context: context,
@@ -398,14 +398,18 @@ class NotificationPreferencesPage extends ConsumerWidget {
 
     if (time != null) {
       if (isStart) {
-        ref.read(notificationProvider.notifier).setQuietHours(
+        ref
+            .read(notificationProvider.notifier)
+            .setQuietHours(
               startHour: time.hour,
               startMinute: time.minute,
               endHour: settings.quietHoursEndHour,
               endMinute: settings.quietHoursEndMinute,
             );
       } else {
-        ref.read(notificationProvider.notifier).setQuietHours(
+        ref
+            .read(notificationProvider.notifier)
+            .setQuietHours(
               startHour: settings.quietHoursStartHour,
               startMinute: settings.quietHoursStartMinute,
               endHour: time.hour,

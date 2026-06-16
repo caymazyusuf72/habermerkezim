@@ -74,11 +74,11 @@ class RssSourcesState {
   /// Kategoriye göre kaynak sayıları
   Map<String, int> get sourcesPerCategory {
     final counts = <String, int>{'tümü': sources.length};
-    
+
     for (final source in sources) {
       counts[source.category] = (counts[source.category] ?? 0) + 1;
     }
-    
+
     return counts;
   }
 }
@@ -92,13 +92,10 @@ class RssSourcesNotifier extends StateNotifier<RssSourcesState> {
   /// Kaynakları yükle
   Future<void> loadSources() async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final sources = RssSourcesService.getAllSources();
-      state = state.copyWith(
-        sources: sources,
-        isLoading: false,
-      );
+      state = state.copyWith(sources: sources, isLoading: false);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -158,7 +155,9 @@ class RssSourcesNotifier extends StateNotifier<RssSourcesState> {
       }
       return success;
     } catch (e) {
-      state = state.copyWith(error: 'Kaynak durumu değiştirilirken hata oluştu: $e');
+      state = state.copyWith(
+        error: 'Kaynak durumu değiştirilirken hata oluştu: $e',
+      );
       return false;
     }
   }
@@ -166,7 +165,9 @@ class RssSourcesNotifier extends StateNotifier<RssSourcesState> {
   /// Kaynağı kopyala
   Future<RssSource?> duplicateSource(String sourceId) async {
     try {
-      final duplicatedSource = await RssSourcesService.duplicateSource(sourceId);
+      final duplicatedSource = await RssSourcesService.duplicateSource(
+        sourceId,
+      );
       if (duplicatedSource != null) {
         await loadSources(); // Listeyi güncelle
       }
@@ -180,7 +181,7 @@ class RssSourcesNotifier extends StateNotifier<RssSourcesState> {
   /// Varsayılan kaynaklara sıfırla
   Future<bool> resetToDefaults() async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final success = await RssSourcesService.resetToDefaults();
       if (success) {
@@ -199,7 +200,7 @@ class RssSourcesNotifier extends StateNotifier<RssSourcesState> {
   /// Tüm kaynakları temizle
   Future<bool> clearAllSources() async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final success = await RssSourcesService.clearAllSources();
       if (success) {
@@ -231,10 +232,13 @@ class RssSourcesNotifier extends StateNotifier<RssSourcesState> {
   }
 
   /// Kaynağın son güncelleme tarihini güncelle
-  Future<bool> updateLastFetchedTime(String sourceId, {int? articleCount}) async {
+  Future<bool> updateLastFetchedTime(
+    String sourceId, {
+    int? articleCount,
+  }) async {
     try {
       final success = await RssSourcesService.updateLastFetchedTime(
-        sourceId, 
+        sourceId,
         articleCount: articleCount,
       );
       if (success) {
@@ -329,9 +333,10 @@ class RssSourcesNotifier extends StateNotifier<RssSourcesState> {
 }
 
 /// RSS kaynakları provider
-final rssSourcesProvider = StateNotifierProvider<RssSourcesNotifier, RssSourcesState>((ref) {
-  return RssSourcesNotifier();
-});
+final rssSourcesProvider =
+    StateNotifierProvider<RssSourcesNotifier, RssSourcesState>((ref) {
+      return RssSourcesNotifier();
+    });
 
 /// Aktif RSS kaynaklarını al
 final activeRssSourcesProvider = Provider<List<RssSource>>((ref) {
@@ -340,13 +345,14 @@ final activeRssSourcesProvider = Provider<List<RssSource>>((ref) {
 });
 
 /// Kategoriye göre aktif RSS kaynaklarını al
-final activeRssSourcesByCategoryProvider = Provider.family<List<RssSource>, String>((ref, category) {
-  final sources = ref.watch(activeRssSourcesProvider);
-  if (category == 'genel' || category == 'tümü') {
-    return sources;
-  }
-  return sources.where((source) => source.category == category).toList();
-});
+final activeRssSourcesByCategoryProvider =
+    Provider.family<List<RssSource>, String>((ref, category) {
+      final sources = ref.watch(activeRssSourcesProvider);
+      if (category == 'genel' || category == 'tümü') {
+        return sources;
+      }
+      return sources.where((source) => source.category == category).toList();
+    });
 
 /// RSS kaynak kategorileri provider
 final rssSourceCategoriesProvider = Provider<List<String>>((ref) {

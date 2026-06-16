@@ -17,8 +17,7 @@ void main() {
   group('GetBookmarksUseCase', () {
     test('boş liste döndürmeli - bookmark yoksa', () async {
       // Arrange
-      when(() => mockRepository.getBookmarks())
-          .thenAnswer((_) async => []);
+      when(() => mockRepository.getBookmarks()).thenAnswer((_) async => []);
 
       // Act
       final result = await useCase.call();
@@ -31,8 +30,9 @@ void main() {
     test('dolu liste döndürmeli - bookmark varsa', () async {
       // Arrange
       final articles = createTestArticleList(3);
-      when(() => mockRepository.getBookmarks())
-          .thenAnswer((_) async => articles);
+      when(
+        () => mockRepository.getBookmarks(),
+      ).thenAnswer((_) async => articles);
 
       // Act
       final result = await useCase.call();
@@ -45,8 +45,9 @@ void main() {
 
     test('repository hata fırlatırsa exception fırlatmalı', () async {
       // Arrange
-      when(() => mockRepository.getBookmarks())
-          .thenThrow(Exception('Veritabanı hatası'));
+      when(
+        () => mockRepository.getBookmarks(),
+      ).thenThrow(Exception('Veritabanı hatası'));
 
       // Act & Assert
       expect(() => useCase.call(), throwsException);

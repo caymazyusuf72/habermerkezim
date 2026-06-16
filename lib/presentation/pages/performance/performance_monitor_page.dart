@@ -9,10 +9,12 @@ class PerformanceMonitorPage extends ConsumerStatefulWidget {
   const PerformanceMonitorPage({super.key});
 
   @override
-  ConsumerState<PerformanceMonitorPage> createState() => _PerformanceMonitorPageState();
+  ConsumerState<PerformanceMonitorPage> createState() =>
+      _PerformanceMonitorPageState();
 }
 
-class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage> {
+class _PerformanceMonitorPageState
+    extends ConsumerState<PerformanceMonitorPage> {
   Timer? _timer;
   int _memoryUsageMB = 0;
   int _rssMemoryMB = 0;
@@ -20,27 +22,27 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
   int _activeObjects = 0;
   DateTime _startTime = DateTime.now();
   int _updateCount = 0;
-  
+
   // Cache boyutları (yaklaşık)
   int _imageCacheSizeMB = 0;
   int _diskCacheSizeMB = 0;
-  
+
   // Network (simüle - gerçek network tracking için platform channel gerekir)
   double _networkUsageKB = 0;
   int _networkRequestCount = 0;
-  
+
   @override
   void initState() {
     super.initState();
     _startMonitoring();
   }
-  
+
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
   }
-  
+
   void _startMonitoring() {
     _updateMetrics();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -49,28 +51,28 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
       }
     });
   }
-  
+
   void _updateMetrics() {
     setState(() {
       _updateCount++;
-      
+
       // Process memory bilgisi (sadece isolate bazında)
       final info = ProcessInfo.currentRss;
       _rssMemoryMB = (info / (1024 * 1024)).round();
-      
+
       // Tahmini heap memory
       _memoryUsageMB = (_rssMemoryMB * 0.7).round();
-      
+
       // CPU kullanımı simülasyonu (gerçek değer için platform channel gerekir)
       _cpuUsage = (50 + (DateTime.now().second % 20)).toDouble();
-      
+
       // Aktif nesneler (tahmini)
       _activeObjects = _updateCount * 100 + 5000;
-      
+
       // Cache boyutları (simüle - gerçek değer için file system scan gerekir)
       _imageCacheSizeMB = (20 + (_updateCount % 30)).toInt();
       _diskCacheSizeMB = (15 + (_updateCount % 25)).toInt();
-      
+
       // Network kullanımı (simüle)
       _networkUsageKB += (100 + (DateTime.now().millisecond % 50));
       if (_updateCount % 5 == 0) {
@@ -78,7 +80,7 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
       }
     });
   }
-  
+
   String _getUptime() {
     final duration = DateTime.now().difference(_startTime);
     final hours = duration.inHours;
@@ -86,11 +88,11 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
     final seconds = duration.inSeconds % 60;
     return '${hours}s ${minutes}d ${seconds}s';
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Anlık Performans İzleme'),
@@ -126,9 +128,9 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
               value: _getUptime(),
               color: Colors.blue,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // RAM Kullanımı - Anlık
             _buildRealtimeCard(
               context,
@@ -138,12 +140,16 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
               items: [
                 _MetricItem('RSS Memory', '$_rssMemoryMB MB', 'Gerçek zamanlı'),
                 _MetricItem('Heap Memory', '$_memoryUsageMB MB', 'Tahmini'),
-                _MetricItem('Aktif Nesneler', '$_activeObjects', 'Widget & Objects'),
+                _MetricItem(
+                  'Aktif Nesneler',
+                  '$_activeObjects',
+                  'Widget & Objects',
+                ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // CPU Kullanımı
             _buildRealtimeCard(
               context,
@@ -151,14 +157,26 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
               title: 'CPU Kullanımı',
               color: Colors.red,
               items: [
-                _MetricItem('CPU Yükü', '${_cpuUsage.toStringAsFixed(1)}%', 'Anlık'),
-                _MetricItem('FPS', '${58 + (DateTime.now().second % 3)}', 'Hedef: 60'),
-                _MetricItem('Frame Time', '${16 + (DateTime.now().millisecond % 4)} ms', 'Hedef: 16ms'),
+                _MetricItem(
+                  'CPU Yükü',
+                  '${_cpuUsage.toStringAsFixed(1)}%',
+                  'Anlık',
+                ),
+                _MetricItem(
+                  'FPS',
+                  '${58 + (DateTime.now().second % 3)}',
+                  'Hedef: 60',
+                ),
+                _MetricItem(
+                  'Frame Time',
+                  '${16 + (DateTime.now().millisecond % 4)} ms',
+                  'Hedef: 16ms',
+                ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Disk & Cache
             _buildRealtimeCard(
               context,
@@ -166,14 +184,22 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
               title: 'Disk & Cache (Anlık)',
               color: Colors.orange,
               items: [
-                _MetricItem('Görsel Cache', '$_imageCacheSizeMB MB', 'Limit: 100MB'),
+                _MetricItem(
+                  'Görsel Cache',
+                  '$_imageCacheSizeMB MB',
+                  'Limit: 100MB',
+                ),
                 _MetricItem('Disk Cache', '$_diskCacheSizeMB MB', 'Veri cache'),
-                _MetricItem('Toplam Cache', '${_imageCacheSizeMB + _diskCacheSizeMB} MB', 'Geçici veriler'),
+                _MetricItem(
+                  'Toplam Cache',
+                  '${_imageCacheSizeMB + _diskCacheSizeMB} MB',
+                  'Geçici veriler',
+                ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Network Kullanımı
             _buildRealtimeCard(
               context,
@@ -181,14 +207,26 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
               title: 'Network Kullanımı (Anlık)',
               color: Colors.green,
               items: [
-                _MetricItem('Toplam Veri', '${(_networkUsageKB / 1024).toStringAsFixed(2)} MB', 'Oturum başına'),
-                _MetricItem('İstek Sayısı', '$_networkRequestCount', 'API çağrıları'),
-                _MetricItem('Ortalama', '${(_networkUsageKB / (_updateCount > 0 ? _updateCount : 1)).toStringAsFixed(1)} KB/s', 'Saniye başına'),
+                _MetricItem(
+                  'Toplam Veri',
+                  '${(_networkUsageKB / 1024).toStringAsFixed(2)} MB',
+                  'Oturum başına',
+                ),
+                _MetricItem(
+                  'İstek Sayısı',
+                  '$_networkRequestCount',
+                  'API çağrıları',
+                ),
+                _MetricItem(
+                  'Ortalama',
+                  '${(_networkUsageKB / (_updateCount > 0 ? _updateCount : 1)).toStringAsFixed(1)} KB/s',
+                  'Saniye başına',
+                ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Güncelleme bilgisi
             Card(
               color: Colors.blue.withValues(alpha: 0.1),
@@ -208,9 +246,9 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Uyarı
             Card(
               color: Colors.orange.withValues(alpha: 0.1),
@@ -242,9 +280,9 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Temizleme butonu
             ElevatedButton.icon(
               onPressed: () => _showClearCacheDialog(context),
@@ -261,7 +299,7 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
       ),
     );
   }
-  
+
   Widget _buildInfoCard(
     BuildContext context, {
     required IconData icon,
@@ -270,12 +308,10 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
     required Color color,
   }) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -315,7 +351,7 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
       ),
     );
   }
-  
+
   Widget _buildRealtimeCard(
     BuildContext context, {
     required IconData icon,
@@ -324,12 +360,10 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
     required List<_MetricItem> items,
   }) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -357,7 +391,10 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
                 ),
                 // Anlık göstergesi
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.green.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
@@ -387,51 +424,55 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 8),
-            
+
             // Metrikler
-            ...items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        item.label,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
+            ...items.map(
+              (item) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          item.label,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      Text(
-                        item.value,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: color,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          item.value,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: color,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item.description,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    Text(
+                      item.description,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
     );
   }
-  
+
   void _showClearCacheDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -450,7 +491,9 @@ class _PerformanceMonitorPageState extends ConsumerState<PerformanceMonitorPage>
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Cache temizleme ayarlar sayfasından yapılabilir'),
+                  content: Text(
+                    'Cache temizleme ayarlar sayfasından yapılabilir',
+                  ),
                   duration: Duration(seconds: 2),
                 ),
               );

@@ -111,18 +111,9 @@ class OnboardingPageController extends StateNotifier<OnboardingPageState> {
       );
 
       // Bildirim tercihleri
-      await prefs.setBool(
-        'notifications_enabled',
-        state.notificationsEnabled,
-      );
-      await prefs.setBool(
-        'breaking_news_enabled',
-        state.breakingNewsEnabled,
-      );
-      await prefs.setBool(
-        'daily_digest_enabled',
-        state.dailyDigestEnabled,
-      );
+      await prefs.setBool('notifications_enabled', state.notificationsEnabled);
+      await prefs.setBool('breaking_news_enabled', state.breakingNewsEnabled);
+      await prefs.setBool('daily_digest_enabled', state.dailyDigestEnabled);
 
       state = state.copyWith(isCompleted: true, isLoading: false);
       return true;
@@ -142,8 +133,8 @@ class OnboardingPageController extends StateNotifier<OnboardingPageState> {
 /// Onboarding controller provider
 final onboardingPageControllerProvider =
     StateNotifierProvider<OnboardingPageController, OnboardingPageState>(
-  (ref) => OnboardingPageController(),
-);
+      (ref) => OnboardingPageController(),
+    );
 
 /// Onboarding tamamlanmış mı provider
 final isOnboardingCompletedProvider = FutureProvider<bool>((ref) async {

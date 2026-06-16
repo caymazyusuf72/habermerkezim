@@ -16,8 +16,9 @@ void main() {
   group('GetThemeUseCase', () {
     test('light tema bilgisi döndürmeli', () async {
       // Arrange
-      when(() => mockRepository.getThemeMode())
-          .thenAnswer((_) async => 'light');
+      when(
+        () => mockRepository.getThemeMode(),
+      ).thenAnswer((_) async => 'light');
 
       // Act
       final result = await useCase.call();
@@ -29,8 +30,7 @@ void main() {
 
     test('dark tema bilgisi döndürmeli', () async {
       // Arrange
-      when(() => mockRepository.getThemeMode())
-          .thenAnswer((_) async => 'dark');
+      when(() => mockRepository.getThemeMode()).thenAnswer((_) async => 'dark');
 
       // Act
       final result = await useCase.call();
@@ -41,8 +41,9 @@ void main() {
 
     test('system tema bilgisi döndürmeli', () async {
       // Arrange
-      when(() => mockRepository.getThemeMode())
-          .thenAnswer((_) async => 'system');
+      when(
+        () => mockRepository.getThemeMode(),
+      ).thenAnswer((_) async => 'system');
 
       // Act
       final result = await useCase.call();
@@ -53,8 +54,9 @@ void main() {
 
     test('repository hata fırlatırsa exception fırlatmalı', () async {
       // Arrange
-      when(() => mockRepository.getThemeMode())
-          .thenThrow(Exception('Tema okuma hatası'));
+      when(
+        () => mockRepository.getThemeMode(),
+      ).thenThrow(Exception('Tema okuma hatası'));
 
       // Act & Assert
       expect(() => useCase.call(), throwsException);

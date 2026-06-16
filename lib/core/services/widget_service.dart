@@ -13,7 +13,9 @@ class WidgetService {
 
   /// Widget'ı son haberlerle güncelle
   static Future<void> updateWidget(List<Article> articles) async {
-    debugPrint('🔄 WidgetService.updateWidget -> AppWidgetService.updateAllWidgets');
+    debugPrint(
+      '🔄 WidgetService.updateWidget -> AppWidgetService.updateAllWidgets',
+    );
     await AppWidgetService.updateAllWidgets(articles);
   }
 }

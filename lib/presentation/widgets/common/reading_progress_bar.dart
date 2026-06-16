@@ -48,10 +48,7 @@ class ReadingProgressBar extends StatelessWidget {
           ),
         Container(
           height: height,
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: radius,
-          ),
+          decoration: BoxDecoration(color: bgColor, borderRadius: radius),
           child: LayoutBuilder(
             builder: (context, constraints) {
               return Stack(
@@ -107,10 +104,8 @@ class GradientReadingProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = gradientColors ?? [
-      AppTheme.sageGreen,
-      AppTheme.sageGreenLight,
-    ];
+    final colors =
+        gradientColors ?? [AppTheme.sageGreen, AppTheme.sageGreenLight];
     final bgColor = backgroundColor ?? colors.first.withValues(alpha: 0.2);
     final radius = BorderRadius.circular(height / 2);
 
@@ -131,10 +126,7 @@ class GradientReadingProgressBar extends StatelessWidget {
           ),
         Container(
           height: height,
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: radius,
-          ),
+          decoration: BoxDecoration(color: bgColor, borderRadius: radius),
           child: LayoutBuilder(
             builder: (context, constraints) {
               return Stack(
@@ -281,7 +273,8 @@ class ScrollReadingProgressBar extends StatefulWidget {
   });
 
   @override
-  State<ScrollReadingProgressBar> createState() => _ScrollReadingProgressBarState();
+  State<ScrollReadingProgressBar> createState() =>
+      _ScrollReadingProgressBarState();
 }
 
 class _ScrollReadingProgressBarState extends State<ScrollReadingProgressBar> {
@@ -301,10 +294,10 @@ class _ScrollReadingProgressBarState extends State<ScrollReadingProgressBar> {
 
   void _updateProgress() {
     if (!widget.scrollController.hasClients) return;
-    
+
     final maxScroll = widget.scrollController.position.maxScrollExtent;
     final currentScroll = widget.scrollController.offset;
-    
+
     if (maxScroll > 0) {
       setState(() {
         _progress = (currentScroll / maxScroll).clamp(0.0, 1.0);
@@ -355,10 +348,12 @@ class SegmentedProgressBar extends StatelessWidget {
     return Row(
       children: List.generate(totalSegments, (index) {
         final isCompleted = index < completedSegments;
-        
+
         return Expanded(
           child: AnimatedContainer(
-            duration: animated ? const Duration(milliseconds: 300) : Duration.zero,
+            duration: animated
+                ? const Duration(milliseconds: 300)
+                : Duration.zero,
             curve: Curves.easeOutCubic,
             height: height,
             margin: EdgeInsets.only(
@@ -413,7 +408,8 @@ class StepProgressIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final active = activeColor ?? theme.colorScheme.primary;
-    final inactive = inactiveColor ?? theme.colorScheme.outline.withValues(alpha: 0.3);
+    final inactive =
+        inactiveColor ?? theme.colorScheme.outline.withValues(alpha: 0.3);
     final completed = completedColor ?? active;
 
     return Column(
@@ -426,7 +422,7 @@ class StepProgressIndicator extends StatelessWidget {
               final stepIndex = index ~/ 2;
               final isCompleted = stepIndex < currentStep;
               final isActive = stepIndex == currentStep;
-              
+
               return _StepCircle(
                 size: size,
                 stepNumber: stepIndex + 1,
@@ -441,7 +437,7 @@ class StepProgressIndicator extends StatelessWidget {
             else {
               final lineIndex = index ~/ 2;
               final isCompleted = lineIndex < currentStep;
-              
+
               return Expanded(
                 child: Container(
                   height: lineHeight,
@@ -501,7 +497,7 @@ class _StepCircle extends StatelessWidget {
   Widget build(BuildContext context) {
     Color bgColor;
     Color contentColor;
-    
+
     if (isCompleted) {
       bgColor = completedColor;
       contentColor = Colors.white;
@@ -536,11 +532,7 @@ class _StepCircle extends StatelessWidget {
       ),
       child: Center(
         child: isCompleted
-            ? Icon(
-                Icons.check_rounded,
-                size: size * 0.5,
-                color: contentColor,
-              )
+            ? Icon(Icons.check_rounded, size: size * 0.5, color: contentColor)
             : Text(
                 stepNumber.toString(),
                 style: TextStyle(

@@ -15,9 +15,7 @@ class CollectionsPage extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Koleksiyonlar'),
-      ),
+      appBar: AppBar(title: const Text('Koleksiyonlar')),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCreateCollectionDialog(context, ref),
         child: const Icon(Icons.add),
@@ -147,12 +145,14 @@ class CollectionsPage extends ConsumerWidget {
             onPressed: () {
               final name = nameController.text.trim();
               if (name.isNotEmpty) {
-                ref.read(collectionsProvider.notifier).createCollection(
-                  name: name,
-                  description: descController.text.trim().isEmpty
-                      ? null
-                      : descController.text.trim(),
-                );
+                ref
+                    .read(collectionsProvider.notifier)
+                    .createCollection(
+                      name: name,
+                      description: descController.text.trim().isEmpty
+                          ? null
+                          : descController.text.trim(),
+                    );
                 Navigator.of(context).pop();
               }
             },
@@ -169,7 +169,9 @@ class CollectionsPage extends ConsumerWidget {
     ArticleCollection collection,
   ) {
     final nameController = TextEditingController(text: collection.name);
-    final descController = TextEditingController(text: collection.description ?? '');
+    final descController = TextEditingController(
+      text: collection.description ?? '',
+    );
 
     showDialog(
       context: context,
@@ -211,7 +213,9 @@ class CollectionsPage extends ConsumerWidget {
                       ? null
                       : descController.text.trim(),
                 );
-                ref.read(collectionsProvider.notifier).updateCollection(updated);
+                ref
+                    .read(collectionsProvider.notifier)
+                    .updateCollection(updated);
                 Navigator.of(context).pop();
               }
             },
@@ -231,7 +235,9 @@ class CollectionsPage extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Koleksiyonu Sil'),
-        content: Text('"${collection.name}" koleksiyonu silinecek. Bu islem geri alinamaz.'),
+        content: Text(
+          '"${collection.name}" koleksiyonu silinecek. Bu islem geri alinamaz.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -242,7 +248,9 @@ class CollectionsPage extends ConsumerWidget {
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
             onPressed: () {
-              ref.read(collectionsProvider.notifier).deleteCollection(collection.id);
+              ref
+                  .read(collectionsProvider.notifier)
+                  .deleteCollection(collection.id);
               Navigator.of(context).pop();
             },
             child: const Text('Sil'),
@@ -289,7 +297,8 @@ class _CollectionCard extends StatelessWidget {
                     Image.network(
                       collection.coverImageUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _buildPlaceholder(colorScheme),
+                      errorBuilder: (_, __, ___) =>
+                          _buildPlaceholder(colorScheme),
                     )
                   else
                     _buildPlaceholder(colorScheme),
@@ -423,8 +432,8 @@ class _CollectionCard extends StatelessWidget {
         child: Icon(
           collection.isDefault
               ? (collection.id == CollectionService.favoritesCollectionId
-                  ? Icons.favorite
-                  : Icons.bookmark)
+                    ? Icons.favorite
+                    : Icons.bookmark)
               : Icons.collections_bookmark,
           size: 40,
           color: colorScheme.onSurfaceVariant.withOpacity(0.3),
@@ -497,12 +506,13 @@ class _CollectionDetailPage extends ConsumerWidget {
                 return _CollectionArticleCard(
                   article: article,
                   onRemove: () {
-                    ref.read(collectionsProvider.notifier).removeArticle(
-                      collection.id,
-                      article.id,
-                    );
+                    ref
+                        .read(collectionsProvider.notifier)
+                        .removeArticle(collection.id, article.id);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Haber koleksiyondan cikarildi')),
+                      const SnackBar(
+                        content: Text('Haber koleksiyondan cikarildi'),
+                      ),
                     );
                   },
                 );
@@ -517,10 +527,7 @@ class _CollectionArticleCard extends StatelessWidget {
   final Article article;
   final VoidCallback onRemove;
 
-  const _CollectionArticleCard({
-    required this.article,
-    required this.onRemove,
-  });
+  const _CollectionArticleCard({required this.article, required this.onRemove});
 
   @override
   Widget build(BuildContext context) {
@@ -535,10 +542,7 @@ class _CollectionArticleCard extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         color: colorScheme.error,
-        child: Icon(
-          Icons.delete_outline,
-          color: colorScheme.onError,
-        ),
+        child: Icon(Icons.delete_outline, color: colorScheme.onError),
       ),
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),

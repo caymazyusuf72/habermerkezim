@@ -7,10 +7,7 @@ import '../../../domain/entities/article.dart';
 class ReadingModePage extends ConsumerStatefulWidget {
   final Article article;
 
-  const ReadingModePage({
-    super.key,
-    required this.article,
-  });
+  const ReadingModePage({super.key, required this.article});
 
   @override
   ConsumerState<ReadingModePage> createState() => _ReadingModePageState();
@@ -37,14 +34,14 @@ class _ReadingModePageState extends ConsumerState<ReadingModePage> {
 
   String _getCleanContent() {
     String content = widget.article.content ?? widget.article.description;
-    
+
     // HTML tag'lerini temizle
     content = content.replaceAll(RegExp(r'<[^>]*>'), '');
-    
+
     // Fazla boşlukları temizle
     content = content.replaceAll(RegExp(r'\s+'), ' ');
     content = content.replaceAll(RegExp(r'\n\s*\n'), '\n\n');
-    
+
     return content.trim();
   }
 
@@ -84,9 +81,9 @@ class _ReadingModePageState extends ConsumerState<ReadingModePage> {
                   height: _lineHeight,
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Meta bilgiler
               Row(
                 children: [
@@ -109,9 +106,9 @@ class _ReadingModePageState extends ConsumerState<ReadingModePage> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // İçerik
               Text(
                 _getCleanContent(),
@@ -152,7 +149,7 @@ class _ReadingModePageState extends ConsumerState<ReadingModePage> {
                   });
                 },
               ),
-              
+
               // Satır yüksekliği
               Text('Satır Yüksekliği: ${_lineHeight.toStringAsFixed(1)}'),
               Slider(
@@ -167,14 +164,17 @@ class _ReadingModePageState extends ConsumerState<ReadingModePage> {
                   });
                 },
               ),
-              
+
               // Font ailesi
               DropdownButton<String>(
                 value: _fontFamily,
                 isExpanded: true,
                 items: const [
                   DropdownMenuItem(value: 'Georgia', child: Text('Georgia')),
-                  DropdownMenuItem(value: 'Times New Roman', child: Text('Times New Roman')),
+                  DropdownMenuItem(
+                    value: 'Times New Roman',
+                    child: Text('Times New Roman'),
+                  ),
                   DropdownMenuItem(value: 'Arial', child: Text('Arial')),
                   DropdownMenuItem(value: 'Roboto', child: Text('Roboto')),
                 ],
@@ -186,9 +186,9 @@ class _ReadingModePageState extends ConsumerState<ReadingModePage> {
                   }
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Gece modu
               SwitchListTile(
                 title: const Text('Gece Modu'),
@@ -219,4 +219,3 @@ class _ReadingModePageState extends ConsumerState<ReadingModePage> {
     );
   }
 }
-

@@ -15,7 +15,11 @@ abstract class CategoryRepository {
   Future<Category?> getCategoryById(String categoryId);
 
   /// Kategoriye göre haberleri getir
-  Future<List<Article>> getCategoryNews(String categoryId, {int page = 1, int limit = 20});
+  Future<List<Article>> getCategoryNews(
+    String categoryId, {
+    int page = 1,
+    int limit = 20,
+  });
 
   /// Kategori sıralamasını güncelle
   Future<void> updateCategoryOrder(List<String> categoryIds);

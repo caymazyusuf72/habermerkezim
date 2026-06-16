@@ -7,17 +7,18 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../../domain/entities/article.dart';
 
 /// Görsel Ön Yükleme Servisi
-/// 
+///
 /// Kullanıcı listeyi kaydırırken, görünür olmayan ama yakında görünecek
 /// olan görselleri önceden yükler. Bu sayede kullanıcı deneyimi iyileşir.
-/// 
+///
 /// Özellikler:
 /// - Akıllı prefetch (scroll yönüne göre)
 /// - Öncelik sırası (yakın görseller önce)
 /// - Bellek yönetimi (max concurrent downloads)
 /// - Hata toleransı (başarısız yüklemeler atlanır)
 class ImagePrefetchService {
-  static final ImagePrefetchService _instance = ImagePrefetchService._internal();
+  static final ImagePrefetchService _instance =
+      ImagePrefetchService._internal();
   factory ImagePrefetchService() => _instance;
   ImagePrefetchService._internal();
 
@@ -63,7 +64,7 @@ class ImagePrefetchService {
   int get activeCount => _activePrefetches.length;
 
   /// Makalelerin görsellerini prefetch et
-  /// 
+  ///
   /// [articles] - Prefetch edilecek makaleler
   /// [startIndex] - Başlangıç indeksi (görünür alan)
   /// [prefetchCount] - Kaç makale önceden yüklenecek
@@ -152,9 +153,7 @@ class ImagePrefetchService {
 
     try {
       // Timeout ile görsel yükle
-      await _cacheManager
-          .downloadFile(imageUrl)
-          .timeout(_prefetchTimeout);
+      await _cacheManager.downloadFile(imageUrl).timeout(_prefetchTimeout);
 
       _completedPrefetches.add(imageUrl);
       // Prefetch log'ları kaldırıldı (performans)
@@ -214,17 +213,17 @@ class ImagePrefetchService {
 }
 
 /// Scroll Controller için Prefetch Mixin
-/// 
+///
 /// ListView veya ScrollView'a prefetch özelliği ekler
 mixin ImagePrefetchMixin<T extends StatefulWidget> on State<T> {
   final ImagePrefetchService _prefetchService = ImagePrefetchService();
-  
+
   ScrollController? _scrollController;
   List<Article>? _articles;
-  
+
   double _lastScrollPosition = 0;
   int _lastScrollDirection = 1;
-  
+
   /// Prefetch'i başlat
   void initPrefetch({
     required ScrollController scrollController,
@@ -232,31 +231,31 @@ mixin ImagePrefetchMixin<T extends StatefulWidget> on State<T> {
   }) {
     _scrollController = scrollController;
     _articles = articles;
-    
+
     scrollController.addListener(_onScroll);
   }
-  
+
   /// Makaleleri güncelle
   void updateArticles(List<Article> articles) {
     _articles = articles;
   }
-  
+
   /// Scroll dinleyicisi
   void _onScroll() {
     if (_scrollController == null || _articles == null) return;
-    
+
     final currentPosition = _scrollController!.position.pixels;
     final maxExtent = _scrollController!.position.maxScrollExtent;
-    
+
     // Scroll yönünü belirle
     _lastScrollDirection = currentPosition > _lastScrollPosition ? 1 : -1;
     _lastScrollPosition = currentPosition;
-    
+
     // Görünür alan indeksini hesapla (yaklaşık)
     // Varsayılan kart yüksekliği: 120px
     const estimatedItemHeight = 120.0;
     final visibleStartIndex = (currentPosition / estimatedItemHeight).floor();
-    
+
     // Prefetch tetikle
     _prefetchService.prefetchArticleImages(
       articles: _articles!,
@@ -265,7 +264,7 @@ mixin ImagePrefetchMixin<T extends StatefulWidget> on State<T> {
       scrollDirection: _lastScrollDirection,
     );
   }
-  
+
   /// Prefetch'i temizle
   void disposePrefetch() {
     _scrollController?.removeListener(_onScroll);

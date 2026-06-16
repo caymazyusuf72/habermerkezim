@@ -12,7 +12,8 @@ class AddEditRssSourcePage extends ConsumerStatefulWidget {
   const AddEditRssSourcePage({super.key, this.source});
 
   @override
-  ConsumerState<AddEditRssSourcePage> createState() => _AddEditRssSourcePageState();
+  ConsumerState<AddEditRssSourcePage> createState() =>
+      _AddEditRssSourcePageState();
 }
 
 class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
@@ -20,11 +21,11 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
   final _nameController = TextEditingController();
   final _urlController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   String _selectedCategory = 'genel';
   bool _isEnabled = true;
   bool _isLoading = false;
-  
+
   /// Düzenleme modu mu?
   bool get isEditing => widget.source != null;
 
@@ -57,7 +58,7 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Kaynağı Düzenle' : 'Yeni Kaynak Ekle'),
@@ -65,7 +66,7 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
           // Kaydet butonu
           TextButton(
             onPressed: _isLoading ? null : _saveSource,
-            child: _isLoading 
+            child: _isLoading
                 ? const SizedBox(
                     width: 20,
                     height: 20,
@@ -83,30 +84,30 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
             // Kaynak adı
             _buildNameField(),
             const SizedBox(height: 16),
-            
+
             // RSS URL
             _buildUrlField(),
             const SizedBox(height: 16),
-            
+
             // Kategori seçimi
             _buildCategoryField(),
             const SizedBox(height: 16),
-            
+
             // Açıklama
             _buildDescriptionField(),
             const SizedBox(height: 16),
-            
+
             // Aktif/Pasif durumu
             _buildEnabledSwitch(theme),
             const SizedBox(height: 24),
-            
+
             // URL test butonu
             _buildTestUrlButton(theme),
             const SizedBox(height: 24),
-            
+
             // Kaydet butonu (alt)
             _buildSaveButton(theme),
-            
+
             if (isEditing) ...[
               const SizedBox(height: 16),
               _buildDeleteButton(theme),
@@ -166,7 +167,9 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
             if (value == null || value.trim().isEmpty) {
               return 'RSS URL boş olamaz';
             }
-            if (!ref.read(rssSourcesProvider.notifier).isValidRssUrl(value.trim())) {
+            if (!ref
+                .read(rssSourcesProvider.notifier)
+                .isValidRssUrl(value.trim())) {
               return 'Geçersiz URL formatı';
             }
             return null;
@@ -175,11 +178,15 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
             if (value.isNotEmpty) {
               // URL'den otomatik tahmin yap
               if (_nameController.text.isEmpty) {
-                final predictedName = ref.read(rssSourcesProvider.notifier).predictTitleFromUrl(value);
+                final predictedName = ref
+                    .read(rssSourcesProvider.notifier)
+                    .predictTitleFromUrl(value);
                 _nameController.text = predictedName;
               }
-              
-              final predictedCategory = ref.read(rssSourcesProvider.notifier).predictCategoryFromUrl(value);
+
+              final predictedCategory = ref
+                  .read(rssSourcesProvider.notifier)
+                  .predictCategoryFromUrl(value);
               if (predictedCategory != 'genel') {
                 setState(() {
                   _selectedCategory = predictedCategory;
@@ -192,7 +199,9 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
         Text(
           'RSS feed URL\'sini girin (örn: .../rss.xml, .../feed, .../rss)',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -228,10 +237,7 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
               Container(
                 width: 12,
                 height: 12,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
               const SizedBox(width: 8),
               Text(category.toUpperCase()),
@@ -276,7 +282,7 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
       child: SwitchListTile(
         title: const Text('Kaynağı Aktif Et'),
         subtitle: Text(
-          _isEnabled 
+          _isEnabled
               ? 'Bu kaynak haberler güncellenirken kullanılacak'
               : 'Bu kaynak haberler güncellenirken kullanılmayacak',
         ),
@@ -310,7 +316,7 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
   Widget _buildSaveButton(ThemeData theme) {
     return ElevatedButton.icon(
       onPressed: _isLoading ? null : _saveSource,
-      icon: _isLoading 
+      icon: _isLoading
           ? const SizedBox(
               width: 20,
               height: 20,
@@ -357,19 +363,26 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
       final uri = Uri.parse(url);
       if (uri.hasScheme && uri.hasAuthority) {
         _showSnackBar('URL formatı geçerli görünüyor ✓', isError: false);
-        
+
         // URL'den otomatik tahminler yap
         if (_nameController.text.isEmpty) {
-          final predictedName = ref.read(rssSourcesProvider.notifier).predictTitleFromUrl(url);
+          final predictedName = ref
+              .read(rssSourcesProvider.notifier)
+              .predictTitleFromUrl(url);
           _nameController.text = predictedName;
         }
-        
-        final predictedCategory = ref.read(rssSourcesProvider.notifier).predictCategoryFromUrl(url);
+
+        final predictedCategory = ref
+            .read(rssSourcesProvider.notifier)
+            .predictCategoryFromUrl(url);
         if (predictedCategory != 'genel' && _selectedCategory == 'genel') {
           setState(() {
             _selectedCategory = predictedCategory;
           });
-          _showSnackBar('Kategori otomatik olarak "$predictedCategory" seçildi', isError: false);
+          _showSnackBar(
+            'Kategori otomatik olarak "$predictedCategory" seçildi',
+            isError: false,
+          );
         }
       } else {
         _showSnackBar('URL formatı eksik veya hatalı', isError: true);
@@ -391,7 +404,11 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
 
     try {
       final source = RssSource(
-        id: isEditing ? widget.source!.id : ref.read(rssSourcesProvider.notifier).generateUniqueId(_nameController.text.trim()),
+        id: isEditing
+            ? widget.source!.id
+            : ref
+                  .read(rssSourcesProvider.notifier)
+                  .generateUniqueId(_nameController.text.trim()),
         name: _nameController.text.trim(),
         url: _urlController.text.trim(),
         category: _selectedCategory,
@@ -404,7 +421,9 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
 
       bool success;
       if (isEditing) {
-        success = await ref.read(rssSourcesProvider.notifier).updateSource(source);
+        success = await ref
+            .read(rssSourcesProvider.notifier)
+            .updateSource(source);
       } else {
         success = await ref.read(rssSourcesProvider.notifier).addSource(source);
       }
@@ -419,7 +438,9 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
         }
       } else {
         _showSnackBar(
-          isEditing ? 'Kaynak güncellenirken hata oluştu' : 'Kaynak eklenirken hata oluştu',
+          isEditing
+              ? 'Kaynak güncellenirken hata oluştu'
+              : 'Kaynak eklenirken hata oluştu',
           isError: true,
         );
       }
@@ -440,7 +461,9 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Kaynağı Sil'),
-        content: Text('${widget.source!.name} kaynağını silmek istediğinizden emin misiniz?'),
+        content: Text(
+          '${widget.source!.name} kaynağını silmek istediğinizden emin misiniz?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -467,8 +490,10 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
     });
 
     try {
-      final success = await ref.read(rssSourcesProvider.notifier).deleteSource(widget.source!.id);
-      
+      final success = await ref
+          .read(rssSourcesProvider.notifier)
+          .deleteSource(widget.source!.id);
+
       if (success && mounted) {
         _showSnackBar('Kaynak silindi', isError: false);
         Navigator.of(context).pop();
@@ -489,7 +514,7 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
   /// SnackBar göster
   void _showSnackBar(String message, {required bool isError}) {
     if (!mounted) return;
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(

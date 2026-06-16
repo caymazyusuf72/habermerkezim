@@ -5,7 +5,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// Real-time update servisi
 /// WebSocket ile canlı güncellemeler sağlar
 class RealtimeUpdateService {
-  static final RealtimeUpdateService _instance = RealtimeUpdateService._internal();
+  static final RealtimeUpdateService _instance =
+      RealtimeUpdateService._internal();
   factory RealtimeUpdateService() => _instance;
   RealtimeUpdateService._internal();
 
@@ -56,7 +57,7 @@ class RealtimeUpdateService {
   void _onMessage(dynamic message) {
     try {
       debugPrint('📨 WebSocket message received: $message');
-      
+
       // Parse message and create update
       final update = _parseMessage(message);
       if (update != null) {
@@ -77,7 +78,7 @@ class RealtimeUpdateService {
   void _onDone() {
     debugPrint('🔌 WebSocket connection closed');
     _isConnected = false;
-    
+
     // Auto-reconnect
     if (_reconnectAttempts < _maxReconnectAttempts) {
       _scheduleReconnect(_channel?.closeCode.toString() ?? '');
@@ -90,8 +91,10 @@ class RealtimeUpdateService {
     _reconnectAttempts++;
 
     if (_reconnectAttempts <= _maxReconnectAttempts) {
-      debugPrint('🔄 Scheduling reconnect attempt $_reconnectAttempts/$_maxReconnectAttempts');
-      
+      debugPrint(
+        '🔄 Scheduling reconnect attempt $_reconnectAttempts/$_maxReconnectAttempts',
+      );
+
       _reconnectTimer = Timer(_reconnectDelay * _reconnectAttempts, () {
         connect(url);
       });
@@ -128,12 +131,12 @@ class RealtimeUpdateService {
   Future<void> disconnect() async {
     _reconnectTimer?.cancel();
     _reconnectTimer = null;
-    
+
     if (_channel != null) {
       await _channel!.sink.close();
       _channel = null;
     }
-    
+
     _isConnected = false;
     _reconnectAttempts = 0;
     debugPrint('🔌 WebSocket disconnected');
@@ -229,11 +232,13 @@ class LiveBadgeService {
 
 /// Push notification servisi entegrasyonu
 class PushNotificationHandler {
-  static final PushNotificationHandler _instance = PushNotificationHandler._internal();
+  static final PushNotificationHandler _instance =
+      PushNotificationHandler._internal();
   factory PushNotificationHandler() => _instance;
   PushNotificationHandler._internal();
 
-  final _notificationController = StreamController<PushNotification>.broadcast();
+  final _notificationController =
+      StreamController<PushNotification>.broadcast();
   Stream<PushNotification> get notifications => _notificationController.stream;
 
   /// Breaking news bildirimi
@@ -245,7 +250,7 @@ class PushNotificationHandler {
       data: data,
       timestamp: DateTime.now(),
     );
-    
+
     _notificationController.add(notification);
     debugPrint('🚨 Breaking news notification: ${notification.title}');
   }
@@ -259,7 +264,7 @@ class PushNotificationHandler {
       data: data,
       timestamp: DateTime.now(),
     );
-    
+
     _notificationController.add(notification);
     debugPrint('💡 Recommendation notification: ${notification.title}');
   }
@@ -273,7 +278,7 @@ class PushNotificationHandler {
       data: data,
       timestamp: DateTime.now(),
     );
-    
+
     _notificationController.add(notification);
     debugPrint('📂 Category update notification: ${notification.title}');
   }
@@ -284,11 +289,7 @@ class PushNotificationHandler {
 }
 
 /// Bildirim türleri
-enum NotificationType {
-  breakingNews,
-  recommendation,
-  categoryUpdate,
-}
+enum NotificationType { breakingNews, recommendation, categoryUpdate }
 
 /// Push notification modeli
 class PushNotification {

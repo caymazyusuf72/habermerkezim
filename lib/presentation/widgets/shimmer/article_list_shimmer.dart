@@ -24,9 +24,8 @@ class ArticleListShimmerNew extends StatelessWidget {
       itemCount: itemCount,
       shrinkWrap: shrinkWrap,
       physics: physics ?? const AlwaysScrollableScrollPhysics(),
-      itemBuilder: (context, index) => ArticleCardShimmerNew(
-        isCompact: isCompact,
-      ),
+      itemBuilder: (context, index) =>
+          ArticleCardShimmerNew(isCompact: isCompact),
     );
   }
 }
@@ -46,9 +45,7 @@ class SliverArticleListShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        (context, index) => ArticleCardShimmerNew(
-          isCompact: isCompact,
-        ),
+        (context, index) => ArticleCardShimmerNew(isCompact: isCompact),
         childCount: itemCount,
       ),
     );

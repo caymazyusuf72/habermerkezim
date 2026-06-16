@@ -24,8 +24,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 
   Future<void> _handleComplete() async {
-    final success = await ref.read(onboardingProvider.notifier).completeOnboarding();
-    
+    final success = await ref
+        .read(onboardingProvider.notifier)
+        .completeOnboarding();
+
     if (success && mounted) {
       // Onboarding tamamlandı, ana sayfaya yönlendir
       // App.dart'ta otomatik olarak HomePage'e geçecek
@@ -59,7 +61,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              
+
               // Başlık
               Text(
                 'İlgi Alanlarınızı Seçin',
@@ -68,9 +70,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               // Açıklama
               Text(
                 'Size özel haber akışı oluşturmak için en az 3 ilgi alanı seçin. Daha sonra değiştirebilirsiniz.',
@@ -79,12 +81,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   height: 1.5,
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Seçim sayacı
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: isDark ? Colors.grey[800] : Colors.grey[100],
                   borderRadius: BorderRadius.circular(12),
@@ -108,7 +113,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                     ),
                     if (onboardingState.canProceed)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: AppTheme.sageGreen.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
@@ -135,15 +143,17 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Hashtag'ler - Wrap layout
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
                 children: allTags.map((tag) {
-                  final isSelected = onboardingState.selectedTagIds.contains(tag.id);
+                  final isSelected = onboardingState.selectedTagIds.contains(
+                    tag.id,
+                  );
                   return InterestTagChip(
                     tag: tag,
                     isSelected: isSelected,
@@ -153,14 +163,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   );
                 }).toList(),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Devam Et butonu
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: onboardingState.canProceed && !onboardingState.isLoading
+                  onPressed:
+                      onboardingState.canProceed && !onboardingState.isLoading
                       ? _handleComplete
                       : null,
                   style: ElevatedButton.styleFrom(
@@ -178,7 +189,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : Row(
@@ -197,9 +210,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                         ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Bilgi metni
               Center(
                 child: Text(
@@ -217,4 +230,3 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     );
   }
 }
-

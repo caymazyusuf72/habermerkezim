@@ -59,11 +59,11 @@ class UserProfile {
 
   /// Varsayılan profil oluşturur
   static UserProfile get defaultProfile => UserProfile(
-        id: 'default_user',
-        createdAt: DateTime.now(),
-        stats: UserStats.empty,
-        preferences: UserPreferences.defaultPreferences,
-      );
+    id: 'default_user',
+    createdAt: DateTime.now(),
+    stats: UserStats.empty,
+    preferences: UserPreferences.defaultPreferences,
+  );
 }
 
 /// Kullanıcı istatistiklerini temsil eden sınıf
@@ -167,4 +167,3 @@ class UserPreferences {
     return blockedSources.contains(source);
   }
 }
-

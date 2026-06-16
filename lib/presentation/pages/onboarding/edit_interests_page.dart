@@ -21,7 +21,9 @@ class _EditInterestsPageState extends ConsumerState<EditInterestsPage> {
     super.initState();
     // Mevcut seçili tag'leri yükle
     final profile = ref.read(userProfileProvider).profile;
-    _selectedTagIds = List<String>.from(profile?.preferences.interestTags ?? []);
+    _selectedTagIds = List<String>.from(
+      profile?.preferences.interestTags ?? [],
+    );
   }
 
   void _toggleTag(String tagId) {
@@ -50,9 +52,11 @@ class _EditInterestsPageState extends ConsumerState<EditInterestsPage> {
       final updatedPreferences = profile.preferences.copyWith(
         interestTags: _selectedTagIds,
       );
-      
-      await ref.read(userProfileProvider.notifier).updatePreferences(updatedPreferences);
-      
+
+      await ref
+          .read(userProfileProvider.notifier)
+          .updatePreferences(updatedPreferences);
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -101,9 +105,9 @@ class _EditInterestsPageState extends ConsumerState<EditInterestsPage> {
                 height: 1.5,
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Seçim sayacı
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -130,7 +134,10 @@ class _EditInterestsPageState extends ConsumerState<EditInterestsPage> {
                   ),
                   if (_selectedTagIds.length >= 3)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppTheme.sageGreen.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
@@ -157,9 +164,9 @@ class _EditInterestsPageState extends ConsumerState<EditInterestsPage> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Hashtag'ler
             Wrap(
               spacing: 12,
@@ -179,4 +186,3 @@ class _EditInterestsPageState extends ConsumerState<EditInterestsPage> {
     );
   }
 }
-

@@ -7,11 +7,7 @@ class BadgeUnlockDialog extends StatefulWidget {
   final Badge badge;
   final VoidCallback? onDismiss;
 
-  const BadgeUnlockDialog({
-    super.key,
-    required this.badge,
-    this.onDismiss,
-  });
+  const BadgeUnlockDialog({super.key, required this.badge, this.onDismiss});
 
   /// Dialog'u göster
   static Future<void> show(BuildContext context, Badge badge) async {
@@ -23,7 +19,10 @@ class BadgeUnlockDialog extends StatefulWidget {
   }
 
   /// Birden fazla rozet için dialog göster
-  static Future<void> showMultiple(BuildContext context, List<Badge> badges) async {
+  static Future<void> showMultiple(
+    BuildContext context,
+    List<Badge> badges,
+  ) async {
     for (final badge in badges) {
       if (context.mounted) {
         await show(context, badge);
@@ -117,19 +116,16 @@ class _BadgeUnlockDialogState extends State<BadgeUnlockDialog>
             mainAxisSize: MainAxisSize.min,
             children: [
               // Konfeti efekti (basit)
-              const Text(
-                '🎉',
-                style: TextStyle(fontSize: 40),
-              ),
+              const Text('🎉', style: TextStyle(fontSize: 40)),
               const SizedBox(height: 8),
 
               // Başlık
               Text(
                 'Yeni Rozet!',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: tierColor,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: tierColor,
+                ),
               ),
               const SizedBox(height: 24),
 
@@ -145,10 +141,7 @@ class _BadgeUnlockDialogState extends State<BadgeUnlockDialog>
                     ],
                   ),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: tierColor,
-                    width: 4,
-                  ),
+                  border: Border.all(color: tierColor, width: 4),
                   boxShadow: [
                     BoxShadow(
                       color: tierColor.withValues(alpha: 0.4),
@@ -169,22 +162,23 @@ class _BadgeUnlockDialogState extends State<BadgeUnlockDialog>
               // Rozet adı
               Text(
                 widget.badge.name,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
 
               // Tier badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: tierColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: tierColor.withValues(alpha: 0.5),
-                  ),
+                  border: Border.all(color: tierColor.withValues(alpha: 0.5)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -212,11 +206,10 @@ class _BadgeUnlockDialogState extends State<BadgeUnlockDialog>
               Text(
                 widget.badge.description,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withValues(alpha: 0.7),
-                    ),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -239,10 +232,7 @@ class _BadgeUnlockDialogState extends State<BadgeUnlockDialog>
                   ),
                   child: const Text(
                     'Harika!',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
               ),
@@ -319,12 +309,10 @@ class _LevelUpDialogState extends State<LevelUpDialog>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.elasticOut,
-      ),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
     _controller.forward();
   }
@@ -345,10 +333,7 @@ class _LevelUpDialogState extends State<LevelUpDialog>
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Colors.amber.shade700,
-                Colors.orange.shade600,
-              ],
+              colors: [Colors.amber.shade700, Colors.orange.shade600],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -365,10 +350,7 @@ class _LevelUpDialogState extends State<LevelUpDialog>
             mainAxisSize: MainAxisSize.min,
             children: [
               // Konfeti
-              const Text(
-                '🎊 🎉 🎊',
-                style: TextStyle(fontSize: 32),
-              ),
+              const Text('🎊 🎉 🎊', style: TextStyle(fontSize: 32)),
               const SizedBox(height: 16),
 
               // Başlık
@@ -448,7 +430,10 @@ class _LevelUpDialogState extends State<LevelUpDialog>
 
               // Yeni unvan
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
@@ -482,10 +467,7 @@ class _LevelUpDialogState extends State<LevelUpDialog>
                   ),
                   child: const Text(
                     'Devam Et',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
               ),

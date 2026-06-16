@@ -32,7 +32,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
       duration: const Duration(milliseconds: 500),
     );
   }
-  
+
   void _startAutoScroll(int itemsLength) {
     _autoScrollTimer?.cancel();
     if (itemsLength > 1 && !_isPaused) {
@@ -45,16 +45,18 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
       });
     }
   }
-  
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
+
     // News provider'dan haberler yüklendiğinde banner'ı güncelle
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final newsState = ref.read(newsProvider);
       if (newsState.allArticles.isNotEmpty) {
-        ref.read(notificationBannerProvider.notifier).updateFromNewsProvider(newsState.allArticles);
+        ref
+            .read(notificationBannerProvider.notifier)
+            .updateFromNewsProvider(newsState.allArticles);
       }
     });
   }
@@ -65,7 +67,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
     _marqueeController.dispose();
     super.dispose();
   }
-  
+
   void _nextItem(int itemsLength) {
     if (itemsLength == 0) return;
     setState(() {
@@ -79,14 +81,16 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
   Widget build(BuildContext context) {
     final bannerState = ref.watch(notificationBannerProvider);
     final items = bannerState.allItems;
-    
+
     // News provider'dan haberler yüklendiğinde banner'ı otomatik güncelle
     // ref.listen ile değişiklikleri yakala
     ref.listen<NewsState>(newsProvider, (previous, next) {
       // Haberler yüklendiğinde veya güncellendiğinde banner'ı güncelle
       if (next.allArticles.isNotEmpty) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref.read(notificationBannerProvider.notifier).updateFromNewsProvider(next.allArticles);
+          ref
+              .read(notificationBannerProvider.notifier)
+              .updateFromNewsProvider(next.allArticles);
         });
       }
     });
@@ -95,12 +99,12 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
     if (bannerState.isLoading && items.isEmpty) {
       final colorTheme = ref.watch(colorThemeProvider);
       final primaryColor = AppTheme.getPrimaryColor(colorTheme);
-      
+
       return Container(
         height: 48,
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark 
-              ? AppTheme.matBlackSurfaceVariant 
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppTheme.matBlackSurfaceVariant
               : primaryColor.withValues(alpha: 0.1),
           border: Border(
             bottom: BorderSide(
@@ -211,29 +215,31 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                           height: 32 + (_marqueeController.value * 8),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: primaryColor.withValues(alpha: 0.2 - (_marqueeController.value * 0.2)),
+                            color: primaryColor.withValues(
+                              alpha: 0.2 - (_marqueeController.value * 0.2),
+                            ),
                           ),
                         );
                       },
                     ),
                     // Icon
-                    Icon(
-                      Icons.article_rounded,
-                      size: 22,
-                      color: primaryColor,
-                    ),
+                    Icon(Icons.article_rounded, size: 22, color: primaryColor),
                   ],
                 ),
               ),
-              
+
               // Ana içerik - Marquee efekti
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    if (items.isNotEmpty && items[_currentIndex].isArticle && items[_currentIndex].article != null) {
+                    if (items.isNotEmpty &&
+                        items[_currentIndex].isArticle &&
+                        items[_currentIndex].article != null) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => ArticleDetailPage(article: items[_currentIndex].article!),
+                          builder: (_) => ArticleDetailPage(
+                            article: items[_currentIndex].article!,
+                          ),
                         ),
                       );
                     }
@@ -253,13 +259,16 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                             duration: const Duration(milliseconds: 500),
                             transitionBuilder: (child, animation) {
                               return SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(1.0, 0.0),
-                                  end: Offset.zero,
-                                ).animate(CurvedAnimation(
-                                  parent: animation,
-                                  curve: Curves.easeInOut,
-                                )),
+                                position:
+                                    Tween<Offset>(
+                                      begin: const Offset(1.0, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(
+                                      CurvedAnimation(
+                                        parent: animation,
+                                        curve: Curves.easeInOut,
+                                      ),
+                                    ),
                                 child: FadeTransition(
                                   opacity: animation,
                                   child: child,
@@ -267,13 +276,18 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                               );
                             },
                             child: Text(
-                              items.isNotEmpty ? items[_currentIndex].title : '',
+                              items.isNotEmpty
+                                  ? items[_currentIndex].title
+                                  : '',
                               key: ValueKey(_currentIndex),
                               style: theme.textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.w800, // Daha bold için okunabilirlik
+                                fontWeight: FontWeight
+                                    .w800, // Daha bold için okunabilirlik
                                 color: isDark
                                     ? Colors.white.withValues(alpha: 0.95)
-                                    : AppTheme.getPrimaryDarkColor(colorTheme).withValues(alpha: 0.9),
+                                    : AppTheme.getPrimaryDarkColor(
+                                        colorTheme,
+                                      ).withValues(alpha: 0.9),
                                 letterSpacing: 0.3,
                                 height: 1.3,
                                 shadows: isDark
@@ -282,7 +296,9 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                                         Shadow(
                                           offset: const Offset(0.5, 0.5),
                                           blurRadius: 1.0,
-                                          color: Colors.white.withValues(alpha: 0.5),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.5,
+                                          ),
                                         ),
                                       ],
                               ),
@@ -291,7 +307,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                             ),
                           ),
                         ),
-                        
+
                         // Ok ikonu
                         if (items.isNotEmpty)
                           Container(
@@ -312,7 +328,7 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
                   ),
                 ),
               ),
-              
+
               // Duraklat/Devam butonu
               if (items.length > 1)
                 IconButton(
@@ -341,6 +357,4 @@ class _NotificationBannerState extends ConsumerState<NotificationBanner>
       ),
     );
   }
-
 }
-

@@ -80,10 +80,8 @@ class _ShimmerWidgetState extends State<ShimmerWidget>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    )..repeat();
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat();
   }
 
   @override
@@ -96,9 +94,11 @@ class _ShimmerWidgetState extends State<ShimmerWidget>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final baseColor = widget.baseColor ??
+    final baseColor =
+        widget.baseColor ??
         (isDark ? const Color(0xFF2C2C2C) : const Color(0xFFE0E0E0));
-    final highlightColor = widget.highlightColor ??
+    final highlightColor =
+        widget.highlightColor ??
         (isDark ? const Color(0xFF3D3D3D) : const Color(0xFFF5F5F5));
 
     return AnimatedBuilder(
@@ -114,11 +114,7 @@ class _ShimmerWidgetState extends State<ShimmerWidget>
             return LinearGradient(
               begin: begin,
               end: end,
-              colors: [
-                baseColor,
-                highlightColor,
-                baseColor,
-              ],
+              colors: [baseColor, highlightColor, baseColor],
               stops: [
                 (value - 0.3).clamp(0.0, 1.0),
                 value.clamp(0.0, 1.0),
@@ -161,9 +157,4 @@ class _ShimmerWidgetState extends State<ShimmerWidget>
 }
 
 /// Shimmer animasyon yönü
-enum ShimmerDirection {
-  leftToRight,
-  rightToLeft,
-  topToBottom,
-  bottomToTop,
-}
+enum ShimmerDirection { leftToRight, rightToLeft, topToBottom, bottomToTop }

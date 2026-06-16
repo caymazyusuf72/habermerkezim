@@ -10,7 +10,8 @@ class CustomCategoriesPage extends ConsumerStatefulWidget {
   const CustomCategoriesPage({super.key});
 
   @override
-  ConsumerState<CustomCategoriesPage> createState() => _CustomCategoriesPageState();
+  ConsumerState<CustomCategoriesPage> createState() =>
+      _CustomCategoriesPageState();
 }
 
 class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
@@ -64,8 +65,8 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _categories.isEmpty
-              ? _buildEmptyState(context)
-              : _buildCategoriesList(context, theme),
+          ? _buildEmptyState(context)
+          : _buildCategoriesList(context, theme),
     );
   }
 
@@ -74,11 +75,7 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.category_outlined,
-            size: 64,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.category_outlined, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
             'Henüz özel kategori yok',
@@ -204,7 +201,9 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
 
   void _showCategoryDialog(BuildContext context, CustomCategory? category) {
     final nameController = TextEditingController(text: category?.name ?? '');
-    final descriptionController = TextEditingController(text: category?.description ?? '');
+    final descriptionController = TextEditingController(
+      text: category?.description ?? '',
+    );
     final rssUrlsController = TextEditingController(
       text: category?.rssFeedUrls.join('\n') ?? '',
     );
@@ -270,13 +269,17 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
 
               if (urls.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('En az bir RSS feed URL\'si gereklidir')),
+                  const SnackBar(
+                    content: Text('En az bir RSS feed URL\'si gereklidir'),
+                  ),
                 );
                 return;
               }
 
               final newCategory = CustomCategory(
-                id: category?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+                id:
+                    category?.id ??
+                    DateTime.now().millisecondsSinceEpoch.toString(),
                 name: name,
                 description: description.isEmpty ? null : description,
                 rssFeedUrls: urls,
@@ -327,7 +330,9 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final success = await CustomCategoriesService.deleteCategory(category.id);
+              final success = await CustomCategoriesService.deleteCategory(
+                category.id,
+              );
               if (success && mounted) {
                 Navigator.of(context).pop();
                 _loadCategories();
@@ -351,4 +356,3 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
     );
   }
 }
-

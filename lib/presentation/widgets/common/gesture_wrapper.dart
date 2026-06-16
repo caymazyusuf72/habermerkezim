@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// Swipe yönleri
-enum SwipeDirection {
-  left,
-  right,
-  up,
-  down,
-}
+enum SwipeDirection { left, right, up, down }
 
 /// Swipe action widget - kaydırma ile aksiyon
 class SwipeActionWidget extends StatefulWidget {
@@ -76,7 +71,7 @@ class _SwipeActionWidgetState extends State<SwipeActionWidget>
 
     setState(() {
       _dragExtent += details.primaryDelta ?? 0;
-      
+
       // Sınırla
       if (widget.onSwipeRight == null && _dragExtent > 0) {
         _dragExtent = 0;
@@ -122,7 +117,8 @@ class _SwipeActionWidgetState extends State<SwipeActionWidget>
               decoration: BoxDecoration(
                 color: widget.rightActionColor ?? Colors.green,
               ),
-              child: widget.rightActionWidget ??
+              child:
+                  widget.rightActionWidget ??
                   Icon(
                     widget.rightActionIcon ?? Icons.check_rounded,
                     color: Colors.white,
@@ -140,7 +136,8 @@ class _SwipeActionWidgetState extends State<SwipeActionWidget>
               decoration: BoxDecoration(
                 color: widget.leftActionColor ?? Colors.red,
               ),
-              child: widget.leftActionWidget ??
+              child:
+                  widget.leftActionWidget ??
                   Icon(
                     widget.leftActionIcon ?? Icons.delete_rounded,
                     color: Colors.white,
@@ -202,37 +199,16 @@ class _DoubleTapWidgetState extends State<DoubleTapWidget>
     );
 
     _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.2),
-        weight: 30,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.2, end: 1.0),
-        weight: 20,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 1.0),
-        weight: 30,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.0),
-        weight: 20,
-      ),
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.2), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 1.2, end: 1.0), weight: 20),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 20),
     ]).animate(_controller);
 
     _opacityAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.0),
-        weight: 20,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 1.0),
-        weight: 60,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.0),
-        weight: 20,
-      ),
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 20),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 60),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 20),
     ]).animate(_controller);
 
     _controller.addStatusListener((status) {
@@ -289,7 +265,8 @@ class _DoubleTapWidgetState extends State<DoubleTapWidget>
                     ),
                   );
                 },
-                child: widget.doubleTapFeedback ??
+                child:
+                    widget.doubleTapFeedback ??
                     const Icon(
                       Icons.favorite_rounded,
                       color: Colors.red,
@@ -337,9 +314,10 @@ class _LongPressWidgetState extends State<LongPressWidget>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -378,11 +356,7 @@ class _LongPressWidgetState extends State<LongPressWidget>
         position.dx + size.width,
         position.dy + size.height + 100,
       ),
-      items: [
-        PopupMenuItem(
-          child: widget.contextMenuBuilder!(context),
-        ),
-      ],
+      items: [PopupMenuItem(child: widget.contextMenuBuilder!(context))],
     );
   }
 
@@ -395,10 +369,7 @@ class _LongPressWidgetState extends State<LongPressWidget>
       child: AnimatedBuilder(
         animation: _scaleAnimation,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          );
+          return Transform.scale(scale: _scaleAnimation.value, child: child);
         },
         child: widget.child,
       ),
@@ -455,7 +426,7 @@ class _PinchToZoomWidgetState extends State<PinchToZoomWidget>
 
   void _onInteractionStart(ScaleStartDetails details) {
     if (!widget.enabled) return;
-    
+
     if (!_isZooming) {
       _isZooming = true;
       widget.onZoomStart?.call();
@@ -466,7 +437,7 @@ class _PinchToZoomWidgetState extends State<PinchToZoomWidget>
     if (!widget.enabled) return;
 
     final scale = _transformationController.value.getMaxScaleOnAxis();
-    
+
     if (scale < widget.minScale) {
       _animateToIdentity();
     }
@@ -478,13 +449,13 @@ class _PinchToZoomWidgetState extends State<PinchToZoomWidget>
   }
 
   void _animateToIdentity() {
-    _animation = Matrix4Tween(
-      begin: _transformationController.value,
-      end: Matrix4.identity(),
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _animation =
+        Matrix4Tween(
+          begin: _transformationController.value,
+          end: Matrix4.identity(),
+        ).animate(
+          CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+        );
 
     _animation!.addListener(() {
       _transformationController.value = _animation!.value;
@@ -497,7 +468,7 @@ class _PinchToZoomWidgetState extends State<PinchToZoomWidget>
     if (!widget.enabled) return;
 
     final scale = _transformationController.value.getMaxScaleOnAxis();
-    
+
     if (scale > widget.minScale) {
       _animateToIdentity();
     } else {
@@ -505,14 +476,17 @@ class _PinchToZoomWidgetState extends State<PinchToZoomWidget>
       final zoomed = Matrix4.identity()
         ..translate(position.x, position.y)
         ..scale(2.0);
-      
-      _animation = Matrix4Tween(
-        begin: _transformationController.value,
-        end: zoomed,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ));
+
+      _animation =
+          Matrix4Tween(
+            begin: _transformationController.value,
+            end: zoomed,
+          ).animate(
+            CurvedAnimation(
+              parent: _animationController,
+              curve: Curves.easeOut,
+            ),
+          );
 
       _animation!.addListener(() {
         _transformationController.value = _animation!.value;

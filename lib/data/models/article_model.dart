@@ -12,34 +12,34 @@ part 'article_model.g.dart';
 class ArticleModel extends HiveObject {
   @HiveField(0)
   final String id;
-  
+
   @HiveField(1)
   final String title;
-  
+
   @HiveField(2)
   final String description;
-  
+
   @HiveField(3)
   final String? content;
-  
+
   @HiveField(4)
   final String link;
-  
+
   @HiveField(5)
   final String? imageUrl;
-  
+
   @HiveField(6)
   final DateTime publishedDate;
-  
+
   @HiveField(7)
   final String category;
-  
+
   @HiveField(8)
   final String sourceName;
-  
+
   @HiveField(9)
   final bool isRead;
-  
+
   @HiveField(10)
   final bool isFavorite;
 
@@ -93,10 +93,10 @@ class ArticleModel extends HiveObject {
     final title = _cleanHtml(rssItem['title'] ?? '');
     final link = rssItem['link'] ?? '';
     final pubDate = rssItem['pubDate'] ?? '';
-    
+
     // Unique ID oluştur (link + sourceName + title + publishDate bazlı)
     final id = _generateId(link, sourceName, title, pubDate);
-    
+
     return ArticleModel(
       id: id,
       title: title,
@@ -168,7 +168,7 @@ class ArticleModel extends HiveObject {
   /// HTML taglerini temizler
   static String _cleanHtml(String htmlString) {
     if (htmlString.isEmpty) return htmlString;
-    
+
     final RegExp exp = RegExp(r'<[^>]*>', multiLine: true, caseSensitive: true);
     return htmlString
         .replaceAll(exp, '')
@@ -183,17 +183,19 @@ class ArticleModel extends HiveObject {
   /// RSS item'ından görsel URL'i çıkarır
   static String? _extractImageUrl(Map<String, dynamic> rssItem) {
     // 1. media:content URL'i (öncelikli)
-    if (rssItem['mediaContent'] != null && rssItem['mediaContent'].toString().isNotEmpty) {
+    if (rssItem['mediaContent'] != null &&
+        rssItem['mediaContent'].toString().isNotEmpty) {
       final url = rssItem['mediaContent'].toString().trim();
       if (_isValidImageUrl(url)) return url;
     }
-    
+
     // 2. enclosure URL'i
-    if (rssItem['enclosure'] != null && rssItem['enclosure'].toString().isNotEmpty) {
+    if (rssItem['enclosure'] != null &&
+        rssItem['enclosure'].toString().isNotEmpty) {
       final url = rssItem['enclosure'].toString().trim();
       if (_isValidImageUrl(url)) return url;
     }
-    
+
     // 3. description içindeki img tag'i (farklı formatlar)
     final description = rssItem['description'] ?? '';
     if (description.isNotEmpty) {
@@ -210,7 +212,7 @@ class ArticleModel extends HiveObject {
         final url = match.group(1)?.trim();
         if (url != null && _isValidImageUrl(url)) return url;
       }
-      
+
       // data-src (lazy loading): <img data-src="...">
       imgRegex = RegExp(r'<img[^>]+data-src="([^"]+)"', caseSensitive: false);
       match = imgRegex.firstMatch(description);
@@ -222,12 +224,18 @@ class ArticleModel extends HiveObject {
         final url = match.group(1)?.trim();
         if (url != null && _isValidImageUrl(url)) return url;
       }
-      
+
       // data-lazy-src: <img data-lazy-src="...">
-      imgRegex = RegExp(r'<img[^>]+data-lazy-src="([^"]+)"', caseSensitive: false);
+      imgRegex = RegExp(
+        r'<img[^>]+data-lazy-src="([^"]+)"',
+        caseSensitive: false,
+      );
       match = imgRegex.firstMatch(description);
       if (match == null) {
-        imgRegex = RegExp(r"<img[^>]+data-lazy-src='([^']+)'", caseSensitive: false);
+        imgRegex = RegExp(
+          r"<img[^>]+data-lazy-src='([^']+)'",
+          caseSensitive: false,
+        );
         match = imgRegex.firstMatch(description);
       }
       if (match != null) {
@@ -235,7 +243,7 @@ class ArticleModel extends HiveObject {
         if (url != null && _isValidImageUrl(url)) return url;
       }
     }
-    
+
     // 4. content içindeki img tag'i
     final content = rssItem['content'] ?? '';
     if (content.isNotEmpty && content != description) {
@@ -249,7 +257,7 @@ class ArticleModel extends HiveObject {
         final url = match.group(1)?.trim();
         if (url != null && _isValidImageUrl(url)) return url;
       }
-      
+
       // content içinde data-src kontrol et
       imgRegex = RegExp(r'<img[^>]+data-src="([^"]+)"', caseSensitive: false);
       match = imgRegex.firstMatch(content);
@@ -258,7 +266,7 @@ class ArticleModel extends HiveObject {
         if (url != null && _isValidImageUrl(url)) return url;
       }
     }
-    
+
     // 5. Herhangi bir URL içinde görsel uzantısı ara (son çare)
     final allText = '$description $content';
     if (allText.isNotEmpty) {
@@ -273,38 +281,63 @@ class ArticleModel extends HiveObject {
         if (url != null && _isValidImageUrl(url)) return url;
       }
     }
-    
+
     return null;
   }
-  
+
   /// Görsel URL'inin geçerli olup olmadığını kontrol eder
   static bool _isValidImageUrl(String url) {
     if (url.isEmpty) return false;
-    
+
     // URL formatını kontrol et
     try {
       final uri = Uri.parse(url);
       if (!uri.hasScheme || (!uri.scheme.startsWith('http'))) {
         return false;
       }
-      
+
       // Görsel uzantılarını kontrol et
       final lowerUrl = url.toLowerCase();
-      final imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg', '.avif'];
-      final hasImageExtension = imageExtensions.any((ext) => lowerUrl.contains(ext));
-      
+      final imageExtensions = [
+        '.jpg',
+        '.jpeg',
+        '.png',
+        '.gif',
+        '.webp',
+        '.bmp',
+        '.svg',
+        '.avif',
+      ];
+      final hasImageExtension = imageExtensions.any(
+        (ext) => lowerUrl.contains(ext),
+      );
+
       // URL'de görsel uzantısı yoksa ama domain'de görsel servisi varsa kabul et
       if (!hasImageExtension) {
         final imageDomains = [
-          'imgur.com', 'i.imgur.com', 'cdn', 'image', 'photo', 'pic', 'media',
-          'img', 'static', 'assets', 'upload', 'content', 'cloudinary', 'imgix'
+          'imgur.com',
+          'i.imgur.com',
+          'cdn',
+          'image',
+          'photo',
+          'pic',
+          'media',
+          'img',
+          'static',
+          'assets',
+          'upload',
+          'content',
+          'cloudinary',
+          'imgix',
         ];
-        final hasImageDomain = imageDomains.any((domain) => lowerUrl.contains(domain));
+        final hasImageDomain = imageDomains.any(
+          (domain) => lowerUrl.contains(domain),
+        );
         if (!hasImageDomain) {
           return false;
         }
       }
-      
+
       return true;
     } catch (e) {
       return false;
@@ -317,10 +350,10 @@ class ArticleModel extends HiveObject {
       debugPrint('⚠️ Tarih string boş, şu anki zaman kullanılıyor');
       return DateTime.now();
     }
-    
+
     // String'i temizle
     final cleaned = dateString.trim();
-    
+
     // RFC 2822 formatı (Thu, 14 Sep 2025 09:00:00 GMT veya +0300)
     try {
       // RFC 2822 formatını parse et
@@ -338,20 +371,22 @@ class ArticleModel extends HiveObject {
             'Oca': 1, 'Şub': 2, 'Nis': 4, 'Haz': 6,
             'Tem': 7, 'Ağu': 8, 'Eyl': 9, 'Eki': 10, 'Kas': 11, 'Ara': 12,
           };
-          
+
           final day = int.tryParse(parts[1]) ?? 1;
           final monthStr = parts[2];
           final month = monthMap[monthStr] ?? DateTime.now().month;
           final year = int.tryParse(parts[3]) ?? DateTime.now().year;
-          
+
           // Saat bilgisi
           final timeParts = parts[4].split(':');
           final hour = int.tryParse(timeParts[0]) ?? 0;
           final minute = int.tryParse(timeParts[1]) ?? 0;
-          final second = timeParts.length > 2 ? (int.tryParse(timeParts[2]) ?? 0) : 0;
-          
+          final second = timeParts.length > 2
+              ? (int.tryParse(timeParts[2]) ?? 0)
+              : 0;
+
           final date = DateTime(year, month, day, hour, minute, second);
-          
+
           // Timezone offset varsa uygula
           if (parts.length > 5) {
             final tzStr = parts[5];
@@ -359,8 +394,11 @@ class ArticleModel extends HiveObject {
               // +0300 formatı
               final offsetHours = int.tryParse(tzStr.substring(1, 3)) ?? 0;
               final offsetMinutes = int.tryParse(tzStr.substring(3, 5)) ?? 0;
-              final offset = Duration(hours: offsetHours, minutes: offsetMinutes);
-              
+              final offset = Duration(
+                hours: offsetHours,
+                minutes: offsetMinutes,
+              );
+
               if (tzStr.startsWith('-')) {
                 return date.add(offset);
               } else {
@@ -372,21 +410,21 @@ class ArticleModel extends HiveObject {
               return date.add(localOffset);
             }
           }
-          
+
           return date;
         }
       }
     } catch (e) {
       debugPrint('⚠️ RFC 2822 parse hatası: $e');
     }
-    
+
     // ISO 8601 formatı (2025-09-14T09:00:00Z veya 2025-09-14T09:00:00+03:00)
     try {
       return DateTime.parse(cleaned);
     } catch (e) {
       debugPrint('⚠️ ISO 8601 parse hatası: $e');
     }
-    
+
     // Unix timestamp (milliseconds)
     try {
       final timestamp = int.tryParse(cleaned);
@@ -401,16 +439,23 @@ class ArticleModel extends HiveObject {
     } catch (e) {
       debugPrint('⚠️ Timestamp parse hatası: $e');
     }
-    
+
     // Parse edilemezse şu anki zamanı kullan ama logla
-    debugPrint('⚠️ Tarih parse edilemedi: "$dateString", şu anki zaman kullanılıyor');
+    debugPrint(
+      '⚠️ Tarih parse edilemedi: "$dateString", şu anki zaman kullanılıyor',
+    );
     return DateTime.now();
   }
 
   /// Unique ID oluşturur - link, kaynak adı, başlık ve tarih bazlı
   /// UUID v5 kullanarak deterministic ve platform-bağımsız ID üretir
   /// Bu sayede aynı linkli haberler farklı kaynaklardan geldiğinde karışmaz
-  static String _generateId(String link, String sourceName, String title, String pubDate) {
+  static String _generateId(
+    String link,
+    String sourceName,
+    String title,
+    String pubDate,
+  ) {
     const uuid = Uuid();
     // UUID v5: namespace + name bazlı deterministic UUID üretir
     // Aynı girdi her zaman aynı UUID'yi üretir (hashCode'dan farklı olarak platform bağımsız)

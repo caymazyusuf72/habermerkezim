@@ -9,14 +9,20 @@ void main() {
 
       expect(failure.message, 'İnternet bağlantısı yok');
       expect(failure.code, 'NO_INTERNET');
-      expect(failure.userMessage, 'İnternet bağlantınızı kontrol edin ve tekrar deneyin.');
+      expect(
+        failure.userMessage,
+        'İnternet bağlantınızı kontrol edin ve tekrar deneyin.',
+      );
     });
 
     test('timeout factory doğru değerler döndürmeli', () {
       final failure = NetworkFailure.timeout();
 
       expect(failure.code, 'TIMEOUT');
-      expect(failure.userMessage, 'Bağlantı zaman aşımına uğradı. Lütfen tekrar deneyin.');
+      expect(
+        failure.userMessage,
+        'Bağlantı zaman aşımına uğradı. Lütfen tekrar deneyin.',
+      );
     });
 
     test('fromException ile exception dönüşümü doğru olmalı', () {
@@ -31,7 +37,10 @@ void main() {
     test('bilinmeyen kod için varsayılan userMessage döndürmeli', () {
       const failure = NetworkFailure('Bilinmeyen');
 
-      expect(failure.userMessage, 'Bağlantı hatası oluştu. Lütfen tekrar deneyin.');
+      expect(
+        failure.userMessage,
+        'Bağlantı hatası oluştu. Lütfen tekrar deneyin.',
+      );
     });
   });
 
@@ -47,7 +56,10 @@ void main() {
       final failure = CacheFailure.readError();
 
       expect(failure.code, 'CACHE_READ_ERROR');
-      expect(failure.userMessage, 'Veriler yüklenemedi. Lütfen tekrar deneyin.');
+      expect(
+        failure.userMessage,
+        'Veriler yüklenemedi. Lütfen tekrar deneyin.',
+      );
     });
 
     test('writeError factory doğru değerler döndürmeli', () {
@@ -72,8 +84,10 @@ void main() {
 
       expect(failure.code, 'RSS_PARSE_ERROR');
       expect(failure.sourceUrl, 'https://rss.com/feed');
-      expect(failure.userMessage,
-          'Haber kaynağı okunamadı. Kaynak geçici olarak kullanılamıyor olabilir.');
+      expect(
+        failure.userMessage,
+        'Haber kaynağı okunamadı. Kaynak geçici olarak kullanılamıyor olabilir.',
+      );
     });
 
     test('jsonError factory doğru değerler döndürmeli', () {
@@ -99,8 +113,10 @@ void main() {
 
       expect(failure.code, 'SERVER_ERROR');
       expect(failure.statusCode, 500);
-      expect(failure.userMessage,
-          'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.');
+      expect(
+        failure.userMessage,
+        'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.',
+      );
     });
 
     test('serviceUnavailable factory doğru değerler döndürmeli', () {
@@ -108,8 +124,10 @@ void main() {
 
       expect(failure.code, 'SERVICE_UNAVAILABLE');
       expect(failure.statusCode, 503);
-      expect(failure.userMessage,
-          'Servis geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.');
+      expect(
+        failure.userMessage,
+        'Servis geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.',
+      );
     });
 
     test('fromException ile exception dönüşümü doğru olmalı', () {
@@ -127,8 +145,10 @@ void main() {
       final failure = UnexpectedFailure.unknown();
 
       expect(failure.code, 'UNEXPECTED_ERROR');
-      expect(failure.userMessage,
-          'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.');
+      expect(
+        failure.userMessage,
+        'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.',
+      );
     });
 
     test('originalError saklanmalı', () {

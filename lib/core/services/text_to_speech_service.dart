@@ -1,6 +1,7 @@
 import 'package:flutter_tts/flutter_tts.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Text-to-Speech servisi
 class TextToSpeechService {
   static final TextToSpeechService _instance = TextToSpeechService._internal();
@@ -21,30 +22,30 @@ class TextToSpeechService {
     if (_isInitialized) return;
 
     _flutterTts = FlutterTts();
-    
+
     // Platform ayarları
     await _flutterTts.setLanguage(_language);
     await _flutterTts.setSpeechRate(_speechRate);
     await _flutterTts.setVolume(_volume);
     await _flutterTts.setPitch(_pitch);
-    
+
     // Event listener'lar
     _flutterTts.setStartHandler(() {
       _isPlaying = true;
       _isPaused = false;
     });
-    
+
     _flutterTts.setCompletionHandler(() {
       _isPlaying = false;
       _isPaused = false;
     });
-    
+
     _flutterTts.setErrorHandler((msg) {
       debugPrint('💥 TTS hatası: $msg');
       _isPlaying = false;
       _isPaused = false;
     });
-    
+
     _isInitialized = true;
   }
 
@@ -153,4 +154,3 @@ class TextToSpeechService {
     }
   }
 }
-

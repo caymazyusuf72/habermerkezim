@@ -54,7 +54,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 
   void _onFocusChange() {
-    if (_searchFocusNode.hasFocus && 
+    if (_searchFocusNode.hasFocus &&
         ref.read(searchProvider).autocompleteSuggestions.isNotEmpty) {
       _showOverlay();
     } else {
@@ -67,10 +67,10 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     if (query.trim().isNotEmpty) {
       _removeOverlay();
       ref.read(searchProvider.notifier).searchArticles(query.trim());
-      
+
       // Analytics kaydı - arama yapıldı
       ref.read(analyticsProvider.notifier).recordSearchPerformed();
-      
+
       // Gamification kaydı - arama yapıldı
       _recordGamificationSearch();
     }
@@ -81,15 +81,19 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     try {
       final analyticsState = ref.read(analyticsProvider);
       final totalSearches = analyticsState.totalSearches;
-      
-      final unlockedBadges = await ref.read(gamificationProvider.notifier).recordSearch(totalSearches);
-      
+
+      final unlockedBadges = await ref
+          .read(gamificationProvider.notifier)
+          .recordSearch(totalSearches);
+
       if (unlockedBadges.isNotEmpty && mounted) {
         _showUnlockedBadges(unlockedBadges);
       }
-      
+
       // XP ekle
-      final xpResult = await ref.read(gamificationProvider.notifier).addXP(5, 'Arama yapma');
+      final xpResult = await ref
+          .read(gamificationProvider.notifier)
+          .addXP(5, 'Arama yapma');
       if (xpResult != null && xpResult.leveledUp && mounted) {
         _showLevelUpDialog(xpResult.newLevel);
       }
@@ -113,7 +117,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     final gamificationState = ref.read(gamificationProvider);
     final oldLevel = gamificationState.userLevel.level;
     final newLevel = UserLevel.fromLevel(newLevelNumber);
-    
+
     showDialog(
       context: context,
       builder: (context) => LevelUpDialog(
@@ -127,7 +131,9 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   /// Autocomplete önerileri güncelle
   void _onSearchChanged(String query) {
     if (query.length >= 2) {
-      ref.read(searchProvider.notifier).getAutocompleteSuggestionsDebounced(query);
+      ref
+          .read(searchProvider.notifier)
+          .getAutocompleteSuggestionsDebounced(query);
     } else {
       ref.read(searchProvider.notifier).hideSuggestions();
       _removeOverlay();
@@ -164,10 +170,10 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     try {
       final shareText = '${article.title}\n\n${article.link}';
       await Share.share(shareText);
-      
+
       // Analytics kaydı - paylaşım yapıldı
       ref.read(analyticsProvider.notifier).recordSharePerformed();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -191,7 +197,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   /// Overlay göster
   void _showOverlay() {
     _removeOverlay();
-    
+
     final searchState = ref.read(searchProvider);
     if (searchState.autocompleteSuggestions.isEmpty) return;
 
@@ -205,7 +211,9 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           child: Material(
             elevation: 8,
             borderRadius: BorderRadius.circular(12),
-            child: _buildSuggestionsOverlay(searchState.autocompleteSuggestions),
+            child: _buildSuggestionsOverlay(
+              searchState.autocompleteSuggestions,
+            ),
           ),
         ),
       ),
@@ -223,7 +231,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   /// Öneriler overlay widget'ı
   Widget _buildSuggestionsOverlay(List<String> suggestions) {
     final theme = Theme.of(context);
-    
+
     return Container(
       constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
@@ -245,10 +253,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               color: theme.colorScheme.primary,
               size: 20,
             ),
-            title: Text(
-              suggestion,
-              style: theme.textTheme.bodyMedium,
-            ),
+            title: Text(suggestion, style: theme.textTheme.bodyMedium),
             dense: true,
             onTap: () => _selectSuggestion(suggestion),
           );
@@ -373,7 +378,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 
   /// Ana içerik
-  Widget _buildBody(BuildContext context, SearchState searchState, ThemeData theme) {
+  Widget _buildBody(
+    BuildContext context,
+    SearchState searchState,
+    ThemeData theme,
+  ) {
     // Yükleniyor durumu
     if (searchState.isSearching) {
       return const Center(
@@ -394,16 +403,9 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: theme.colorScheme.error,
-            ),
+            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
             const SizedBox(height: 16),
-            Text(
-              'Arama Hatası',
-              style: theme.textTheme.headlineSmall,
-            ),
+            Text('Arama Hatası', style: theme.textTheme.headlineSmall),
             const SizedBox(height: 8),
             Text(
               searchState.error ?? 'Bilinmeyen hata',
@@ -503,7 +505,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 
   /// Bölüm başlığı
-  Widget _buildSectionHeader(String title, IconData icon, Color color, ThemeData theme) {
+  Widget _buildSectionHeader(
+    String title,
+    IconData icon,
+    Color color,
+    ThemeData theme,
+  ) {
     return Row(
       children: [
         Container(
@@ -526,7 +533,10 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 
   /// Trend aramalar
-  Widget _buildTrendingSearches(List<TrendingSearch> trending, ThemeData theme) {
+  Widget _buildTrendingSearches(
+    List<TrendingSearch> trending,
+    ThemeData theme,
+  ) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -549,7 +559,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       runSpacing: 8,
       children: popular.map((query) {
         return ActionChip(
-          avatar: const Icon(Icons.local_fire_department, size: 16, color: Colors.red),
+          avatar: const Icon(
+            Icons.local_fire_department,
+            size: 16,
+            color: Colors.red,
+          ),
           label: Text(query),
           onPressed: () => _selectFromHistory(query),
           backgroundColor: Colors.red.withValues(alpha: 0.1),
@@ -617,7 +631,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   /// Arama sonuçları
   Widget _buildSearchResults(SearchState searchState) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -625,12 +639,10 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            border: Border(
-              bottom: BorderSide(
-                color: theme.dividerColor,
-              ),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.5,
             ),
+            border: Border(bottom: BorderSide(color: theme.dividerColor)),
           ),
           child: Row(
             children: [
@@ -653,7 +665,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       if (searchState.highQualityResultCount > 0) ...[
                         const TextSpan(text: ' • '),
                         TextSpan(
-                          text: '${searchState.highQualityResultCount} yüksek eşleşme',
+                          text:
+                              '${searchState.highQualityResultCount} yüksek eşleşme',
                           style: TextStyle(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.w500,
@@ -667,7 +680,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             ],
           ),
         ),
-        
+
         // Sonuç listesi
         Expanded(
           child: ListView.builder(
@@ -676,7 +689,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             itemBuilder: (context, index) {
               final result = searchState.searchResults[index];
               final article = result.article;
-              
+
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: _buildSearchResultCard(result, article, theme),
@@ -689,7 +702,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 
   /// Arama sonuç kartı
-  Widget _buildSearchResultCard(SearchResult result, Article article, ThemeData theme) {
+  Widget _buildSearchResultCard(
+    SearchResult result,
+    Article article,
+    ThemeData theme,
+  ) {
     return Stack(
       children: [
         ArticleCard(
@@ -704,7 +721,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           onFavoriteToggle: () {
             final wasAlreadyFavorite = article.isFavorite;
             ref.read(favoritesProvider.notifier).toggleFavorite(article);
-            
+
             // Analytics kaydı - sadece favori eklendiğinde
             if (!wasAlreadyFavorite) {
               ref.read(analyticsProvider.notifier).recordFavoriteAdded();
@@ -712,7 +729,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           },
           onShare: () => _shareArticle(article),
         ),
-        
+
         // Eşleşme kalitesi badge'i
         Positioned(
           top: 8,
@@ -789,10 +806,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
-          Text(
-            'Sonuç Bulunamadı',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text('Sonuç Bulunamadı', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             '"${_searchController.text}" için sonuç bulunamadı',
@@ -802,7 +816,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // Öneriler
           Text(
             'Öneriler:',
@@ -820,7 +834,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           ElevatedButton.icon(
             onPressed: _clearSearch,
             icon: const Icon(Icons.refresh),

@@ -26,13 +26,17 @@ void main() {
       final inkWells = find.byType(InkWell);
       final gestureDetectors = find.byType(GestureDetector);
 
-      final totalInteractive = buttons.evaluate().length +
+      final totalInteractive =
+          buttons.evaluate().length +
           iconButtons.evaluate().length +
           inkWells.evaluate().length +
           gestureDetectors.evaluate().length;
 
-      expect(totalInteractive, greaterThan(0),
-          reason: 'Uygulama en az bir etkileşimli element içermeli');
+      expect(
+        totalInteractive,
+        greaterThan(0),
+        reason: 'Uygulama en az bir etkileşimli element içermeli',
+      );
     });
 
     testWidgets('App should display text content', (tester) async {
@@ -41,8 +45,11 @@ void main() {
 
       // Uygulama yüklendikten sonra metin widget'ları olmalı
       final textWidgets = find.byType(Text);
-      expect(textWidgets.evaluate().isNotEmpty, true,
-          reason: 'Uygulama metin içermeli');
+      expect(
+        textWidgets.evaluate().isNotEmpty,
+        true,
+        reason: 'Uygulama metin içermeli',
+      );
     });
   });
 
@@ -66,8 +73,11 @@ void main() {
       stopwatch.stop();
 
       // App 10 saniye içinde yüklenmeli
-      expect(stopwatch.elapsedMilliseconds, lessThan(10000),
-          reason: 'Uygulama 10 saniye içinde yüklenmeli');
+      expect(
+        stopwatch.elapsedMilliseconds,
+        lessThan(10000),
+        reason: 'Uygulama 10 saniye içinde yüklenmeli',
+      );
     });
   });
 }

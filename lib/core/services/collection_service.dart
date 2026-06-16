@@ -108,7 +108,9 @@ class CollectionService {
       }
 
       if (!Hive.isBoxOpen(_collectionArticlesBoxName)) {
-        _articlesBox = await Hive.openBox<ArticleModel>(_collectionArticlesBoxName);
+        _articlesBox = await Hive.openBox<ArticleModel>(
+          _collectionArticlesBoxName,
+        );
       } else {
         _articlesBox = Hive.box<ArticleModel>(_collectionArticlesBoxName);
       }
@@ -147,7 +149,10 @@ class CollectionService {
         updatedAt: DateTime.now(),
         isDefault: true,
       );
-      await _collections.put(favoritesCollectionId, jsonEncode(favorites.toJson()));
+      await _collections.put(
+        favoritesCollectionId,
+        jsonEncode(favorites.toJson()),
+      );
     }
 
     if (!_collections.containsKey(readLaterCollectionId)) {
@@ -159,7 +164,10 @@ class CollectionService {
         updatedAt: DateTime.now(),
         isDefault: true,
       );
-      await _collections.put(readLaterCollectionId, jsonEncode(readLater.toJson()));
+      await _collections.put(
+        readLaterCollectionId,
+        jsonEncode(readLater.toJson()),
+      );
     }
   }
 
@@ -228,9 +236,11 @@ class CollectionService {
         final data = _collections.get(key);
         if (data is String && data.isNotEmpty) {
           try {
-            collections.add(ArticleCollection.fromJson(
-              Map<String, dynamic>.from(jsonDecode(data)),
-            ));
+            collections.add(
+              ArticleCollection.fromJson(
+                Map<String, dynamic>.from(jsonDecode(data)),
+              ),
+            );
           } catch (_) {}
         }
       }
@@ -252,7 +262,10 @@ class CollectionService {
   // ─── Haber Ekleme/Cikarma ────────────────────────────────────────────────
 
   /// Haberi koleksiyona ekle
-  Future<bool> addArticleToCollection(String collectionId, Article article) async {
+  Future<bool> addArticleToCollection(
+    String collectionId,
+    Article article,
+  ) async {
     try {
       final collection = getCollection(collectionId);
       if (collection == null) return false;
@@ -265,7 +278,8 @@ class CollectionService {
       await _articles.put(article.id, model);
 
       // Koleksiyonu guncelle
-      final newArticleIds = List<String>.from(collection.articleIds)..add(article.id);
+      final newArticleIds = List<String>.from(collection.articleIds)
+        ..add(article.id);
       final coverUrl = collection.coverImageUrl ?? article.imageUrl;
       final updated = collection.copyWith(
         articleIds: newArticleIds,
@@ -283,12 +297,16 @@ class CollectionService {
   }
 
   /// Haberi koleksiyondan cikar
-  Future<bool> removeArticleFromCollection(String collectionId, String articleId) async {
+  Future<bool> removeArticleFromCollection(
+    String collectionId,
+    String articleId,
+  ) async {
     try {
       final collection = getCollection(collectionId);
       if (collection == null) return false;
 
-      final newArticleIds = List<String>.from(collection.articleIds)..remove(articleId);
+      final newArticleIds = List<String>.from(collection.articleIds)
+        ..remove(articleId);
       final updated = collection.copyWith(
         articleIds: newArticleIds,
         updatedAt: DateTime.now(),
@@ -341,13 +359,17 @@ final collectionServiceProvider = Provider<CollectionService>((ref) {
 });
 
 /// Tum koleksiyonlar provider
-final collectionsProvider = StateNotifierProvider<CollectionsNotifier, List<ArticleCollection>>((ref) {
-  final service = ref.watch(collectionServiceProvider);
-  return CollectionsNotifier(service);
-});
+final collectionsProvider =
+    StateNotifierProvider<CollectionsNotifier, List<ArticleCollection>>((ref) {
+      final service = ref.watch(collectionServiceProvider);
+      return CollectionsNotifier(service);
+    });
 
 /// Koleksiyon detay provider
-final collectionArticlesProvider = Provider.family<List<Article>, String>((ref, collectionId) {
+final collectionArticlesProvider = Provider.family<List<Article>, String>((
+  ref,
+  collectionId,
+) {
   final service = ref.watch(collectionServiceProvider);
   return service.getCollectionArticles(collectionId);
 });
@@ -394,7 +416,10 @@ class CollectionsNotifier extends StateNotifier<List<ArticleCollection>> {
   }
 
   Future<bool> removeArticle(String collectionId, String articleId) async {
-    final result = await _service.removeArticleFromCollection(collectionId, articleId);
+    final result = await _service.removeArticleFromCollection(
+      collectionId,
+      articleId,
+    );
     if (result) _loadCollections();
     return result;
   }

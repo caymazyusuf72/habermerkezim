@@ -16,8 +16,9 @@ void main() {
   group('CheckBookmarkUseCase', () {
     test('bookmark varsa true döndürmeli', () async {
       // Arrange
-      when(() => mockRepository.isBookmarked('article-123'))
-          .thenAnswer((_) async => true);
+      when(
+        () => mockRepository.isBookmarked('article-123'),
+      ).thenAnswer((_) async => true);
 
       // Act
       final result = await useCase.call('article-123');
@@ -29,8 +30,9 @@ void main() {
 
     test('bookmark yoksa false döndürmeli', () async {
       // Arrange
-      when(() => mockRepository.isBookmarked('article-456'))
-          .thenAnswer((_) async => false);
+      when(
+        () => mockRepository.isBookmarked('article-456'),
+      ).thenAnswer((_) async => false);
 
       // Act
       final result = await useCase.call('article-456');
@@ -41,8 +43,9 @@ void main() {
 
     test('repository hata fırlatırsa exception fırlatmalı', () async {
       // Arrange
-      when(() => mockRepository.isBookmarked(any()))
-          .thenThrow(Exception('Kontrol hatası'));
+      when(
+        () => mockRepository.isBookmarked(any()),
+      ).thenThrow(Exception('Kontrol hatası'));
 
       // Act & Assert
       expect(() => useCase.call('article-123'), throwsException);

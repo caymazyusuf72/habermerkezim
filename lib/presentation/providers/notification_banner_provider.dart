@@ -32,17 +32,17 @@ class NotificationBannerState {
 
   List<BannerItem> get allItems {
     final items = <BannerItem>[];
-    
+
     // RSS haberleri
     for (final article in latestArticles.take(5)) {
       items.add(BannerItem.article(article));
     }
-    
+
     // Uygulama bildirimleri
     for (final notification in appNotifications) {
       items.add(BannerItem.notification(notification));
     }
-    
+
     return items;
   }
 }
@@ -53,13 +53,11 @@ class BannerItem {
   final AppNotification? notification;
   final bool isArticle;
 
-  BannerItem.article(this.article)
-      : notification = null,
-        isArticle = true;
+  BannerItem.article(this.article) : notification = null, isArticle = true;
 
   BannerItem.notification(this.notification)
-      : article = null,
-        isArticle = false;
+    : article = null,
+      isArticle = false;
 
   String get title {
     if (isArticle) {
@@ -95,23 +93,20 @@ class AppNotification {
   });
 }
 
-enum NotificationType {
-  readingGoal,
-  newCategory,
-  breakingNews,
-  achievement,
-}
+enum NotificationType { readingGoal, newCategory, breakingNews, achievement }
 
 /// Notification Banner Provider
 final notificationBannerProvider =
     StateNotifierProvider<NotificationBannerNotifier, NotificationBannerState>(
-  (ref) => NotificationBannerNotifier(ref),
-);
+      (ref) => NotificationBannerNotifier(ref),
+    );
 
-class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> {
+class NotificationBannerNotifier
+    extends StateNotifier<NotificationBannerState> {
   final Ref _ref;
 
-  NotificationBannerNotifier(this._ref) : super(const NotificationBannerState()) {
+  NotificationBannerNotifier(this._ref)
+    : super(const NotificationBannerState()) {
     // Verileri yükle - async olduğu için hemen başlat
     _initialize();
   }
@@ -128,7 +123,7 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
     } catch (e) {
       // News provider henüz hazır değilse, direkt yükle
     }
-    
+
     // News provider'dan haber yoksa, direkt repository'den yükle
     await loadLatestArticles();
     _loadAppNotifications();
@@ -138,10 +133,12 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
   void _updateFromNewsState(List<Article> articles) {
     // En son 5-10 haberi al (resimli olanları tercih et)
     final latest = articles
-        .where((article) => article.imageUrl != null && article.imageUrl!.isNotEmpty)
+        .where(
+          (article) => article.imageUrl != null && article.imageUrl!.isNotEmpty,
+        )
         .take(10)
         .toList();
-    
+
     // Eğer resimli haber yoksa, resimsiz olanları da al
     if (latest.isEmpty) {
       final latestWithoutImage = articles.take(10).toList();
@@ -150,12 +147,9 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
         isLoading: false,
       );
     } else {
-      state = state.copyWith(
-        latestArticles: latest,
-        isLoading: false,
-      );
+      state = state.copyWith(latestArticles: latest, isLoading: false);
     }
-    
+
     _loadAppNotifications();
   }
 
@@ -169,7 +163,10 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
 
       // En son 5-10 haberi al (resimli olanları tercih et)
       final latest = articles
-          .where((article) => article.imageUrl != null && article.imageUrl!.isNotEmpty)
+          .where(
+            (article) =>
+                article.imageUrl != null && article.imageUrl!.isNotEmpty,
+          )
           .take(10)
           .toList();
 
@@ -189,10 +186,7 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -234,11 +228,11 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
     } catch (e) {
       // News provider hazır değilse devam et
     }
-    
+
     await loadLatestArticles();
     _loadAppNotifications();
   }
-  
+
   /// News provider'dan haberler yüklendiğinde otomatik güncelle
   void updateFromNewsProvider(List<Article> articles) {
     if (articles.isNotEmpty) {
@@ -247,4 +241,3 @@ class NotificationBannerNotifier extends StateNotifier<NotificationBannerState> 
     }
   }
 }
-

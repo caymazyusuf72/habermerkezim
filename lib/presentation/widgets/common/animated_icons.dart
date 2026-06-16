@@ -34,33 +34,38 @@ class _AnimatedFavoriteIconState extends State<AnimatedFavoriteIcon>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.3)
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween<double>(
+          begin: 1.0,
+          end: 1.3,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 50,
       ),
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.3, end: 1.0)
-            .chain(CurveTween(curve: Curves.elasticOut)),
+        tween: Tween<double>(
+          begin: 1.3,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.elasticOut)),
         weight: 50,
       ),
     ]).animate(_controller);
 
     _bounceAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween<double>(begin: 0, end: -5)
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween<double>(
+          begin: 0,
+          end: -5,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 30,
       ),
       TweenSequenceItem(
-        tween: Tween<double>(begin: -5, end: 0)
-            .chain(CurveTween(curve: Curves.bounceOut)),
+        tween: Tween<double>(
+          begin: -5,
+          end: 0,
+        ).chain(CurveTween(curve: Curves.bounceOut)),
         weight: 70,
       ),
     ]).animate(_controller);
@@ -84,7 +89,9 @@ class _AnimatedFavoriteIconState extends State<AnimatedFavoriteIcon>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final activeColor = widget.activeColor ?? Colors.red;
-    final inactiveColor = widget.inactiveColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.6);
+    final inactiveColor =
+        widget.inactiveColor ??
+        theme.colorScheme.onSurface.withValues(alpha: 0.6);
 
     return GestureDetector(
       onTap: () {
@@ -99,22 +106,18 @@ class _AnimatedFavoriteIconState extends State<AnimatedFavoriteIcon>
         builder: (context, child) {
           return Transform.translate(
             offset: Offset(0, _bounceAnimation.value),
-            child: Transform.scale(
-              scale: _scaleAnimation.value,
-              child: child,
-            ),
+            child: Transform.scale(scale: _scaleAnimation.value, child: child),
           );
         },
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           transitionBuilder: (child, animation) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
+            return FadeTransition(opacity: animation, child: child);
           },
           child: Icon(
-            widget.isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+            widget.isFavorite
+                ? Icons.favorite_rounded
+                : Icons.favorite_border_rounded,
             key: ValueKey(widget.isFavorite),
             size: widget.size,
             color: widget.isFavorite ? activeColor : inactiveColor,
@@ -160,13 +163,15 @@ class _AnimatedBookmarkIconState extends State<AnimatedBookmarkIcon>
       vsync: this,
     );
 
-    _slideAnimation = Tween<double>(begin: -10, end: 0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
-    );
+    _slideAnimation = Tween<double>(
+      begin: -10,
+      end: 0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     if (widget.isBookmarked) {
       _controller.value = 1.0;
@@ -193,7 +198,9 @@ class _AnimatedBookmarkIconState extends State<AnimatedBookmarkIcon>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final activeColor = widget.activeColor ?? theme.colorScheme.primary;
-    final inactiveColor = widget.inactiveColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.6);
+    final inactiveColor =
+        widget.inactiveColor ??
+        theme.colorScheme.onSurface.withValues(alpha: 0.6);
 
     return GestureDetector(
       onTap: () {
@@ -206,9 +213,15 @@ class _AnimatedBookmarkIconState extends State<AnimatedBookmarkIcon>
           return Transform.translate(
             offset: Offset(0, _slideAnimation.value * (1 - _controller.value)),
             child: Icon(
-              widget.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+              widget.isBookmarked
+                  ? Icons.bookmark_rounded
+                  : Icons.bookmark_border_rounded,
               size: widget.size,
-              color: Color.lerp(inactiveColor, activeColor, _fadeAnimation.value),
+              color: Color.lerp(
+                inactiveColor,
+                activeColor,
+                _fadeAnimation.value,
+              ),
             ),
           );
         },
@@ -223,12 +236,7 @@ class AnimatedShareIcon extends StatefulWidget {
   final double size;
   final Color? color;
 
-  const AnimatedShareIcon({
-    super.key,
-    this.onTap,
-    this.size = 24,
-    this.color,
-  });
+  const AnimatedShareIcon({super.key, this.onTap, this.size = 24, this.color});
 
   @override
   State<AnimatedShareIcon> createState() => _AnimatedShareIconState();
@@ -248,9 +256,10 @@ class _AnimatedShareIconState extends State<AnimatedShareIcon>
       vsync: this,
     );
 
-    _rotationAnimation = Tween<double>(begin: 0, end: 0.1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
-    );
+    _rotationAnimation = Tween<double>(
+      begin: 0,
+      end: 0.1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
@@ -261,10 +270,7 @@ class _AnimatedShareIconState extends State<AnimatedShareIcon>
         tween: Tween<double>(begin: 0.85, end: 1.1),
         weight: 40,
       ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.1, end: 1.0),
-        weight: 30,
-      ),
+      TweenSequenceItem(tween: Tween<double>(begin: 1.1, end: 1.0), weight: 30),
     ]).animate(_controller);
   }
 
@@ -283,7 +289,8 @@ class _AnimatedShareIconState extends State<AnimatedShareIcon>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final iconColor = widget.color ?? theme.colorScheme.onSurface.withValues(alpha: 0.7);
+    final iconColor =
+        widget.color ?? theme.colorScheme.onSurface.withValues(alpha: 0.7);
 
     return GestureDetector(
       onTap: _handleTap,
@@ -298,11 +305,7 @@ class _AnimatedShareIconState extends State<AnimatedShareIcon>
             ),
           );
         },
-        child: Icon(
-          Icons.share_rounded,
-          size: widget.size,
-          color: iconColor,
-        ),
+        child: Icon(Icons.share_rounded, size: widget.size, color: iconColor),
       ),
     );
   }
@@ -444,19 +447,14 @@ class _AnimatedCheckIconState extends State<AnimatedCheckIcon>
     );
 
     _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.2),
-        weight: 40,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.2, end: 1.0),
-        weight: 60,
-      ),
+      TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.2), weight: 40),
+      TweenSequenceItem(tween: Tween<double>(begin: 1.2, end: 1.0), weight: 60),
     ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
-    _checkAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _checkAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     if (widget.isChecked) {
       _controller.value = 1.0;
@@ -507,7 +505,11 @@ class _AnimatedCheckIconState extends State<AnimatedCheckIcon>
                       ),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Color.lerp(inactiveColor, activeColor, _checkAnimation.value)!,
+                        color: Color.lerp(
+                          inactiveColor,
+                          activeColor,
+                          _checkAnimation.value,
+                        )!,
                         width: 2,
                       ),
                     )
@@ -547,7 +549,8 @@ class AnimatedNotificationIcon extends StatefulWidget {
   });
 
   @override
-  State<AnimatedNotificationIcon> createState() => _AnimatedNotificationIconState();
+  State<AnimatedNotificationIcon> createState() =>
+      _AnimatedNotificationIconState();
 }
 
 class _AnimatedNotificationIconState extends State<AnimatedNotificationIcon>
@@ -629,13 +632,12 @@ class _AnimatedNotificationIconState extends State<AnimatedNotificationIcon>
                     width: 1.5,
                   ),
                 ),
-                constraints: const BoxConstraints(
-                  minWidth: 18,
-                  minHeight: 18,
-                ),
+                constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
                 child: Center(
                   child: Text(
-                    widget.notificationCount > 99 ? '99+' : widget.notificationCount.toString(),
+                    widget.notificationCount > 99
+                        ? '99+'
+                        : widget.notificationCount.toString(),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
@@ -761,13 +763,17 @@ class _PulseIconState extends State<PulseIcon>
 
     _pulseAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.15)
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween<double>(
+          begin: 1.0,
+          end: 1.15,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 50,
       ),
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.15, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeIn)),
+        tween: Tween<double>(
+          begin: 1.15,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeIn)),
         weight: 50,
       ),
     ]).animate(_controller);
@@ -809,11 +815,7 @@ class _PulseIconState extends State<PulseIcon>
             child: child,
           );
         },
-        child: Icon(
-          widget.icon,
-          size: widget.size,
-          color: iconColor,
-        ),
+        child: Icon(widget.icon, size: widget.size, color: iconColor),
       ),
     );
   }

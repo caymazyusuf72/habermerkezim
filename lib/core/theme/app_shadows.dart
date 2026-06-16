@@ -145,7 +145,11 @@ class AppShadows {
   }
 
   /// Renkli shadow (buton vb. için)
-  static List<BoxShadow> colored(Color color, {double opacity = 0.3, double blurRadius = 12}) {
+  static List<BoxShadow> colored(
+    Color color, {
+    double opacity = 0.3,
+    double blurRadius = 12,
+  }) {
     return [
       BoxShadow(
         color: color.withValues(alpha: opacity),
@@ -156,7 +160,11 @@ class AppShadows {
   }
 
   /// Soft glow efekti
-  static List<BoxShadow> glow(Color color, {double opacity = 0.2, double blurRadius = 20}) {
+  static List<BoxShadow> glow(
+    Color color, {
+    double opacity = 0.2,
+    double blurRadius = 20,
+  }) {
     return [
       BoxShadow(
         color: color.withValues(alpha: opacity),

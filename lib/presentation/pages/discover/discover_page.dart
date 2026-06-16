@@ -33,7 +33,9 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     });
 
     try {
-      final articles = await RecommendationService.getRecommendedArticles(limit: 30);
+      final articles = await RecommendationService.getRecommendedArticles(
+        limit: 30,
+      );
       final sources = RecommendationService.discoverNewSources(limit: 10);
 
       setState(() {
@@ -82,7 +84,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                       _buildNewSourcesSection(theme),
                       const SizedBox(height: 24),
                     ],
-                    
+
                     // Sizin İçin Öneriler
                     _buildRecommendedSection(theme),
                   ],
@@ -124,7 +126,11 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.rss_feed_rounded, size: 32, color: AppTheme.primaryBlue),
+                        Icon(
+                          Icons.rss_feed_rounded,
+                          size: 32,
+                          color: AppTheme.primaryBlue,
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           source,
@@ -155,10 +161,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
           children: [
             Icon(Icons.recommend_rounded, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
-            Text(
-              'Henüz öneri yok',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
+            Text('Henüz öneri yok', style: TextStyle(color: Colors.grey[600])),
             const SizedBox(height: 8),
             Text(
               'Daha fazla haber okuyun, size özel öneriler sunalım',
@@ -175,7 +178,11 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
       children: [
         Row(
           children: [
-            Icon(Icons.auto_awesome_rounded, color: AppTheme.primaryBlue, size: 20),
+            Icon(
+              Icons.auto_awesome_rounded,
+              color: AppTheme.primaryBlue,
+              size: 20,
+            ),
             const SizedBox(width: 8),
             Text(
               'Sizin İçin Öneriler',
@@ -208,4 +215,3 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     );
   }
 }
-

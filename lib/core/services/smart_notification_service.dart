@@ -130,11 +130,7 @@ class DailySummarySettings {
     );
   }
 
-  DailySummarySettings copyWith({
-    bool? enabled,
-    int? hour,
-    int? minute,
-  }) {
+  DailySummarySettings copyWith({bool? enabled, int? hour, int? minute}) {
     return DailySummarySettings(
       enabled: enabled ?? this.enabled,
       hour: hour ?? this.hour,
@@ -146,14 +142,16 @@ class DailySummarySettings {
 /// Akıllı Bildirim Servisi
 /// Topic-based, scheduled, gruplama, sessiz saatler ve öncelik sistemi
 class SmartNotificationService {
-  static final SmartNotificationService _instance = SmartNotificationService._internal();
+  static final SmartNotificationService _instance =
+      SmartNotificationService._internal();
   factory SmartNotificationService() => _instance;
   SmartNotificationService._internal();
 
   final NotificationService _notificationService = NotificationService();
 
   // Hive keys
-  static const String _topicSubscriptionsKey = 'notification_topic_subscriptions';
+  static const String _topicSubscriptionsKey =
+      'notification_topic_subscriptions';
   static const String _quietHoursKey = 'notification_quiet_hours';
   static const String _dailySummaryKey = 'notification_daily_summary';
   static const String _notificationStatsKey = 'notification_stats';
@@ -227,7 +225,9 @@ class SmartNotificationService {
         enabled: settings.enabled,
       );
 
-      debugPrint('📱 Günlük özet ayarları güncellendi: ${settings.hour}:${settings.minute}');
+      debugPrint(
+        '📱 Günlük özet ayarları güncellendi: ${settings.hour}:${settings.minute}',
+      );
     } catch (e) {
       debugPrint('❌ Günlük özet ayarları güncellenemedi: $e');
     }
@@ -257,7 +257,9 @@ class SmartNotificationService {
       await box.put(_pendingNotificationsKey, jsonEncode(pending));
 
       // Aynı kaynaktan 3+ bildirim birikirse gruplayarak gönder
-      final sourceNotifications = pending.where((n) => n['source'] == source).toList();
+      final sourceNotifications = pending
+          .where((n) => n['source'] == source)
+          .toList();
       if (sourceNotifications.length >= 3) {
         await _sendGroupedNotification(source, sourceNotifications);
         // Gönderilen bildirimleri temizle
@@ -321,7 +323,9 @@ class SmartNotificationService {
     try {
       final box = HiveService.settingsBox;
       await box.put(_quietHoursKey, settings.toJson());
-      debugPrint('📱 Sessiz saatler güncellendi: ${settings.startHour}:${settings.startMinute} - ${settings.endHour}:${settings.endMinute}');
+      debugPrint(
+        '📱 Sessiz saatler güncellendi: ${settings.startHour}:${settings.startMinute} - ${settings.endHour}:${settings.endMinute}',
+      );
     } catch (e) {
       debugPrint('❌ Sessiz saatler güncellenemedi: $e');
     }
@@ -371,9 +375,11 @@ class SmartNotificationService {
     }
 
     // 3. Günlük limit kontrolü
-    if (priority == NotificationPriority.low || priority == NotificationPriority.normal) {
+    if (priority == NotificationPriority.low ||
+        priority == NotificationPriority.normal) {
       final dailyCount = _getDailyNotificationCount();
-      if (dailyCount >= 20) { // Günlük max 20 bildirim
+      if (dailyCount >= 20) {
+        // Günlük max 20 bildirim
         debugPrint('📱 Günlük bildirim limiti aşıldı: $dailyCount');
         return false;
       }
@@ -440,7 +446,10 @@ class SmartNotificationService {
         categoryStats: stats.categoryStats,
         lastResetDate: stats.lastResetDate,
       );
-      await HiveService.settingsBox.put(_notificationStatsKey, newStats.toJson());
+      await HiveService.settingsBox.put(
+        _notificationStatsKey,
+        newStats.toJson(),
+      );
     } catch (e) {
       debugPrint('❌ Bildirim istatistiği güncellenemedi: $e');
     }
@@ -457,7 +466,10 @@ class SmartNotificationService {
         categoryStats: stats.categoryStats,
         lastResetDate: stats.lastResetDate,
       );
-      await HiveService.settingsBox.put(_notificationStatsKey, newStats.toJson());
+      await HiveService.settingsBox.put(
+        _notificationStatsKey,
+        newStats.toJson(),
+      );
     } catch (e) {
       debugPrint('❌ Görüntülenme kaydedilemedi: $e');
     }
@@ -474,7 +486,10 @@ class SmartNotificationService {
         categoryStats: stats.categoryStats,
         lastResetDate: stats.lastResetDate,
       );
-      await HiveService.settingsBox.put(_notificationStatsKey, newStats.toJson());
+      await HiveService.settingsBox.put(
+        _notificationStatsKey,
+        newStats.toJson(),
+      );
     } catch (e) {
       debugPrint('❌ Tıklanma kaydedilemedi: $e');
     }
@@ -484,7 +499,10 @@ class SmartNotificationService {
   Future<void> resetStats() async {
     try {
       final newStats = NotificationStats(lastResetDate: DateTime.now());
-      await HiveService.settingsBox.put(_notificationStatsKey, newStats.toJson());
+      await HiveService.settingsBox.put(
+        _notificationStatsKey,
+        newStats.toJson(),
+      );
     } catch (e) {
       debugPrint('❌ İstatistikler sıfırlanamadı: $e');
     }
@@ -532,7 +550,9 @@ class SmartNotificationService {
 // ─── Riverpod Provider'ları ─────────────────────────────────────────────────
 
 /// SmartNotificationService provider
-final smartNotificationServiceProvider = Provider<SmartNotificationService>((ref) {
+final smartNotificationServiceProvider = Provider<SmartNotificationService>((
+  ref,
+) {
   return SmartNotificationService();
 });
 

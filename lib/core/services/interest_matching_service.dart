@@ -13,7 +13,8 @@ class InterestMatchingService {
     double score = 0.0;
 
     // 1. Kategori bazlı eşleştirme (40 puan)
-    if (tag.category != null && article.category.toLowerCase() == tag.category!.toLowerCase()) {
+    if (tag.category != null &&
+        article.category.toLowerCase() == tag.category!.toLowerCase()) {
       score += 40.0;
     }
 
@@ -35,7 +36,11 @@ class InterestMatchingService {
 
   /// Bir haberin kullanıcının ilgi alanlarına uygun olup olmadığını kontrol eder
   /// Eşik değeri: 30 puan (ayarlanabilir)
-  static bool isArticleRelevant(Article article, List<String> interestTagIds, {double threshold = 30.0}) {
+  static bool isArticleRelevant(
+    Article article,
+    List<String> interestTagIds, {
+    double threshold = 30.0,
+  }) {
     if (interestTagIds.isEmpty) return false;
 
     for (final tagId in interestTagIds) {
@@ -97,18 +102,18 @@ class InterestMatchingService {
   /// Haber metnini birleştirir (başlık + açıklama + içerik)
   static String _getArticleText(Article article) {
     final parts = <String>[];
-    
+
     if (article.title.isNotEmpty) {
       parts.add(article.title);
     }
-    
+
     if (article.description.isNotEmpty) {
       parts.add(article.description);
     }
-    
+
     // Content varsa ekle (ilk 500 karakter)
     if (article.content != null && article.content!.isNotEmpty) {
-      final content = article.content!.length > 500 
+      final content = article.content!.length > 500
           ? article.content!.substring(0, 500)
           : article.content!;
       parts.add(content);
@@ -123,9 +128,5 @@ class _ScoredArticle {
   final Article article;
   final double score;
 
-  _ScoredArticle({
-    required this.article,
-    required this.score,
-  });
+  _ScoredArticle({required this.article, required this.score});
 }
-

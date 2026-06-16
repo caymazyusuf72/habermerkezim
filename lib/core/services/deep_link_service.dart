@@ -3,13 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Deep link türleri
-enum DeepLinkType {
-  article,
-  category,
-  search,
-  collection,
-  unknown,
-}
+enum DeepLinkType { article, category, search, collection, unknown }
 
 /// Deep link veri modeli
 class DeepLinkData {
@@ -89,10 +83,7 @@ class DeepLinkService {
       return _parseWebUri(uri);
     }
 
-    return DeepLinkData(
-      type: DeepLinkType.unknown,
-      rawUri: uri.toString(),
-    );
+    return DeepLinkData(type: DeepLinkType.unknown, rawUri: uri.toString());
   }
 
   /// App scheme URI parse
@@ -140,10 +131,7 @@ class DeepLinkService {
         );
 
       default:
-        return DeepLinkData(
-          type: DeepLinkType.unknown,
-          rawUri: uri.toString(),
-        );
+        return DeepLinkData(type: DeepLinkType.unknown, rawUri: uri.toString());
     }
   }
 
@@ -152,10 +140,7 @@ class DeepLinkService {
     final pathSegments = uri.pathSegments;
 
     if (pathSegments.isEmpty) {
-      return DeepLinkData(
-        type: DeepLinkType.unknown,
-        rawUri: uri.toString(),
-      );
+      return DeepLinkData(type: DeepLinkType.unknown, rawUri: uri.toString());
     }
 
     switch (pathSegments[0]) {
@@ -189,10 +174,7 @@ class DeepLinkService {
         );
 
       default:
-        return DeepLinkData(
-          type: DeepLinkType.unknown,
-          rawUri: uri.toString(),
-        );
+        return DeepLinkData(type: DeepLinkType.unknown, rawUri: uri.toString());
     }
   }
 

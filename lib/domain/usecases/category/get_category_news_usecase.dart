@@ -16,7 +16,8 @@ class GetCategoryNewsParams {
 }
 
 /// Kategoriye göre haberleri getiren use case
-class GetCategoryNewsUseCase implements UseCaseWithParams<List<Article>, GetCategoryNewsParams> {
+class GetCategoryNewsUseCase
+    implements UseCaseWithParams<List<Article>, GetCategoryNewsParams> {
   final CategoryRepository repository;
 
   const GetCategoryNewsUseCase(this.repository);

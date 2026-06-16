@@ -10,7 +10,8 @@ class UpdateSettingsParams {
 }
 
 /// Ayarları güncelleme use case'i
-class UpdateSettingsUseCase implements VoidUseCaseWithParams<UpdateSettingsParams> {
+class UpdateSettingsUseCase
+    implements VoidUseCaseWithParams<UpdateSettingsParams> {
   final SettingsRepository repository;
 
   const UpdateSettingsUseCase(this.repository);

@@ -3,7 +3,8 @@ import '../repositories/news_repository.dart';
 import 'usecase.dart';
 
 /// Kategoriye göre haberleri getiren use case
-class GetArticlesByCategory implements UseCaseWithParams<List<Article>, String> {
+class GetArticlesByCategory
+    implements UseCaseWithParams<List<Article>, String> {
   final NewsRepository repository;
 
   const GetArticlesByCategory(this.repository);
@@ -15,7 +16,8 @@ class GetArticlesByCategory implements UseCaseWithParams<List<Article>, String> 
 }
 
 /// Kategoriye göre haberleri stream olarak dinleyen use case
-class WatchArticlesByCategory implements StreamUseCaseWithParams<List<Article>, String> {
+class WatchArticlesByCategory
+    implements StreamUseCaseWithParams<List<Article>, String> {
   final NewsRepository repository;
 
   const WatchArticlesByCategory(this.repository);

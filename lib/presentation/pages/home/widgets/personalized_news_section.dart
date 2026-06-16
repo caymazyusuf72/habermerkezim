@@ -37,7 +37,12 @@ class PersonalizedNewsSection extends ConsumerWidget {
     }
 
     if (personalizedState.hasError) {
-      return _buildErrorState(context, theme, isDark, personalizedState.errorMessage);
+      return _buildErrorState(
+        context,
+        theme,
+        isDark,
+        personalizedState.errorMessage,
+      );
     }
 
     if (!personalizedState.hasArticles) {
@@ -108,15 +113,15 @@ class PersonalizedNewsSection extends ConsumerWidget {
               ],
             ),
           ),
-          
+
           // Haber listesi (horizontal scroll)
           SizedBox(
             height: 280,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: personalizedState.articles.length > 10 
-                  ? 10 
+              itemCount: personalizedState.articles.length > 10
+                  ? 10
                   : personalizedState.articles.length,
               itemBuilder: (context, index) {
                 final article = personalizedState.articles[index];
@@ -131,12 +136,15 @@ class PersonalizedNewsSection extends ConsumerWidget {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => ArticleDetailPage(article: article),
+                                builder: (_) =>
+                                    ArticleDetailPage(article: article),
                               ),
                             );
                           },
                           onFavoriteToggle: () {
-                            ref.read(favoritesProvider.notifier).toggleFavorite(article);
+                            ref
+                                .read(favoritesProvider.notifier)
+                                .toggleFavorite(article);
                           },
                         ),
                       ),
@@ -146,7 +154,7 @@ class PersonalizedNewsSection extends ConsumerWidget {
               },
             ),
           ),
-          
+
           const SizedBox(height: 16),
         ],
       ),
@@ -191,9 +199,7 @@ class PersonalizedNewsSection extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const EditInterestsPage(),
-                ),
+                MaterialPageRoute(builder: (_) => const EditInterestsPage()),
               );
             },
             icon: const Icon(Icons.add),
@@ -208,7 +214,11 @@ class PersonalizedNewsSection extends ConsumerWidget {
     );
   }
 
-  Widget _buildLoadingState(BuildContext context, ThemeData theme, bool isDark) {
+  Widget _buildLoadingState(
+    BuildContext context,
+    ThemeData theme,
+    bool isDark,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(24),
@@ -216,9 +226,7 @@ class PersonalizedNewsSection extends ConsumerWidget {
         color: isDark ? Colors.grey[900] : Colors.grey[50],
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
+      child: const Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -249,6 +257,4 @@ class PersonalizedNewsSection extends ConsumerWidget {
       ),
     );
   }
-
 }
-

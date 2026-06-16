@@ -9,10 +9,7 @@ import '../../../themes/app_theme.dart';
 class TtsControls extends ConsumerStatefulWidget {
   final Article article;
 
-  const TtsControls({
-    super.key,
-    required this.article,
-  });
+  const TtsControls({super.key, required this.article});
 
   @override
   ConsumerState<TtsControls> createState() => _TtsControlsState();
@@ -117,7 +114,10 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                 },
                 child: Container(
                   height: 60,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: Row(
                     children: [
                       // Play/Pause butonu
@@ -131,9 +131,9 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                         iconSize: 28,
                         color: AppTheme.primaryBlue,
                       ),
-                      
+
                       const SizedBox(width: 12),
-                      
+
                       // Başlık ve bilgi
                       Expanded(
                         child: Column(
@@ -154,13 +154,15 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                                   ? (_isPaused ? 'Duraklatıldı' : 'Oynatılıyor')
                                   : 'Hazır',
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.6,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      
+
                       // Stop butonu
                       if (_isPlaying)
                         IconButton(
@@ -168,7 +170,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                           onPressed: _stop,
                           color: Colors.red,
                         ),
-                      
+
                       // Expand/Collapse butonu
                       IconButton(
                         icon: Icon(
@@ -184,11 +186,11 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                   ),
                 ),
               ),
-              
+
               // Genişletilmiş kontroller
               if (_isExpanded) ...[
                 const Divider(height: 1),
-                
+
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -208,9 +210,9 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                         },
                         formatValue: (value) => '${(value * 100).toInt()}%',
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Ses seviyesi kontrolü
                       _buildExpandedSlider(
                         context,
@@ -226,9 +228,9 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                         },
                         formatValue: (value) => '${(value * 100).toInt()}%',
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Hızlı erişim butonları
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -270,7 +272,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -307,7 +309,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
     required String Function(double) formatValue,
   }) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -376,7 +378,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
     required String Function(double) formatValue,
   }) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -420,9 +422,9 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 6),
-        
+
         // Slider - daha ince
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
@@ -445,4 +447,3 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
     );
   }
 }
-

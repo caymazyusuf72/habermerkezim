@@ -29,41 +29,52 @@ class HaberMerkeziApp extends ConsumerWidget {
     final themeMode = themeState.themeMode;
     final fontScale = themeState.fontScale;
     final colorTheme = themeState.colorTheme;
-    
+
     // Locale durumunu izle
     final localeState = ref.watch(localeProvider);
     final currentLocale = localeState.locale;
-    
+
     // App initialization durumunu izle
     final appInitialization = ref.watch(appInitializationProvider);
-    
+
     // DynamicColorBuilder ile sistem renklerini al
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         // Dynamic color'ları provider'a kaydet
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (lightDynamic != null && darkDynamic != null) {
-            ref.read(dynamicColorProvider.notifier).setDynamicColors(
-              lightDynamic,
-              darkDynamic,
-            );
+            ref
+                .read(dynamicColorProvider.notifier)
+                .setDynamicColors(lightDynamic, darkDynamic);
           }
         });
-        
+
         // Dynamic color kullanılıyorsa ve destekleniyorsa
-        final effectiveLightDynamic = colorTheme == ColorTheme.dynamic ? lightDynamic : null;
-        final effectiveDarkDynamic = colorTheme == ColorTheme.dynamic ? darkDynamic : null;
+        final effectiveLightDynamic = colorTheme == ColorTheme.dynamic
+            ? lightDynamic
+            : null;
+        final effectiveDarkDynamic = colorTheme == ColorTheme.dynamic
+            ? darkDynamic
+            : null;
 
         return MaterialApp(
           title: 'Haber Merkezim',
           debugShowCheckedModeBanner: false,
           showPerformanceOverlay: false,
-          
+
           // Tema ayarları - font scale, color theme ve dynamic color ile birlikte
-          theme: AppTheme.getLightTheme(fontScale, colorTheme, effectiveLightDynamic),
-          darkTheme: AppTheme.getDarkTheme(fontScale, colorTheme, effectiveDarkDynamic),
+          theme: AppTheme.getLightTheme(
+            fontScale,
+            colorTheme,
+            effectiveLightDynamic,
+          ),
+          darkTheme: AppTheme.getDarkTheme(
+            fontScale,
+            colorTheme,
+            effectiveDarkDynamic,
+          ),
           themeMode: themeMode,
-      
+
           // Localization ayarları
           localizationsDelegates: const [
             AppLocalizations.delegate,
@@ -76,21 +87,17 @@ class HaberMerkeziApp extends ConsumerWidget {
             Locale('en', 'US'), // İngilizce
           ],
           locale: currentLocale,
-          
+
           // Ana sayfa - initialization ve authentication durumuna göre
           home: appInitialization.when(
             data: (_) {
               // Authentication kontrolü yap - DEVRE DIŞI BIRAKILDI (Açık kaynak için)
               return _OnboardingCheckWrapper(
-                child: _UpdateCheckWrapper(
-                  child: const HomePage(),
-                ),
+                child: _UpdateCheckWrapper(child: const HomePage()),
               );
             },
             loading: () => const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
+              body: Center(child: CircularProgressIndicator()),
             ),
             error: (error, stackTrace) {
               AppLogger.error('App initialization hatasi', error, stackTrace);
@@ -102,14 +109,14 @@ class HaberMerkeziApp extends ConsumerWidget {
               );
             },
           ),
-          
+
           // Route ayarları
           routes: {
             '/home': (context) => const HomePage(),
             '/onboarding': (context) => const OnboardingPage(),
             '/login': (context) => const LoginPage(),
           },
-          
+
           // App boyut ve orientation ayarları
           builder: (context, child) {
             return MediaQuery(
@@ -131,11 +138,7 @@ class ErrorPage extends StatelessWidget {
   final Object error;
   final VoidCallback onRetry;
 
-  const ErrorPage({
-    super.key,
-    required this.error,
-    required this.onRetry,
-  });
+  const ErrorPage({super.key, required this.error, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -160,9 +163,9 @@ class ErrorPage extends StatelessWidget {
                   color: Colors.red.shade400,
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Başlık
               Text(
                 'Bir sorun oluştu',
@@ -172,20 +175,20 @@ class ErrorPage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Açıklama
               Text(
                 'Haber Merkezi başlatılırken bir hata oluştu. Lütfen tekrar deneyin.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey.shade600,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               // Hata detayı (debug modda)
               if (error.toString().isNotEmpty)
                 Container(
@@ -205,9 +208,9 @@ class ErrorPage extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Yeniden dene butonu
               SizedBox(
                 width: double.infinity,
@@ -225,9 +228,9 @@ class ErrorPage extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // İptal butonu
               TextButton(
                 onPressed: () {
@@ -236,9 +239,7 @@ class ErrorPage extends StatelessWidget {
                 },
                 child: Text(
                   'Uygulamayı Kapat',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600),
                 ),
               ),
             ],
@@ -257,7 +258,8 @@ class _UpdateCheckWrapper extends ConsumerStatefulWidget {
   const _UpdateCheckWrapper({required this.child});
 
   @override
-  ConsumerState<_UpdateCheckWrapper> createState() => _UpdateCheckWrapperState();
+  ConsumerState<_UpdateCheckWrapper> createState() =>
+      _UpdateCheckWrapperState();
 }
 
 class _UpdateCheckWrapperState extends ConsumerState<_UpdateCheckWrapper> {
@@ -279,12 +281,13 @@ class _UpdateCheckWrapperState extends ConsumerState<_UpdateCheckWrapper> {
     try {
       // Güncelleme kontrolü yap (non-blocking)
       final updateResult = await ref.read(checkForUpdatesProvider.future);
-      
+
       if (updateResult != null && mounted) {
         // Güncelleme mevcut, dialog göster
         showDialog(
           context: context,
-          barrierDismissible: updateResult.type != UpdateType.immediate &&
+          barrierDismissible:
+              updateResult.type != UpdateType.immediate &&
               !(updateResult.updateInfo?.forceUpdate ?? false),
           builder: (context) => UpdateDialog(
             updateResult: updateResult,
@@ -314,10 +317,12 @@ class _OnboardingCheckWrapper extends ConsumerStatefulWidget {
   const _OnboardingCheckWrapper({required this.child});
 
   @override
-  ConsumerState<_OnboardingCheckWrapper> createState() => _OnboardingCheckWrapperState();
+  ConsumerState<_OnboardingCheckWrapper> createState() =>
+      _OnboardingCheckWrapperState();
 }
 
-class _OnboardingCheckWrapperState extends ConsumerState<_OnboardingCheckWrapper> {
+class _OnboardingCheckWrapperState
+    extends ConsumerState<_OnboardingCheckWrapper> {
   bool? _hasCompletedOnboarding;
   bool _isLoading = true;
   bool _hasError = false;
@@ -332,7 +337,8 @@ class _OnboardingCheckWrapperState extends ConsumerState<_OnboardingCheckWrapper
   Future<void> _checkOnboarding() async {
     try {
       // Timeout ekle - maksimum 500ms bekle
-      final result = await ref.read(hasCompletedOnboardingProvider.future)
+      final result = await ref
+          .read(hasCompletedOnboardingProvider.future)
           .timeout(const Duration(milliseconds: 500), onTimeout: () => true);
       if (mounted) {
         setState(() {
@@ -364,11 +370,7 @@ class _OnboardingCheckWrapperState extends ConsumerState<_OnboardingCheckWrapper
           });
         }
       });
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (_hasError || _hasCompletedOnboarding == true) {
@@ -389,7 +391,7 @@ class _AuthCheckWrapper extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
-    
+
     return authState.when(
       data: (user) {
         if (user == null) {
@@ -399,11 +401,8 @@ class _AuthCheckWrapper extends ConsumerWidget {
         // Kullanıcı giriş yapmış, ana sayfaya devam et
         return child;
       },
-      loading: () => const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stackTrace) {
         AppLogger.error('Auth kontrolü hatası', error, stackTrace);
         // Hata durumunda Login sayfasına yönlendir

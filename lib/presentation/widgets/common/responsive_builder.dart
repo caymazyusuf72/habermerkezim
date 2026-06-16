@@ -6,13 +6,13 @@ class Breakpoints {
 
   /// Mobil cihazlar için maksimum genişlik
   static const double mobile = 600;
-  
+
   /// Tablet cihazlar için maksimum genişlik
   static const double tablet = 900;
-  
+
   /// Desktop için maksimum genişlik
   static const double desktop = 1200;
-  
+
   /// Büyük desktop için maksimum genişlik
   static const double largeDesktop = 1800;
 
@@ -50,21 +50,18 @@ class Breakpoints {
 }
 
 /// Cihaz türü enum
-enum DeviceType {
-  mobile,
-  tablet,
-  desktop,
-  largeDesktop,
-}
+enum DeviceType { mobile, tablet, desktop, largeDesktop }
 
 /// Responsive builder widget
 class ResponsiveBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context, DeviceType deviceType, BoxConstraints constraints) builder;
+  final Widget Function(
+    BuildContext context,
+    DeviceType deviceType,
+    BoxConstraints constraints,
+  )
+  builder;
 
-  const ResponsiveBuilder({
-    super.key,
-    required this.builder,
-  });
+  const ResponsiveBuilder({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +136,7 @@ class ResponsiveValue<T> {
 
   T getValue(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    
+
     if (width >= Breakpoints.largeDesktop && largeDesktop != null) {
       return largeDesktop!;
     } else if (width >= Breakpoints.tablet && desktop != null) {
@@ -245,7 +242,11 @@ class ResponsiveGrid extends StatelessWidget {
             columns = desktopColumns ?? tabletColumns ?? mobileColumns;
             break;
           case DeviceType.largeDesktop:
-            columns = largeDesktopColumns ?? desktopColumns ?? tabletColumns ?? mobileColumns;
+            columns =
+                largeDesktopColumns ??
+                desktopColumns ??
+                tabletColumns ??
+                mobileColumns;
             break;
         }
 
@@ -286,9 +287,7 @@ class ResponsiveContainer extends StatelessWidget {
     return Align(
       alignment: alignment,
       child: Container(
-        constraints: BoxConstraints(
-          maxWidth: maxWidth ?? Breakpoints.desktop,
-        ),
+        constraints: BoxConstraints(maxWidth: maxWidth ?? Breakpoints.desktop),
         padding: padding,
         child: child,
       ),
@@ -369,7 +368,8 @@ class ResponsiveRowColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
       builder: (context, deviceType, constraints) {
-        final isRow = (deviceType == DeviceType.tablet && rowOnTablet) ||
+        final isRow =
+            (deviceType == DeviceType.tablet && rowOnTablet) ||
             (deviceType == DeviceType.desktop && rowOnDesktop) ||
             (deviceType == DeviceType.largeDesktop && rowOnDesktop);
 
@@ -377,10 +377,9 @@ class ResponsiveRowColumn extends StatelessWidget {
         for (int i = 0; i < children.length; i++) {
           spacedChildren.add(children[i]);
           if (i < children.length - 1) {
-            spacedChildren.add(SizedBox(
-              width: isRow ? spacing : 0,
-              height: isRow ? 0 : spacing,
-            ));
+            spacedChildren.add(
+              SizedBox(width: isRow ? spacing : 0, height: isRow ? 0 : spacing),
+            );
           }
         }
 
@@ -445,7 +444,11 @@ class ResponsiveText extends StatelessWidget {
             fontSize = desktopFontSize ?? tabletFontSize ?? mobileFontSize;
             break;
           case DeviceType.largeDesktop:
-            fontSize = largeDesktopFontSize ?? desktopFontSize ?? tabletFontSize ?? mobileFontSize;
+            fontSize =
+                largeDesktopFontSize ??
+                desktopFontSize ??
+                tabletFontSize ??
+                mobileFontSize;
             break;
         }
 
@@ -505,11 +508,7 @@ class ResponsiveSizedBox extends StatelessWidget {
             break;
         }
 
-        return SizedBox(
-          width: width,
-          height: height,
-          child: child,
-        );
+        return SizedBox(width: width, height: height, child: child);
       },
     );
   }

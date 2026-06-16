@@ -9,7 +9,7 @@ class MiniAudioPlayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final audioState = ref.watch(audioPlayerProvider);
-    
+
     if (audioState.currentEpisode == null) {
       return const SizedBox.shrink();
     }
@@ -51,8 +51,7 @@ class MiniAudioPlayer extends ConsumerWidget {
                       width: 64,
                       height: 64,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Container(
+                      errorBuilder: (context, error, stackTrace) => Container(
                         width: 64,
                         height: 64,
                         color: Colors.grey[300],
@@ -70,9 +69,9 @@ class MiniAudioPlayer extends ConsumerWidget {
                     ),
                     child: const Icon(Icons.headphones, size: 32),
                   ),
-                
+
                 const SizedBox(width: 12),
-                
+
                 // Episode Info
                 Expanded(
                   child: Column(
@@ -91,15 +90,12 @@ class MiniAudioPlayer extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         '${_formatDuration(audioState.position)} / ${_formatDuration(audioState.duration ?? Duration.zero)}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ],
                   ),
                 ),
-                
+
                 // Play/Pause Button
                 IconButton(
                   icon: audioState.isLoading
@@ -116,7 +112,9 @@ class MiniAudioPlayer extends ConsumerWidget {
                         ),
                   onPressed: audioState.isLoading
                       ? null
-                      : () => ref.read(audioPlayerProvider.notifier).togglePlayPause(),
+                      : () => ref
+                            .read(audioPlayerProvider.notifier)
+                            .togglePlayPause(),
                 ),
               ],
             ),
@@ -131,7 +129,7 @@ class MiniAudioPlayer extends ConsumerWidget {
     final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);
     final seconds = duration.inSeconds.remainder(60);
-    
+
     if (hours > 0) {
       return '$hours:${twoDigits(minutes)}:${twoDigits(seconds)}';
     }
@@ -166,7 +164,7 @@ class FullAudioPlayer extends ConsumerWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          
+
           // Close button
           Align(
             alignment: Alignment.topRight,
@@ -175,7 +173,7 @@ class FullAudioPlayer extends ConsumerWidget {
               onPressed: () => Navigator.pop(context),
             ),
           ),
-          
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
@@ -190,8 +188,7 @@ class FullAudioPlayer extends ConsumerWidget {
                         width: double.infinity,
                         height: 300,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            Container(
+                        errorBuilder: (context, error, stackTrace) => Container(
                           width: double.infinity,
                           height: 300,
                           color: Colors.grey[300],
@@ -209,9 +206,9 @@ class FullAudioPlayer extends ConsumerWidget {
                       ),
                       child: const Icon(Icons.headphones, size: 80),
                     ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Episode Title
                   Text(
                     audioState.currentEpisode?.title ?? '',
@@ -221,19 +218,16 @@ class FullAudioPlayer extends ConsumerWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   Text(
                     'Haber Merkezi Podcast',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Progress Bar
                   Column(
                     children: [
@@ -249,7 +243,10 @@ class FullAudioPlayer extends ConsumerWidget {
                           onChanged: (value) {
                             if (audioState.duration != null) {
                               final position = Duration(
-                                milliseconds: (value * audioState.duration!.inMilliseconds).round(),
+                                milliseconds:
+                                    (value *
+                                            audioState.duration!.inMilliseconds)
+                                        .round(),
                               );
                               notifier.seek(position);
                             }
@@ -266,7 +263,9 @@ class FullAudioPlayer extends ConsumerWidget {
                               style: TextStyle(color: Colors.grey[600]),
                             ),
                             Text(
-                              _formatDuration(audioState.duration ?? Duration.zero),
+                              _formatDuration(
+                                audioState.duration ?? Duration.zero,
+                              ),
                               style: TextStyle(color: Colors.grey[600]),
                             ),
                           ],
@@ -274,9 +273,9 @@ class FullAudioPlayer extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Control Buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -287,14 +286,14 @@ class FullAudioPlayer extends ConsumerWidget {
                         iconSize: 36,
                         onPressed: () => notifier.seekBackward(),
                       ),
-                      
+
                       // Previous button (placeholder)
                       IconButton(
                         icon: const Icon(Icons.skip_previous),
                         iconSize: 48,
                         onPressed: () {},
                       ),
-                      
+
                       // Play/Pause button
                       Container(
                         decoration: BoxDecoration(
@@ -323,14 +322,14 @@ class FullAudioPlayer extends ConsumerWidget {
                               : () => notifier.togglePlayPause(),
                         ),
                       ),
-                      
+
                       // Next button (placeholder)
                       IconButton(
                         icon: const Icon(Icons.skip_next),
                         iconSize: 48,
                         onPressed: () {},
                       ),
-                      
+
                       // +10s button
                       IconButton(
                         icon: const Icon(Icons.forward_10),
@@ -339,9 +338,9 @@ class FullAudioPlayer extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Speed Control
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -350,23 +349,27 @@ class FullAudioPlayer extends ConsumerWidget {
                       DropdownButton<double>(
                         value: audioState.speed,
                         items: [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
-                            .map((speed) => DropdownMenuItem(
-                                  value: speed,
-                                  child: Text('${speed}x'),
-                                ))
+                            .map(
+                              (speed) => DropdownMenuItem(
+                                value: speed,
+                                child: Text('${speed}x'),
+                              ),
+                            )
                             .toList(),
                         onChanged: (speed) {
                           if (speed != null) {
-                            debugPrint('🔊 DEBUG: UI Speed değiştiriliyor: $speed');
+                            debugPrint(
+                              '🔊 DEBUG: UI Speed değiştiriliyor: $speed',
+                            );
                             notifier.setSpeed(speed);
                           }
                         },
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Volume Control
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -392,7 +395,9 @@ class FullAudioPlayer extends ConsumerWidget {
                             max: 1.0,
                             divisions: 20,
                             onChanged: (volume) {
-                              debugPrint('🔊 DEBUG: UI Volume değiştiriliyor: $volume');
+                              debugPrint(
+                                '🔊 DEBUG: UI Volume değiştiriliyor: $volume',
+                              );
                               notifier.setVolume(volume);
                             },
                           ),
@@ -414,7 +419,7 @@ class FullAudioPlayer extends ConsumerWidget {
     final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);
     final seconds = duration.inSeconds.remainder(60);
-    
+
     if (hours > 0) {
       return '$hours:${twoDigits(minutes)}:${twoDigits(seconds)}';
     }

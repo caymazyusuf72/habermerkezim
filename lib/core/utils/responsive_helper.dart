@@ -17,8 +17,12 @@ enum DeviceType {
 
   bool get isMobile => this == DeviceType.mobile;
   bool get isTablet => this == DeviceType.tablet;
-  bool get isDesktop => this == DeviceType.desktop || this == DeviceType.largeDesktop;
-  bool get isLargeScreen => this == DeviceType.tablet || this == DeviceType.desktop || this == DeviceType.largeDesktop;
+  bool get isDesktop =>
+      this == DeviceType.desktop || this == DeviceType.largeDesktop;
+  bool get isLargeScreen =>
+      this == DeviceType.tablet ||
+      this == DeviceType.desktop ||
+      this == DeviceType.largeDesktop;
 }
 
 /// Ekran yönü
@@ -95,7 +99,9 @@ class ResponsiveHelper {
 
   /// Ekran yönünü hesapla
   ScreenOrientation _calculateOrientation() {
-    return _width > _height ? ScreenOrientation.landscape : ScreenOrientation.portrait;
+    return _width > _height
+        ? ScreenOrientation.landscape
+        : ScreenOrientation.portrait;
   }
 
   /// Grid sütun sayısı
@@ -154,7 +160,9 @@ class ResponsiveHelper {
       case DeviceType.mobile:
         return _width - (padding * 2);
       case DeviceType.tablet:
-        return isLandscape ? (_width - (padding * 3)) / 2 : _width - (padding * 2);
+        return isLandscape
+            ? (_width - (padding * 3)) / 2
+            : _width - (padding * 2);
       case DeviceType.desktop:
         return (_width - (padding * 4)) / 3;
       case DeviceType.largeDesktop:
@@ -241,11 +249,7 @@ class ResponsiveHelper {
   }
 
   /// Responsive değer döndür
-  T value<T>({
-    required T mobile,
-    T? tablet,
-    T? desktop,
-  }) {
+  T value<T>({required T mobile, T? tablet, T? desktop}) {
     switch (_deviceType) {
       case DeviceType.mobile:
         return mobile;
@@ -258,11 +262,7 @@ class ResponsiveHelper {
   }
 
   /// Responsive widget döndür
-  Widget builder({
-    required Widget mobile,
-    Widget? tablet,
-    Widget? desktop,
-  }) {
+  Widget builder({required Widget mobile, Widget? tablet, Widget? desktop}) {
     switch (_deviceType) {
       case DeviceType.mobile:
         return mobile;
@@ -277,12 +277,10 @@ class ResponsiveHelper {
 
 /// Responsive widget builder
 class ResponsiveBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context, ResponsiveHelper responsive) builder;
+  final Widget Function(BuildContext context, ResponsiveHelper responsive)
+  builder;
 
-  const ResponsiveBuilder({
-    super.key,
-    required this.builder,
-  });
+  const ResponsiveBuilder({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context) {
@@ -401,7 +399,8 @@ class ResponsiveContainer extends StatelessWidget {
         return Center(
           child: Container(
             constraints: BoxConstraints(maxWidth: maxWidth),
-            padding: padding ?? EdgeInsets.symmetric(horizontal: responsive.padding),
+            padding:
+                padding ?? EdgeInsets.symmetric(horizontal: responsive.padding),
             child: child,
           ),
         );

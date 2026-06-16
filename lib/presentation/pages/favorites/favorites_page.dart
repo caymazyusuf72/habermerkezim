@@ -42,12 +42,13 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
     final result = await ModernDialogs.showDangerDialog(
       context: context,
       title: 'Tüm Favorileri Sil',
-      content: 'Tüm favori makaleleri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+      content:
+          'Tüm favori makaleleri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
       icon: Icons.favorite_border_rounded,
       confirmText: 'Sil',
       cancelText: 'İptal',
     );
-    
+
     if (result == true && mounted) {
       ref.read(favoritesProvider.notifier).clearAllFavorites();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -112,7 +113,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
               icon: const Icon(Icons.sort_rounded),
               tooltip: 'Sırala',
             ),
-            
+
             // Menü butonu
             PopupMenuButton<String>(
               onSelected: (value) {
@@ -143,7 +144,11 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
   }
 
   /// Ana içerik
-  Widget _buildBody(BuildContext context, FavoritesState favoritesState, ThemeData theme) {
+  Widget _buildBody(
+    BuildContext context,
+    FavoritesState favoritesState,
+    ThemeData theme,
+  ) {
     // Yükleniyor durumu
     if (favoritesState.isLoading) {
       return const Center(
@@ -164,16 +169,9 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: theme.colorScheme.error,
-            ),
+            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
             const SizedBox(height: 16),
-            Text(
-              'Hata',
-              style: theme.textTheme.headlineSmall,
-            ),
+            Text('Hata', style: theme.textTheme.headlineSmall),
             const SizedBox(height: 8),
             Text(
               favoritesState.error ?? 'Bilinmeyen hata',
@@ -182,7 +180,8 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: () => ref.read(favoritesProvider.notifier).loadFavorites(),
+              onPressed: () =>
+                  ref.read(favoritesProvider.notifier).loadFavorites(),
               icon: const Icon(Icons.refresh),
               label: const Text('Tekrar Dene'),
             ),
@@ -203,10 +202,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
               color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
-            Text(
-              'Henüz Favori Yok',
-              style: theme.textTheme.headlineSmall,
-            ),
+            Text('Henüz Favori Yok', style: theme.textTheme.headlineSmall),
             const SizedBox(height: 8),
             Text(
               'Beğendiğiniz haberleri favorilere ekleyerek burada görebilirsiniz',
@@ -271,26 +267,23 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Sıralama',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('Sıralama', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 16),
-          
+
           _buildSortOption(
             title: 'Tarihe Göre (Yeni → Eski)',
             subtitle: 'En yeni haberler önce gösterilir',
             value: 'date',
             icon: Icons.schedule,
           ),
-          
+
           _buildSortOption(
             title: 'Başlığa Göre (A → Z)',
             subtitle: 'Alfabetik sıraya göre',
             value: 'title',
             icon: Icons.sort_by_alpha,
           ),
-          
+
           _buildSortOption(
             title: 'Kaynağa Göre',
             subtitle: 'Haber kaynağına göre grupla',
@@ -310,12 +303,9 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
     required IconData icon,
   }) {
     final isSelected = _sortBy == value;
-    
+
     return ListTile(
-      leading: Icon(
-        icon,
-        color: isSelected ? AppTheme.primaryBlue : null,
-      ),
+      leading: Icon(icon, color: isSelected ? AppTheme.primaryBlue : null),
       title: Text(
         title,
         style: TextStyle(
@@ -324,13 +314,15 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
         ),
       ),
       subtitle: Text(subtitle),
-      trailing: isSelected ? const Icon(Icons.check, color: AppTheme.primaryBlue) : null,
+      trailing: isSelected
+          ? const Icon(Icons.check, color: AppTheme.primaryBlue)
+          : null,
       onTap: () {
         Navigator.of(context).pop();
         setState(() {
           _sortBy = value;
         });
-        
+
         // Sıralamayı uygula
         switch (value) {
           case 'date':
@@ -343,7 +335,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
             ref.read(favoritesProvider.notifier).sortFavoritesBySource();
             break;
         }
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Favoriler $title sıralandı'),
@@ -359,7 +351,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
   void _shareArticle(Article article) {
     final text = '${article.title}\n\n${article.link}';
     Share.share(text);
-    
+
     // Feedback göster
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -372,9 +364,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
         ),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }

@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+
 /// Retry helper - işlemleri otomatik olarak tekrar dener
 class RetryHelper {
   /// Exponential backoff ile retry yapar
-  /// 
+  ///
   /// [operation]: Tekrar denenecek işlem
   /// [maxAttempts]: Maksimum deneme sayısı (default: 3)
   /// [initialDelay]: İlk bekleme süresi (default: 1 saniye)
@@ -20,37 +21,39 @@ class RetryHelper {
   }) async {
     int attempt = 0;
     Duration delay = initialDelay;
-    
+
     while (true) {
       attempt++;
-      
+
       try {
         return await operation();
       } catch (e) {
         final exception = e is Exception ? e : Exception(e.toString());
-        
+
         // Son deneme ise hata fırlat
         if (attempt >= maxAttempts) {
           debugPrint('❌ Retry başarısız ($attempt/$maxAttempts): $e');
           rethrow;
         }
-        
+
         // Retry yapılıp yapılmayacağını kontrol et
         if (shouldRetry != null && !shouldRetry(exception)) {
           debugPrint('❌ Retry yapılmayacak hata: $e');
           rethrow;
         }
-        
+
         // Callback çağır
         if (onRetry != null) {
           onRetry(attempt, exception);
         }
-        
-        debugPrint('⚠️ Retry deneniyor ($attempt/$maxAttempts) - $delay bekleniyor: $e');
-        
+
+        debugPrint(
+          '⚠️ Retry deneniyor ($attempt/$maxAttempts) - $delay bekleniyor: $e',
+        );
+
         // Exponential backoff ile bekle
         await Future.delayed(delay);
-        
+
         // Bir sonraki delay'i hesapla (2x artır ama maxDelay'i geçme)
         delay = Duration(
           milliseconds: (delay.inMilliseconds * 2).clamp(
@@ -61,35 +64,35 @@ class RetryHelper {
       }
     }
   }
-  
+
   /// Belirli hata tiplerini retry etmemek için kontrol fonksiyonu
   static bool shouldRetryError(Exception error) {
     final errorMessage = error.toString().toLowerCase();
-    
+
     // Parse hataları retry edilmemeli (zaten başarısız olacak)
-    if (errorMessage.contains('parse') || 
+    if (errorMessage.contains('parse') ||
         errorMessage.contains('xml') ||
         errorMessage.contains('format')) {
       return false;
     }
-    
+
     // 404 hataları retry edilmemeli (kaynak yok)
     if (errorMessage.contains('404') || errorMessage.contains('not found')) {
       return false;
     }
-    
+
     // 401/403 hataları retry edilmemeli (yetki hatası)
-    if (errorMessage.contains('401') || 
+    if (errorMessage.contains('401') ||
         errorMessage.contains('403') ||
         errorMessage.contains('unauthorized') ||
         errorMessage.contains('forbidden')) {
       return false;
     }
-    
+
     // Timeout, network, 500 hataları retry edilebilir
     return true;
   }
-  
+
   /// Paralel işlemler için retry wrapper
   static Future<T?> retryOrNull<T>({
     required Future<T> Function() operation,

@@ -22,15 +22,14 @@ class UpdateDialog extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     // Zorunlu güncelleme - iptal butonu yok
-    final isForceUpdate = updateResult.type == UpdateType.immediate ||
+    final isForceUpdate =
+        updateResult.type == UpdateType.immediate ||
         (updateResult.updateInfo?.forceUpdate ?? false);
 
     return PopScope(
       canPop: !isForceUpdate, // Zorunlu güncellemede kapatılamaz
       child: Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
@@ -39,14 +38,8 @@ class UpdateDialog extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: isDark
-                  ? [
-                      Colors.grey[900]!,
-                      Colors.grey[800]!,
-                    ]
-                  : [
-                      Colors.white,
-                      Colors.grey[50]!,
-                    ],
+                  ? [Colors.grey[900]!, Colors.grey[800]!]
+                  : [Colors.white, Colors.grey[50]!],
             ),
           ),
           child: Column(
@@ -81,7 +74,10 @@ class UpdateDialog extends StatelessWidget {
               // Versiyon bilgisi
               if (updateResult.updateInfo != null) ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -134,7 +130,9 @@ class UpdateDialog extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           side: BorderSide(
-                            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                            color: isDark
+                                ? Colors.grey[700]!
+                                : Colors.grey[300]!,
                           ),
                         ),
                         child: Text(
@@ -198,7 +196,10 @@ class UpdateDialog extends StatelessWidget {
           // Zorunlu güncelleme
           final success = await updateService.startImmediateUpdate();
           if (!success) {
-            _showError(context, 'Güncelleme başlatılamadı. Lütfen Play Store\'dan manuel olarak güncelleyin.');
+            _showError(
+              context,
+              'Güncelleme başlatılamadı. Lütfen Play Store\'dan manuel olarak güncelleyin.',
+            );
           }
           break;
 
@@ -210,21 +211,28 @@ class UpdateDialog extends StatelessWidget {
             // Güncelleme arka planda devam eder
             _showUpdateInProgress(context);
           } else {
-            _showError(context, 'Güncelleme başlatılamadı. Lütfen Play Store\'dan manuel olarak güncelleyin.');
+            _showError(
+              context,
+              'Güncelleme başlatılamadı. Lütfen Play Store\'dan manuel olarak güncelleyin.',
+            );
           }
           break;
 
         case UpdateType.manual:
           // Manuel güncelleme - Play Store'a yönlendir
-          final downloadUrl = updateResult.updateInfo?.downloadUrl ??
+          final downloadUrl =
+              updateResult.updateInfo?.downloadUrl ??
               'https://play.google.com/store/apps/details?id=com.example.untitled';
-          
+
           final uri = Uri.parse(downloadUrl);
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
             Navigator.of(context).pop();
           } else {
-            _showError(context, 'Play Store açılamadı. Lütfen manuel olarak güncelleyin.');
+            _showError(
+              context,
+              'Play Store açılamadı. Lütfen manuel olarak güncelleyin.',
+            );
           }
           break;
 
@@ -273,4 +281,3 @@ class UpdateDialog extends StatelessWidget {
     );
   }
 }
-

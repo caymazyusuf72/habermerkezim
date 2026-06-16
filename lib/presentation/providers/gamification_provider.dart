@@ -5,9 +5,10 @@ import '../../domain/entities/badge.dart';
 import '../../core/services/gamification_service.dart';
 
 /// Gamification state provider
-final gamificationProvider = StateNotifierProvider<GamificationNotifier, GamificationState>((ref) {
-  return GamificationNotifier();
-});
+final gamificationProvider =
+    StateNotifierProvider<GamificationNotifier, GamificationState>((ref) {
+      return GamificationNotifier();
+    });
 
 /// Gamification notifier
 class GamificationNotifier extends StateNotifier<GamificationState> {
@@ -161,7 +162,10 @@ final lockedBadgesProvider = Provider<List<Badge>>((ref) {
 });
 
 /// Kategoriye göre rozetler provider
-final badgesByCategoryProvider = Provider.family<List<Badge>, BadgeCategory>((ref, category) {
+final badgesByCategoryProvider = Provider.family<List<Badge>, BadgeCategory>((
+  ref,
+  category,
+) {
   final gamificationState = ref.watch(gamificationProvider);
   return gamificationState.badges.where((b) => b.category == category).toList();
 });

@@ -11,7 +11,8 @@ class LoginPage extends ConsumerStatefulWidget {
   ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProviderStateMixin {
+class _LoginPageState extends ConsumerState<LoginPage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -19,21 +20,24 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-    
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.2),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
-    
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     _animationController.forward();
   }
 
@@ -45,9 +49,9 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
 
   Future<void> _handleGoogleSignIn() async {
     final authController = ref.read(authControllerProvider.notifier);
-    
+
     final success = await authController.signInWithGoogle();
-    
+
     if (success && mounted) {
       Navigator.of(context).pushReplacementNamed('/home');
     } else if (mounted) {
@@ -93,15 +97,15 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
                       // Logo ve Başlık
                       _buildLogo(),
                       const SizedBox(height: 48),
-                      
+
                       // Hoş Geldiniz Kartı
                       _buildWelcomeCard(theme),
                       const SizedBox(height: 32),
-                      
+
                       // Google Sign In Butonu
                       _buildGoogleSignInButton(isLoading),
                       const SizedBox(height: 24),
-                      
+
                       // Bilgi Metni
                       _buildInfoText(theme),
                     ],
@@ -239,7 +243,10 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
               onTap: isLoading ? null : _handleGoogleSignIn,
               borderRadius: BorderRadius.circular(16),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.grey[300]!),

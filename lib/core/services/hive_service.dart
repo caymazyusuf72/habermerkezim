@@ -3,6 +3,7 @@ import '../../data/models/article_model.dart';
 import '../../data/models/user_profile_model.dart';
 
 import 'package:flutter/foundation.dart';
+
 /// Hive database servis sınıfı
 /// Uygulama başlangıcında Hive'ı initialize eder ve box'ları açar
 class HiveService {
@@ -44,7 +45,6 @@ class HiveService {
 
       _initialized = true;
       debugPrint('✅ Hive başarıyla initialize edildi');
-
     } catch (e) {
       debugPrint('❌ Hive initialization hatası: $e');
       debugPrint('🔍 Hata detayı: ${e.toString()}');
@@ -85,7 +85,8 @@ class HiveService {
     } catch (e) {
       debugPrint('❌ Box açma hatası: $e');
       // User profile box'ında hata varsa, box'ı temizle ve yeniden aç
-      if (e.toString().contains('interestTags') || e.toString().contains('UserPreferencesModel')) {
+      if (e.toString().contains('interestTags') ||
+          e.toString().contains('UserPreferencesModel')) {
         debugPrint('🔧 User profile box eski format, temizleniyor...');
         try {
           if (Hive.isBoxOpen(_userProfileBoxName)) {
@@ -109,7 +110,7 @@ class HiveService {
       return await Hive.openBox<UserProfileModel>(_userProfileBoxName);
     } catch (e) {
       // Eski format hatası varsa box'ı temizle
-      if (e.toString().contains('interestTags') || 
+      if (e.toString().contains('interestTags') ||
           e.toString().contains('type cast') ||
           e.toString().contains('Null') ||
           e.toString().contains('List')) {
@@ -190,7 +191,6 @@ class HiveService {
     return Hive.box<dynamic>(boxName);
   }
 
-
   /// Box'ları kapatır ve Hive'ı temizler
   static Future<void> dispose() async {
     if (!_initialized) return;
@@ -239,17 +239,14 @@ class HiveService {
         'totalSize': _calculateTotalSize(),
       };
     } catch (e) {
-      return {
-        'initialized': true,
-        'error': e.toString(),
-      };
+      return {'initialized': true, 'error': e.toString()};
     }
   }
 
   /// Database boyutunu hesaplar (yaklaşık)
   static int _calculateTotalSize() {
     int totalSize = 0;
-    
+
     try {
       // Articles box size
       for (final article in articlesBox.values) {
@@ -259,25 +256,26 @@ class HiveService {
         totalSize += article.link.length;
         totalSize += (article.imageUrl?.length ?? 0);
       }
-      
+
       // Favorites box size
       totalSize += favoritesBox.values.fold(0, (sum, id) => sum + id.length);
-      
+
       // Read articles box size
       totalSize += readArticlesBox.values.fold(0, (sum, id) => sum + id.length);
-      
     } catch (e) {
       // Size calculation error, return 0
       return 0;
     }
-    
+
     return totalSize;
   }
 
   /// Initialize kontrolü
   static void _ensureInitialized() {
     if (!_initialized) {
-      throw StateError('HiveService initialize edilmemiş! main.dart\'da HiveService.initialize() çağırın.');
+      throw StateError(
+        'HiveService initialize edilmemiş! main.dart\'da HiveService.initialize() çağırın.',
+      );
     }
   }
 
@@ -293,7 +291,7 @@ class HiveService {
     debugPrint('Favorites: ${favoritesBox.length}');
     debugPrint('Read Articles: ${readArticlesBox.length}');
     debugPrint('Settings: ${settingsBox.length}');
-    
+
     // Son 5 makaleyi göster
     if (articlesBox.isNotEmpty) {
       debugPrint('\n📰 Son Makaleler:');
@@ -302,7 +300,7 @@ class HiveService {
         debugPrint('  - ${article.title} (${article.category})');
       }
     }
-    
+
     debugPrint('======================');
   }
 }
