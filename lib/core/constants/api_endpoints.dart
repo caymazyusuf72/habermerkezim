@@ -4,6 +4,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   /// RSS Feed URL'leri - Kategori bazlı (güvenilir kaynaklar)
+  /// Her feed için birincil ve alternatif URL'ler tanımlanmıştır
   static const Map<String, String> rssFeedUrls = {
     // Genel/Son Dakika
     'genel': 'https://www.hurriyet.com.tr/rss/anasayfa',
@@ -12,6 +13,14 @@ class ApiEndpoints {
     'genel_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/son_dakika.xml',
     'genel_haberturk': 'https://www.haberturk.com/rss',
     'genel_cnnturk': 'https://www.cnnturk.com/feed/rss/all/news',
+    'genel_trthaber': 'https://www.trthaber.com/xml_mobile.rss',
+    'genel_ahaber': 'https://www.ahaber.com.tr/rss/anasayfa.xml',
+    'genel_anadoluajansi': 'https://www.aa.com.tr/tr/rss/default?cat=guncel',
+    'genel_showhaber': 'https://www.showhaber.com/rss/anasayfa.xml',
+    'genel_star': 'https://www.star.com.tr/rss/rss.xml',
+    'genel_yenisafak': 'https://www.yenisafak.com/rss',
+    'genel_iha': 'https://www.iha.com.tr/rss',
+    'genel_dha': 'https://www.dha.com.tr/rss.xml',
     
     // Türkiye
     'turkiye': 'https://www.sabah.com.tr/rss/gundem.xml',
@@ -37,9 +46,10 @@ class ApiEndpoints {
     // Spor
     'spor': 'https://www.hurriyet.com.tr/rss/spor',
     'spor_sabah': 'https://www.sabah.com.tr/rss/spor.xml',
-    'spor_ntv': 'https://www.ntv.com.tr/spor.rss',
     'spor_fanatik': 'https://www.fanatik.com.tr/rss',
     'spor_sporx': 'https://www.sporx.com/rss',
+    'spor_aspor': 'https://www.aspor.com.tr/rss',
+    'spor_fotomac': 'https://www.fotomac.com.tr/rss/anasayfa.xml',
     
     // Dünya
     'dunya': 'https://www.hurriyet.com.tr/rss/dunya',
@@ -52,7 +62,7 @@ class ApiEndpoints {
     // Sağlık
     'saglik': 'https://www.sabah.com.tr/rss/saglik.xml',
     'saglik_hurriyet': 'https://www.hurriyet.com.tr/rss/saglik',
-    'saglik_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/saglikRSS.xml',
+    // 'saglik_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/saglikRSS.xml', // ❌ Redirect to sondakika
     'saglik_ntv': 'https://www.ntv.com.tr/saglik.rss',
     'saglik_haberturk': 'https://www.haberturk.com/rss/kategori/saglik.xml',
     'saglik_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/11.xml',
@@ -60,14 +70,14 @@ class ApiEndpoints {
     // Kültür-Sanat
     'kultur': 'https://www.hurriyet.com.tr/rss/kultur-sanat',
     'kultur_sabah': 'https://www.sabah.com.tr/rss/kultur-sanat.xml',
-    'kultur_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/kulturSanatRSS.xml',
+    // 'kultur_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/kulturSanatRSS.xml', // ❌ Redirect to sondakika
     'kultur_ntv': 'https://www.ntv.com.tr/yasam.rss',
     'kultur_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/5.xml',
     
     // Magazin
     'magazin': 'https://www.hurriyet.com.tr/rss/magazin',
     'magazin_sabah': 'https://www.sabah.com.tr/rss/magazin.xml',
-    'magazin_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/magazinRSS.xml',
+    // 'magazin_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/magazinRSS.xml', // ❌ Redirect to sondakika
     'magazin_posta': 'https://www.posta.com.tr/rss/magazin.xml',
     'magazin_mynet': 'https://www.mynet.com/rss/magazin',
     'magazin_ensonhaber': 'https://www.ensonhaber.com/rss/magazin.xml',
@@ -84,18 +94,158 @@ class ApiEndpoints {
     'egitim': 'https://www.hurriyet.com.tr/rss/egitim',
     'egitim_sabah': 'https://www.sabah.com.tr/rss/egitim.xml',
     'egitim_ntv': 'https://www.ntv.com.tr/egitim.rss',
-    'egitim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/egitimRSS.xml',
+    // 'egitim_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/egitimRSS.xml', // ❌ Redirect to sondakika
     'egitim_haberturk': 'https://www.haberturk.com/rss/kategori/egitim.xml',
-    'egitim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/12.xml',
+    // 'egitim_cumhuriyet': 'https://www.cumhuriyet.com.tr/rss/12.xml', // ❌ Redirect to cevre
     
     // Otomobil
     'otomobil': 'https://www.ntv.com.tr/otomobil.rss',
     'otomobil_ntv': 'https://www.ntv.com.tr/otomobil.rss',
     'otomobil_ensonhaber': 'https://www.ensonhaber.com/rss/otomobil.xml',
     'otomobil_haberturk': 'https://www.haberturk.com/rss/kategori/otomobil.xml',
-    'otomobil_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/otomotivRSS.xml',
-    'otomobil_arabam': 'https://www.arabam.com/rss',
+    // 'otomobil_milliyet': 'https://www.milliyet.com.tr/rss/rssNew/otomotivRSS.xml', // ❌ Redirect to sondakika
+    'otomobil_gazetevatan': 'https://www.gazetevatan.com/rss/otomobil.xml',
+    'otomobil_otomobilturkiye': 'https://www.otomobilturkiye.com/rss.xml',
   };
+
+  /// Alternatif RSS Feed URL'leri - Birincil URL başarısız olduğunda kullanılır
+  /// Her feed key için alternatif URL listesi
+  static const Map<String, List<String>> alternativeFeedUrls = {
+    // Genel/Son Dakika alternatifleri
+    'genel': [
+      'https://www.hurriyet.com.tr/rss/anasayfa',
+      'https://www.ntv.com.tr/son-dakika.rss',
+      'https://www.sabah.com.tr/rss/sondakika.xml',
+    ],
+    'genel_ntv': [
+      'https://www.ntv.com.tr/son-dakika.rss',
+      'https://www.ntv.com.tr/gundem.rss',
+    ],
+    'genel_sabah': [
+      'https://www.sabah.com.tr/rss/sondakika.xml',
+      'https://www.sabah.com.tr/rss/gundem.xml',
+    ],
+    'genel_cumhuriyet': [
+      'https://www.cumhuriyet.com.tr/rss/son_dakika.xml',
+      'https://www.cumhuriyet.com.tr/rss/1.xml',
+    ],
+    'genel_haberturk': [
+      'https://www.haberturk.com/rss',
+      'https://www.haberturk.com/rss/kategori/gundem.xml',
+    ],
+    'genel_cnnturk': [
+      'https://www.cnnturk.com/feed/rss/all/news',
+      'https://www.cnnturk.com/feed/rss/turkiye/news',
+    ],
+    
+    // Ekonomi alternatifleri
+    'ekonomi': [
+      'https://www.hurriyet.com.tr/rss/ekonomi',
+      'https://www.ntv.com.tr/ekonomi.rss',
+      'https://www.sabah.com.tr/rss/ekonomi.xml',
+    ],
+    'ekonomi_bloomberght': [
+      'https://www.bloomberght.com/rss',
+      'https://www.ntv.com.tr/ekonomi.rss',
+    ],
+    
+    // Teknoloji alternatifleri
+    'teknoloji': [
+      'https://www.hurriyet.com.tr/rss/teknoloji',
+      'https://shiftdelete.net/rss',
+      'https://www.webtekno.com/rss.xml',
+    ],
+    'teknoloji_shiftdelete': [
+      'https://shiftdelete.net/rss',
+      'https://shiftdelete.net/feed',
+    ],
+    'teknoloji_webtekno': [
+      'https://www.webtekno.com/rss.xml',
+      'https://www.webtekno.com/feed',
+    ],
+    'teknoloji_donanimhaber': [
+      'https://www.donanimhaber.com/rss',
+      'https://www.donanimhaber.com/feed',
+    ],
+    
+    // Spor alternatifleri
+    'spor': [
+      'https://www.hurriyet.com.tr/rss/spor',
+      'https://www.sabah.com.tr/rss/spor.xml',
+      'https://www.fanatik.com.tr/rss',
+    ],
+    'spor_fanatik': [
+      'https://www.fanatik.com.tr/rss',
+      'https://www.fanatik.com.tr/feed',
+    ],
+    'spor_sporx': [
+      'https://www.sporx.com/rss',
+      'https://www.sporx.com/feed',
+    ],
+    
+    // Dünya alternatifleri
+    'dunya': [
+      'https://www.hurriyet.com.tr/rss/dunya',
+      'https://www.ntv.com.tr/dunya.rss',
+      'https://www.sabah.com.tr/rss/dunya.xml',
+    ],
+    'dunya_euronews': [
+      'https://tr.euronews.com/rss',
+      'https://tr.euronews.com/rss/news',
+    ],
+    
+    // Sağlık alternatifleri
+    'saglik': [
+      'https://www.sabah.com.tr/rss/saglik.xml',
+      'https://www.hurriyet.com.tr/rss/saglik',
+      'https://www.ntv.com.tr/saglik.rss',
+    ],
+    
+    // Kültür alternatifleri
+    'kultur': [
+      'https://www.hurriyet.com.tr/rss/kultur-sanat',
+      'https://www.sabah.com.tr/rss/kultur-sanat.xml',
+      'https://www.ntv.com.tr/yasam.rss',
+    ],
+    
+    // Magazin alternatifleri
+    'magazin': [
+      'https://www.hurriyet.com.tr/rss/magazin',
+      'https://www.sabah.com.tr/rss/magazin.xml',
+      'https://www.posta.com.tr/rss/magazin.xml',
+    ],
+    
+    // Bilim alternatifleri
+    'bilim': [
+      'https://shiftdelete.net/rss',
+      'https://www.webtekno.com/rss.xml',
+      'https://www.ntv.com.tr/bilim.rss',
+    ],
+    
+    // Eğitim alternatifleri
+    'egitim': [
+      'https://www.hurriyet.com.tr/rss/egitim',
+      'https://www.sabah.com.tr/rss/egitim.xml',
+      'https://www.ntv.com.tr/egitim.rss',
+    ],
+    
+    // Otomobil alternatifleri
+    'otomobil': [
+      'https://www.ntv.com.tr/otomobil.rss',
+      'https://www.haberturk.com/rss/kategori/otomobil.xml',
+      'https://www.milliyet.com.tr/rss/rssNew/otomotivRSS.xml',
+    ],
+  };
+
+  /// Feed için alternatif URL'leri döndürür
+  static List<String> getAlternativeUrls(String feedKey) {
+    return alternativeFeedUrls[feedKey] ?? [rssFeedUrls[feedKey] ?? ''];
+  }
+
+  /// Feed'in birincil URL'sini döndürür
+  static String? getPrimaryUrl(String feedKey) {
+    return rssFeedUrls[feedKey];
+  }
 
   /// RSS Feed isimler - UI'da gösterilecek
   static const Map<String, String> feedNames = {
@@ -106,6 +256,14 @@ class ApiEndpoints {
     'genel_cumhuriyet': 'Cumhuriyet - Son Dakika',
     'genel_haberturk': 'Habertürk - Son Dakika',
     'genel_cnnturk': 'CNN Türk - Tüm Haberler',
+    'genel_trthaber': 'TRT Haber - Son Dakika',
+    'genel_ahaber': 'A Haber - Son Dakika',
+    'genel_anadoluajansi': 'Anadolu Ajansı - Güncel',
+    'genel_showhaber': 'Show Haber - Son Dakika',
+    'genel_star': 'Star Gazetesi - Son Dakika',
+    'genel_yenisafak': 'Yeni Şafak - Son Dakika',
+    'genel_iha': 'İHA - İhlas Haber Ajansı',
+    'genel_dha': 'DHA - Demirören Haber Ajansı',
     
     // Türkiye
     'turkiye': 'Sabah - Türkiye',
@@ -131,9 +289,10 @@ class ApiEndpoints {
     // Spor
     'spor': 'Hürriyet - Spor',
     'spor_sabah': 'Sabah - Spor',
-    'spor_ntv': 'NTV - Spor',
     'spor_fanatik': 'Fanatik',
     'spor_sporx': 'Sporx',
+    'spor_aspor': 'A Spor',
+    'spor_fotomac': 'Fotomaç',
     
     // Dünya
     'dunya': 'Hürriyet - Dünya',
@@ -188,7 +347,8 @@ class ApiEndpoints {
     'otomobil_ensonhaber': 'Ensonhaber - Otomobil',
     'otomobil_haberturk': 'Habertürk - Otomobil',
     'otomobil_milliyet': 'Milliyet - Otomotiv',
-    'otomobil_arabam': 'Arabam.com',
+    'otomobil_gazetevatan': 'Gazete Vatan - Otomobil',
+    'otomobil_otomobilturkiye': 'Otomobil Türkiye',
   };
 
   /// RSS Feed simgeleri - Material Icons
@@ -200,6 +360,14 @@ class ApiEndpoints {
     'genel_cumhuriyet': 'breaking_news',
     'genel_haberturk': 'breaking_news',
     'genel_cnnturk': 'breaking_news',
+    'genel_trthaber': 'breaking_news',
+    'genel_ahaber': 'breaking_news',
+    'genel_anadoluajansi': 'newspaper',
+    'genel_showhaber': 'breaking_news',
+    'genel_star': 'breaking_news',
+    'genel_yenisafak': 'breaking_news',
+    'genel_iha': 'article',
+    'genel_dha': 'article',
     
     // Türkiye
     'turkiye': 'flag',
@@ -285,14 +453,44 @@ class ApiEndpoints {
     'otomobil_arabam': 'directions_car',
   };
 
-  /// Network timeout değerleri - yavaş sunucular için artırıldı
-  static const int connectTimeoutMs = 15000; // 15 saniye (yavaş sunucular için)
-  static const int receiveTimeoutMs = 20000; // 20 saniye (büyük feed'ler için)
-  static const int sendTimeoutMs = 10000; // 10 saniye
+  /// Network timeout değerleri - Performans optimizasyonu (paralel yükleme için kısaltıldı)
+  /// Adaptive timeout: Bağlantı kalitesine göre ayarlanabilir
+  static const int connectTimeoutMs = 5000; // 5 saniye (paralel yükleme için optimize edildi)
+  static const int receiveTimeoutMs = 8000; // 8 saniye (paralel yükleme için optimize edildi)
+  static const int sendTimeoutMs = 5000; // 5 saniye (paralel yükleme için optimize edildi)
+  
+  /// Hızlı timeout değerleri - İlk deneme için
+  static const int fastConnectTimeoutMs = 5000; // 5 saniye
+  static const int fastReceiveTimeoutMs = 8000; // 8 saniye
+  
+  /// Yavaş bağlantı timeout değerleri - Retry için
+  static const int slowConnectTimeoutMs = 15000; // 15 saniye
+  static const int slowReceiveTimeoutMs = 25000; // 25 saniye
 
   /// Cache süreleri
   static const Duration cacheValidityDuration = Duration(minutes: 30);
   static const Duration offlineCacheDuration = Duration(days: 7);
+  
+  /// Feed öncelik sıralaması - Daha güvenilir kaynaklar önce denenir
+  static const List<String> reliableSources = [
+    'hurriyet',
+    'ntv',
+    'sabah',
+    'haberturk',
+    'trthaber',
+    'aa',
+    'cnnturk',
+  ];
+  
+  /// Kaynak güvenilirlik puanı (0-100)
+  static int getSourceReliabilityScore(String feedKey) {
+    final source = feedKey.split('_').first;
+    final index = reliableSources.indexOf(source);
+    if (index >= 0) {
+      return 100 - (index * 10); // İlk kaynak 100, sonrakiler 90, 80...
+    }
+    return 50; // Bilinmeyen kaynaklar için varsayılan
+  }
 
   /// Versiyon kontrol endpoint'i (opsiyonel - manuel kontrol için)
   /// Bu endpoint'ten JSON formatında versiyon bilgisi alınır

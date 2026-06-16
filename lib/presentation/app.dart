@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../core/utils/app_logger.dart';
 import 'providers/providers.dart';
-import 'providers/onboarding_provider.dart';
+import 'providers/auth_provider.dart';
+import 'providers/locale_provider.dart';
 import 'themes/app_theme.dart';
 import 'pages/home/home_page.dart';
-import 'pages/splash/splash_page.dart';
 import 'pages/onboarding/onboarding_page.dart';
+import 'pages/auth/login_page.dart';
 import 'pages/update/update_dialog.dart';
-import '../../core/services/update_service.dart';
+import '../core/services/update_service.dart';
+import '../l10n/generated/app_localizations.dart';
 
 /// Ana uygulama widget'ı - Haber Merkezi
 /// Riverpod ile state management ve theme management
+/// Material Design 3 Dynamic Color desteği ile
 class HaberMerkeziApp extends ConsumerWidget {
   const HaberMerkeziApp({super.key});
 
@@ -24,63 +30,98 @@ class HaberMerkeziApp extends ConsumerWidget {
     final fontScale = themeState.fontScale;
     final colorTheme = themeState.colorTheme;
     
+    // Locale durumunu izle
+    final localeState = ref.watch(localeProvider);
+    final currentLocale = localeState.locale;
+    
     // App initialization durumunu izle
     final appInitialization = ref.watch(appInitializationProvider);
+    
+    // DynamicColorBuilder ile sistem renklerini al
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        // Dynamic color'ları provider'a kaydet
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (lightDynamic != null && darkDynamic != null) {
+            ref.read(dynamicColorProvider.notifier).setDynamicColors(
+              lightDynamic,
+              darkDynamic,
+            );
+          }
+        });
+        
+        // Dynamic color kullanılıyorsa ve destekleniyorsa
+        final effectiveLightDynamic = colorTheme == ColorTheme.dynamic ? lightDynamic : null;
+        final effectiveDarkDynamic = colorTheme == ColorTheme.dynamic ? darkDynamic : null;
 
-    return MaterialApp(
-      title: 'Haber Merkezim',
-      debugShowCheckedModeBanner: false,
-      showPerformanceOverlay: false, // Performans overlay'i (gerekirse true yapılabilir)
+        return MaterialApp(
+          title: 'Haber Merkezim',
+          debugShowCheckedModeBanner: false,
+          showPerformanceOverlay: false,
+          
+          // Tema ayarları - font scale, color theme ve dynamic color ile birlikte
+          theme: AppTheme.getLightTheme(fontScale, colorTheme, effectiveLightDynamic),
+          darkTheme: AppTheme.getDarkTheme(fontScale, colorTheme, effectiveDarkDynamic),
+          themeMode: themeMode,
       
-      // Tema ayarları - font scale ve color theme ile birlikte
-      theme: AppTheme.getLightTheme(fontScale, colorTheme),
-      darkTheme: AppTheme.getDarkTheme(fontScale, colorTheme),
-      themeMode: themeMode,
-      
-      // Localization ayarları
-      locale: const Locale('tr', 'TR'),
-      
-      // Ana sayfa - initialization durumuna göre
-      home: appInitialization.when(
-        data: (_) {
-          print('✅ App initialization tamamlandi, onboarding kontrolü yapılıyor...');
-          // Onboarding kontrolü yap
-          return _OnboardingCheckWrapper(
-            child: _UpdateCheckWrapper(
-              child: const HomePage(),
-            ),
-          );
-        },
-        loading: () {
-          print('⏳ App initialization devam ediyor, SplashPage gosteriliyor');
-          return const SplashPage();
-        },
-        error: (error, stackTrace) {
-          print('❌ App initialization hatasi: $error');
-          return ErrorPage(
-            error: error,
-            onRetry: () {
-              ref.invalidate(appInitializationProvider);
+          // Localization ayarları
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('tr', 'TR'), // Türkçe
+            Locale('en', 'US'), // İngilizce
+          ],
+          locale: currentLocale,
+          
+          // Ana sayfa - initialization ve authentication durumuna göre
+          home: appInitialization.when(
+            data: (_) {
+              // Authentication kontrolü yap
+              return _AuthCheckWrapper(
+                child: _OnboardingCheckWrapper(
+                  child: _UpdateCheckWrapper(
+                    child: const HomePage(),
+                  ),
+                ),
+              );
             },
-          );
-        },
-      ),
-      
-      // Route ayarları (gelecekte navigation için)
-      routes: {
-        '/home': (context) => const HomePage(),
-        '/splash': (context) => const SplashPage(),
-        '/onboarding': (context) => const OnboardingPage(),
-      },
-      
-      // App boyut ve orientation ayarları
-      builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            // Font scale'i provider'dan alınan değerle sınırla (deprecated textScaleFactor yerine textScaler)
-            textScaler: TextScaler.linear(fontScale.clamp(0.8, 1.6)),
+            loading: () => const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            error: (error, stackTrace) {
+              AppLogger.error('App initialization hatasi', error, stackTrace);
+              return ErrorPage(
+                error: error,
+                onRetry: () {
+                  ref.invalidate(appInitializationProvider);
+                },
+              );
+            },
           ),
-          child: child!,
+          
+          // Route ayarları
+          routes: {
+            '/home': (context) => const HomePage(),
+            '/onboarding': (context) => const OnboardingPage(),
+            '/login': (context) => const LoginPage(),
+          },
+          
+          // App boyut ve orientation ayarları
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                // Font scale'i provider'dan alınan değerle sınırla
+                textScaler: TextScaler.linear(fontScale.clamp(0.8, 1.6)),
+              ),
+              child: child!,
+            );
+          },
         );
       },
     );
@@ -256,7 +297,7 @@ class _UpdateCheckWrapperState extends ConsumerState<_UpdateCheckWrapper> {
         );
       }
     } catch (e) {
-      print('⚠️ Güncelleme kontrolü hatası: $e');
+      AppLogger.warning('Güncelleme kontrolü hatası: $e');
       // Hata durumunda sessizce devam et
     }
   }
@@ -269,33 +310,106 @@ class _UpdateCheckWrapperState extends ConsumerState<_UpdateCheckWrapper> {
 
 /// Onboarding kontrolü wrapper widget'ı
 /// İlk giriş kontrolü yapar, onboarding tamamlanmamışsa OnboardingPage gösterir
-class _OnboardingCheckWrapper extends ConsumerWidget {
+class _OnboardingCheckWrapper extends ConsumerStatefulWidget {
   final Widget child;
 
   const _OnboardingCheckWrapper({required this.child});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final hasCompletedOnboarding = ref.watch(hasCompletedOnboardingProvider);
+  ConsumerState<_OnboardingCheckWrapper> createState() => _OnboardingCheckWrapperState();
+}
 
-    return hasCompletedOnboarding.when(
-      data: (completed) {
-        if (completed) {
-          // Onboarding tamamlanmış, ana sayfaya geç
-          return child;
-        } else {
-          // Onboarding tamamlanmamış, onboarding sayfasını göster
-          return const OnboardingPage();
+class _OnboardingCheckWrapperState extends ConsumerState<_OnboardingCheckWrapper> {
+  bool? _hasCompletedOnboarding;
+  bool _isLoading = true;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Hemen kontrol et, gecikme olmadan
+    _checkOnboarding();
+  }
+
+  Future<void> _checkOnboarding() async {
+    try {
+      // Timeout ekle - maksimum 500ms bekle
+      final result = await ref.read(hasCompletedOnboardingProvider.future)
+          .timeout(const Duration(milliseconds: 500), onTimeout: () => true);
+      if (mounted) {
+        setState(() {
+          _hasCompletedOnboarding = result;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      AppLogger.warning('Onboarding kontrolü hatası: $e');
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Loading durumunda kısa bir süre bekle, sonra child'ı göster
+    if (_isLoading) {
+      // 100ms sonra otomatik olarak child'a geç
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted && _isLoading) {
+          setState(() {
+            _isLoading = false;
+            _hasCompletedOnboarding = true; // Varsayılan olarak tamamlanmış say
+          });
         }
-      },
-      loading: () {
-        // Loading sırasında splash göster
-        return const SplashPage();
-      },
-      error: (error, stackTrace) {
-        // Hata durumunda ana sayfaya geç (onboarding'i atla)
-        print('⚠️ Onboarding kontrolü hatası: $error');
+      });
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_hasError || _hasCompletedOnboarding == true) {
+      return widget.child;
+    }
+
+    return const OnboardingPage();
+  }
+}
+
+/// Authentication kontrolü wrapper widget'ı
+/// Kullanıcı giriş yapmadıysa Login sayfasına yönlendirir
+class _AuthCheckWrapper extends ConsumerWidget {
+  final Widget child;
+
+  const _AuthCheckWrapper({required this.child});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+    
+    return authState.when(
+      data: (user) {
+        if (user == null) {
+          // Kullanıcı giriş yapmamış, Login sayfasına yönlendir
+          return const LoginPage();
+        }
+        // Kullanıcı giriş yapmış, ana sayfaya devam et
         return child;
+      },
+      loading: () => const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stackTrace) {
+        AppLogger.error('Auth kontrolü hatası', error, stackTrace);
+        // Hata durumunda Login sayfasına yönlendir
+        return const LoginPage();
       },
     );
   }

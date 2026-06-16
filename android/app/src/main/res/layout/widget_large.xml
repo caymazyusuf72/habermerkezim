@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_large_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:padding="0dp">
+
+    <!-- Header Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/widget_header_background"
+        android:paddingStart="@dimen/widget_padding"
+        android:paddingEnd="@dimen/widget_padding_small">
+
+        <!-- Logo -->
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@mipmap/launcher_icon"
+            android:contentDescription="Haber Merkezi"
+            android:layout_marginEnd="@dimen/widget_item_spacing_small" />
+
+        <!-- Başlık -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/widget_header_title"
+            android:textSize="@dimen/widget_text_header"
+            android:textStyle="bold"
+            android:textColor="@color/widget_on_primary" />
+
+        <!-- Tarih -->
+        <TextView
+            android:id="@+id/widget_large_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="@dimen/widget_text_caption"
+            android:textColor="#CCFFFFFF"
+            android:layout_marginEnd="@dimen/widget_item_spacing_small" />
+
+        <!-- Yenile -->
+        <ImageButton
+            android:id="@+id/widget_large_refresh"
+            android:layout_width="@dimen/widget_button_height"
+            android:layout_height="@dimen/widget_button_height"
+            android:src="@drawable/widget_refresh_icon"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/widget_refresh"
+            android:padding="@dimen/widget_button_padding"
+            android:tint="@color/widget_on_primary" />
+    </LinearLayout>
+
+    <!-- Ana Haber Kartı (Büyük Resim) -->
+    <FrameLayout
+        android:id="@+id/widget_large_main_card"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:layout_margin="@dimen/widget_padding_small">
+
+        <!-- Haber Resmi -->
+        <ImageView
+            android:id="@+id/widget_large_main_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:background="@drawable/widget_placeholder"
+            android:contentDescription="Ana haber resmi" />
+
+        <!-- Gradient Overlay -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/widget_image_overlay" />
+
+        <!-- Haber Bilgisi (Overlay üzerinde) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:padding="@dimen/widget_padding">
+
+            <!-- SON DAKİKA Rozeti -->
+            <TextView
+                android:id="@+id/widget_large_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/widget_breaking"
+                android:textSize="@dimen/widget_text_caption"
+                android:textStyle="bold"
+                android:textColor="@color/widget_badge_text"
+                android:background="@drawable/widget_badge_background"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:layout_marginBottom="@dimen/widget_item_spacing_small"
+                android:visibility="gone" />
+
+            <!-- Başlık -->
+            <TextView
+                android:id="@+id/widget_large_main_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/widget_loading"
+                android:textSize="@dimen/widget_text_title_large"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:shadowColor="#80000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="3" />
+
+            <!-- Kaynak + Tarih -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/widget_item_spacing_small">
+
+                <TextView
+                    android:id="@+id/widget_large_main_source"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="@dimen/widget_text_caption"
+                    android:textColor="#CCFFFFFF"
+                    android:maxLines="1" />
+
+                <TextView
+                    android:id="@+id/widget_large_main_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="@dimen/widget_text_caption"
+                    android:textColor="#99FFFFFF"
+                    android:maxLines="1"
+                    android:layout_marginStart="@dimen/widget_item_spacing" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Alt Haber Listesi -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/widget_padding_small"
+        android:paddingEnd="@dimen/widget_padding_small"
+        android:paddingBottom="@dimen/widget_padding_small">
+
+        <!-- 2. Haber -->
+        <LinearLayout
+            android:id="@+id/widget_large_item2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/widget_item_background"
+            android:padding="@dimen/widget_padding_small">
+
+            <ImageView
+                android:id="@+id/widget_large_image2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/widget_placeholder"
+                android:contentDescription="Haber resmi"
+                android:layout_marginEnd="@dimen/widget_item_spacing" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/widget_large_title2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="@dimen/widget_text_body"
+                    android:textStyle="bold"
+                    android:textColor="@color/widget_text_primary"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/widget_large_source2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="@dimen/widget_text_caption"
+                    android:textColor="@color/widget_text_tertiary"
+                    android:maxLines="1" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_divider_height"
+            android:background="@color/widget_divider"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp" />
+
+        <!-- 3. Haber -->
+        <LinearLayout
+            android:id="@+id/widget_large_item3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/widget_item_background"
+            android:padding="@dimen/widget_padding_small">
+
+            <ImageView
+                android:id="@+id/widget_large_image3"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/widget_placeholder"
+                android:contentDescription="Haber resmi"
+                android:layout_marginEnd="@dimen/widget_item_spacing" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/widget_large_title3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="@dimen/widget_text_body"
+                    android:textStyle="bold"
+                    android:textColor="@color/widget_text_primary"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/widget_large_source3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="@dimen/widget_text_caption"
+                    android:textColor="@color/widget_text_tertiary"
+                    android:maxLines="1" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_divider_height"
+            android:background="@color/widget_divider"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp" />
+
+        <!-- 4. Haber -->
+        <LinearLayout
+            android:id="@+id/widget_large_item4"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/widget_item_background"
+            android:padding="@dimen/widget_padding_small">
+
+            <ImageView
+                android:id="@+id/widget_large_image4"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/widget_placeholder"
+                android:contentDescription="Haber resmi"
+                android:layout_marginEnd="@dimen/widget_item_spacing" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/widget_large_title4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="@dimen/widget_text_body"
+                    android:textStyle="bold"
+                    android:textColor="@color/widget_text_primary"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/widget_large_source4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="@dimen/widget_text_caption"
+                    android:textColor="@color/widget_text_tertiary"
+                    android:maxLines="1" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

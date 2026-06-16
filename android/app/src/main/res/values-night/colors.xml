@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget Theme Colors - Dark Mode -->
+    <color name="widget_background">#1C1B1F</color>
+    <color name="widget_surface">#2B2930</color>
+    <color name="widget_primary">#D0BCFF</color>
+    <color name="widget_primary_container">#4F378B</color>
+    <color name="widget_on_primary">#381E72</color>
+    <color name="widget_on_primary_container">#EADDFF</color>
+    <color name="widget_secondary">#CCC2DC</color>
+    <color name="widget_secondary_container">#4A4458</color>
+    <color name="widget_tertiary">#EFB8C8</color>
+    <color name="widget_text_primary">#E6E1E5</color>
+    <color name="widget_text_secondary">#CAC4D0</color>
+    <color name="widget_text_tertiary">#938F99</color>
+    <color name="widget_accent">#CE93D8</color>
+    <color name="widget_divider">#49454F</color>
+    <color name="widget_outline">#938F99</color>
+    <color name="widget_error">#F2B8B5</color>
+
+    <!-- Gradient Colors -->
+    <color name="widget_gradient_start">#D0BCFF</color>
+    <color name="widget_gradient_end">#CE93D8</color>
+    <color name="widget_gradient_overlay_start">#00000000</color>
+    <color name="widget_gradient_overlay_end">#E6000000</color>
+
+    <!-- Badge Colors -->
+    <color name="widget_badge_breaking">#F2B8B5</color>
+    <color name="widget_badge_trending">#FFB74D</color>
+    <color name="widget_badge_text">#1C1B1F</color>
+</resources>

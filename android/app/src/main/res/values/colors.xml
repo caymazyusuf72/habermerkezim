@@ -1,7 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Legacy colors (backward compatibility) -->
     <color name="widget_purple">#9C27B0</color>
     <color name="widget_dark_bg">#1A1A1A</color>
     <color name="widget_white">#FFFFFF</color>
-</resources>
 
+    <!-- Widget Theme Colors - Light Mode -->
+    <color name="widget_background">#FFFFFF</color>
+    <color name="widget_surface">#F7F2FA</color>
+    <color name="widget_primary">#6750A4</color>
+    <color name="widget_primary_container">#EADDFF</color>
+    <color name="widget_on_primary">#FFFFFF</color>
+    <color name="widget_on_primary_container">#21005D</color>
+    <color name="widget_secondary">#625B71</color>
+    <color name="widget_secondary_container">#E8DEF8</color>
+    <color name="widget_tertiary">#7D5260</color>
+    <color name="widget_text_primary">#1C1B1F</color>
+    <color name="widget_text_secondary">#49454F</color>
+    <color name="widget_text_tertiary">#79747E</color>
+    <color name="widget_accent">#9C27B0</color>
+    <color name="widget_divider">#E0E0E0</color>
+    <color name="widget_outline">#CAC4D0</color>
+    <color name="widget_error">#B3261E</color>
+
+    <!-- Gradient Colors -->
+    <color name="widget_gradient_start">#6750A4</color>
+    <color name="widget_gradient_end">#9C27B0</color>
+    <color name="widget_gradient_overlay_start">#00000000</color>
+    <color name="widget_gradient_overlay_end">#CC000000</color>
+
+    <!-- Badge Colors -->
+    <color name="widget_badge_breaking">#B3261E</color>
+    <color name="widget_badge_trending">#FF6D00</color>
+    <color name="widget_badge_text">#FFFFFF</color>
+</resources>

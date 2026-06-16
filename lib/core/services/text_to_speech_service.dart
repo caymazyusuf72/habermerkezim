@@ -1,5 +1,6 @@
 import 'package:flutter_tts/flutter_tts.dart';
 
+import 'package:flutter/foundation.dart';
 /// Text-to-Speech servisi
 class TextToSpeechService {
   static final TextToSpeechService _instance = TextToSpeechService._internal();
@@ -39,7 +40,7 @@ class TextToSpeechService {
     });
     
     _flutterTts.setErrorHandler((msg) {
-      print('💥 TTS hatası: $msg');
+      debugPrint('💥 TTS hatası: $msg');
       _isPlaying = false;
       _isPaused = false;
     });
@@ -56,7 +57,7 @@ class TextToSpeechService {
     try {
       await _flutterTts.speak(text);
     } catch (e) {
-      print('💥 Konuşma hatası: $e');
+      debugPrint('💥 Konuşma hatası: $e');
     }
   }
 
@@ -68,7 +69,7 @@ class TextToSpeechService {
       await _flutterTts.pause();
       _isPaused = true;
     } catch (e) {
-      print('💥 Duraklatma hatası: $e');
+      debugPrint('💥 Duraklatma hatası: $e');
     }
   }
 
@@ -80,7 +81,7 @@ class TextToSpeechService {
       await _flutterTts.speak(''); // Resume için boş metin
       _isPaused = false;
     } catch (e) {
-      print('💥 Devam ettirme hatası: $e');
+      debugPrint('💥 Devam ettirme hatası: $e');
     }
   }
 
@@ -93,7 +94,7 @@ class TextToSpeechService {
       _isPlaying = false;
       _isPaused = false;
     } catch (e) {
-      print('💥 Durdurma hatası: $e');
+      debugPrint('💥 Durdurma hatası: $e');
     }
   }
 
@@ -147,7 +148,7 @@ class TextToSpeechService {
       final languages = await _flutterTts.getLanguages;
       return List<String>.from(languages ?? []);
     } catch (e) {
-      print('💥 Dil listesi alma hatası: $e');
+      debugPrint('💥 Dil listesi alma hatası: $e');
       return ['tr-TR', 'en-US'];
     }
   }

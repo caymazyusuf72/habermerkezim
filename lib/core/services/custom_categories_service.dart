@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/entities/custom_category.dart';
 
+import 'package:flutter/foundation.dart';
 /// Özel kategoriler servisi
 class CustomCategoriesService {
   static const String _boxName = 'custom_categories';
@@ -13,7 +14,7 @@ class CustomCategoriesService {
         _box = await Hive.openBox<Map>(_boxName);
       }
     } catch (e) {
-      print('Custom Categories Service başlatma hatası: $e');
+      debugPrint('Custom Categories Service başlatma hatası: $e');
       rethrow;
     }
   }
@@ -37,7 +38,7 @@ class CustomCategoriesService {
 
       return categories;
     } catch (e) {
-      print('Özel kategoriler getirme hatası: $e');
+      debugPrint('Özel kategoriler getirme hatası: $e');
       return [];
     }
   }
@@ -48,7 +49,7 @@ class CustomCategoriesService {
       await _box!.put(category.id, category.toJson());
       return true;
     } catch (e) {
-      print('Kategori kaydetme hatası: $e');
+      debugPrint('Kategori kaydetme hatası: $e');
       return false;
     }
   }
@@ -60,7 +61,7 @@ class CustomCategoriesService {
       await _box!.put(category.id, updated.toJson());
       return true;
     } catch (e) {
-      print('Kategori güncelleme hatası: $e');
+      debugPrint('Kategori güncelleme hatası: $e');
       return false;
     }
   }
@@ -71,7 +72,7 @@ class CustomCategoriesService {
       await _box!.delete(categoryId);
       return true;
     } catch (e) {
-      print('Kategori silme hatası: $e');
+      debugPrint('Kategori silme hatası: $e');
       return false;
     }
   }
@@ -86,7 +87,7 @@ class CustomCategoriesService {
       }
       return null;
     } catch (e) {
-      print('Kategori getirme hatası: $e');
+      debugPrint('Kategori getirme hatası: $e');
       return null;
     }
   }

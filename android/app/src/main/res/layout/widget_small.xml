@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_small_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/widget_background_gradient"
+    android:gravity="center_vertical"
+    android:padding="@dimen/widget_padding"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Sol: Uygulama İkonu -->
+    <ImageView
+        android:id="@+id/widget_small_icon"
+        android:layout_width="@dimen/widget_icon_size"
+        android:layout_height="@dimen/widget_icon_size"
+        android:src="@mipmap/launcher_icon"
+        android:contentDescription="Haber Merkezi"
+        android:layout_marginEnd="@dimen/widget_item_spacing" />
+
+    <!-- Orta: Haber Bilgisi -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Haber Başlığı -->
+        <TextView
+            android:id="@+id/widget_small_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/widget_loading"
+            android:textSize="@dimen/widget_text_title"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Kaynak + Zaman -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/widget_small_source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_caption"
+                android:textColor="#CCFFFFFF"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" · "
+                android:textSize="@dimen/widget_text_caption"
+                android:textColor="#99FFFFFF"
+                android:visibility="gone"
+                android:id="@+id/widget_small_dot" />
+
+            <TextView
+                android:id="@+id/widget_small_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/widget_text_caption"
+                android:textColor="#99FFFFFF"
+                android:maxLines="1" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

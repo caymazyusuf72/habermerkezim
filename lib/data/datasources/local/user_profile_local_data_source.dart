@@ -4,6 +4,7 @@ import '../../../core/services/hive_service.dart';
 import '../../../domain/entities/user_profile.dart';
 import '../../models/user_profile_model.dart';
 
+import 'package:flutter/foundation.dart';
 /// Kullanıcı profil verilerini yerel olarak saklayan data source
 /// Hive database kullanır
 abstract class UserProfileLocalDataSource {
@@ -24,12 +25,12 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
   @override
   Future<void> saveProfile(UserProfile profile) async {
     try {
-      print('💾 Profil kaydediliyor: ${profile.id}');
+      debugPrint('💾 Profil kaydediliyor: ${profile.id}');
       final model = UserProfileModel.fromEntity(profile);
       await _box.put(_profileKey, model);
-      print('✅ Profil başarıyla kaydedildi');
+      debugPrint('✅ Profil başarıyla kaydedildi');
     } catch (e) {
-      print('💥 Profil kaydetme hatası: $e');
+      debugPrint('💥 Profil kaydetme hatası: $e');
       throw Exception('Profil kaydedilemedi: ${e.toString()}');
     }
   }
@@ -37,19 +38,19 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
   @override
   Future<UserProfile?> getProfile() async {
     try {
-      print('💾 Profil okunuyor...');
+      debugPrint('💾 Profil okunuyor...');
       final model = _box.get(_profileKey);
       
       if (model == null) {
-        print('⚠️ Profil bulunamadı, varsayılan profil döndürülüyor');
+        debugPrint('⚠️ Profil bulunamadı, varsayılan profil döndürülüyor');
         return null;
       }
       
       final profile = model.toEntity();
-      print('✅ Profil başarıyla okundu: ${profile.id}');
+      debugPrint('✅ Profil başarıyla okundu: ${profile.id}');
       return profile;
     } catch (e) {
-      print('💥 Profil okuma hatası: $e');
+      debugPrint('💥 Profil okuma hatası: $e');
       throw Exception('Profil okunamadı: ${e.toString()}');
     }
   }
@@ -57,12 +58,12 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
   @override
   Future<void> updateProfile(UserProfile profile) async {
     try {
-      print('🔄 Profil güncelleniyor: ${profile.id}');
+      debugPrint('🔄 Profil güncelleniyor: ${profile.id}');
       final model = UserProfileModel.fromEntity(profile);
       await _box.put(_profileKey, model);
-      print('✅ Profil başarıyla güncellendi');
+      debugPrint('✅ Profil başarıyla güncellendi');
     } catch (e) {
-      print('💥 Profil güncelleme hatası: $e');
+      debugPrint('💥 Profil güncelleme hatası: $e');
       throw Exception('Profil güncellenemedi: ${e.toString()}');
     }
   }
@@ -70,11 +71,11 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
   @override
   Future<void> deleteProfile() async {
     try {
-      print('🗑️ Profil siliniyor...');
+      debugPrint('🗑️ Profil siliniyor...');
       await _box.delete(_profileKey);
-      print('✅ Profil başarıyla silindi');
+      debugPrint('✅ Profil başarıyla silindi');
     } catch (e) {
-      print('💥 Profil silme hatası: $e');
+      debugPrint('💥 Profil silme hatası: $e');
       throw Exception('Profil silinemedi: ${e.toString()}');
     }
   }
@@ -82,7 +83,7 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
   @override
   Future<void> updateStats(UserStats stats) async {
     try {
-      print('📊 İstatistikler güncelleniyor...');
+      debugPrint('📊 İstatistikler güncelleniyor...');
       final currentModel = _box.get(_profileKey);
       
       if (currentModel == null) {
@@ -97,9 +98,9 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
       final currentProfile = currentModel.toEntity();
       final updatedProfile = currentProfile.copyWith(stats: stats);
       await updateProfile(updatedProfile);
-      print('✅ İstatistikler başarıyla güncellendi');
+      debugPrint('✅ İstatistikler başarıyla güncellendi');
     } catch (e) {
-      print('💥 İstatistik güncelleme hatası: $e');
+      debugPrint('💥 İstatistik güncelleme hatası: $e');
       throw Exception('İstatistikler güncellenemedi: ${e.toString()}');
     }
   }
@@ -107,7 +108,7 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
   @override
   Future<void> updatePreferences(UserPreferences preferences) async {
     try {
-      print('⚙️ Tercihler güncelleniyor...');
+      debugPrint('⚙️ Tercihler güncelleniyor...');
       final currentModel = _box.get(_profileKey);
       
       if (currentModel == null) {
@@ -122,9 +123,9 @@ class UserProfileLocalDataSourceImpl implements UserProfileLocalDataSource {
       final currentProfile = currentModel.toEntity();
       final updatedProfile = currentProfile.copyWith(preferences: preferences);
       await updateProfile(updatedProfile);
-      print('✅ Tercihler başarıyla güncellendi');
+      debugPrint('✅ Tercihler başarıyla güncellendi');
     } catch (e) {
-      print('💥 Tercih güncelleme hatası: $e');
+      debugPrint('💥 Tercih güncelleme hatası: $e');
       throw Exception('Tercihler güncellenemedi: ${e.toString()}');
     }
   }

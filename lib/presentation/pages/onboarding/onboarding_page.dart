@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/interest_tags.dart';
-import '../../../domain/entities/interest_tag.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/interest_tag_chip.dart';
 import '../../themes/app_theme.dart';
@@ -111,7 +110,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppTheme.sageGreen.withOpacity(0.2),
+                          color: AppTheme.sageGreen.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(

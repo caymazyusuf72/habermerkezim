@@ -43,3 +43,18 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Sensitive files
+google-services.json
+*.jks
+*.keystore
+key.properties
+.env
+lib/firebase_options.dart
+
+# Build artifacts and temporary files
+*.apk
+*.log
+
+# Backup folder (contains sensitive files)
+gerekli_dosyalar/

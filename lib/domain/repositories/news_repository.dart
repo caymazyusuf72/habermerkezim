@@ -26,4 +26,10 @@ abstract class NewsRepository {
 
   /// İnternet bağlantısı kontrol et
   Future<bool> isConnected();
+
+  /// Kategoriye göre haberleri stream olarak dinle (reactive updates)
+  Stream<List<Article>> watchArticlesByCategory(String category);
+
+  /// Tüm haberleri stream olarak dinle (reactive updates)
+  Stream<List<Article>> watchAllArticles();
 }

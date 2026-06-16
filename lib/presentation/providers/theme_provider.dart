@@ -1,8 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/hive_service.dart';
-import '../themes/app_theme.dart' show AppTheme, ColorTheme;
+import '../themes/app_theme.dart' show ColorTheme;
+
+/// Dynamic color için global state
+/// Android 12+ cihazlarda duvar kağıdından alınan renk şeması
+class DynamicColorState {
+  final ColorScheme? lightDynamic;
+  final ColorScheme? darkDynamic;
+  final bool isSupported;
+  
+  const DynamicColorState({
+    this.lightDynamic,
+    this.darkDynamic,
+    this.isSupported = false,
+  });
+  
+  DynamicColorState copyWith({
+    ColorScheme? lightDynamic,
+    ColorScheme? darkDynamic,
+    bool? isSupported,
+  }) {
+    return DynamicColorState(
+      lightDynamic: lightDynamic ?? this.lightDynamic,
+      darkDynamic: darkDynamic ?? this.darkDynamic,
+      isSupported: isSupported ?? this.isSupported,
+    );
+  }
+}
+
+/// Dynamic color state notifier
+class DynamicColorNotifier extends StateNotifier<DynamicColorState> {
+  DynamicColorNotifier() : super(const DynamicColorState());
+  
+  /// Dynamic color şemalarını ayarla
+  void setDynamicColors(ColorScheme? light, ColorScheme? dark) {
+    state = state.copyWith(
+      lightDynamic: light,
+      darkDynamic: dark,
+      isSupported: light != null && dark != null,
+    );
+  }
+  
+  /// Dynamic color desteğini kontrol et
+  bool get isSupported => state.isSupported;
+}
+
+/// Dynamic color provider
+final dynamicColorProvider = StateNotifierProvider<DynamicColorNotifier, DynamicColorState>((ref) {
+  return DynamicColorNotifier();
+});
+
+/// Dynamic color destekli mi provider
+final isDynamicColorSupportedProvider = Provider<bool>((ref) {
+  return ref.watch(dynamicColorProvider).isSupported;
+});
 
 /// Theme state - dark/light mode, color theme ve font scale durumunu yönetir
 class ThemeState {
@@ -74,7 +126,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
       );
     } catch (e) {
       // Storage error durumunda default kullan
-      print('Theme yükleme hatası: $e');
+      debugPrint('Theme yükleme hatası: $e');
     }
   }
 
@@ -104,7 +156,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     try {
       await HiveService.settingsBox.put(_colorThemeKey, _colorThemeToString(colorTheme));
     } catch (e) {
-      print('Color theme kaydetme hatası: $e');
+      debugPrint('Color theme kaydetme hatası: $e');
     }
   }
   
@@ -121,6 +173,8 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
         return 'purple';
       case ColorTheme.amber:
         return 'amber';
+      case ColorTheme.dynamic:
+        return 'dynamic';
     }
   }
   
@@ -135,6 +189,8 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
         return ColorTheme.purple;
       case 'amber':
         return ColorTheme.amber;
+      case 'dynamic':
+        return ColorTheme.dynamic;
       case 'default':
       default:
         return ColorTheme.defaultTheme;
@@ -163,7 +219,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     try {
       await HiveService.settingsBox.put(_fontScaleKey, clampedScale);
     } catch (e) {
-      print('Font scale kaydetme hatası: $e');
+      debugPrint('Font scale kaydetme hatası: $e');
     }
   }
 
@@ -197,7 +253,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     try {
       await HiveService.settingsBox.put(_themeKey, _themeModeToString(themeMode));
     } catch (e) {
-      print('Theme kaydetme hatası: $e');
+      debugPrint('Theme kaydetme hatası: $e');
     }
   }
 

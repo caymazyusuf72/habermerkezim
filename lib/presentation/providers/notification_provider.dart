@@ -15,8 +15,25 @@ class NotificationSettings {
   final int dailyReadingGoal;
   final bool breakingNewsEnabled;
   final Map<String, bool> categoryNotifications; // Kategori ID -> bildirim açık/kapalı
+  
+  // YENİ ALANLAR - Sessiz Saatler
+  final bool quietHoursEnabled;
+  final int quietHoursStartHour;
+  final int quietHoursStartMinute;
+  final int quietHoursEndHour;
+  final int quietHoursEndMinute;
+  
+  // YENİ ALANLAR - Bildirim Limiti
+  final bool dailyLimitEnabled;
+  final int maxDailyNotifications;
+  final DateTime lastResetDate;
+  final int todayNotificationCount;
+  
+  // YENİ ALANLAR - Öncelik Ayarları
+  final bool highPrioritySound;
+  final bool highPriorityVibration;
 
-  const NotificationSettings({
+  NotificationSettings({
     this.dailyNewsEnabled = true,
     this.dailyNewsHour = 9,
     this.dailyNewsMinute = 0,
@@ -26,7 +43,21 @@ class NotificationSettings {
     this.dailyReadingGoal = 10,
     this.breakingNewsEnabled = false,
     this.categoryNotifications = const {},
-  });
+    // Sessiz Saatler - Varsayılan: 22:00-08:00
+    this.quietHoursEnabled = false,
+    this.quietHoursStartHour = 22,
+    this.quietHoursStartMinute = 0,
+    this.quietHoursEndHour = 8,
+    this.quietHoursEndMinute = 0,
+    // Bildirim Limiti - Varsayılan: 10 bildirim/gün
+    this.dailyLimitEnabled = false,
+    this.maxDailyNotifications = 10,
+    DateTime? lastResetDate,
+    this.todayNotificationCount = 0,
+    // Öncelik Ayarları
+    this.highPrioritySound = true,
+    this.highPriorityVibration = true,
+  }) : lastResetDate = lastResetDate ?? DateTime.now();
 
   NotificationSettings copyWith({
     bool? dailyNewsEnabled,
@@ -38,6 +69,17 @@ class NotificationSettings {
     int? dailyReadingGoal,
     bool? breakingNewsEnabled,
     Map<String, bool>? categoryNotifications,
+    bool? quietHoursEnabled,
+    int? quietHoursStartHour,
+    int? quietHoursStartMinute,
+    int? quietHoursEndHour,
+    int? quietHoursEndMinute,
+    bool? dailyLimitEnabled,
+    int? maxDailyNotifications,
+    DateTime? lastResetDate,
+    int? todayNotificationCount,
+    bool? highPrioritySound,
+    bool? highPriorityVibration,
   }) {
     return NotificationSettings(
       dailyNewsEnabled: dailyNewsEnabled ?? this.dailyNewsEnabled,
@@ -49,6 +91,17 @@ class NotificationSettings {
       dailyReadingGoal: dailyReadingGoal ?? this.dailyReadingGoal,
       breakingNewsEnabled: breakingNewsEnabled ?? this.breakingNewsEnabled,
       categoryNotifications: categoryNotifications ?? this.categoryNotifications,
+      quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,
+      quietHoursStartHour: quietHoursStartHour ?? this.quietHoursStartHour,
+      quietHoursStartMinute: quietHoursStartMinute ?? this.quietHoursStartMinute,
+      quietHoursEndHour: quietHoursEndHour ?? this.quietHoursEndHour,
+      quietHoursEndMinute: quietHoursEndMinute ?? this.quietHoursEndMinute,
+      dailyLimitEnabled: dailyLimitEnabled ?? this.dailyLimitEnabled,
+      maxDailyNotifications: maxDailyNotifications ?? this.maxDailyNotifications,
+      lastResetDate: lastResetDate ?? this.lastResetDate,
+      todayNotificationCount: todayNotificationCount ?? this.todayNotificationCount,
+      highPrioritySound: highPrioritySound ?? this.highPrioritySound,
+      highPriorityVibration: highPriorityVibration ?? this.highPriorityVibration,
     );
   }
 
@@ -63,6 +116,17 @@ class NotificationSettings {
       'dailyReadingGoal': dailyReadingGoal,
       'breakingNewsEnabled': breakingNewsEnabled,
       'categoryNotifications': categoryNotifications,
+      'quietHoursEnabled': quietHoursEnabled,
+      'quietHoursStartHour': quietHoursStartHour,
+      'quietHoursStartMinute': quietHoursStartMinute,
+      'quietHoursEndHour': quietHoursEndHour,
+      'quietHoursEndMinute': quietHoursEndMinute,
+      'dailyLimitEnabled': dailyLimitEnabled,
+      'maxDailyNotifications': maxDailyNotifications,
+      'lastResetDate': lastResetDate.toIso8601String(),
+      'todayNotificationCount': todayNotificationCount,
+      'highPrioritySound': highPrioritySound,
+      'highPriorityVibration': highPriorityVibration,
     };
   }
 
@@ -79,6 +143,19 @@ class NotificationSettings {
       categoryNotifications: map['categoryNotifications'] != null
           ? Map<String, bool>.from(map['categoryNotifications'])
           : const {},
+      quietHoursEnabled: map['quietHoursEnabled'] ?? false,
+      quietHoursStartHour: map['quietHoursStartHour'] ?? 22,
+      quietHoursStartMinute: map['quietHoursStartMinute'] ?? 0,
+      quietHoursEndHour: map['quietHoursEndHour'] ?? 8,
+      quietHoursEndMinute: map['quietHoursEndMinute'] ?? 0,
+      dailyLimitEnabled: map['dailyLimitEnabled'] ?? false,
+      maxDailyNotifications: map['maxDailyNotifications'] ?? 10,
+      lastResetDate: map['lastResetDate'] != null
+          ? DateTime.parse(map['lastResetDate'])
+          : DateTime.now(),
+      todayNotificationCount: map['todayNotificationCount'] ?? 0,
+      highPrioritySound: map['highPrioritySound'] ?? true,
+      highPriorityVibration: map['highPriorityVibration'] ?? true,
     );
   }
 
@@ -105,13 +182,13 @@ class NotificationState {
   final bool loading;
   final String? error;
 
-  const NotificationState({
-    this.settings = const NotificationSettings(),
+  NotificationState({
+    NotificationSettings? settings,
     this.permissionsGranted = false,
     this.initialized = false,
     this.loading = false,
     this.error,
-  });
+  }) : settings = settings ?? NotificationSettings();
 
   NotificationState copyWith({
     NotificationSettings? settings,
@@ -133,13 +210,12 @@ class NotificationState {
 /// Notification provider
 class NotificationNotifier extends StateNotifier<NotificationState> {
   final NotificationService _notificationService;
-  final HiveService _hiveService;
   final Ref _ref;
 
   static const String _settingsKey = 'notification_settings';
 
-  NotificationNotifier(this._notificationService, this._hiveService, this._ref)
-      : super(const NotificationState()) {
+  NotificationNotifier(this._notificationService, this._ref)
+      : super(NotificationState()) {
     _initialize();
   }
 
@@ -170,7 +246,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       );
 
       if (kDebugMode) {
-        print('📱 NotificationProvider initialized: $savedSettings');
+        debugPrint('📱 NotificationProvider initialized: $savedSettings');
       }
     } catch (e) {
       state = state.copyWith(
@@ -178,7 +254,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
         error: 'Bildirim servisi başlatılamadı: $e',
       );
       if (kDebugMode) {
-        print('❌ NotificationProvider initialization error: $e');
+        debugPrint('❌ NotificationProvider initialization error: $e');
       }
     }
   }
@@ -194,10 +270,10 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error loading notification settings: $e');
+        debugPrint('❌ Error loading notification settings: $e');
       }
     }
-    return const NotificationSettings();
+    return NotificationSettings();
   }
 
   /// Save settings to storage
@@ -207,7 +283,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       await settingsBox.put(_settingsKey, settings.toMap());
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error saving notification settings: $e');
+        debugPrint('❌ Error saving notification settings: $e');
       }
     }
   }
@@ -264,7 +340,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       state = state.copyWith(settings: newSettings);
 
       if (kDebugMode) {
-        print('📱 Daily news settings updated: $newSettings');
+        debugPrint('📱 Daily news settings updated: $newSettings');
       }
     } catch (e) {
       state = state.copyWith(error: 'Günlük haber ayarları güncellenemedi: $e');
@@ -303,7 +379,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       state = state.copyWith(settings: newSettings);
 
       if (kDebugMode) {
-        print('📱 Reading goal settings updated: $newSettings');
+        debugPrint('📱 Reading goal settings updated: $newSettings');
       }
     } catch (e) {
       state = state.copyWith(error: 'Okuma hedefi ayarları güncellenemedi: $e');
@@ -321,7 +397,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       state = state.copyWith(settings: newSettings);
 
       if (kDebugMode) {
-        print('📱 Breaking news settings updated: enabled=$enabled');
+        debugPrint('📱 Breaking news settings updated: enabled=$enabled');
       }
     } catch (e) {
       state = state.copyWith(error: 'Son dakika ayarları güncellenemedi: $e');
@@ -355,7 +431,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
       return todayAnalytics.articlesRead;
     } catch (e) {
       if (kDebugMode) {
-        print('⚠️ Analytics progress alma hatası: $e');
+        debugPrint('⚠️ Analytics progress alma hatası: $e');
       }
       return 0; // Default to 0 if analytics not available
     }
@@ -399,14 +475,151 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   void clearError() {
     state = state.copyWith(error: null);
   }
+
+  // ========== YENİ METODLAR - AKILLI BİLDİRİM SİSTEMİ ==========
+
+  /// Sessiz saatler toggle
+  Future<void> toggleQuietHours(bool enabled) async {
+    try {
+      final newSettings = state.settings.copyWith(quietHoursEnabled: enabled);
+      await _saveSettings(newSettings);
+      state = state.copyWith(settings: newSettings);
+
+      if (kDebugMode) {
+        debugPrint('📱 Quiet hours ${enabled ? "enabled" : "disabled"}');
+      }
+    } catch (e) {
+      state = state.copyWith(error: 'Sessiz saatler ayarı güncellenemedi: $e');
+    }
+  }
+
+  /// Sessiz saatler zamanlarını ayarla
+  Future<void> setQuietHours({
+    required int startHour,
+    required int startMinute,
+    required int endHour,
+    required int endMinute,
+  }) async {
+    try {
+      final newSettings = state.settings.copyWith(
+        quietHoursStartHour: startHour,
+        quietHoursStartMinute: startMinute,
+        quietHoursEndHour: endHour,
+        quietHoursEndMinute: endMinute,
+      );
+      await _saveSettings(newSettings);
+      state = state.copyWith(settings: newSettings);
+
+      if (kDebugMode) {
+        debugPrint('📱 Quiet hours set: $startHour:$startMinute - $endHour:$endMinute');
+      }
+    } catch (e) {
+      state = state.copyWith(error: 'Sessiz saatler zamanı ayarlanamadı: $e');
+    }
+  }
+
+  /// Günlük limit toggle
+  Future<void> toggleDailyLimit(bool enabled) async {
+    try {
+      final newSettings = state.settings.copyWith(dailyLimitEnabled: enabled);
+      await _saveSettings(newSettings);
+      state = state.copyWith(settings: newSettings);
+
+      if (kDebugMode) {
+        debugPrint('📱 Daily limit ${enabled ? "enabled" : "disabled"}');
+      }
+    } catch (e) {
+      state = state.copyWith(error: 'Günlük limit ayarı güncellenemedi: $e');
+    }
+  }
+
+  /// Maksimum bildirim sayısı
+  Future<void> setMaxDailyNotifications(int max) async {
+    try {
+      final newSettings = state.settings.copyWith(maxDailyNotifications: max);
+      await _saveSettings(newSettings);
+      state = state.copyWith(settings: newSettings);
+
+      if (kDebugMode) {
+        debugPrint('📱 Max daily notifications set to: $max');
+      }
+    } catch (e) {
+      state = state.copyWith(error: 'Maksimum bildirim sayısı ayarlanamadı: $e');
+    }
+  }
+
+  /// Kategori bildirim toggle
+  Future<void> toggleCategoryNotification(String category, bool enabled) async {
+    try {
+      final newCategories = Map<String, bool>.from(state.settings.categoryNotifications);
+      newCategories[category] = enabled;
+      
+      final newSettings = state.settings.copyWith(categoryNotifications: newCategories);
+      await _saveSettings(newSettings);
+      state = state.copyWith(settings: newSettings);
+
+      if (kDebugMode) {
+        debugPrint('📱 Category "$category" notifications ${enabled ? "enabled" : "disabled"}');
+      }
+    } catch (e) {
+      state = state.copyWith(error: 'Kategori bildirim ayarı güncellenemedi: $e');
+    }
+  }
+
+  /// Bildirim sayacını artır (internal kullanım için)
+  Future<void> incrementNotificationCount() async {
+    try {
+      final today = DateTime.now();
+      final isSameDay = state.settings.lastResetDate.day == today.day &&
+                        state.settings.lastResetDate.month == today.month &&
+                        state.settings.lastResetDate.year == today.year;
+      
+      final newSettings = state.settings.copyWith(
+        todayNotificationCount: isSameDay ? state.settings.todayNotificationCount + 1 : 1,
+        lastResetDate: today,
+      );
+      
+      await _saveSettings(newSettings);
+      state = state.copyWith(settings: newSettings);
+
+      if (kDebugMode) {
+        debugPrint('📱 Notification count: ${newSettings.todayNotificationCount}');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Error incrementing notification count: $e');
+      }
+    }
+  }
+
+  /// Öncelik ses ayarı
+  Future<void> toggleHighPrioritySound(bool enabled) async {
+    try {
+      final newSettings = state.settings.copyWith(highPrioritySound: enabled);
+      await _saveSettings(newSettings);
+      state = state.copyWith(settings: newSettings);
+    } catch (e) {
+      state = state.copyWith(error: 'Öncelik ses ayarı güncellenemedi: $e');
+    }
+  }
+
+  /// Öncelik titreşim ayarı
+  Future<void> toggleHighPriorityVibration(bool enabled) async {
+    try {
+      final newSettings = state.settings.copyWith(highPriorityVibration: enabled);
+      await _saveSettings(newSettings);
+      state = state.copyWith(settings: newSettings);
+    } catch (e) {
+      state = state.copyWith(error: 'Öncelik titreşim ayarı güncellenemedi: $e');
+    }
+  }
 }
 
 /// Notification provider
 final notificationProvider =
     StateNotifierProvider<NotificationNotifier, NotificationState>((ref) {
   final notificationService = NotificationService();
-  final hiveService = HiveService();
-  return NotificationNotifier(notificationService, hiveService, ref);
+  return NotificationNotifier(notificationService, ref);
 });
 
 /// Notification service provider

@@ -115,7 +115,7 @@ class _ImageGalleryState extends State<ImageGallery> {
                       shape: BoxShape.circle,
                       color: _currentIndex == index
                           ? Colors.white
-                          : Colors.white.withOpacity(0.4),
+                          : Colors.white.withValues(alpha: 0.4),
                     ),
                   ),
                 ),

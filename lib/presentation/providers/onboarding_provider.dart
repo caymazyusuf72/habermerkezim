@@ -3,7 +3,6 @@ import '../../core/services/onboarding_service.dart';
 import '../../domain/repositories/interest_tags_repository.dart';
 import '../../data/repositories/interest_tags_repository_impl.dart';
 import '../../domain/repositories/user_profile_repository.dart';
-import '../../domain/entities/user_profile.dart';
 import 'providers.dart';
 
 /// Onboarding state - seçilen hashtag'leri tutar
@@ -74,20 +73,10 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
       // 2. UserProfile'a interestTags ekle
       final profile = await _profileRepository.getProfile();
-      if (profile != null) {
-        final updatedPreferences = profile.preferences.copyWith(
-          interestTags: state.selectedTagIds,
-        );
-        await _profileRepository.updatePreferences(updatedPreferences);
-      } else {
-        // Profil yoksa oluştur
-        final defaultProfile = UserProfile.defaultProfile.copyWith(
-          preferences: UserPreferences.defaultPreferences.copyWith(
-            interestTags: state.selectedTagIds,
-          ),
-        );
-        await _profileRepository.saveProfile(defaultProfile);
-      }
+      final updatedPreferences = profile.preferences.copyWith(
+        interestTags: state.selectedTagIds,
+      );
+      await _profileRepository.updatePreferences(updatedPreferences);
 
       // 3. Onboarding'i tamamlandı olarak işaretle
       await OnboardingService.completeOnboarding();

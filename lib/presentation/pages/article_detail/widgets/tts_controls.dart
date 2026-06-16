@@ -5,7 +5,7 @@ import '../../../../core/services/text_to_speech_service.dart';
 import '../../../../domain/entities/article.dart';
 import '../../../themes/app_theme.dart';
 
-/// TTS kontrolleri widget'ı
+/// TTS kontrolleri widget'ı - Mini Player tasarımı
 class TtsControls extends ConsumerStatefulWidget {
   final Article article;
 
@@ -23,6 +23,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
   bool _isInitialized = false;
   bool _isPlaying = false;
   bool _isPaused = false;
+  bool _isExpanded = false;
 
   @override
   void initState() {
@@ -94,161 +95,272 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: isDark ? theme.colorScheme.surface : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Material(
+        elevation: 8,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark ? theme.colorScheme.surface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Başlık - daha kompakt
-            Row(
-              children: [
-                Icon(
-                  Icons.headphones_rounded,
-                  color: AppTheme.primaryBlue,
-                  size: 18,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  'Sesli Okuma',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Mini Player - Her zaman görünür (60px yükseklik)
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    _isExpanded = !_isExpanded;
+                  });
+                },
+                child: Container(
+                  height: 60,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    children: [
+                      // Play/Pause butonu
+                      IconButton(
+                        icon: Icon(
+                          _isPlaying && !_isPaused
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                        ),
+                        onPressed: _togglePlayPause,
+                        iconSize: 28,
+                        color: AppTheme.primaryBlue,
+                      ),
+                      
+                      const SizedBox(width: 12),
+                      
+                      // Başlık ve bilgi
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Sesli Okuma',
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              _isPlaying
+                                  ? (_isPaused ? 'Duraklatıldı' : 'Oynatılıyor')
+                                  : 'Hazır',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Stop butonu
+                      if (_isPlaying)
+                        IconButton(
+                          icon: const Icon(Icons.stop_rounded),
+                          onPressed: _stop,
+                          color: Colors.red,
+                        ),
+                      
+                      // Expand/Collapse butonu
+                      IconButton(
+                        icon: Icon(
+                          _isExpanded ? Icons.expand_more : Icons.expand_less,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isExpanded = !_isExpanded;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-            
-            const SizedBox(height: 14),
-            
-            // Kontrol butonları - daha küçük
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Play/Pause butonu
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: _togglePlayPause,
-                    borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryBlue,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.primaryBlue.withOpacity(0.25),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+              ),
+              
+              // Genişletilmiş kontroller
+              if (_isExpanded) ...[
+                const Divider(height: 1),
+                
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      // Hız kontrolü
+                      _buildExpandedSlider(
+                        context,
+                        label: 'Hız',
+                        icon: Icons.speed_rounded,
+                        value: _ttsService.speechRate,
+                        min: 0.25,
+                        max: 1.0,
+                        divisions: 15,
+                        onChanged: (value) {
+                          _ttsService.setSpeechRate(value);
+                          setState(() {});
+                        },
+                        formatValue: (value) => '${(value * 100).toInt()}%',
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Ses seviyesi kontrolü
+                      _buildExpandedSlider(
+                        context,
+                        label: 'Ses Seviyesi',
+                        icon: Icons.volume_up_rounded,
+                        value: _ttsService.volume,
+                        min: 0.0,
+                        max: 1.0,
+                        divisions: 20,
+                        onChanged: (value) {
+                          _ttsService.setVolume(value);
+                          setState(() {});
+                        },
+                        formatValue: (value) => '${(value * 100).toInt()}%',
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Hızlı erişim butonları
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildQuickButton(
+                            context,
+                            icon: Icons.replay_10,
+                            label: '10s Geri',
+                            onTap: () {
+                              // Not: TTS servisi bunu desteklemiyorsa boş bırakılabilir
+                            },
+                          ),
+                          _buildQuickButton(
+                            context,
+                            icon: Icons.forward_10,
+                            label: '10s İleri',
+                            onTap: () {
+                              // Not: TTS servisi bunu desteklemiyorsa boş bırakılabilir
+                            },
                           ),
                         ],
                       ),
-                      child: Icon(
-                        _isPlaying && !_isPaused
-                            ? Icons.pause_rounded
-                            : Icons.play_arrow_rounded,
-                        color: Colors.white,
-                        size: 26,
-                      ),
-                    ),
-                  ),
-                ),
-                
-                const SizedBox(width: 12),
-                
-                // Stop butonu
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: _isPlaying ? _stop : null,
-                    borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: _isPlaying 
-                            ? Colors.red.withOpacity(0.1)
-                            : Colors.grey.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: _isPlaying 
-                              ? Colors.red.withOpacity(0.3)
-                              : Colors.grey.withOpacity(0.2),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.stop_rounded,
-                        color: _isPlaying ? Colors.red : Colors.grey,
-                        size: 20,
-                      ),
-                    ),
+                    ],
                   ),
                 ),
               ],
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Ayarlar - yan yana kompakt slider'lar
-            Row(
-              children: [
-                // Hız slider
-                Expanded(
-                  child: _buildCompactSlider(
-                    context,
-                    label: 'Hız',
-                    icon: Icons.speed_rounded,
-                    value: _ttsService.speechRate,
-                    min: 0.25,
-                    max: 1.0,
-                    divisions: 15,
-                    onChanged: (value) {
-                      _ttsService.setSpeechRate(value);
-                      setState(() {});
-                    },
-                    formatValue: (value) => '${(value * 100).toInt()}%',
-                  ),
-                ),
-                
-                const SizedBox(width: 12),
-                
-                // Ses slider
-                Expanded(
-                  child: _buildCompactSlider(
-                    context,
-                    label: 'Ses',
-                    icon: Icons.volume_up_rounded,
-                    value: _ttsService.volume,
-                    min: 0.0,
-                    max: 1.0,
-                    divisions: 20,
-                    onChanged: (value) {
-                      _ttsService.setVolume(value);
-                      setState(() {});
-                    },
-                    formatValue: (value) => '${(value * 100).toInt()}%',
-                  ),
-                ),
-              ],
-            ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Hızlı erişim butonu
+  Widget _buildQuickButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: theme.colorScheme.outline.withValues(alpha: 0.3),
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 20),
+            const SizedBox(width: 8),
+            Text(label, style: theme.textTheme.bodySmall),
           ],
         ),
       ),
+    );
+  }
+
+  /// Genişletilmiş slider widget'ı
+  Widget _buildExpandedSlider(
+    BuildContext context, {
+    required String label,
+    required IconData icon,
+    required double value,
+    required double min,
+    required double max,
+    required int divisions,
+    required ValueChanged<double> onChanged,
+    required String Function(double) formatValue,
+  }) {
+    final theme = Theme.of(context);
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 18, color: AppTheme.primaryBlue),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                formatValue(value),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryBlue,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: AppTheme.primaryBlue,
+            inactiveTrackColor: AppTheme.primaryBlue.withValues(alpha: 0.2),
+            thumbColor: AppTheme.primaryBlue,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
+            trackHeight: 4,
+          ),
+          child: Slider(
+            value: value,
+            min: min,
+            max: max,
+            divisions: divisions,
+            onChanged: onChanged,
+          ),
+        ),
+      ],
     );
   }
 
@@ -278,7 +390,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                 Icon(
                   icon,
                   size: 14,
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 4),
                 Text(
@@ -286,7 +398,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -294,7 +406,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
+                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -315,7 +427,7 @@ class _TtsControlsState extends ConsumerState<TtsControls> {
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: AppTheme.primaryBlue,
-            inactiveTrackColor: AppTheme.primaryBlue.withOpacity(0.2),
+            inactiveTrackColor: AppTheme.primaryBlue.withValues(alpha: 0.2),
             thumbColor: AppTheme.primaryBlue,
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),

@@ -192,7 +192,7 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
         Text(
           'RSS feed URL\'sini girin (örn: .../rss.xml, .../feed, .../rss)',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -213,7 +213,7 @@ class _AddEditRssSourcePageState extends ConsumerState<AddEditRssSourcePage> {
     ];
 
     return DropdownButtonFormField<String>(
-      value: _selectedCategory,
+      initialValue: _selectedCategory,
       decoration: const InputDecoration(
         labelText: 'Kategori *',
         prefixIcon: Icon(Icons.category_rounded),

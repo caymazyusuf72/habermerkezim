@@ -1,0 +1,272 @@
+{
+  "@@locale": "tr",
+  "@@last_modified": "2026-01-16T21:33:00.000Z",
+  
+  "appTitle": "Haber Merkezi",
+  "@appTitle": {
+    "description": "Uygulama başlığı"
+  },
+  
+  "home": "Ana Sayfa",
+  "favorites": "Favoriler",
+  "search": "Ara",
+  "settings": "Ayarlar",
+  "profile": "Profil",
+  
+  "categories": "Kategoriler",
+  "general": "Genel",
+  "technology": "Teknoloji",
+  "sports": "Spor",
+  "economy": "Ekonomi",
+  "health": "Sağlık",
+  "science": "Bilim",
+  "culture": "Kültür",
+  "world": "Dünya",
+  "politics": "Politika",
+  "entertainment": "Magazin",
+  
+  "loading": "Yükleniyor...",
+  "error": "Hata",
+  "retry": "Tekrar Dene",
+  "cancel": "İptal",
+  "ok": "Tamam",
+  "save": "Kaydet",
+  "delete": "Sil",
+  "edit": "Düzenle",
+  "close": "Kapat",
+  "share": "Paylaş",
+  "refresh": "Yenile",
+  
+  "noArticles": "Henüz haber yok",
+  "noFavorites": "Henüz favori haber yok",
+  "noSearchResults": "Arama sonucu bulunamadı",
+  "noReadingHistory": "Okuma geçmişi boş",
+  
+  "addToFavorites": "Favorilere Ekle",
+  "removeFromFavorites": "Favorilerden Çıkar",
+  "addedToFavorites": "Favorilere eklendi",
+  "removedFromFavorites": "Favorilerden çıkarıldı",
+  
+  "readMore": "Devamını Oku",
+  "readingTime": "{minutes} dk okuma",
+  "@readingTime": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "publishedAt": "{date} tarihinde yayınlandı",
+  "@publishedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "source": "Kaynak",
+  "category": "Kategori",
+  
+  "searchHint": "Haber ara...",
+  "searchHistory": "Arama Geçmişi",
+  "clearSearchHistory": "Arama Geçmişini Temizle",
+  "popularSearches": "Popüler Aramalar",
+  "recentSearches": "Son Aramalar",
+  
+  "settingsTitle": "Ayarlar",
+  "appearance": "Görünüm",
+  "darkMode": "Karanlık Tema",
+  "lightMode": "Açık Tema",
+  "systemTheme": "Sistem Teması",
+  "themes": "Temalar",
+  "selectTheme": "Renk teması seçin",
+  "fontSize": "Font Boyutu",
+  "small": "Küçük",
+  "normal": "Normal",
+  "large": "Büyük",
+  "extraLarge": "Çok Büyük",
+  
+  "notifications": "Bildirimler",
+  "notificationSettings": "Bildirim Ayarları",
+  "notificationPreferences": "Bildirim Tercihleri",
+  "dailyNewsReminder": "Günlük Haber Hatırlatması",
+  "readingGoalReminder": "Okuma Hedefi Hatırlatması",
+  "breakingNews": "Son Dakika Haberleri",
+  "notificationsEnabled": "Bildirimler aktif",
+  "notificationsDisabled": "Bildirimler kapalı",
+  
+  "dataManagement": "Veri Yönetimi",
+  "clearCache": "Önbelleği Temizle",
+  "clearCacheDescription": "Tüm kaydedilmiş haberleri sil",
+  "clearFavorites": "Favorileri Temizle",
+  "clearFavoritesDescription": "Tüm favori haberleri sil",
+  "clearSearchHistoryDescription": "Tüm arama geçmişini temizle",
+  "exportData": "Verileri Dışa Aktar",
+  "exportDataDescription": "Favoriler, okuma geçmişi ve istatistikler",
+  
+  "rssSources": "Haber Kaynakları",
+  "manageRssSources": "Haber Kaynaklarını Yönet",
+  "addNewSource": "Yeni Kaynak Ekle",
+  "resetSources": "Kaynakları Sıfırla",
+  "resetSourcesDescription": "Varsayılan kaynaklara dön",
+  
+  "statistics": "İstatistikler",
+  "readingStatistics": "Okuma İstatistikleri",
+  "readingGoals": "Okuma Hedefleri",
+  "readingTrends": "Okuma Trendleri",
+  
+  "about": "Hakkında",
+  "aboutApp": "Uygulama Hakkında",
+  "privacyPolicy": "Gizlilik Politikası",
+  "termsOfService": "Kullanım Şartları",
+  "version": "Versiyon",
+  
+  "analyticsTitle": "İstatistikler",
+  "overview": "Genel Bakış",
+  "charts": "Grafikler",
+  "details": "Detaylar",
+  
+  "today": "Bugün",
+  "thisWeek": "Bu Hafta",
+  "thisMonth": "Bu Ay",
+  
+  "articlesRead": "Okunan Makale",
+  "timeSpent": "Geçirilen Süre",
+  "favoritesCount": "Favoriler",
+  "sharesCount": "Paylaşımlar",
+  "searchesCount": "Aramalar",
+  "readingStreak": "Okuma Serisi",
+  "consistency": "Tutarlılık",
+  
+  "goals": "Hedefler",
+  "dailyGoal": "Günlük Hedef",
+  "weeklyGoal": "Haftalık Hedef",
+  "goalAchieved": "Tebrikler! Hedefi başardınız.",
+  "goalNotAchieved": "Hedefe ulaşmak için okumaya devam edin.",
+  
+  "weeklyReadingChart": "Son 7 Günün Okuma Grafiği",
+  "categoryDistribution": "Kategori Dağılımı",
+  "monthlyTrend": "Aylık Okuma Trendi",
+  
+  "socialActivity": "Sosyal Aktivite",
+  "totalShares": "Toplam Paylaşım",
+  "totalSearches": "Toplam Arama",
+  "totalFavorites": "Toplam Favori",
+  
+  "readingHabits": "Okuma Alışkanlıklarınız",
+  "readingTrend": "Okuma Trendi",
+  "productiveTime": "En Verimli Saat",
+  "consistencyScore": "Tutarlılık Puanı",
+  "dailyAverage": "Günlük Ortalama",
+  "weeklyAverage": "Haftalık Ortalama",
+  
+  "trendIncreasing": "Artış trendi",
+  "trendDecreasing": "Azalış trendi",
+  "trendStable": "Stabil",
+  
+  "exportTitle": "Dışa Aktar",
+  "exportOptions": "Dışa Aktarma Seçenekleri",
+  "exportDescription": "Verilerinizi CSV veya JSON formatında dışa aktarın",
+  "exportFavorites": "Favoriler",
+  "exportFavoritesDescription": "Favori makalelerinizi dışa aktarın",
+  "exportReadingHistory": "Okuma Geçmişi",
+  "exportReadingHistoryDescription": "Okuduğunuz makalelerin listesi",
+  "exportReadingList": "Okuma Listesi",
+  "exportReadingListDescription": "Sonra okumak için kaydettiğiniz makaleler",
+  "exportStatistics": "İstatistikler",
+  "exportStatisticsDescription": "Okuma istatistikleriniz ve hedefleriniz",
+  "exportAll": "Tüm Veriler",
+  "exportAllDescription": "Tüm verilerinizi tek dosyada dışa aktarın",
+  "exportedFiles": "Dışa Aktarılan Dosyalar",
+  "exportSuccess": "Dışa aktarma başarılı! {count} öğe kaydedildi.",
+  "@exportSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportError": "Dışa aktarma hatası",
+  "selectFormat": "Dışa aktarma formatını seçin",
+  "csvFormat": "CSV",
+  "csvDescription": "Excel ile uyumlu",
+  "jsonFormat": "JSON",
+  "jsonDescription": "Yapılandırılmış veri",
+  
+  "language": "Dil",
+  "selectLanguage": "Dil Seçin",
+  "turkish": "Türkçe",
+  "english": "English",
+  
+  "confirmDelete": "Silmek istediğinizden emin misiniz?",
+  "confirmClear": "Temizlemek istediğinizden emin misiniz?",
+  "actionCannotBeUndone": "Bu işlem geri alınamaz.",
+  
+  "connectionError": "Bağlantı hatası",
+  "noInternet": "İnternet bağlantısı yok",
+  "serverError": "Sunucu hatası",
+  "unknownError": "Bilinmeyen hata",
+  
+  "minutes": "dakika",
+  "hours": "saat",
+  "days": "gün",
+  "articles": "makale",
+  
+  "monday": "Pazartesi",
+  "tuesday": "Salı",
+  "wednesday": "Çarşamba",
+  "thursday": "Perşembe",
+  "friday": "Cuma",
+  "saturday": "Cumartesi",
+  "sunday": "Pazar",
+  
+  "mondayShort": "Pzt",
+  "tuesdayShort": "Sal",
+  "wednesdayShort": "Çar",
+  "thursdayShort": "Per",
+  "fridayShort": "Cum",
+  "saturdayShort": "Cmt",
+  "sundayShort": "Paz",
+  
+  "notificationCategoryFilters": "Kategori Bildirimleri",
+  "notificationQuietHours": "Sessiz Saatler",
+  "notificationDailyLimit": "Günlük Bildirim Limiti",
+  "notificationQuietHoursStart": "Başlangıç Saati",
+  "notificationQuietHoursEnd": "Bitiş Saati",
+  "notificationMaxDaily": "Maksimum Bildirim",
+  "notificationTodayCount": "Bugün: {count}/{max}",
+  "@notificationTodayCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationPrioritySettings": "Öncelik Ayarları",
+  "notificationHighPrioritySound": "Yüksek Öncelik Sesi",
+  "notificationHighPriorityVibration": "Yüksek Öncelik Titreşimi",
+  
+  "readingMode": "Okuma Modu",
+  "readingModeFontSize": "Font Boyutu",
+  "readingModeBackground": "Arka Plan Rengi",
+  "readingModeLineSpacing": "Satır Aralığı",
+  "readingModeNightMode": "Gece Modu",
+  "readingModeReset": "Varsayılana Dön",
+  "readingModeSettings": "Okuma Ayarları",
+  
+  "readingColorWhite": "Beyaz",
+  "readingColorBeige": "Bej",
+  "readingColorSepia": "Sepia",
+  "readingColorBlack": "Siyah",
+  "readingColorNight": "Gece",
+  
+  "readingSpacingCompact": "Dar",
+  "readingSpacingNormal": "Normal",
+  "readingSpacingComfortable": "Rahat",
+  "readingSpacingWide": "Geniş"
+}

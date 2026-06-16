@@ -43,6 +43,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        
+        <!-- UCrop Activity for image cropping -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -64,7 +71,9 @@
             </intent-filter>
         </receiver>
         
-        <!-- Haber Widget Provider - banner -->
+        <!-- ==================== WIDGET PROVIDERS ==================== -->
+        
+        <!-- Haber Banner Widget (mevcut - marquee ile kayan tek haber) -->
         <receiver
             android:name=".NewsWidgetProvider"
             android:exported="false">
@@ -76,7 +85,7 @@
                 android:resource="@xml/news_widget_info" />
         </receiver>
 
-        <!-- Çoklu Haber Kartı Widget Provider -->
+        <!-- Çoklu Haber Listesi Widget (mevcut - 3 haber listesi) -->
         <receiver
             android:name=".NewsListWidgetProvider"
             android:exported="false">
@@ -88,7 +97,7 @@
                 android:resource="@xml/news_list_widget_info" />
         </receiver>
 
-        <!-- Kategori Kısayol Widget Provider -->
+        <!-- Kategori Kısayol Widget (mevcut) -->
         <receiver
             android:name=".CategoryShortcutWidgetProvider"
             android:exported="false">
@@ -99,6 +108,55 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/category_shortcut_widget_info" />
         </receiver>
+
+        <!-- Small Widget (2x1) - Tek haber başlığı, gradient arka plan -->
+        <receiver
+            android:name=".NewsWidgetSmall"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_small_info" />
+        </receiver>
+
+        <!-- Medium Widget (4x2) - 3 haber listesi, resimler, header -->
+        <receiver
+            android:name=".NewsWidgetMedium"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_medium_info" />
+        </receiver>
+
+        <!-- Large Widget (4x4) - Büyük haber kartı + alt haberler -->
+        <receiver
+            android:name=".NewsWidgetLarge"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_large_info" />
+        </receiver>
+
+        <!-- Headlines Widget (4x1) - Kayan haber başlıkları (ViewFlipper) -->
+        <receiver
+            android:name=".NewsWidgetHeadlines"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_headlines_info" />
+        </receiver>
+
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

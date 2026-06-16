@@ -1,14 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/scheduler.dart';
+import 'dart:async';
 
 import '../../domain/entities/article.dart';
-import '../../domain/repositories/news_repository.dart';
+import '../../core/utils/app_logger.dart';
+import '../../domain/usecases/get_all_articles.dart';
+import '../../domain/usecases/get_articles_by_category.dart';
+import '../../domain/usecases/mark_article_as_read.dart';
+import '../../domain/usecases/toggle_article_favorite.dart';
+import '../../domain/usecases/clear_article_cache.dart';
+import '../../domain/usecases/check_breaking_news.dart';
 import '../../core/services/widget_service.dart';
-import '../../core/services/breaking_news_service.dart';
-import '../../core/services/notification_service.dart';
-import '../../core/services/hive_service.dart';
 import '../../core/utils/error_message_helper.dart';
 import 'providers.dart';
-
 /// News State - haber listesinin durumunu tutar
 class NewsState {
   final List<Article> articles;
@@ -61,10 +65,109 @@ class NewsState {
 }
 
 /// News StateNotifier - haber işlemlerini yönetir
+/// Use case'ler üzerinden iş mantığına erişir (Clean Architecture)
 class NewsNotifier extends StateNotifier<NewsState> {
-  final NewsRepository _repository;
+  final GetAllArticles _getAllArticles;
+  final GetArticlesByCategory _getArticlesByCategory;
+  final MarkArticleAsRead _markArticleAsRead;
+  final ToggleArticleFavorite _toggleArticleFavorite;
+  final ClearArticleCache _clearArticleCache;
+  final CheckBreakingNews _checkBreakingNews;
+  final WatchAllArticles _watchAllArticles;
+  StreamSubscription<List<Article>>? _articlesSubscription;
 
-  NewsNotifier(this._repository) : super(const NewsState());
+  NewsNotifier({
+    required GetAllArticles getAllArticles,
+    required GetArticlesByCategory getArticlesByCategory,
+    required MarkArticleAsRead markArticleAsRead,
+    required ToggleArticleFavorite toggleArticleFavorite,
+    required ClearArticleCache clearArticleCache,
+    required CheckBreakingNews checkBreakingNews,
+    required WatchAllArticles watchAllArticles,
+  })  : _getAllArticles = getAllArticles,
+        _getArticlesByCategory = getArticlesByCategory,
+        _markArticleAsRead = markArticleAsRead,
+        _toggleArticleFavorite = toggleArticleFavorite,
+        _clearArticleCache = clearArticleCache,
+        _checkBreakingNews = checkBreakingNews,
+        _watchAllArticles = watchAllArticles,
+        super(const NewsState()) {
+    _setupArticlesStream();
+  }
+
+  /// Stream'i dinlemeye başla
+  void _setupArticlesStream() {
+    _articlesSubscription = _watchAllArticles().listen(
+      (articles) {
+        // Background refresh sonrası gelen verileri handle et
+        AppLogger.debug('[Provider] Stream\'den ${articles.length} makale alındı');
+        
+        // Build cycle dışında state güncellemesi için SchedulerBinding kullan
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            // DEBUG GÜVENLİK: Eğer stream'den gelen verilerde mevcut bir kategorinin haberleri
+            // tamamen silinmişse (örneğin 'bilim' haberleri yoksa) ve bizde varsa, KORU!
+            List<Article> safeArticles = List.from(articles);
+            
+            // Eğer state'imizde zaten haberler varsa
+            if (state.allArticles.isNotEmpty) {
+              // Uygulamadaki tüm kategoriler (dinamik olarak da alınabilirdi)
+              final categories = state.allArticles.map((a) => a.category).toSet();
+              
+              for (final cat in categories) {
+                final countInNew = safeArticles.where((a) => a.category == cat).length;
+                final countInOld = state.allArticles.where((a) => a.category == cat).length;
+                
+                // Eğer yeni listede o kategori tamamen yok olmuşsa veya eskisinden "çok daha az" ise ve eski liste 0 değilse
+                if (countInNew == 0 && countInOld > 0) {
+                  // Eski haberleri güvenli listeye geri ekle
+                  final missingArticles = state.allArticles.where((a) => a.category == cat).toList();
+                  safeArticles.addAll(missingArticles);
+                  AppLogger.warning('🛡️ [State Guard] Stream "$cat" kategorisini BOŞ getirdi! Eski $countInOld haber korunuyor.');
+                }
+              }
+              
+              // Yeniden sırala
+              safeArticles.sort((a, b) {
+                final aHasImage = a.imageUrl != null && a.imageUrl!.isNotEmpty;
+                final bHasImage = b.imageUrl != null && b.imageUrl!.isNotEmpty;
+                if (aHasImage && !bHasImage) return -1;
+                if (!aHasImage && bHasImage) return 1;
+                return b.publishedDate.compareTo(a.publishedDate);
+              });
+            }
+
+            final paginatedArticles = _paginateArticles(safeArticles, page: state.currentPage);
+            state = state.copyWith(
+              allArticles: safeArticles,
+              articles: paginatedArticles,
+              isLoading: false,
+              errorMessage: null,
+              hasMore: safeArticles.length > NewsState.pageSize * state.currentPage,
+            );
+            AppLogger.success('[Provider] State güncellendi: ${paginatedArticles.length} makale gösteriliyor');
+          }
+        });
+      },
+      onError: (error) {
+        AppLogger.error('[Provider] Stream hatası', error);
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            state = state.copyWith(
+              isLoading: false,
+              errorMessage: ErrorMessageHelper.getErrorMessage(error),
+            );
+          }
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _articlesSubscription?.cancel();
+    super.dispose();
+  }
 
   /// Tüm haberleri yükler
   Future<void> loadAllArticles({bool refresh = false}) async {
@@ -77,7 +180,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
     }
 
     try {
-      final allArticles = await _repository.getAllArticles();
+      final allArticles = await _getAllArticles();
       final paginatedArticles = _paginateArticles(allArticles, page: 1);
       
       state = state.copyWith(
@@ -89,13 +192,17 @@ class NewsNotifier extends StateNotifier<NewsState> {
         currentPage: 1,
       );
       
-      // Widget'ı güncelle (await ile bekliyoruz)
-      await WidgetService.updateWidget(allArticles);
+      // Widget'ı güncelle (NON-BLOCKING - await kullanma)
+      WidgetService.updateWidget(allArticles).catchError((e) {
+        AppLogger.debug('Widget update hatası (sessizce başarısız): $e');
+      });
       
-      // Breaking news kontrolü ve bildirim gönderimi
-      _checkAndNotifyBreakingNews(allArticles);
+      // Breaking news kontrolü (NON-BLOCKING - use case üzerinden)
+      _checkBreakingNews(allArticles).catchError((e) {
+        AppLogger.debug('Breaking news kontrolü hatası (sessizce başarısız): $e');
+      });
     } catch (e, stackTrace) {
-      print('❌ Haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+      AppLogger.error('Haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoading: false,
         errorMessage: ErrorMessageHelper.getErrorMessage(e),
@@ -122,7 +229,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
         currentPage: nextPage,
       );
     } catch (e, stackTrace) {
-      print('❌ Daha fazla haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+      AppLogger.error('Daha fazla haber yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoadingMore: false,
         errorMessage: ErrorMessageHelper.getErrorMessage(e),
@@ -132,33 +239,78 @@ class NewsNotifier extends StateNotifier<NewsState> {
 
   /// Haberleri sayfalara böler
   List<Article> _paginateArticles(List<Article> allArticles, {required int page}) {
-    final startIndex = 0;
     final endIndex = page * NewsState.pageSize;
     return allArticles.sublist(0, endIndex > allArticles.length ? allArticles.length : endIndex);
   }
 
   /// Kategori bazında haberleri yükler
   Future<void> loadArticlesByCategory(String category, {bool refresh = false}) async {
-    if (refresh) {
+    // Eğer allArticles boşsa önce tüm haberleri yükle
+    if (state.allArticles.isEmpty || refresh) {
       state = state.copyWith(isLoading: true, errorMessage: null, currentPage: 1);
-    } else {
-      state = state.copyWith(isLoading: true, errorMessage: null, currentPage: 1);
-    }
+      
+      try {
+        final categoryArticles = await _getArticlesByCategory(category);
+        
+        List<Article> newAllArticles;
+        if (state.allArticles.isNotEmpty && refresh) {
+          // Mevcut allArticles içinden bu kategoriye ait OLMAYANLARI tut
+          final otherArticles = state.allArticles
+              .where((a) => a.category.toLowerCase() != category.toLowerCase())
+              .toList();
+          
+          // Yeni kategori makalelerini ekle
+          newAllArticles = [...otherArticles, ...categoryArticles];
+          
+          // Yeniden resim varlığı ve tarihe göre sırala
+          newAllArticles.sort((a, b) {
+            final aHasImage = a.imageUrl != null && a.imageUrl!.isNotEmpty;
+            final bHasImage = b.imageUrl != null && b.imageUrl!.isNotEmpty;
+            if (aHasImage && !bHasImage) return -1;
+            if (!aHasImage && bHasImage) return 1;
+            return b.publishedDate.compareTo(a.publishedDate);
+          });
+        } else {
+          newAllArticles = categoryArticles;
+        }
 
+        final paginatedArticles = _paginateArticles(categoryArticles, page: 1);
+        
+        state = state.copyWith(
+          allArticles: newAllArticles,
+          articles: paginatedArticles,
+          isLoading: false,
+          errorMessage: null,
+          hasMore: categoryArticles.length > NewsState.pageSize,
+          currentPage: 1,
+        );
+      } catch (e, stackTrace) {
+        AppLogger.error('Kategori haberleri yükleme hatası: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: ErrorMessageHelper.getErrorMessage(e),
+        );
+      }
+      return;
+    }
+    
+    // allArticles varsa sadece filtreleme yap (cache'den)
     try {
-      final allArticles = await _repository.getArticlesByCategory(category);
-      final paginatedArticles = _paginateArticles(allArticles, page: 1);
+      final filteredArticles = state.allArticles
+          .where((article) => article.category.toLowerCase() == category.toLowerCase())
+          .toList();
+      
+      final paginatedArticles = _paginateArticles(filteredArticles, page: 1);
       
       state = state.copyWith(
-        allArticles: allArticles,
         articles: paginatedArticles,
         isLoading: false,
         errorMessage: null,
-        hasMore: allArticles.length > NewsState.pageSize,
+        hasMore: filteredArticles.length > NewsState.pageSize,
         currentPage: 1,
       );
     } catch (e, stackTrace) {
-      print('❌ Kategori yükleme hatası [$category]: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
+      AppLogger.error('Kategori yükleme hatası [$category]: ${ErrorMessageHelper.getDetailedError(e, stackTrace)}');
       state = state.copyWith(
         isLoading: false,
         errorMessage: ErrorMessageHelper.getErrorMessage(e),
@@ -168,7 +320,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
 
   /// Haberleri yenile (pull-to-refresh için)
   Future<void> refreshArticles([String? category]) async {
-    if (category != null) {
+    if (category != null && category != 'genel') {
       await loadArticlesByCategory(category, refresh: true);
     } else {
       await loadAllArticles(refresh: true);
@@ -183,7 +335,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
   /// Makaleyi okundu olarak işaretle
   Future<void> markAsRead(String articleId) async {
     try {
-      await _repository.markAsRead(articleId);
+      await _markArticleAsRead(articleId);
       
       // Update local state
       final updatedArticles = state.articles.map((article) {
@@ -196,14 +348,14 @@ class NewsNotifier extends StateNotifier<NewsState> {
       state = state.copyWith(articles: updatedArticles);
     } catch (e) {
       // Silently handle error for UX
-      print('Failed to mark as read: $e');
+      AppLogger.debug('Failed to mark as read: $e');
     }
   }
 
   /// Favori durumunu değiştir
   Future<void> toggleFavorite(String articleId) async {
     try {
-      await _repository.toggleFavorite(articleId);
+      await _toggleArticleFavorite(articleId);
       
       // Update local state
       final updatedArticles = state.articles.map((article) {
@@ -216,7 +368,7 @@ class NewsNotifier extends StateNotifier<NewsState> {
       state = state.copyWith(articles: updatedArticles);
     } catch (e) {
       // Silently handle error for UX
-      print('Failed to toggle favorite: $e');
+      AppLogger.debug('Failed to toggle favorite: $e');
     }
   }
 
@@ -228,99 +380,10 @@ class NewsNotifier extends StateNotifier<NewsState> {
   /// Cache'i temizle
   Future<void> clearCache() async {
     try {
-      await _repository.clearCache();
+      await _clearArticleCache();
       state = const NewsState();
     } catch (e) {
-      print('Failed to clear cache: $e');
-    }
-  }
-
-  /// Breaking news kontrolü ve bildirim gönderimi
-  Future<void> _checkAndNotifyBreakingNews(List<Article> articles) async {
-    try {
-      final breakingNewsService = BreakingNewsService();
-      final notificationService = NotificationService();
-      
-      // Son 10 dakika içindeki haberleri kontrol et
-      final now = DateTime.now();
-      final recentArticles = articles.where((article) {
-        final diff = now.difference(article.publishedDate);
-        return diff.inMinutes <= 10;
-      }).toList();
-      
-      // Breaking news'leri filtrele
-      final breakingNews = breakingNewsService.filterBreakingNews(recentArticles);
-      
-      if (breakingNews.isNotEmpty) {
-        // En yüksek öncelikli breaking news'i al
-        breakingNews.sort((a, b) {
-          final priorityA = breakingNewsService.calculatePriority(a);
-          final priorityB = breakingNewsService.calculatePriority(b);
-          return priorityB.compareTo(priorityA);
-        });
-        
-        final topBreakingNews = breakingNews.first;
-        
-        // Bildirim sıklığı kontrolü
-        if (await _canSendNotification()) {
-          await notificationService.showBreakingNewsNotification(
-            title: topBreakingNews.title,
-            summary: topBreakingNews.description,
-            articleId: topBreakingNews.id,
-          );
-          
-          // Son bildirim zamanını kaydet
-          await _saveLastNotificationTime();
-        }
-      }
-    } catch (e) {
-      print('⚠️ Breaking news kontrolü hatası: $e');
-    }
-  }
-  
-  /// Bildirim gönderilebilir mi kontrol et (saatte max 3 bildirim)
-  Future<bool> _canSendNotification() async {
-    try {
-      final box = HiveService.notificationFrequencyBox;
-      final lastNotificationTimes = box.get('lastNotificationTimes', defaultValue: <int>[]) as List<dynamic>?;
-      
-      if (lastNotificationTimes == null || lastNotificationTimes.isEmpty) {
-        return true;
-      }
-      
-      final now = DateTime.now().millisecondsSinceEpoch;
-      final oneHourAgo = now - (60 * 60 * 1000);
-      
-      // Son 1 saat içindeki bildirimleri filtrele
-      final recentNotifications = lastNotificationTimes
-          .where((time) => (time as int) > oneHourAgo)
-          .toList();
-      
-      // Saatte max 3 bildirim
-      return recentNotifications.length < 3;
-    } catch (e) {
-      print('⚠️ Bildirim sıklığı kontrolü hatası: $e');
-      return true; // Hata durumunda bildirim gönder
-    }
-  }
-  
-  /// Son bildirim zamanını kaydet
-  Future<void> _saveLastNotificationTime() async {
-    try {
-      final box = HiveService.notificationFrequencyBox;
-      final lastNotificationTimes = box.get('lastNotificationTimes', defaultValue: <int>[]) as List<dynamic>?;
-      
-      final now = DateTime.now().millisecondsSinceEpoch;
-      final updatedTimes = List<int>.from(lastNotificationTimes ?? []);
-      updatedTimes.add(now);
-      
-      // Son 24 saat içindeki bildirimleri tut
-      final oneDayAgo = now - (24 * 60 * 60 * 1000);
-      final filteredTimes = updatedTimes.where((time) => time > oneDayAgo).toList();
-      
-      await box.put('lastNotificationTimes', filteredTimes);
-    } catch (e) {
-      print('⚠️ Bildirim zamanı kaydetme hatası: $e');
+      AppLogger.debug('Failed to clear cache: $e');
     }
   }
 
@@ -342,10 +405,53 @@ class NewsNotifier extends StateNotifier<NewsState> {
 }
 
 
+// ============================================================================
+// USE CASE PROVIDERS
+// ============================================================================
+
+final getAllArticlesProvider = Provider<GetAllArticles>((ref) {
+  return GetAllArticles(ref.read(newsRepositoryProvider));
+});
+
+final watchAllArticlesProvider = Provider<WatchAllArticles>((ref) {
+  return WatchAllArticles(ref.read(newsRepositoryProvider));
+});
+
+final getArticlesByCategoryProvider = Provider<GetArticlesByCategory>((ref) {
+  return GetArticlesByCategory(ref.read(newsRepositoryProvider));
+});
+
+final markArticleAsReadProvider = Provider<MarkArticleAsRead>((ref) {
+  return MarkArticleAsRead(ref.read(newsRepositoryProvider));
+});
+
+final toggleArticleFavoriteProvider = Provider<ToggleArticleFavorite>((ref) {
+  return ToggleArticleFavorite(ref.read(newsRepositoryProvider));
+});
+
+final clearArticleCacheProvider = Provider<ClearArticleCache>((ref) {
+  return ClearArticleCache(ref.read(newsRepositoryProvider));
+});
+
+final checkBreakingNewsProvider = Provider<CheckBreakingNews>((ref) {
+  return CheckBreakingNews();
+});
+
+// ============================================================================
+// NEWS PROVIDER - Use case'ler ile oluşturulur
+// ============================================================================
+
 /// News provider - StateNotifierProvider
 final newsProvider = StateNotifierProvider<NewsNotifier, NewsState>((ref) {
-  final repository = ref.read(newsRepositoryProvider);
-  return NewsNotifier(repository);
+  return NewsNotifier(
+    getAllArticles: ref.read(getAllArticlesProvider),
+    getArticlesByCategory: ref.read(getArticlesByCategoryProvider),
+    markArticleAsRead: ref.read(markArticleAsReadProvider),
+    toggleArticleFavorite: ref.read(toggleArticleFavoriteProvider),
+    clearArticleCache: ref.read(clearArticleCacheProvider),
+    checkBreakingNews: ref.read(checkBreakingNewsProvider),
+    watchAllArticles: ref.read(watchAllArticlesProvider),
+  );
 });
 
 /// Favorite articles provider

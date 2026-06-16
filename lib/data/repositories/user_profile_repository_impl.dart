@@ -5,6 +5,7 @@ import '../../domain/entities/reading_analytics.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 import '../datasources/local/user_profile_local_data_source.dart';
 
+import 'package:flutter/foundation.dart';
 /// UserProfileRepository interface'inin implementasyonu
 /// Analytics service'ten veri çekerek istatistikleri hesaplar
 class UserProfileRepositoryImpl implements UserProfileRepository {
@@ -35,7 +36,7 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
       
       return updatedProfile;
     } catch (e) {
-      print('💥 Profil getirme hatası: $e');
+      debugPrint('💥 Profil getirme hatası: $e');
       // Hata durumunda varsayılan profil döndür
       return UserProfile.defaultProfile;
     }
@@ -46,7 +47,7 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     try {
       await localDataSource.saveProfile(profile);
     } catch (e) {
-      print('💥 Profil kaydetme hatası: $e');
+      debugPrint('💥 Profil kaydetme hatası: $e');
       rethrow;
     }
   }
@@ -56,7 +57,7 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     try {
       await localDataSource.updateProfile(profile);
     } catch (e) {
-      print('💥 Profil güncelleme hatası: $e');
+      debugPrint('💥 Profil güncelleme hatası: $e');
       rethrow;
     }
   }
@@ -67,7 +68,7 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
       final stats = await calculateStats();
       await localDataSource.updateStats(stats);
     } catch (e) {
-      print('💥 İstatistik güncelleme hatası: $e');
+      debugPrint('💥 İstatistik güncelleme hatası: $e');
       rethrow;
     }
   }
@@ -77,7 +78,7 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     try {
       await localDataSource.updatePreferences(preferences);
     } catch (e) {
-      print('💥 Tercih güncelleme hatası: $e');
+      debugPrint('💥 Tercih güncelleme hatası: $e');
       rethrow;
     }
   }
@@ -129,7 +130,7 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
         lastReadDate: lastReadDate,
       );
     } catch (e) {
-      print('💥 İstatistik hesaplama hatası: $e');
+      debugPrint('💥 İstatistik hesaplama hatası: $e');
       // Hata durumunda boş istatistikler döndür
       return UserStats.empty;
     }

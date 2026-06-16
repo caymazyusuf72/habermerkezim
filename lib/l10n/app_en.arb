@@ -1,0 +1,272 @@
+{
+  "@@locale": "en",
+  "@@last_modified": "2026-01-16T21:34:00.000Z",
+  
+  "appTitle": "News Center",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  
+  "home": "Home",
+  "favorites": "Favorites",
+  "search": "Search",
+  "settings": "Settings",
+  "profile": "Profile",
+  
+  "categories": "Categories",
+  "general": "General",
+  "technology": "Technology",
+  "sports": "Sports",
+  "economy": "Economy",
+  "health": "Health",
+  "science": "Science",
+  "culture": "Culture",
+  "world": "World",
+  "politics": "Politics",
+  "entertainment": "Entertainment",
+  
+  "loading": "Loading...",
+  "error": "Error",
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "close": "Close",
+  "share": "Share",
+  "refresh": "Refresh",
+  
+  "noArticles": "No articles yet",
+  "noFavorites": "No favorite articles yet",
+  "noSearchResults": "No search results found",
+  "noReadingHistory": "Reading history is empty",
+  
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
+  "addedToFavorites": "Added to favorites",
+  "removedFromFavorites": "Removed from favorites",
+  
+  "readMore": "Read More",
+  "readingTime": "{minutes} min read",
+  "@readingTime": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "publishedAt": "Published on {date}",
+  "@publishedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "source": "Source",
+  "category": "Category",
+  
+  "searchHint": "Search news...",
+  "searchHistory": "Search History",
+  "clearSearchHistory": "Clear Search History",
+  "popularSearches": "Popular Searches",
+  "recentSearches": "Recent Searches",
+  
+  "settingsTitle": "Settings",
+  "appearance": "Appearance",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "systemTheme": "System Theme",
+  "themes": "Themes",
+  "selectTheme": "Select color theme",
+  "fontSize": "Font Size",
+  "small": "Small",
+  "normal": "Normal",
+  "large": "Large",
+  "extraLarge": "Extra Large",
+  
+  "notifications": "Notifications",
+  "notificationSettings": "Notification Settings",
+  "notificationPreferences": "Notification Preferences",
+  "dailyNewsReminder": "Daily News Reminder",
+  "readingGoalReminder": "Reading Goal Reminder",
+  "breakingNews": "Breaking News",
+  "notificationsEnabled": "Notifications enabled",
+  "notificationsDisabled": "Notifications disabled",
+  
+  "dataManagement": "Data Management",
+  "clearCache": "Clear Cache",
+  "clearCacheDescription": "Delete all cached news",
+  "clearFavorites": "Clear Favorites",
+  "clearFavoritesDescription": "Delete all favorite news",
+  "clearSearchHistoryDescription": "Clear all search history",
+  "exportData": "Export Data",
+  "exportDataDescription": "Favorites, reading history and statistics",
+  
+  "rssSources": "News Sources",
+  "manageRssSources": "Manage News Sources",
+  "addNewSource": "Add New Source",
+  "resetSources": "Reset Sources",
+  "resetSourcesDescription": "Return to default sources",
+  
+  "statistics": "Statistics",
+  "readingStatistics": "Reading Statistics",
+  "readingGoals": "Reading Goals",
+  "readingTrends": "Reading Trends",
+  
+  "about": "About",
+  "aboutApp": "About App",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service",
+  "version": "Version",
+  
+  "analyticsTitle": "Statistics",
+  "overview": "Overview",
+  "charts": "Charts",
+  "details": "Details",
+  
+  "today": "Today",
+  "thisWeek": "This Week",
+  "thisMonth": "This Month",
+  
+  "articlesRead": "Articles Read",
+  "timeSpent": "Time Spent",
+  "favoritesCount": "Favorites",
+  "sharesCount": "Shares",
+  "searchesCount": "Searches",
+  "readingStreak": "Reading Streak",
+  "consistency": "Consistency",
+  
+  "goals": "Goals",
+  "dailyGoal": "Daily Goal",
+  "weeklyGoal": "Weekly Goal",
+  "goalAchieved": "Congratulations! You achieved the goal.",
+  "goalNotAchieved": "Keep reading to reach your goal.",
+  
+  "weeklyReadingChart": "Last 7 Days Reading Chart",
+  "categoryDistribution": "Category Distribution",
+  "monthlyTrend": "Monthly Reading Trend",
+  
+  "socialActivity": "Social Activity",
+  "totalShares": "Total Shares",
+  "totalSearches": "Total Searches",
+  "totalFavorites": "Total Favorites",
+  
+  "readingHabits": "Your Reading Habits",
+  "readingTrend": "Reading Trend",
+  "productiveTime": "Most Productive Time",
+  "consistencyScore": "Consistency Score",
+  "dailyAverage": "Daily Average",
+  "weeklyAverage": "Weekly Average",
+  
+  "trendIncreasing": "Increasing trend",
+  "trendDecreasing": "Decreasing trend",
+  "trendStable": "Stable",
+  
+  "exportTitle": "Export",
+  "exportOptions": "Export Options",
+  "exportDescription": "Export your data in CSV or JSON format",
+  "exportFavorites": "Favorites",
+  "exportFavoritesDescription": "Export your favorite articles",
+  "exportReadingHistory": "Reading History",
+  "exportReadingHistoryDescription": "List of articles you've read",
+  "exportReadingList": "Reading List",
+  "exportReadingListDescription": "Articles saved for later",
+  "exportStatistics": "Statistics",
+  "exportStatisticsDescription": "Your reading statistics and goals",
+  "exportAll": "All Data",
+  "exportAllDescription": "Export all your data in a single file",
+  "exportedFiles": "Exported Files",
+  "exportSuccess": "Export successful! {count} items saved.",
+  "@exportSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportError": "Export error",
+  "selectFormat": "Select export format",
+  "csvFormat": "CSV",
+  "csvDescription": "Excel compatible",
+  "jsonFormat": "JSON",
+  "jsonDescription": "Structured data",
+  
+  "language": "Language",
+  "selectLanguage": "Select Language",
+  "turkish": "Türkçe",
+  "english": "English",
+  
+  "confirmDelete": "Are you sure you want to delete?",
+  "confirmClear": "Are you sure you want to clear?",
+  "actionCannotBeUndone": "This action cannot be undone.",
+  
+  "connectionError": "Connection error",
+  "noInternet": "No internet connection",
+  "serverError": "Server error",
+  "unknownError": "Unknown error",
+  
+  "minutes": "minutes",
+  "hours": "hours",
+  "days": "days",
+  "articles": "articles",
+  
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday",
+  
+  "mondayShort": "Mon",
+  "tuesdayShort": "Tue",
+  "wednesdayShort": "Wed",
+  "thursdayShort": "Thu",
+  "fridayShort": "Fri",
+  "saturdayShort": "Sat",
+  "sundayShort": "Sun",
+  
+  "notificationCategoryFilters": "Category Notifications",
+  "notificationQuietHours": "Quiet Hours",
+  "notificationDailyLimit": "Daily Notification Limit",
+  "notificationQuietHoursStart": "Start Time",
+  "notificationQuietHoursEnd": "End Time",
+  "notificationMaxDaily": "Maximum Notifications",
+  "notificationTodayCount": "Today: {count}/{max}",
+  "@notificationTodayCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationPrioritySettings": "Priority Settings",
+  "notificationHighPrioritySound": "High Priority Sound",
+  "notificationHighPriorityVibration": "High Priority Vibration",
+  
+  "readingMode": "Reading Mode",
+  "readingModeFontSize": "Font Size",
+  "readingModeBackground": "Background Color",
+  "readingModeLineSpacing": "Line Spacing",
+  "readingModeNightMode": "Night Mode",
+  "readingModeReset": "Reset to Default",
+  "readingModeSettings": "Reading Settings",
+  
+  "readingColorWhite": "White",
+  "readingColorBeige": "Beige",
+  "readingColorSepia": "Sepia",
+  "readingColorBlack": "Black",
+  "readingColorNight": "Night",
+  
+  "readingSpacingCompact": "Compact",
+  "readingSpacingNormal": "Normal",
+  "readingSpacingComfortable": "Comfortable",
+  "readingSpacingWide": "Wide"
+}

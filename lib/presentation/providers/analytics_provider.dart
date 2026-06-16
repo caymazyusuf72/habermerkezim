@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/analytics_service.dart';
 import '../../domain/entities/reading_analytics.dart';
 
+import 'package:flutter/foundation.dart';
 /// Analytics state
 class AnalyticsState {
   final ReadingAnalytics todayAnalytics;
@@ -13,6 +14,13 @@ class AnalyticsState {
   final bool isLoading;
   final String? error;
   final int streakDays;
+  
+  // Gamification için ek getter'lar
+  int get totalSearches => weeklySummary.totalSearches;
+  int get totalArticlesRead => weeklySummary.totalArticlesRead;
+  int get totalShares => weeklySummary.totalShares;
+  List<dynamic> get readArticles => weeklyAnalytics;
+  List<dynamic> get favoritedArticles => [];
 
   const AnalyticsState({
     required this.todayAnalytics,
@@ -107,7 +115,7 @@ class AnalyticsNotifier extends StateNotifier<AnalyticsState> {
         await loadAnalytics(); // Verileri güncelle
       }
     } catch (e) {
-      print('Makale okuma kaydı hatası: $e');
+      debugPrint('Makale okuma kaydı hatası: $e');
     }
   }
 
@@ -119,7 +127,7 @@ class AnalyticsNotifier extends StateNotifier<AnalyticsState> {
         await loadAnalytics(); // Verileri güncelle
       }
     } catch (e) {
-      print('Favori ekleme kaydı hatası: $e');
+      debugPrint('Favori ekleme kaydı hatası: $e');
     }
   }
 
@@ -131,7 +139,7 @@ class AnalyticsNotifier extends StateNotifier<AnalyticsState> {
         await loadAnalytics(); // Verileri güncelle
       }
     } catch (e) {
-      print('Arama kaydı hatası: $e');
+      debugPrint('Arama kaydı hatası: $e');
     }
   }
 
@@ -143,7 +151,7 @@ class AnalyticsNotifier extends StateNotifier<AnalyticsState> {
         await loadAnalytics(); // Verileri güncelle
       }
     } catch (e) {
-      print('Paylaşım kaydı hatası: $e');
+      debugPrint('Paylaşım kaydı hatası: $e');
     }
   }
 
@@ -201,7 +209,7 @@ class AnalyticsNotifier extends StateNotifier<AnalyticsState> {
       }
       return success;
     } catch (e) {
-      print('Analytics import hatası: $e');
+      debugPrint('Analytics import hatası: $e');
       return false;
     }
   }

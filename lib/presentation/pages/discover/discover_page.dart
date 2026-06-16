@@ -203,7 +203,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               },
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

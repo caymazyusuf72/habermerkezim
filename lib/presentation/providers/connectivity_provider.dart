@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:flutter/foundation.dart';
 /// Connectivity State - internet bağlantısı durumunu tutar
 class ConnectivityState {
   final bool isConnected;
@@ -66,7 +67,7 @@ class ConnectivityNotifier extends StateNotifier<ConnectivityState> {
       final results = await _connectivity.checkConnectivity();
       _updateConnectivityStatus(results);
     } catch (e) {
-      print('Connectivity initialization error: $e');
+      debugPrint('Connectivity initialization error: $e');
       state = state.copyWith(
         isConnected: false,
         connectivityResults: [ConnectivityResult.none],
@@ -85,7 +86,7 @@ class ConnectivityNotifier extends StateNotifier<ConnectivityState> {
       lastChecked: DateTime.now(),
     );
 
-    print('Connectivity changed: $results (connected: $isConnected)');
+    debugPrint('Connectivity changed: $results (connected: $isConnected)');
   }
 
   /// Manuel olarak bağlantı durumunu kontrol et
@@ -94,7 +95,7 @@ class ConnectivityNotifier extends StateNotifier<ConnectivityState> {
       final results = await _connectivity.checkConnectivity();
       _updateConnectivityStatus(results);
     } catch (e) {
-      print('Manual connectivity check error: $e');
+      debugPrint('Manual connectivity check error: $e');
     }
   }
 

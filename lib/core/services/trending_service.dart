@@ -1,8 +1,8 @@
 import '../../domain/entities/article.dart';
-import '../../domain/entities/reading_analytics.dart';
 import '../../core/services/hive_service.dart';
 import '../../core/services/analytics_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// Trending servisi - trend hesaplama (okunma/paylaşım sayısı, zaman bazlı)
 class TrendingService {
   /// Trend haberleri hesapla
@@ -95,7 +95,7 @@ class TrendingService {
           .map((scored) => scored.article)
           .toList();
     } catch (e) {
-      print('💥 Trend haber hesaplama hatası: $e');
+      debugPrint('💥 Trend haber hesaplama hatası: $e');
       return [];
     }
   }

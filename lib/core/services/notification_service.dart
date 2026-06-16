@@ -53,14 +53,14 @@ class NotificationService {
 
     _initialized = true;
     if (kDebugMode) {
-      print('📱 NotificationService initialized successfully');
+      debugPrint('📱 NotificationService initialized successfully');
     }
   }
 
   /// Handle notification tap
   void _onNotificationTap(NotificationResponse response) {
     if (kDebugMode) {
-      print('📱 Notification tapped: ${response.payload}');
+      debugPrint('📱 Notification tapped: ${response.payload}');
     }
     // TODO: Handle navigation based on payload
   }
@@ -179,7 +179,7 @@ class NotificationService {
     );
 
     if (kDebugMode) {
-      print('📱 Daily news reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
+      debugPrint('📱 Daily news reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
     }
   }
 
@@ -226,7 +226,7 @@ class NotificationService {
     );
 
     if (kDebugMode) {
-      print('📱 Reading goal reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
+      debugPrint('📱 Reading goal reminder scheduled for ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
     }
   }
 
@@ -256,7 +256,7 @@ class NotificationService {
     );
 
     if (kDebugMode) {
-      print('📱 Reading goal achievement notification shown');
+      debugPrint('📱 Reading goal achievement notification shown');
     }
   }
 
@@ -290,7 +290,7 @@ class NotificationService {
     );
 
     if (kDebugMode) {
-      print('📱 Breaking news notification shown: $title');
+      debugPrint('📱 Breaking news notification shown: $title');
     }
   }
 
@@ -298,7 +298,7 @@ class NotificationService {
   Future<void> cancelAllNotifications() async {
     await _notifications.cancelAll();
     if (kDebugMode) {
-      print('📱 All notifications cancelled');
+      debugPrint('📱 All notifications cancelled');
     }
   }
 
@@ -306,7 +306,7 @@ class NotificationService {
   Future<void> cancelNotification(int id) async {
     await _notifications.cancel(id);
     if (kDebugMode) {
-      print('📱 Notification $id cancelled');
+      debugPrint('📱 Notification $id cancelled');
     }
   }
 
@@ -348,5 +348,184 @@ class NotificationService {
       ),
       payload: 'test_notification',
     );
+  }
+
+  // ========== AKILLI BİLDİRİM SİSTEMİ METODLARI ==========
+
+  /// Sessiz saatlerde mi kontrolü
+  bool isInQuietHours({
+    required bool quietHoursEnabled,
+    required int startHour,
+    required int startMinute,
+    required int endHour,
+    required int endMinute,
+  }) {
+    if (!quietHoursEnabled) return false;
+    
+    final now = DateTime.now();
+    final currentMinutes = now.hour * 60 + now.minute;
+    final startMinutes = startHour * 60 + startMinute;
+    final endMinutes = endHour * 60 + endMinute;
+    
+    // Gece yarısı geçişi kontrolü (örn: 22:00-08:00)
+    if (startMinutes > endMinutes) {
+      return currentMinutes >= startMinutes || currentMinutes < endMinutes;
+    }
+    
+    return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+  }
+
+  /// Günlük limit kontrolü
+  bool canSendNotification({
+    required bool dailyLimitEnabled,
+    required int maxDailyNotifications,
+    required int todayNotificationCount,
+    required DateTime lastResetDate,
+  }) {
+    if (!dailyLimitEnabled) return true;
+    
+    final today = DateTime.now();
+    final isSameDay = lastResetDate.day == today.day &&
+                      lastResetDate.month == today.month &&
+                      lastResetDate.year == today.year;
+    
+    // Yeni gün, izin ver
+    if (!isSameDay) return true;
+    
+    // Aynı gün, limit kontrolü
+    return todayNotificationCount < maxDailyNotifications;
+  }
+
+  /// Kategori ve öncelik bazlı akıllı bildirim gönderimi
+  Future<bool> sendSmartNotification({
+    required String category,
+    required String title,
+    required String body,
+    String priority = 'normal', // 'normal', 'high', 'critical'
+    String? articleId,
+    Map<String, bool>? categoryNotifications,
+    bool? quietHoursEnabled,
+    int? quietHoursStartHour,
+    int? quietHoursStartMinute,
+    int? quietHoursEndHour,
+    int? quietHoursEndMinute,
+    bool? dailyLimitEnabled,
+    int? maxDailyNotifications,
+    int? todayNotificationCount,
+    DateTime? lastResetDate,
+    bool? highPrioritySound,
+    bool? highPriorityVibration,
+  }) async {
+    try {
+      // 1. Kategori kontrolü
+      if (categoryNotifications != null &&
+          !(categoryNotifications[category] ?? true)) {
+        if (kDebugMode) {
+          debugPrint('📱 Kategori bildirim kapalı: $category');
+        }
+        return false;
+      }
+      
+      // 2. Sessiz saatler kontrolü
+      if (quietHoursEnabled == true &&
+          quietHoursStartHour != null &&
+          quietHoursStartMinute != null &&
+          quietHoursEndHour != null &&
+          quietHoursEndMinute != null) {
+        if (isInQuietHours(
+          quietHoursEnabled: true,
+          startHour: quietHoursStartHour,
+          startMinute: quietHoursStartMinute,
+          endHour: quietHoursEndHour,
+          endMinute: quietHoursEndMinute,
+        )) {
+          if (kDebugMode) {
+            debugPrint('📱 Sessiz saatlerde, bildirim ertelendi');
+          }
+          return false;
+        }
+      }
+      
+      // 3. Günlük limit kontrolü
+      if (dailyLimitEnabled == true &&
+          maxDailyNotifications != null &&
+          todayNotificationCount != null &&
+          lastResetDate != null) {
+        if (!canSendNotification(
+          dailyLimitEnabled: true,
+          maxDailyNotifications: maxDailyNotifications,
+          todayNotificationCount: todayNotificationCount,
+          lastResetDate: lastResetDate,
+        )) {
+          if (kDebugMode) {
+            debugPrint('📱 Günlük limit aşıldı: $todayNotificationCount/$maxDailyNotifications');
+          }
+          return false;
+        }
+      }
+      
+      // 4. Öncelik seviyesine göre bildirim ayarları
+      Importance importance;
+      Priority androidPriority;
+      String? sound;
+      bool enableVibration;
+      
+      switch (priority) {
+        case 'critical':
+          importance = Importance.max;
+          androidPriority = Priority.max;
+          sound = 'default';
+          enableVibration = highPriorityVibration ?? true;
+          break;
+        case 'high':
+          importance = Importance.high;
+          androidPriority = Priority.high;
+          sound = highPrioritySound == true ? 'default' : null;
+          enableVibration = highPriorityVibration ?? true;
+          break;
+        default: // normal
+          importance = Importance.defaultImportance;
+          androidPriority = Priority.defaultPriority;
+          sound = 'default';
+          enableVibration = false;
+      }
+      
+      // 5. Bildirimi gönder
+      final notificationId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      
+      await _notifications.show(
+        notificationId,
+        title,
+        body.length > 100 ? '${body.substring(0, 97)}...' : body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _dailyNewsChannelId,
+            'Günlük Haber Hatırlatmaları',
+            channelDescription: 'Kategori bazlı haber bildirimleri',
+            importance: importance,
+            priority: androidPriority,
+            icon: '@mipmap/launcher_icon',
+            largeIcon: const DrawableResourceAndroidBitmap('@mipmap/launcher_icon'),
+            sound: sound != null ? RawResourceAndroidNotificationSound(sound) : null,
+            enableVibration: enableVibration,
+          ),
+          iOS: DarwinNotificationDetails(
+            sound: sound,
+          ),
+        ),
+        payload: 'category:$category${articleId != null ? ':$articleId' : ''}',
+      );
+      
+      if (kDebugMode) {
+        debugPrint('📱 Smart notification sent: $category - $priority');
+      }
+      
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Smart notification error: $e');
+      }
+      return false;
+    }
   }
 }

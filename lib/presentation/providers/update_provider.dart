@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/services/update_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// UpdateService provider
 final updateServiceProvider = Provider<UpdateService>((ref) {
   return UpdateService();
@@ -87,7 +88,7 @@ final checkForUpdatesProvider = FutureProvider<UpdateCheckResult?>((ref) async {
     
     return result;
   } catch (e) {
-    print('⚠️ Güncelleme kontrolü hatası: $e');
+    debugPrint('⚠️ Güncelleme kontrolü hatası: $e');
     return null;
   }
 });

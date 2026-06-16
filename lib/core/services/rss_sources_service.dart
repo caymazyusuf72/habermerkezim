@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../domain/entities/rss_source.dart';
 
+import 'package:flutter/foundation.dart';
 /// RSS kaynakları yönetim servisi
 class RssSourcesService {
   static const String _boxName = 'rss_sources';
@@ -19,7 +20,7 @@ class RssSourcesService {
         await _initializeDefaultSources();
       }
     } catch (e) {
-      print('RSS Sources Service başlatma hatası: $e');
+      debugPrint('RSS Sources Service başlatma hatası: $e');
       rethrow;
     }
   }
@@ -43,20 +44,16 @@ class RssSourcesService {
       final sources = <RssSource>[];
       
       for (final map in _box!.values) {
-        if (map is Map<String, dynamic>) {
-          sources.add(RssSource.fromMap(map));
-        } else if (map is Map) {
-          // Type casting için
-          final convertedMap = Map<String, dynamic>.from(map);
-          sources.add(RssSource.fromMap(convertedMap));
-        }
+        // Type casting için
+        final convertedMap = Map<String, dynamic>.from(map);
+        sources.add(RssSource.fromMap(convertedMap));
       }
       
       // ID'ye göre sırala
       sources.sort((a, b) => a.id.compareTo(b.id));
       return sources;
     } catch (e) {
-      print('RSS Sources alma hatası: $e');
+      debugPrint('RSS Sources alma hatası: $e');
       return [];
     }
   }
@@ -85,16 +82,12 @@ class RssSourcesService {
     try {
       final map = _box!.get(id);
       if (map != null) {
-        if (map is Map<String, dynamic>) {
-          return RssSource.fromMap(map);
-        } else if (map is Map) {
-          final convertedMap = Map<String, dynamic>.from(map);
-          return RssSource.fromMap(convertedMap);
-        }
+        final convertedMap = Map<String, dynamic>.from(map);
+        return RssSource.fromMap(convertedMap);
       }
       return null;
     } catch (e) {
-      print('RSS Source alma hatası: $e');
+      debugPrint('RSS Source alma hatası: $e');
       return null;
     }
   }
@@ -110,7 +103,7 @@ class RssSourcesService {
       await _box!.put(source.id, source.toMap());
       return true;
     } catch (e) {
-      print('RSS Source ekleme hatası: $e');
+      debugPrint('RSS Source ekleme hatası: $e');
       return false;
     }
   }
@@ -121,7 +114,7 @@ class RssSourcesService {
       await _box!.put(source.id, source.toMap());
       return true;
     } catch (e) {
-      print('RSS Source güncelleme hatası: $e');
+      debugPrint('RSS Source güncelleme hatası: $e');
       return false;
     }
   }
@@ -132,7 +125,7 @@ class RssSourcesService {
       await _box!.delete(id);
       return true;
     } catch (e) {
-      print('RSS Source silme hatası: $e');
+      debugPrint('RSS Source silme hatası: $e');
       return false;
     }
   }
@@ -147,7 +140,7 @@ class RssSourcesService {
       }
       return false;
     } catch (e) {
-      print('RSS Source durum değiştirme hatası: $e');
+      debugPrint('RSS Source durum değiştirme hatası: $e');
       return false;
     }
   }
@@ -165,7 +158,7 @@ class RssSourcesService {
       }
       return false;
     } catch (e) {
-      print('RSS Source son güncelleme tarihi güncelleme hatası: $e');
+      debugPrint('RSS Source son güncelleme tarihi güncelleme hatası: $e');
       return false;
     }
   }
@@ -176,7 +169,7 @@ class RssSourcesService {
       await _box!.clear();
       return true;
     } catch (e) {
-      print('RSS Sources temizleme hatası: $e');
+      debugPrint('RSS Sources temizleme hatası: $e');
       return false;
     }
   }
@@ -188,7 +181,7 @@ class RssSourcesService {
       await _initializeDefaultSources();
       return true;
     } catch (e) {
-      print('RSS Sources varsayılanlara sıfırlama hatası: $e');
+      debugPrint('RSS Sources varsayılanlara sıfırlama hatası: $e');
       return false;
     }
   }
@@ -281,7 +274,7 @@ class RssSourcesService {
       }
       return null;
     } catch (e) {
-      print('RSS Source kopyalama hatası: $e');
+      debugPrint('RSS Source kopyalama hatası: $e');
       return null;
     }
   }

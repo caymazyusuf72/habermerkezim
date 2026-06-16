@@ -129,7 +129,7 @@ class _NotificationSettingsPageState
                             : 'Bildirimler için izin gerekli',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -187,7 +187,12 @@ class _NotificationSettingsPageState
                   onChanged: state.permissionsGranted
                       ? (value) => notifier.updateDailyNewsSettings(enabled: value)
                       : null,
-                  activeColor: AppTheme.primaryColor,
+                  thumbColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return AppTheme.primaryColor;
+                    }
+                    return null;
+                  }),
                 ),
               ],
             ),
@@ -215,7 +220,7 @@ class _NotificationSettingsPageState
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                          .withOpacity(0.3),
+                          .withValues(alpha: 0.3),
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -275,7 +280,12 @@ class _NotificationSettingsPageState
                   onChanged: state.permissionsGranted
                       ? (value) => notifier.updateReadingGoalSettings(enabled: value)
                       : null,
-                  activeColor: AppTheme.accentColor,
+                  thumbColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return AppTheme.accentColor;
+                    }
+                    return null;
+                  }),
                 ),
               ],
             ),
@@ -347,7 +357,7 @@ class _NotificationSettingsPageState
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -405,7 +415,7 @@ class _NotificationSettingsPageState
                         'Önemli haberler için anında bildirim',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: (isDark ? AppTheme.darkOnSurface : AppTheme.lightOnSurface)
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -416,7 +426,12 @@ class _NotificationSettingsPageState
                   onChanged: state.permissionsGranted
                       ? (value) => notifier.updateBreakingNewsEnabled(value)
                       : null,
-                  activeColor: Colors.red,
+                  thumbColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return Colors.red;
+                    }
+                    return null;
+                  }),
                 ),
               ],
             ),

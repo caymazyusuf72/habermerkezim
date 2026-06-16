@@ -1,6 +1,7 @@
 /// Functional programming Result pattern implementasyonu
 /// Error handling için Either benzeri yaklaşım
 /// Success ve Failure durumlarını type-safe şekilde handle eder
+library;
 
 abstract class Result<T> {
   const Result();

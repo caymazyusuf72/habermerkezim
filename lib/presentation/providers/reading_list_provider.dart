@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/article.dart';
 import '../../domain/repositories/reading_list_repository.dart';
 import '../../data/datasources/local/reading_list_local_data_source.dart';
-import '../../data/datasources/local/news_local_data_source.dart';
 import '../../data/repositories/reading_list_repository_impl.dart';
 import 'providers.dart';
 
@@ -33,6 +32,9 @@ class ReadingListState {
   bool get hasArticles => readingListArticles.isNotEmpty;
   bool get hasError => error != null;
   int get readingListCount => readingListArticles.length;
+  
+  // Export/Import için ek getter
+  List<Article> get articles => readingListArticles;
 
   /// Makale okuma listesinde mi kontrol et
   bool isInReadingList(String articleId) {

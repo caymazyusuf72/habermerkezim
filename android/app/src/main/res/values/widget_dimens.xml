@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget Corner Radius -->
+    <dimen name="widget_corner_radius">16dp</dimen>
+    <dimen name="widget_corner_radius_small">12dp</dimen>
+    <dimen name="widget_corner_radius_inner">12dp</dimen>
+    <dimen name="widget_corner_radius_image">8dp</dimen>
+
+    <!-- Widget Padding -->
+    <dimen name="widget_padding">12dp</dimen>
+    <dimen name="widget_padding_small">8dp</dimen>
+    <dimen name="widget_padding_large">16dp</dimen>
+
+    <!-- Widget Item Spacing -->
+    <dimen name="widget_item_spacing">8dp</dimen>
+    <dimen name="widget_item_spacing_small">4dp</dimen>
+
+    <!-- Widget Image Sizes -->
+    <dimen name="widget_image_size">48dp</dimen>
+    <dimen name="widget_image_size_large">120dp</dimen>
+    <dimen name="widget_icon_size">24dp</dimen>
+    <dimen name="widget_icon_size_small">16dp</dimen>
+
+    <!-- Widget Text Sizes -->
+    <dimen name="widget_text_title">14sp</dimen>
+    <dimen name="widget_text_title_large">16sp</dimen>
+    <dimen name="widget_text_body">12sp</dimen>
+    <dimen name="widget_text_caption">10sp</dimen>
+    <dimen name="widget_text_header">13sp</dimen>
+
+    <!-- Widget Divider -->
+    <dimen name="widget_divider_height">0.5dp</dimen>
+
+    <!-- Widget Button -->
+    <dimen name="widget_button_height">32dp</dimen>
+    <dimen name="widget_button_padding">8dp</dimen>
+</resources>

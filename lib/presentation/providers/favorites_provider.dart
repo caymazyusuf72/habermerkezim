@@ -30,6 +30,9 @@ class FavoritesState {
   bool get hasFavorites => favoriteArticles.isNotEmpty;
   bool get hasError => error != null;
   int get favoritesCount => favoriteArticles.length;
+  
+  // Export/Import için ek getter
+  List<Article> get articles => favoriteArticles;
 
   /// Makale favori mi kontrol et
   bool isFavorite(String articleId) {

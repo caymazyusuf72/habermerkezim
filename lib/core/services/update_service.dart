@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -70,9 +70,9 @@ class UpdateService {
     try {
       _packageInfo = await PackageInfo.fromPlatform();
       _isInitialized = true;
-      print('✅ UpdateService initialized: ${_packageInfo?.version} (${_packageInfo?.buildNumber})');
+      debugPrint('✅ UpdateService initialized: ${_packageInfo?.version} (${_packageInfo?.buildNumber})');
     } catch (e) {
-      print('⚠️ UpdateService initialization hatası: $e');
+      debugPrint('⚠️ UpdateService initialization hatası: $e');
     }
   }
 
@@ -98,7 +98,7 @@ class UpdateService {
           final appUpdateInfo = await InAppUpdate.checkForUpdate();
           
           if (appUpdateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-            print('🔄 Google Play In-App Update mevcut');
+            debugPrint('🔄 Google Play In-App Update mevcut');
             
             // Zorunlu güncelleme kontrolü
             if (appUpdateInfo.immediateUpdateAllowed) {
@@ -117,7 +117,7 @@ class UpdateService {
             }
           }
         } catch (e) {
-          print('⚠️ Google Play In-App Update kontrolü başarısız: $e');
+          debugPrint('⚠️ Google Play In-App Update kontrolü başarısız: $e');
           // Play Store kontrolü başarısız olursa manuel kontrolü dene
         }
       }
@@ -134,7 +134,7 @@ class UpdateService {
       // Güncelleme yok
       return UpdateCheckResult(type: UpdateType.none);
     } catch (e) {
-      print('⚠️ Güncelleme kontrolü hatası: $e');
+      debugPrint('⚠️ Güncelleme kontrolü hatası: $e');
       return UpdateCheckResult(type: UpdateType.none);
     }
   }
@@ -148,7 +148,7 @@ class UpdateService {
 
       final currentVersion = _packageInfo;
       if (currentVersion == null) {
-        print('⚠️ Mevcut versiyon bilgisi alınamadı');
+        debugPrint('⚠️ Mevcut versiyon bilgisi alınamadı');
         return null;
       }
 
@@ -164,15 +164,15 @@ class UpdateService {
         
         // Versiyon karşılaştırması
         if (updateInfo.versionCode > currentVersionCode) {
-          print('🔄 Yeni versiyon mevcut: ${updateInfo.version} (${updateInfo.versionCode}) > ${currentVersion.version} ($currentVersionCode)');
+          debugPrint('🔄 Yeni versiyon mevcut: ${updateInfo.version} (${updateInfo.versionCode}) > ${currentVersion.version} ($currentVersionCode)');
           return updateInfo;
         } else {
-          print('✅ Uygulama güncel: ${currentVersion.version} ($currentVersionCode)');
+          debugPrint('✅ Uygulama güncel: ${currentVersion.version} ($currentVersionCode)');
           return null;
         }
       }
     } catch (e) {
-      print('⚠️ Manuel versiyon kontrolü hatası: $e');
+      debugPrint('⚠️ Manuel versiyon kontrolü hatası: $e');
       // Hata durumunda sessizce devam et
     }
     return null;
@@ -182,7 +182,7 @@ class UpdateService {
   Future<bool> startImmediateUpdate() async {
     try {
       if (kIsWeb) {
-        print('⚠️ In-App Update web\'de desteklenmez');
+        debugPrint('⚠️ In-App Update web\'de desteklenmez');
         return false;
       }
 
@@ -196,7 +196,7 @@ class UpdateService {
       
       return false;
     } catch (e) {
-      print('⚠️ Zorunlu güncelleme başlatma hatası: $e');
+      debugPrint('⚠️ Zorunlu güncelleme başlatma hatası: $e');
       return false;
     }
   }
@@ -205,7 +205,7 @@ class UpdateService {
   Future<bool> startFlexibleUpdate() async {
     try {
       if (kIsWeb) {
-        print('⚠️ In-App Update web\'de desteklenmez');
+        debugPrint('⚠️ In-App Update web\'de desteklenmez');
         return false;
       }
 
@@ -219,7 +219,7 @@ class UpdateService {
       
       return false;
     } catch (e) {
-      print('⚠️ Esnek güncelleme başlatma hatası: $e');
+      debugPrint('⚠️ Esnek güncelleme başlatma hatası: $e');
       return false;
     }
   }
@@ -231,7 +231,7 @@ class UpdateService {
         await InAppUpdate.completeFlexibleUpdate();
       }
     } catch (e) {
-      print('⚠️ Esnek güncelleme tamamlama hatası: $e');
+      debugPrint('⚠️ Esnek güncelleme tamamlama hatası: $e');
     }
   }
 }

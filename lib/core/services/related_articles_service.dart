@@ -1,7 +1,7 @@
 import '../../domain/entities/article.dart';
-import '../../data/datasources/local/news_local_data_source.dart';
 import '../../core/services/hive_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// İlgili haberler servisi
 /// Benzer başlık/kelime bazlı öneriler, aynı kategori/kaynak haberler
 class RelatedArticlesService {
@@ -89,7 +89,7 @@ class RelatedArticlesService {
           .map((scored) => scored.article)
           .toList();
     } catch (e) {
-      print('💥 İlgili haber bulma hatası: $e');
+      debugPrint('💥 İlgili haber bulma hatası: $e');
       return [];
     }
   }

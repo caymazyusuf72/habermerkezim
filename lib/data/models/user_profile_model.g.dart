@@ -118,11 +118,11 @@ class UserPreferencesModelAdapter extends TypeAdapter<UserPreferencesModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return UserPreferencesModel(
-      favoriteCategories: fields[0] != null && fields[0] is List ? (fields[0] as List).cast<String>() : [],
-      blockedSources: fields[1] != null && fields[1] is List ? (fields[1] as List).cast<String>() : [],
-      enableNotifications: fields[2] is bool ? fields[2] as bool : true,
-      preferredLanguage: fields[3] is String ? fields[3] as String : 'tr',
-      interestTags: fields[4] != null && fields[4] is List ? (fields[4] as List).cast<String>() : [],
+      favoriteCategories: (fields[0] as List).cast<String>(),
+      blockedSources: (fields[1] as List).cast<String>(),
+      enableNotifications: fields[2] as bool,
+      preferredLanguage: fields[3] as String,
+      interestTags: (fields[4] as List).cast<String>(),
     );
   }
 

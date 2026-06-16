@@ -3,18 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../providers/providers.dart';
 import '../../../providers/connectivity_provider.dart';
-import '../../../providers/reading_list_provider.dart';
 import '../../../themes/app_theme.dart';
 import '../../../../core/services/hive_service.dart';
-import '../../favorites/favorites_page.dart';
 import '../../reading_list/reading_list_page.dart';
 import '../../settings/settings_page.dart';
 import '../../profile/profile_page.dart';
-import '../../custom_categories/custom_categories_page.dart';
 import '../../trending/trending_page.dart';
-import '../../discover/discover_page.dart';
-import '../../archive/archive_page.dart';
-import '../../podcast/podcast_page.dart';
+import '../../performance/performance_monitor_page.dart';
 
 /// Ana drawer widget'ı - yan menü
 /// Kullanıcı profili, ayarlar, hakkında vs. bölümler içerir
@@ -23,7 +18,6 @@ class AppDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final isDarkMode = ref.watch(isDarkModeProvider);
     final connectivityState = ref.watch(connectivityProvider);
     final isConnected = connectivityState.isConnected;
@@ -40,6 +34,18 @@ class AppDrawer extends ConsumerWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                // NAVİGASYON BAŞLIKLARI
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Text(
+                    'SAYFALAR',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                
                 // Profil
                 _buildMenuTile(
                   context,
@@ -55,18 +61,6 @@ class AppDrawer extends ConsumerWidget {
                   },
                 ),
                 
-                const Divider(),
-                
-                // Ana Sayfa
-                _buildMenuTile(
-                  context,
-                  icon: Icons.home_rounded,
-                  title: 'Ana Sayfa',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                
                 // Trending
                 _buildMenuTile(
                   context,
@@ -77,52 +71,6 @@ class AppDrawer extends ConsumerWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const TrendingPage(),
-                      ),
-                    );
-                  },
-                ),
-                
-                // Discover
-                _buildMenuTile(
-                  context,
-                  icon: Icons.explore_rounded,
-                  title: 'Keşfet',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const DiscoverPage(),
-                      ),
-                    );
-                  },
-                ),
-                
-                // Podcast
-                _buildMenuTile(
-                  context,
-                  icon: Icons.podcasts_rounded,
-                  title: 'Podcast Haberleri',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const PodcastPage(),
-                      ),
-                    );
-                  },
-                ),
-                
-                // Favoriler
-                _buildMenuTile(
-                  context,
-                  icon: Icons.favorite_rounded,
-                  title: 'Favoriler',
-                  trailing: _buildFavoriteCount(ref),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const FavoritesPage(),
                       ),
                     );
                   },
@@ -144,42 +92,24 @@ class AppDrawer extends ConsumerWidget {
                   },
                 ),
                 
-                // Arşiv
-                _buildMenuTile(
-                  context,
-                  icon: Icons.archive_rounded,
-                  title: 'Arşiv',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const ArchivePage(),
-                      ),
-                    );
-                  },
-                ),
-                
                 const Divider(),
+                
+                // AYARLAR BAŞLIĞI
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Text(
+                    'ARAÇLAR',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
                 
                 // Tema Ayarları
                 _buildThemeSection(context, ref, isDarkMode),
                 
                 const Divider(),
-                
-                // Özel Kategoriler
-                _buildMenuTile(
-                  context,
-                  icon: Icons.category_rounded,
-                  title: 'Özel Kategoriler',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const CustomCategoriesPage(),
-                      ),
-                    );
-                  },
-                ),
                 
                 // Ayarlar
                 _buildMenuTile(
@@ -196,6 +126,21 @@ class AppDrawer extends ConsumerWidget {
                   },
                 ),
                 
+                
+                // Performans İzleme
+                _buildMenuTile(
+                  context,
+                  icon: Icons.speed_rounded,
+                  title: 'Performans',
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const PerformanceMonitorPage(),
+                      ),
+                    );
+                  },
+                ),
                 
                 // Cache Temizle
                 _buildMenuTile(
@@ -228,8 +173,6 @@ class AppDrawer extends ConsumerWidget {
     bool isConnected,
     String connectionType,
   ) {
-    final theme = Theme.of(context);
-    
     return DrawerHeader(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -275,7 +218,7 @@ class AppDrawer extends ConsumerWidget {
                   Text(
                     'v1.0.0',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 14,
                     ),
                   ),
@@ -291,8 +234,8 @@ class AppDrawer extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: isConnected
-                  ? Colors.green.withOpacity(0.2)
-                  : Colors.orange.withOpacity(0.2),
+                  ? Colors.green.withValues(alpha: 0.2)
+                  : Colors.orange.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isConnected ? Colors.green : Colors.orange,
@@ -443,7 +386,7 @@ class AppDrawer extends ConsumerWidget {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    final theme = Theme.of(context);
+    final themeData = Theme.of(context);
     
     return Expanded(
       child: GestureDetector(
@@ -452,12 +395,12 @@ class AppDrawer extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
-                ? theme.colorScheme.primary.withOpacity(0.1)
+                ? themeData.colorScheme.primary.withValues(alpha: 0.1)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             border: isSelected
-                ? Border.all(color: theme.colorScheme.primary)
-                : Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+                ? Border.all(color: themeData.colorScheme.primary)
+                : Border.all(color: themeData.colorScheme.outline.withValues(alpha: 0.3)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -465,17 +408,17 @@ class AppDrawer extends ConsumerWidget {
               Icon(
                 icon,
                 color: isSelected
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withOpacity(0.6),
+                    ? themeData.colorScheme.primary
+                    : themeData.colorScheme.onSurface.withValues(alpha: 0.6),
                 size: 20,
               ),
               const SizedBox(height: 4),
               Text(
                 label,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: themeData.textTheme.bodySmall?.copyWith(
                   color: isSelected
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurface.withOpacity(0.6),
+                      ? themeData.colorScheme.primary
+                      : themeData.colorScheme.onSurface.withValues(alpha: 0.6),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
@@ -525,7 +468,7 @@ class AppDrawer extends ConsumerWidget {
         '© 2025 Haber Merkezi\nFlutter ile geliştirildi',
         textAlign: TextAlign.center,
         style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.5),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
         ),
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:hive/hive.dart';
+import 'package:uuid/uuid.dart';
 import '../../domain/entities/article.dart';
 
+import 'package:flutter/foundation.dart';
 part 'article_model.g.dart';
 
 /// Article entity'sinin data layer implementasyonu
@@ -88,17 +90,21 @@ class ArticleModel extends HiveObject {
     required String category,
     required String sourceName,
   }) {
-    // Unique ID oluştur (link + publishDate bazlı)
-    final id = _generateId(rssItem['link'] ?? '', rssItem['pubDate'] ?? '');
+    final title = _cleanHtml(rssItem['title'] ?? '');
+    final link = rssItem['link'] ?? '';
+    final pubDate = rssItem['pubDate'] ?? '';
+    
+    // Unique ID oluştur (link + sourceName + title + publishDate bazlı)
+    final id = _generateId(link, sourceName, title, pubDate);
     
     return ArticleModel(
       id: id,
-      title: _cleanHtml(rssItem['title'] ?? ''),
+      title: title,
       description: _cleanHtml(rssItem['description'] ?? ''),
       content: _cleanHtml(rssItem['content'] ?? rssItem['description'] ?? ''),
-      link: rssItem['link'] ?? '',
+      link: link,
       imageUrl: _extractImageUrl(rssItem),
-      publishedDate: _parseDate(rssItem['pubDate']),
+      publishedDate: _parseDate(pubDate),
       category: category,
       sourceName: sourceName,
     );
@@ -243,6 +249,29 @@ class ArticleModel extends HiveObject {
         final url = match.group(1)?.trim();
         if (url != null && _isValidImageUrl(url)) return url;
       }
+      
+      // content içinde data-src kontrol et
+      imgRegex = RegExp(r'<img[^>]+data-src="([^"]+)"', caseSensitive: false);
+      match = imgRegex.firstMatch(content);
+      if (match != null) {
+        final url = match.group(1)?.trim();
+        if (url != null && _isValidImageUrl(url)) return url;
+      }
+    }
+    
+    // 5. Herhangi bir URL içinde görsel uzantısı ara (son çare)
+    final allText = '$description $content';
+    if (allText.isNotEmpty) {
+      // HTTP(S) ile başlayan ve görsel uzantısı içeren URL'leri bul
+      final urlRegex = RegExp(
+        r'https?://[^\s<>"]+?\.(?:jpg|jpeg|png|gif|webp|bmp)(?:\?[^\s<>"]*)?',
+        caseSensitive: false,
+      );
+      final match = urlRegex.firstMatch(allText);
+      if (match != null) {
+        final url = match.group(0)?.trim();
+        if (url != null && _isValidImageUrl(url)) return url;
+      }
     }
     
     return null;
@@ -261,12 +290,15 @@ class ArticleModel extends HiveObject {
       
       // Görsel uzantılarını kontrol et
       final lowerUrl = url.toLowerCase();
-      final imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+      final imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg', '.avif'];
       final hasImageExtension = imageExtensions.any((ext) => lowerUrl.contains(ext));
       
       // URL'de görsel uzantısı yoksa ama domain'de görsel servisi varsa kabul et
       if (!hasImageExtension) {
-        final imageDomains = ['imgur.com', 'i.imgur.com', 'cdn', 'image', 'photo', 'pic', 'media'];
+        final imageDomains = [
+          'imgur.com', 'i.imgur.com', 'cdn', 'image', 'photo', 'pic', 'media',
+          'img', 'static', 'assets', 'upload', 'content', 'cloudinary', 'imgix'
+        ];
         final hasImageDomain = imageDomains.any((domain) => lowerUrl.contains(domain));
         if (!hasImageDomain) {
           return false;
@@ -282,7 +314,7 @@ class ArticleModel extends HiveObject {
   /// Tarih parse eder - RSS feed'lerindeki farklı tarih formatlarını destekler
   static DateTime _parseDate(String? dateString) {
     if (dateString == null || dateString.isEmpty) {
-      print('⚠️ Tarih string boş, şu anki zaman kullanılıyor');
+      debugPrint('⚠️ Tarih string boş, şu anki zaman kullanılıyor');
       return DateTime.now();
     }
     
@@ -299,9 +331,11 @@ class ArticleModel extends HiveObject {
         if (parts.length >= 5) {
           // Ay ismini sayıya çevir
           final monthMap = {
+            // English month names
             'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
             'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12,
-            'Oca': 1, 'Şub': 2, 'Mar': 3, 'Nis': 4, 'May': 5, 'Haz': 6,
+            // Turkish month names
+            'Oca': 1, 'Şub': 2, 'Nis': 4, 'Haz': 6,
             'Tem': 7, 'Ağu': 8, 'Eyl': 9, 'Eki': 10, 'Kas': 11, 'Ara': 12,
           };
           
@@ -343,14 +377,14 @@ class ArticleModel extends HiveObject {
         }
       }
     } catch (e) {
-      print('⚠️ RFC 2822 parse hatası: $e');
+      debugPrint('⚠️ RFC 2822 parse hatası: $e');
     }
     
     // ISO 8601 formatı (2025-09-14T09:00:00Z veya 2025-09-14T09:00:00+03:00)
     try {
       return DateTime.parse(cleaned);
     } catch (e) {
-      print('⚠️ ISO 8601 parse hatası: $e');
+      debugPrint('⚠️ ISO 8601 parse hatası: $e');
     }
     
     // Unix timestamp (milliseconds)
@@ -365,18 +399,23 @@ class ArticleModel extends HiveObject {
         }
       }
     } catch (e) {
-      print('⚠️ Timestamp parse hatası: $e');
+      debugPrint('⚠️ Timestamp parse hatası: $e');
     }
     
     // Parse edilemezse şu anki zamanı kullan ama logla
-    print('⚠️ Tarih parse edilemedi: "$dateString", şu anki zaman kullanılıyor');
+    debugPrint('⚠️ Tarih parse edilemedi: "$dateString", şu anki zaman kullanılıyor');
     return DateTime.now();
   }
 
-  /// Unique ID oluşturur
-  static String _generateId(String link, String pubDate) {
-    final combined = '$link$pubDate';
-    return combined.hashCode.abs().toString();
+  /// Unique ID oluşturur - link, kaynak adı, başlık ve tarih bazlı
+  /// UUID v5 kullanarak deterministic ve platform-bağımsız ID üretir
+  /// Bu sayede aynı linkli haberler farklı kaynaklardan geldiğinde karışmaz
+  static String _generateId(String link, String sourceName, String title, String pubDate) {
+    const uuid = Uuid();
+    // UUID v5: namespace + name bazlı deterministic UUID üretir
+    // Aynı girdi her zaman aynı UUID'yi üretir (hashCode'dan farklı olarak platform bağımsız)
+    final name = '$link|$sourceName|$title|$pubDate';
+    return uuid.v5(Uuid.NAMESPACE_URL, name);
   }
 
   @override

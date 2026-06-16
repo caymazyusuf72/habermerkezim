@@ -1,5 +1,5 @@
-/// Uygulama genelindeki exception sınıfları
-/// Data layer'da fırlatılır, presentation layer'da yakalanır
+// Uygulama genelindeki exception sınıfları
+// Data layer'da fırlatılır, presentation layer'da yakalanır
 
 /// Genel uygulama exception'ı
 abstract class AppException implements Exception {
@@ -56,23 +56,23 @@ class TimeoutException extends NetworkException {
 }
 
 class BadRequestException extends ServerException {
-  const BadRequestException([String message = 'Geçersiz istek'])
-      : super(message, statusCode: 400, code: 'BAD_REQUEST');
+  const BadRequestException([super.message = 'Geçersiz istek'])
+      : super(statusCode: 400, code: 'BAD_REQUEST');
 }
 
 class UnauthorizedException extends ServerException {
-  const UnauthorizedException([String message = 'Yetkisiz erişim'])
-      : super(message, statusCode: 401, code: 'UNAUTHORIZED');
+  const UnauthorizedException([super.message = 'Yetkisiz erişim'])
+      : super(statusCode: 401, code: 'UNAUTHORIZED');
 }
 
 class NotFoundException extends ServerException {
-  const NotFoundException([String message = 'Kaynak bulunamadı'])
-      : super(message, statusCode: 404, code: 'NOT_FOUND');
+  const NotFoundException([super.message = 'Kaynak bulunamadı'])
+      : super(statusCode: 404, code: 'NOT_FOUND');
 }
 
 class InternalServerException extends ServerException {
-  const InternalServerException([String message = 'Sunucu hatası'])
-      : super(message, statusCode: 500, code: 'INTERNAL_SERVER_ERROR');
+  const InternalServerException([super.message = 'Sunucu hatası'])
+      : super(statusCode: 500, code: 'INTERNAL_SERVER_ERROR');
 }
 
 /// RSS feed spesifik exception'ları
@@ -88,11 +88,11 @@ class EmptyRssFeedException extends RssParseException {
 
 /// Local storage exception'ları
 class DatabaseException extends CacheException {
-  const DatabaseException(String message)
-      : super(message, code: 'DATABASE_ERROR');
+  const DatabaseException(super.message)
+      : super(code: 'DATABASE_ERROR');
 }
 
 class DataNotFoundException extends CacheException {
-  const DataNotFoundException([String message = 'Veri bulunamadı'])
-      : super(message, code: 'DATA_NOT_FOUND');
+  const DataNotFoundException([super.message = 'Veri bulunamadı'])
+      : super(code: 'DATA_NOT_FOUND');
 }

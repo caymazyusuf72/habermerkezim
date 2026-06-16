@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../domain/entities/category.dart';
 import '../../../../domain/entities/article_filter.dart';
-import '../../../providers/article_filter_provider.dart';
 import '../../../providers/providers.dart';
 import '../../../themes/app_theme.dart';
 
@@ -229,9 +228,7 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
             ),
           ),
           onChanged: (value) {
-            setState(() {
-              _searchQuery = value.isEmpty ? null : value;
-            });
+            setState(() {});
           },
         ),
       ],
@@ -363,7 +360,7 @@ class _ArticleFilterDialogState extends ConsumerState<ArticleFilterDialog> {
     return ActionChip(
       label: Text(label),
       onPressed: onTap,
-      backgroundColor: AppTheme.primaryBlue.withOpacity(0.1),
+      backgroundColor: AppTheme.primaryBlue.withValues(alpha: 0.1),
       labelStyle: TextStyle(
         color: AppTheme.primaryBlue,
         fontWeight: FontWeight.w500,

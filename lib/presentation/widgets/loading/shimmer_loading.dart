@@ -34,10 +34,10 @@ class ArticleCardShimmer extends StatelessWidget {
       child: Shimmer.fromColors(
         baseColor: isDark 
             ? AppTheme.matBlackSurfaceVariant 
-            : AppTheme.sageGreen.withOpacity(0.1),
+            : AppTheme.sageGreen.withValues(alpha: 0.1),
         highlightColor: isDark 
-            ? AppTheme.sageGreen.withOpacity(0.2)
-            : AppTheme.sageGreenLight.withOpacity(0.3),
+            ? AppTheme.sageGreen.withValues(alpha: 0.2)
+            : AppTheme.sageGreenLight.withValues(alpha: 0.3),
         period: const Duration(milliseconds: 1500),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,10 +171,10 @@ class CompactArticleCardShimmer extends StatelessWidget {
       child: Shimmer.fromColors(
         baseColor: isDark 
             ? AppTheme.matBlackSurfaceVariant 
-            : AppTheme.sageGreen.withOpacity(0.1),
+            : AppTheme.sageGreen.withValues(alpha: 0.1),
         highlightColor: isDark 
-            ? AppTheme.sageGreen.withOpacity(0.2)
-            : AppTheme.sageGreenLight.withOpacity(0.3),
+            ? AppTheme.sageGreen.withValues(alpha: 0.2)
+            : AppTheme.sageGreenLight.withValues(alpha: 0.3),
         period: const Duration(milliseconds: 1500),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -271,10 +271,10 @@ class ShimmerContainer extends StatelessWidget {
     return Shimmer.fromColors(
       baseColor: isDark 
           ? AppTheme.matBlackSurfaceVariant 
-          : AppTheme.sageGreen.withOpacity(0.1),
+          : AppTheme.sageGreen.withValues(alpha: 0.1),
       highlightColor: isDark 
-          ? AppTheme.sageGreen.withOpacity(0.2)
-          : AppTheme.sageGreenLight.withOpacity(0.3),
+          ? AppTheme.sageGreen.withValues(alpha: 0.2)
+          : AppTheme.sageGreenLight.withValues(alpha: 0.3),
       period: const Duration(milliseconds: 1500),
       child: Container(
         width: width,
@@ -339,10 +339,10 @@ class CategoryTabsShimmer extends StatelessWidget implements PreferredSizeWidget
       child: Shimmer.fromColors(
         baseColor: isDark 
             ? AppTheme.matBlackSurfaceVariant 
-            : AppTheme.sageGreen.withOpacity(0.1),
+            : AppTheme.sageGreen.withValues(alpha: 0.1),
         highlightColor: isDark 
-            ? AppTheme.sageGreen.withOpacity(0.2)
-            : AppTheme.sageGreenLight.withOpacity(0.3),
+            ? AppTheme.sageGreen.withValues(alpha: 0.2)
+            : AppTheme.sageGreenLight.withValues(alpha: 0.3),
         period: const Duration(milliseconds: 1500),
         child: Row(
           children: List.generate(5, (index) => 
@@ -380,7 +380,7 @@ class LoadingOverlay extends StatelessWidget {
     if (!isVisible) return const SizedBox.shrink();
     
     return Container(
-      color: Colors.black.withOpacity(0.3),
+      color: Colors.black.withValues(alpha: 0.3),
       child: Center(
         child: Card(
           child: Padding(

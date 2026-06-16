@@ -43,7 +43,7 @@ class ModernAlertDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               spreadRadius: 0,
               blurRadius: 10,
               offset: const Offset(0, 4),
@@ -59,7 +59,7 @@ class ModernAlertDialog extends StatelessWidget {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: (iconColor ?? AppTheme.primaryBlue).withOpacity(0.1),
+                  color: (iconColor ?? AppTheme.primaryBlue).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -87,7 +87,7 @@ class ModernAlertDialog extends StatelessWidget {
             Text(
               content,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                 height: 1.4,
               ),
               textAlign: TextAlign.center,
@@ -114,7 +114,7 @@ class ModernAlertDialog extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ),

@@ -1,11 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:xml/xml.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/error/exceptions.dart';
 import '../../../core/utils/retry_helper.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../core/services/rss_health_check_service.dart';
 import '../../models/article_model.dart';
+/// Parse parametreleri - isolate'e geçmek için
+class _ParseParams {
+  final String xmlString;
+  final String category;
+  final String feedKey;
+  
+  _ParseParams(this.xmlString, this.category, this.feedKey);
+}
 
 /// RSS feed'lerini çeken remote data source
 /// HTTP client ile RSS XML'lerini alır ve ArticleModel'lere parse eder
@@ -20,6 +30,26 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   
   RssRemoteDataSourceImpl({Dio? dio}) : _dio = dio ?? _createDio();
   
+  /// Kategori eşleştirme haritası - RSS feed'lerindeki kategori isimleri
+  static const Map<String, List<String>> _categoryMappings = {
+    'genel': ['genel', 'gündem', 'gundem', 'haber', 'news', 'türkiye', 'turkiye'],
+    'ekonomi': ['ekonomi', 'economy', 'finans', 'finance', 'borsa', 'döviz', 'doviz', 'para'],
+    'spor': ['spor', 'sports', 'futbol', 'football', 'basketbol', 'basketball', 'voleybol'],
+    'teknoloji': ['teknoloji', 'technology', 'tech', 'bilişim', 'bilisim', 'yazılım', 'yazilim', 'donanım', 'donanim'],
+    'sağlık': ['sağlık', 'saglik', 'health', 'tıp', 'tip', 'doktor', 'hastane', 'sağlıklı', 'saglikli'],
+    'saglik': ['sağlık', 'saglik', 'health', 'tıp', 'tip', 'doktor', 'hastane', 'sağlıklı', 'saglikli'],
+    'eğitim': ['eğitim', 'egitim', 'education', 'okul', 'school', 'üniversite', 'universite', 'öğrenci', 'ogrenci'],
+    'egitim': ['eğitim', 'egitim', 'education', 'okul', 'school', 'üniversite', 'universite', 'öğrenci', 'ogrenci'],
+    'magazin': ['magazin', 'magazine', 'ünlü', 'unlu', 'celebrity', 'şov', 'sov', 'show'],
+    'kültür': ['kültür', 'kultur', 'culture', 'sanat', 'art', 'sinema', 'müzik', 'muzik', 'tiyatro'],
+    'kultur': ['kültür', 'kultur', 'culture', 'sanat', 'art', 'sinema', 'müzik', 'muzik', 'tiyatro'],
+    'dünya': ['dünya', 'dunya', 'world', 'uluslararası', 'uluslararasi', 'international', 'global'],
+    'dunya': ['dünya', 'dunya', 'world', 'uluslararası', 'uluslararasi', 'international', 'global'],
+    'bilim': ['bilim', 'science', 'araştırma', 'arastirma', 'research', 'teknoloji', 'technology'],
+    'otomobil': ['otomobil', 'automobile', 'araba', 'car', 'otomotiv', 'automotive', 'motorsport'],
+    'turkiye': ['türkiye', 'turkiye', 'turkey', 'gündem', 'gundem', 'haber'],
+  };
+  
   /// Dio client oluşturur
   static Dio _createDio() {
     final dio = Dio(BaseOptions(
@@ -27,17 +57,19 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       receiveTimeout: const Duration(milliseconds: ApiEndpoints.receiveTimeoutMs),
       sendTimeout: const Duration(milliseconds: ApiEndpoints.sendTimeoutMs),
       headers: {
-        'User-Agent': 'Haber Merkezi RSS Reader v1.0',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'application/rss+xml, application/xml, text/xml',
       },
     ));
     
-    // Request/Response interceptor (debugging için)
-    dio.interceptors.add(LogInterceptor(
-      requestBody: false,
-      responseBody: false,
-      logPrint: (object) => print('[RSS HTTP] $object'),
-    ));
+    // Request/Response interceptor (sadece debug mode'da)
+    if (AppLogger.isDebugMode) {
+      dio.interceptors.add(LogInterceptor(
+        requestBody: false,
+        responseBody: false,
+        // logPrint: (object) => // AppLogger.debug('[RSS HTTP] $object'),
+      ));
+    }
     
     return dio;
   }
@@ -45,14 +77,14 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   @override
   Future<List<ArticleModel>> getArticlesByCategory(String category) async {
     try {
-      print('🌐 RSS Request: $category');
+      // AppLogger.network('RSS Request: $category');
       
       // Disabled feed'leri al
       final healthCheckService = RssHealthCheckService();
       final disabledFeeds = await healthCheckService.getDisabledFeeds();
       
       // Kategoriye ait tüm RSS feed'lerini bul (disabled olanları hariç tut)
-      final categoryFeeds = ApiEndpoints.rssFeedUrls.entries
+      var categoryFeeds = ApiEndpoints.rssFeedUrls.entries
           .where((entry) {
             final matchesCategory = entry.key == category || entry.key.startsWith('${category}_');
             final isNotDisabled = !disabledFeeds.contains(entry.key);
@@ -60,60 +92,65 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
           })
           .toList();
       
+      // FALLBACK: Eğer tüm feed'ler devre dışı bırakılmışsa (örn. geçici ağ kesintilerinde),
+      // kullanıcıya boş kategori göstermek yerine devre dışı bırakma filtresini devre dışı bırak ve hepsini tekrar dene.
+      if (categoryFeeds.isEmpty) {
+        categoryFeeds = ApiEndpoints.rssFeedUrls.entries
+            .where((entry) => entry.key == category || entry.key.startsWith('${category}_'))
+            .toList();
+      }
+      
       if (disabledFeeds.isNotEmpty) {
-        print('⚠️ Devre dışı feed\'ler: ${disabledFeeds.join(", ")}');
+        // AppLogger.debug('Devre dışı feed\'ler: ${disabledFeeds.join(", ")}');
       }
       
       if (categoryFeeds.isEmpty) {
-        print('❌ Kategori bulunamadı: $category');
+        AppLogger.error('Kategori bulunamadı: $category');
         throw RssParseException('Kategori bulunamadı: $category');
       }
       
       final List<ArticleModel> allArticles = [];
       
-      // Kategoriye ait tüm feed'leri PARALEL olarak çek (Future.wait ile)
-      final feedFutures = categoryFeeds.map((feedEntry) async {
-        try {
-          final feedUrl = feedEntry.value;
-          final feedKey = feedEntry.key;
-          
-          // Retry mekanizması ile feed çek
-          final articles = await RetryHelper.retryOrNull(
-            operation: () async {
-              print('📡 URL [$feedKey]: $feedUrl');
-              final response = await _dio.get(feedUrl);
-              print('📊 Response [$feedKey]: ${response.statusCode}');
-              
-              if (response.statusCode != 200) {
-                throw ServerException(
-                  'HTTP Hatası: ${response.statusCode}',
-                  statusCode: response.statusCode,
-                );
-              }
-              
-              final xmlString = response.data as String;
-              print('📝 Parsing XML [$feedKey]...');
-              final articles = await _parseRssXml(xmlString, category);
-              print('✅ $feedKey: ${articles.length} makale');
-              return articles;
-            },
-            maxAttempts: 3,
-            initialDelay: const Duration(seconds: 1),
-            maxDelay: const Duration(seconds: 5),
-          );
-          
-          return articles ?? <ArticleModel>[];
-        } catch (e) {
-          // Bir feed başarısız olursa diğerlerine devam et
-          print('⚠️ Feed hatası [${feedEntry.key}]: $e');
-          return <ArticleModel>[];
-        }
+      // Kategoriye ait tüm feed'leri PARALEL olarak çek (performans optimizasyonu)
+      final feedFutures = categoryFeeds.map((feedEntry) {
+        return RetryHelper.retryOrNull(
+          operation: () async {
+            final feedUrl = feedEntry.value;
+            final feedKey = feedEntry.key;
+            // AppLogger.debug('URL [$feedKey]: $feedUrl');
+            final response = await _dio.get(feedUrl);
+            // AppLogger.debug('Response [$feedKey]: ${response.statusCode}');
+            
+            if (response.statusCode != 200) {
+              throw ServerException(
+                'HTTP Hatası: ${response.statusCode}',
+                statusCode: response.statusCode,
+              );
+            }
+            
+            final xmlString = response.data as String;
+            // AppLogger.debug('Parsing XML [$feedKey]...');
+            // XML parsing - şimdilik ana thread'de (isolate refactoring sonrası taşınacak)
+            final parsedArticles = await _parseRssXml(xmlString, category, feedEntry.key);
+            // AppLogger.success('${feedEntry.key}: ${parsedArticles.length} makale');
+            return parsedArticles;
+          },
+          maxAttempts: 3,
+          initialDelay: const Duration(seconds: 1),
+          maxDelay: const Duration(seconds: 5),
+        ).catchError((e) {
+          AppLogger.warning('Feed hatası [${feedEntry.key}]: $e');
+          return null;
+        });
       }).toList();
       
-      // Tüm feed'leri paralel yükle
+      // AppLogger.performance('${feedFutures.length} feed paralel olarak yükleniyor...');
       final feedResults = await Future.wait(feedFutures);
+      
       for (final articles in feedResults) {
-        allArticles.addAll(articles);
+        if (articles != null && articles.isNotEmpty) {
+          allArticles.addAll(articles);
+        }
       }
       
       if (allArticles.isEmpty) {
@@ -135,14 +172,14 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         return b.publishedDate.compareTo(a.publishedDate);
       });
       
-      print('✅ $category: Toplam ${uniqueArticles.length} makale (${allArticles.length} feed\'den)');
+      // AppLogger.success('$category: Toplam ${uniqueArticles.length} makale (${allArticles.length} feed\'den)');
       return uniqueArticles;
       
     } on DioException catch (e) {
-      print('💥 DioException [$category]: ${e.type} - ${e.message}');
+      AppLogger.error('DioException [$category]: ${e.type} - ${e.message}');
       throw _handleDioError(e);
     } catch (e) {
-      print('💥 Parse Error [$category]: $e');
+      AppLogger.error('Parse Error [$category]: $e');
       throw ServerException('RSS feed parse hatası: ${e.toString()}');
     }
   }
@@ -188,23 +225,31 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     // Sadece ana kategorileri al (alt feed'leri değil)
     final mainCategories = _getMainCategories();
     
-    // Tüm kategorileri PARALEL olarak yükle (Future.wait ile)
-    final categoryFutures = mainCategories.map((category) async {
-      try {
-        final articles = await getArticlesByCategory(category);
-        return articles;
-      } catch (e) {
-        // Tek kategori başarısız olursa devam et
-        print('[$category] RSS feed hatası: $e');
+    // AppLogger.info('Toplam ${mainCategories.length} kategori PARALEL yüklenecek...');
+    
+    // Tüm kategorileri PARALEL olarak yükle (performans optimizasyonu)
+    final futures = mainCategories.map((category) {
+      return getArticlesByCategory(category).catchError((e) {
+        AppLogger.warning('[$category] RSS feed hatası: $e');
         return <ArticleModel>[];
-      }
+      });
     }).toList();
     
-    // Tüm kategorileri paralel yükle
-    final categoryResults = await Future.wait(categoryFutures);
-    for (final articles in categoryResults) {
-      allArticles.addAll(articles);
+    // AppLogger.performance('${futures.length} kategori paralel olarak yükleniyor...');
+    final results = await Future.wait(futures);
+    
+    // Sonuçları birleştir
+    int loadedCount = 0;
+    for (int i = 0; i < results.length; i++) {
+      final articles = results[i];
+      if (articles.isNotEmpty) {
+        loadedCount++;
+        allArticles.addAll(articles);
+        // AppLogger.debug('${mainCategories[i]}: ${articles.length} makale eklendi (Toplam: ${allArticles.length})');
+      }
     }
+    
+    // AppLogger.success('Paralel yükleme tamamlandı: ${allArticles.length} makale ($loadedCount/${mainCategories.length} kategori başarılı)');
     
     if (allArticles.isEmpty) {
       throw const RssParseException('Hiç haber alınamadı');
@@ -225,7 +270,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
       return b.publishedDate.compareTo(a.publishedDate);
     });
     
-    print('✅ Tüm kategoriler: Toplam ${uniqueArticles.length} makale');
+    // AppLogger.success('Tüm kategoriler: Toplam ${uniqueArticles.length} makale');
     return uniqueArticles;
   }
 
@@ -253,7 +298,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
           }
           
           final xmlString = response.data as String;
-          final articles = await _parseRssXml(xmlString, category);
+          final articles = await _parseRssXml(xmlString, category, category);
           
           return articles;
         },
@@ -262,7 +307,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         maxDelay: const Duration(seconds: 5),
         shouldRetry: RetryHelper.shouldRetryError,
         onRetry: (attempt, error) {
-          print('🔄 Refresh retry [$category]: Deneme $attempt - $error');
+          // AppLogger.debug('Refresh retry [$category]: Deneme $attempt - $error');
         },
       );
     } on DioException catch (e) {
@@ -271,10 +316,10 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   }
 
   /// RSS XML'ini parse eder ve ArticleModel listesi döner
-  Future<List<ArticleModel>> _parseRssXml(String xmlString, String category) async {
+  Future<List<ArticleModel>> _parseRssXml(String xmlString, String category, String feedKey) async {
     try {
       final document = XmlDocument.parse(xmlString);
-      final sourceName = ApiEndpoints.feedNames[category] ?? category;
+      final sourceName = ApiEndpoints.feedNames[feedKey] ?? ApiEndpoints.feedNames[category] ?? feedKey;
       
       // RSS 2.0 format kontrolü
       if (document.findAllElements('rss').isNotEmpty) {
@@ -286,7 +331,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         return _parseAtomFormat(document, category, sourceName);
       }
       
-      throw InvalidRssFeedException(ApiEndpoints.rssFeedUrls[category] ?? '');
+      throw InvalidRssFeedException(ApiEndpoints.rssFeedUrls[feedKey] ?? '');
       
     } catch (e) {
       if (e is RssParseException) rethrow;
@@ -298,6 +343,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   List<ArticleModel> _parseRss2Format(XmlDocument document, String category, String sourceName) {
     final items = document.findAllElements('item');
     final List<ArticleModel> articles = [];
+    int filteredCount = 0;
     
     for (final item in items) {
       try {
@@ -314,6 +360,15 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
                                  _getElementText(item, 'content') ??
                                  articleData['description'];
         
+        // RSS kategori tag'ini çıkar
+        articleData['rssCategory'] = _getElementText(item, 'category');
+        
+        // Kategori doğrulaması yap
+        if (!_isArticleInCorrectCategory(category, articleData['rssCategory'], articleData['title'])) {
+          filteredCount++;
+          continue; // Bu makaleyi atla
+        }
+        
         // Media content (görsel)
         articleData['mediaContent'] = _getMediaContent(item);
         
@@ -329,10 +384,14 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         articles.add(article);
         
       } catch (e) {
-        print('RSS item parse hatası: $e');
+        // AppLogger.debug('RSS item parse hatası: $e');
         // Tek item başarısız olursa devam et
         continue;
       }
+    }
+    
+    if (filteredCount > 0) {
+      // AppLogger.debug('[$category] RSS 2.0 kategori filtreleme: $filteredCount makale filtrelendi, ${articles.length} makale kaldı');
     }
     
     if (articles.isEmpty) {
@@ -346,6 +405,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
   List<ArticleModel> _parseAtomFormat(XmlDocument document, String category, String sourceName) {
     final entries = document.findAllElements('entry');
     final List<ArticleModel> articles = [];
+    int filteredCount = 0;
     
     for (final entry in entries) {
       try {
@@ -368,6 +428,15 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         
         articleData['content'] = articleData['description'];
         
+        // Atom kategori tag'ini çıkar
+        articleData['rssCategory'] = _getElementText(entry, 'category');
+        
+        // Kategori doğrulaması yap
+        if (!_isArticleInCorrectCategory(category, articleData['rssCategory'], articleData['title'])) {
+          filteredCount++;
+          continue; // Bu makaleyi atla
+        }
+        
         // Atom formatında görsel çekme
         articleData['mediaContent'] = _getMediaContent(entry);
         
@@ -380,9 +449,13 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
         articles.add(article);
         
       } catch (e) {
-        print('Atom entry parse hatası: $e');
+        // AppLogger.debug('Atom entry parse hatası: $e');
         continue;
       }
+    }
+    
+    if (filteredCount > 0) {
+      // AppLogger.debug('[$category] Atom kategori filtreleme: $filteredCount makale filtrelendi, ${articles.length} makale kaldı');
     }
     
     if (articles.isEmpty) {
@@ -434,7 +507,7 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     return null;
   }
 
-  /// Enclosure URL'ini çıkarır  
+  /// Enclosure URL'ini çıkarır
   String? _getEnclosureUrl(XmlElement item) {
     final enclosureElement = item.findElements('enclosure').firstOrNull;
     
@@ -446,6 +519,37 @@ class RssRemoteDataSourceImpl implements RssRemoteDataSource {
     }
     
     return null;
+  }
+  
+  /// Makalenin RSS kategorisi ile beklenen kategoriyi karşılaştırır
+  /// Returns true if article should be included, false if filtered out
+  bool _isArticleInCorrectCategory(String expectedCategory, String? rssCategory, String? title) {
+    // RSS'de kategori bilgisi yoksa kabul et (bazı feed'lerde kategori tag'i olmayabilir)
+    if (rssCategory == null || rssCategory.isEmpty) {
+      return true;
+    }
+    
+    // Kategori mapping'leri al
+    final mappings = _categoryMappings[expectedCategory.toLowerCase()] ?? [];
+    if (mappings.isEmpty) {
+      // Mapping yoksa kabul et
+      return true;
+    }
+    
+    // RSS kategorisini normalize et
+    final rssCategoryLower = rssCategory.toLowerCase().trim();
+    
+    // Mapping'lerden herhangi biri RSS kategorisinde geçiyor mu kontrol et
+    final isMatch = mappings.any((mapping) =>
+      rssCategoryLower.contains(mapping.toLowerCase())
+    );
+    
+    // Kategori uyuşmazlığı varsa log at
+    if (!isMatch) {
+      // AppLogger.debug('Kategori uyuşmazlığı: Beklenen="$expectedCategory", RSS="$rssCategory", Başlık="${title?.substring(0, title.length > 50 ? 50 : title.length)}..."');
+    }
+    
+    return isMatch;
   }
 
   /// DioError'ı uygun exception'a çevirir

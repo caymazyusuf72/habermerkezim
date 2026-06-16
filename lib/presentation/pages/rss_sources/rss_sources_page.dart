@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 
 import '../../providers/rss_sources_provider.dart';
 import '../../themes/app_theme.dart';
 import '../../../domain/entities/rss_source.dart';
+import '../../../core/services/rss_feed_validator.dart';
 import 'add_edit_rss_source_page.dart';
 
 /// RSS kaynakları yönetimi sayfası
@@ -72,10 +74,325 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
         ],
       ),
       body: _buildBody(context, sourcesState, theme),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _navigateToAddSource(),
-        tooltip: 'Yeni Kaynak Ekle',
-        child: const Icon(Icons.add_rounded),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showAddSourceOptions(context),
+        tooltip: 'Kaynak Ekle',
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Kaynak Ekle'),
+      ),
+    );
+  }
+
+  /// Kaynak ekleme seçeneklerini göster
+  void _showAddSourceOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Kaynak Ekle',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 24),
+            
+            // Manuel RSS ekleme
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryBlue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.rss_feed, color: AppTheme.primaryBlue),
+              ),
+              title: const Text('Custom RSS Feed Ekle'),
+              subtitle: const Text('Herhangi bir RSS feed URL\'si ekleyin'),
+              onTap: () {
+                Navigator.pop(context);
+                _showAddCustomFeedDialog();
+              },
+            ),
+            
+            const SizedBox(height: 8),
+            
+            // Şablon kullanarak ekleme
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.list_alt, color: Colors.green),
+              ),
+              title: const Text('Şablondan Ekle'),
+              subtitle: const Text('Hazır kaynak şablonlarından seçin'),
+              onTap: () {
+                Navigator.pop(context);
+                _navigateToAddSource();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Custom RSS feed ekleme dialogu
+  Future<void> _showAddCustomFeedDialog() async {
+    final urlController = TextEditingController();
+    final nameController = TextEditingController();
+    final descriptionController = TextEditingController();
+    String selectedCategory = 'genel';
+    bool isValidating = false;
+    bool isValid = false;
+    String? validationError;
+    RssFeedValidationResult? validationResult;
+
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Custom RSS Feed Ekle'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // URL girişi
+                TextField(
+                  controller: urlController,
+                  decoration: InputDecoration(
+                    labelText: 'RSS Feed URL *',
+                    hintText: 'https://example.com/feed.xml',
+                    prefixIcon: const Icon(Icons.link),
+                    border: const OutlineInputBorder(),
+                    errorText: validationError,
+                  ),
+                  keyboardType: TextInputType.url,
+                  onChanged: (value) {
+                    setState(() {
+                      isValid = false;
+                      validationError = null;
+                      validationResult = null;
+                    });
+                  },
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Doğrulama butonu
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: isValidating ? null : () async {
+                      if (urlController.text.trim().isEmpty) {
+                        setState(() {
+                          validationError = 'URL boş olamaz';
+                        });
+                        return;
+                      }
+                      
+                      setState(() {
+                        isValidating = true;
+                        validationError = null;
+                      });
+                      
+                      try {
+                        final validator = RssFeedValidator(Dio());
+                        final result = await validator.validateFeedUrl(urlController.text.trim());
+                        
+                        setState(() {
+                          isValidating = false;
+                          isValid = result.isValid;
+                          validationResult = result;
+                          
+                          if (result.isValid) {
+                            // Başlığı otomatik doldur
+                            if (nameController.text.isEmpty && result.title != null) {
+                              nameController.text = result.title!;
+                            }
+                            // Açıklamayı otomatik doldur
+                            if (descriptionController.text.isEmpty && result.description != null) {
+                              descriptionController.text = result.description!;
+                            }
+                          } else {
+                            validationError = result.errorMessage;
+                          }
+                        });
+                      } catch (e) {
+                        setState(() {
+                          isValidating = false;
+                          validationError = 'Doğrulama hatası: $e';
+                        });
+                      }
+                    },
+                    icon: isValidating
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.check_circle),
+                    label: Text(isValidating ? 'Doğrulanıyor...' : 'Feed\'i Doğrula'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isValid ? Colors.green : null,
+                    ),
+                  ),
+                ),
+                
+                // Doğrulama sonucu
+                if (validationResult != null && validationResult!.isValid) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.green),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Feed Geçerli',
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text('Başlık: ${validationResult!.title}'),
+                        if (validationResult!.description != null)
+                          Text('Açıklama: ${validationResult!.description}'),
+                        Text('Tip: ${validationResult!.feedType}'),
+                        Text('Makale Sayısı: ${validationResult!.itemCount}'),
+                      ],
+                    ),
+                  ),
+                ],
+                
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 16),
+                
+                // İsim girişi
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Kaynak Adı *',
+                    hintText: 'Örn: TechCrunch',
+                    prefixIcon: Icon(Icons.title),
+                    border: OutlineInputBorder(),
+                  ),
+                  enabled: isValid,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Kategori seçimi
+                DropdownButtonFormField<String>(
+                  initialValue: selectedCategory,
+                  decoration: const InputDecoration(
+                    labelText: 'Kategori *',
+                    prefixIcon: Icon(Icons.category),
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'genel', child: Text('Genel')),
+                    DropdownMenuItem(value: 'teknoloji', child: Text('Teknoloji')),
+                    DropdownMenuItem(value: 'ekonomi', child: Text('Ekonomi')),
+                    DropdownMenuItem(value: 'spor', child: Text('Spor')),
+                    DropdownMenuItem(value: 'dünya', child: Text('Dünya')),
+                    DropdownMenuItem(value: 'sağlık', child: Text('Sağlık')),
+                    DropdownMenuItem(value: 'bilim', child: Text('Bilim')),
+                    DropdownMenuItem(value: 'magazin', child: Text('Magazin')),
+                    DropdownMenuItem(value: 'kültür', child: Text('Kültür')),
+                    DropdownMenuItem(value: 'eğitim', child: Text('Eğitim')),
+                    DropdownMenuItem(value: 'yaşam', child: Text('Yaşam')),
+                  ],
+                  onChanged: isValid ? (value) {
+                    setState(() {
+                      selectedCategory = value!;
+                    });
+                  } : null,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Açıklama girişi
+                TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Açıklama (Opsiyonel)',
+                    hintText: 'Kaynak hakkında kısa açıklama',
+                    prefixIcon: Icon(Icons.description),
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 2,
+                  enabled: isValid,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: (!isValid || isValidating) ? null : () async {
+                if (nameController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Kaynak adı gerekli')),
+                  );
+                  return;
+                }
+                
+                // Yeni kaynak oluştur
+                final newSource = ref.read(rssSourcesProvider.notifier).createNewSource(
+                  name: nameController.text.trim(),
+                  url: urlController.text.trim(),
+                  category: selectedCategory,
+                  description: descriptionController.text.trim(),
+                );
+                
+                // Kaynağı ekle
+                final success = await ref.read(rssSourcesProvider.notifier).addSource(newSource);
+                
+                if (mounted) {
+                  Navigator.pop(context);
+                  
+                  if (success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${newSource.name} başarıyla eklendi'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Kaynak eklenirken hata oluştu'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('Ekle'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -156,10 +473,10 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -178,7 +495,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
           Container(
             width: 1,
             height: 40,
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
           ),
           
           // Aktif kaynak
@@ -195,7 +512,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
           Container(
             width: 1,
             height: 40,
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
           ),
           
           // Filtrelenmiş
@@ -241,7 +558,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
       ],
@@ -260,7 +577,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
             Icon(
               Icons.rss_feed_outlined,
               size: 64,
-              color: theme.colorScheme.onSurface.withOpacity(0.3),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -276,7 +593,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
                       : 'Henüz RSS kaynağı eklenmemiş',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 24),
@@ -339,7 +656,12 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
                   Switch.adaptive(
                     value: source.isEnabled,
                     onChanged: (value) => _toggleSourceStatus(source.id),
-                    activeColor: Colors.green,
+                    thumbColor: WidgetStateProperty.resolveWith((states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return Colors.green;
+                      }
+                      return null;
+                    }),
                   ),
                 ],
               ),
@@ -350,7 +672,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: categoryColor.withOpacity(0.1),
+                  color: categoryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: categoryColor, width: 1),
                 ),
@@ -369,7 +691,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
               Text(
                 source.domain,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -385,7 +707,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
                     child: Text(
                       source.lastFetchStatus,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ),
@@ -395,7 +717,7 @@ class _RssSourcesPageState extends ConsumerState<RssSourcesPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryBlue.withOpacity(0.1),
+                        color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(

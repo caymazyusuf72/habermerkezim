@@ -1,4 +1,3 @@
-import 'package:hive/hive.dart';
 import '../../../core/services/hive_service.dart';
 
 /// Okuma listesi verilerini yerel olarak saklayan data source

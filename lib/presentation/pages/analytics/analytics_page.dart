@@ -37,15 +37,14 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
 
   @override
   Widget build(BuildContext context) {
-    final isDark = ref.watch(isDarkModeProvider);
-    final fontSize = ref.watch(fontScaleProvider) * 16;
     final analyticsState = ref.watch(analyticsProvider);
+    final baseFontSize = ref.watch(fontScaleProvider) * 16;
     
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'İstatistikler',
-          style: TextStyle(fontSize: fontSize + 4),
+          style: TextStyle(fontSize: baseFontSize + 4),
         ),
         elevation: 0,
         actions: [
@@ -184,7 +183,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
               gradient: LinearGradient(
                 colors: [
                   Theme.of(context).primaryColor,
-                  Theme.of(context).primaryColor.withOpacity(0.8),
+                  Theme.of(context).primaryColor.withValues(alpha: 0.8),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -209,7 +208,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
               _StatItem('Okunan Makale', '${todayAnalytics.articlesRead}', Icons.article_rounded),
               _StatItem('Geçirilen Süre', '${todayAnalytics.timeSpentMinutes} dk', Icons.access_time_rounded),
               _StatItem('Favoriler', '${todayAnalytics.favoriteCount}', Icons.favorite_rounded),
-              _StatItem('Aramalar', '${todayAnalytics.searchCount}', Icons.search_rounded),
+              _StatItem('Paylaşımlar', '${todayAnalytics.shareCount}', Icons.share_rounded),
             ],
           ),
 
@@ -221,8 +220,8 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
             [
               _StatItem('Toplam Makale', '${weeklySummary.totalArticlesRead}', Icons.article_rounded),
               _StatItem('Toplam Süre', '${weeklySummary.totalTimeSpent} dk', Icons.access_time_rounded),
+              _StatItem('Paylaşımlar', '${weeklySummary.totalShares}', Icons.share_rounded),
               _StatItem('Okuma Serisi', '$streakDays gün', Icons.local_fire_department_rounded),
-              _StatItem('Tutarlılık', '${ref.watch(consistencyScoreProvider).toInt()}%', Icons.trending_up_rounded),
             ],
           ),
 
@@ -251,7 +250,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
   Widget _buildChartsTab() {
     final weeklyAnalytics = ref.watch(analyticsProvider).weeklyAnalytics;
     final monthlyAnalytics = ref.watch(analyticsProvider).monthlyAnalytics;
-    final weeklySummary = ref.watch(weeklySummaryProvider);
+    final categoryBreakdown = ref.watch(weeklySummaryProvider).categoriesBreakdown;
     final fontSize = ref.watch(fontScaleProvider) * 16;
 
     return SingleChildScrollView(
@@ -286,7 +285,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
           const SizedBox(height: 16),
 
           // Kategori dağılımı
-          if (weeklySummary.categoriesBreakdown.isNotEmpty) ...[
+          if (categoryBreakdown.isNotEmpty) ...[
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -303,7 +302,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
                     const SizedBox(height: 16),
                     SizedBox(
                       height: 200,
-                      child: _buildCategoryPieChart(weeklySummary.categoriesBreakdown),
+                      child: _buildCategoryPieChart(categoryBreakdown),
                     ),
                   ],
                 ),
@@ -343,7 +342,6 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
   Widget _buildDetailsTab() {
     final weeklySummary = ref.watch(weeklySummaryProvider);
     final monthlySummary = ref.watch(monthlySummaryProvider);
-    final fontSize = ref.watch(fontScaleProvider) * 16;
     final readingTrend = ref.watch(readingTrendProvider);
     final productiveTime = ref.watch(productiveReadingTimeProvider);
 
@@ -373,6 +371,18 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
             ),
             const SizedBox(height: 16),
           ],
+
+          // Sosyal istatistikler
+          _buildDetailCard(
+            'Sosyal Aktivite',
+            [
+              _DetailItem('Toplam Paylaşım', '${weeklySummary.totalShares}'),
+              _DetailItem('Toplam Arama', '${weeklySummary.totalSearches}'),
+              _DetailItem('Toplam Favori', '${weeklySummary.totalFavorites}'),
+            ],
+          ),
+
+          const SizedBox(height: 16),
 
           // Okuma alışkanlıkları
           _buildDetailCard(
@@ -438,7 +448,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Row(
@@ -531,7 +541,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: achieved ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+        color: achieved ? Colors.green.withValues(alpha: 0.1) : Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: achieved ? Colors.green : Colors.orange,
@@ -609,7 +619,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
                   ),
                 ],
               ),
-            )).toList(),
+            )),
           ],
         ),
       ),
@@ -707,7 +717,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
           horizontalInterval: 1,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               strokeWidth: 1,
             );
           },
@@ -746,7 +756,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
           horizontalInterval: 5,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               strokeWidth: 1,
             );
           },
@@ -793,7 +803,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
         ),
         borderData: FlBorderData(
           show: true,
-          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
         ),
         minX: 0,
         maxX: 5,
@@ -806,7 +816,7 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
             }).toList(),
             isCurved: true,
             gradient: LinearGradient(
-              colors: [primaryColor, primaryColor.withOpacity(0.5)],
+              colors: [primaryColor, primaryColor.withValues(alpha: 0.5)],
             ),
             barWidth: 3,
             isStrokeCapRound: true,
@@ -825,8 +835,8 @@ class _AnalyticsPageState extends ConsumerState<AnalyticsPage> with TickerProvid
               show: true,
               gradient: LinearGradient(
                 colors: [
-                  primaryColor.withOpacity(0.1),
-                  primaryColor.withOpacity(0.0),
+                  primaryColor.withValues(alpha: 0.1),
+                  primaryColor.withValues(alpha: 0.0),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,

@@ -3,8 +3,8 @@ import '../../domain/entities/article.dart';
 import '../../core/services/hive_service.dart';
 import '../../core/services/analytics_service.dart';
 import 'recommendation_service.dart';
-import 'interest_matching_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// ML tabanlı gelişmiş öneri servisi
 /// Kullanıcı davranış analizi, içerik bazlı filtreleme ve hibrit öneri sistemi
 class MLRecommendationService {
@@ -54,7 +54,7 @@ class MLRecommendationService {
 
       return diversifiedArticles.take(limit).map((sa) => sa.article).toList();
     } catch (e) {
-      print('💥 ML öneri hesaplama hatası: $e');
+      debugPrint('💥 ML öneri hesaplama hatası: $e');
       // Fallback to basic recommendations
       return await RecommendationService.getRecommendedArticles(limit: limit);
     }
@@ -74,17 +74,17 @@ class MLRecommendationService {
 
     for (final analytics in monthlyAnalytics) {
       totalReads += analytics.articlesRead;
-      totalTimeSpent += analytics.timeSpentMinutes;
+      totalTimeSpent += analytics.articlesRead * 5; // Ortalama 5 dakika okuma süresi varsayımı
 
       // Kategori ağırlıkları (normalize edilmiş)
       for (final entry in analytics.categoriesRead.entries) {
-        categoryWeights[entry.key] = 
+        categoryWeights[entry.key] =
             (categoryWeights[entry.key] ?? 0) + entry.value.toDouble();
       }
 
       // Kaynak ağırlıkları
       for (final entry in analytics.sourcesRead.entries) {
-        sourceWeights[entry.key] = 
+        sourceWeights[entry.key] =
             (sourceWeights[entry.key] ?? 0) + entry.value.toDouble();
       }
     }

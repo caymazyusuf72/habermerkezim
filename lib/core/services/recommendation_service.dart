@@ -1,8 +1,8 @@
 import '../../domain/entities/article.dart';
-import '../../domain/entities/reading_analytics.dart';
 import '../../core/services/hive_service.dart';
 import '../../core/services/analytics_service.dart';
 
+import 'package:flutter/foundation.dart';
 /// Öneri servisi - kullanıcı davranış analizi, öneri algoritması
 class RecommendationService {
   /// Kullanıcı için önerilen haberleri getir
@@ -75,7 +75,7 @@ class RecommendationService {
           .map((scored) => scored.article)
           .toList();
     } catch (e) {
-      print('💥 Öneri hesaplama hatası: $e');
+      debugPrint('💥 Öneri hesaplama hatası: $e');
       return [];
     }
   }

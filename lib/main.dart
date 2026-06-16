@@ -1,6 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:marionette_flutter/marionette_flutter.dart';
+import 'firebase_options.dart';
 
 import 'core/services/hive_service.dart';
 import 'core/services/rss_sources_service.dart';
@@ -9,12 +16,21 @@ import 'core/services/notification_service.dart';
 import 'core/services/widget_service.dart';
 import 'core/services/custom_categories_service.dart';
 import 'core/services/rss_health_check_service.dart';
+import 'core/services/image_cache_service.dart';
+import 'core/services/article_popularity_service.dart';
+import 'core/services/gamification_service.dart';
+import 'core/services/env_config_service.dart';
+import 'core/utils/app_logger.dart';
 import 'presentation/app.dart';
 
 /// Haber Merkezi uygulamasının giriş noktası
 /// Hive database'i initialize eder ve Riverpod ile app'i başlatır
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  if (kDebugMode) {
+    MarionetteBinding.ensureInitialized();
+  } else {
+    WidgetsFlutterBinding.ensureInitialized();
+  }
   
   // System UI overlay'i ayarla
   SystemChrome.setSystemUIOverlayStyle(
@@ -26,42 +42,58 @@ Future<void> main() async {
   );
   
   try {
-    // Hive database'i initialize et
-    print('🔄 Hive database initialize ediliyor...');
-    await HiveService.initialize();
-    print('✅ Hive başarıyla initialize edildi');
+    // === ADIM 1: Firebase (diğer servisler için gerekli) ===
+    AppLogger.info('Firebase initialize ediliyor...');
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      AppLogger.success('Firebase başarıyla initialize edildi');
+    } else {
+      AppLogger.info('Firebase zaten initialize edilmiş');
+    }
     
-    // RSS Sources servisini initialize et
-    print('🔄 RSS Sources service initialize ediliyor...');
-    await RssSourcesService.init();
-    print('✅ RSS Sources service başarıyla initialize edildi');
+    // === ADIM 2: Senkron ayarlar (Crashlytics + Memory Cache) ===
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+    AppLogger.success('Firebase Crashlytics callback\'leri ayarlandı');
     
-    // Custom Categories servisini initialize et
-    print('🔄 Custom Categories service initialize ediliyor...');
-    await CustomCategoriesService.init();
-    print('✅ Custom Categories service başarıyla initialize edildi');
+    PaintingBinding.instance.imageCache.maximumSize = 50;
+    PaintingBinding.instance.imageCache.maximumSizeBytes = 25 * 1024 * 1024;
+    AppLogger.success('Memory cache optimize edildi');
     
-    // Analytics servisini initialize et
-    print('🔄 Analytics service initialize ediliyor...');
-    await AnalyticsService.init();
-    print('✅ Analytics service başarıyla initialize edildi');
+    // === ADIM 3: Bağımsız servisleri paralel başlat ===
+    // Hive, EnvConfig, ImageCache, Notification, Widget birbirinden bağımsız
+    AppLogger.info('Bağımsız servisler paralel başlatılıyor...');
+    await Future.wait([
+      HiveService.initialize(),
+      EnvConfigService().init(),
+      ImageCacheService().init(),
+      NotificationService().initialize(),
+      WidgetService.initialize(),
+    ]);
+    AppLogger.success('Bağımsız servisler başarıyla initialize edildi');
     
-    // Notification servisini initialize et
-    print('🔄 Notification service initialize ediliyor...');
-    await NotificationService().initialize();
-    print('✅ Notification service başarıyla initialize edildi');
+    // === ADIM 4: Hive'a bağımlı servisleri paralel başlat ===
+    // Hive artık hazır, Hive box kullanan servisleri paralel başlat
+    AppLogger.info('Hive-bağımlı servisler paralel başlatılıyor...');
+    await Future.wait([
+      RssSourcesService.init(),
+      CustomCategoriesService.init(),
+      AnalyticsService.init(),
+      ArticlePopularityService.init(),
+      GamificationService.instance.init(),
+    ]);
+    AppLogger.success('Hive-bağımlı servisler başarıyla initialize edildi');
     
-    // Widget servisini initialize et
-    print('🔄 Widget service initialize ediliyor...');
-    await WidgetService.initialize();
-    print('✅ Widget service başarıyla initialize edildi');
-    
-    // RSS Health Check servisini başlat (6 saatte bir kontrol)
-    print('🔄 RSS Health Check service başlatılıyor...');
+    // === ADIM 5: Periyodik görevleri başlat ===
     RssHealthCheckService().startPeriodicHealthCheck(
       interval: const Duration(hours: 6),
     );
-    print('✅ RSS Health Check service başarıyla başlatıldı');
+    AppLogger.success('RSS Health Check service başlatıldı');
     
     // Uygulamayı başlat
     runApp(
@@ -71,7 +103,7 @@ Future<void> main() async {
     );
     
   } catch (e) {
-    print('❌ Uygulama başlatma hatası: $e');
+    AppLogger.error('Uygulama başlatma hatası', e);
     
     // Hata durumunda basit hata ekranıyla uygulamayı başlat
     runApp(

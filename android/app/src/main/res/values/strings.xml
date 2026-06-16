@@ -2,5 +2,14 @@
 <resources>
     <string name="app_name">Haber Merkezim</string>
     <string name="widget_description">Son haberleri görüntüleyin</string>
+    <string name="widget_small_description">Tek haber başlığı widget\'ı</string>
+    <string name="widget_medium_description">Haber listesi widget\'ı</string>
+    <string name="widget_large_description">Haber kartları widget\'ı</string>
+    <string name="widget_headlines_description">Kayan haber başlıkları</string>
+    <string name="widget_header_title">Haber Merkezi</string>
+    <string name="widget_loading">Haberler yükleniyor…</string>
+    <string name="widget_no_news">Haber bulunamadı</string>
+    <string name="widget_see_all">Tümünü Gör</string>
+    <string name="widget_refresh">Yenile</string>
+    <string name="widget_breaking">SON DAKİKA</string>
 </resources>
-
