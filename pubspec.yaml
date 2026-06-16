@@ -167,7 +167,7 @@ dev_dependencies:
   # Code Generation
   hive_generator: ^2.0.1
   build_runner: ^2.4.7
-  envied_generator: ^0.5.4+1
+  envied_generator: ^1.0.0
   
   # Launcher Icon Generator
   flutter_launcher_icons: ^0.14.4
