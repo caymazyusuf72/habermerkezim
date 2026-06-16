@@ -2,8 +2,29 @@
 
 Modern Flutter ile geliştirilmiş, Clean Architecture + Riverpod tabanlı kapsamlı haber uygulaması.
 
-[![CI](https://github.com/caymazyusuf72/habermerkezim/actions/workflows/ci.yml/badge.svg)](https://github.com/caymazyusuf72/habermerkezim/actions/workflows/ci.yml)
-[![Release](https://github.com/caymazyusuf72/habermerkezim/actions/workflows/release.yml/badge.svg)](https://github.com/caymazyusuf72/habermerkezim/actions/workflows/release.yml)
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-blue.svg?style=flat-square" alt="Platform" />
+  <img src="https://img.shields.io/badge/Flutter-%5E3.8.1-02569B?style=flat-square&logo=flutter" alt="Flutter" />
+  <img src="https://img.shields.io/badge/Dart-%5E3.8.1-0175C2?style=flat-square&logo=dart" alt="Dart" />
+  <a href="https://github.com/caymazyusuf72/habermerkezim/releases/latest">
+    <img src="https://img.shields.io/github/v/release/caymazyusuf72/habermerkezim?style=flat-square&label=Version" alt="Version" />
+  </a>
+  <a href="https://github.com/caymazyusuf72/habermerkezim/actions/workflows/ci.yml">
+    <img src="https://github.com/caymazyusuf72/habermerkezim/actions/workflows/ci.yml/badge.svg?style=flat-square" alt="CI" />
+  </a>
+  <a href="https://github.com/caymazyusuf72/habermerkezim/actions/workflows/release.yml">
+    <img src="https://github.com/caymazyusuf72/habermerkezim/actions/workflows/release.yml/badge.svg?style=flat-square" alt="Release" />
+  </a>
+  <a href="https://github.com/caymazyusuf72/habermerkezim/issues">
+    <img src="https://img.shields.io/github/issues/caymazyusuf72/habermerkezim?style=flat-square" alt="Issues" />
+  </a>
+  <a href="https://github.com/caymazyusuf72/habermerkezim/stargazers">
+    <img src="https://img.shields.io/github/stars/caymazyusuf72/habermerkezim?style=flat-square" alt="Stars" />
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT" />
+  </a>
+</p>
 
 ---
 
