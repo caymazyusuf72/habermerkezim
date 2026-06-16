@@ -200,27 +200,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
           },
           tooltip: 'Yenile',
         ),
-        PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert_rounded, color: Colors.white),
-          tooltip: 'Daha Fazla',
-          onSelected: (value) async {
-            if (value == 'logout') {
-              await _handleLogout(context);
-            }
-          },
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'logout',
-              child: Row(
-                children: [
-                  Icon(Icons.logout_rounded, color: Colors.red),
-                  SizedBox(width: 12),
-                  Text('Çıkış Yap', style: TextStyle(color: Colors.red)),
-                ],
-              ),
-            ),
-          ],
-        ),
+        const SizedBox.shrink(),
       ],
     );
   }

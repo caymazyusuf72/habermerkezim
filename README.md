@@ -32,7 +32,7 @@ Modern Flutter ile geliştirilmiş, Clean Architecture + Riverpod tabanlı kapsa
 - 🤖 **ML Öneri Sistemi**: Kişiselleştirilmiş haber önerileri
 - 🔥 **Trend Haberler**: Popüler ve trend içerikler
 - 🌐 **Çoklu Dil**: Türkçe ve İngilizce dil desteği (l10n)
-- 🔐 **Firebase Auth**: Google Sign-In ile kullanıcı hesabı
+- 🔐 **Firebase Auth**: Google Sign-In ile kullanıcı hesabı *(Not: Açık kaynak sürümünde doğrudan erişim için login ekranı atlanmıştır)*
 - ☁️ **Cloud Sync**: Firestore ile bulut senkronizasyonu
 
 ### Performans ve DevOps
@@ -150,13 +150,19 @@ cd haber-merkezi
 cp .env.example .env
 # .env dosyasını düzenleyin
 
-# 3. Dependencies yükleyin
+# 3. Firebase Kurulumu (ÖNEMLİ)
+# Proje açık kaynak olduğu için Firebase config dosyaları projede yer almaz.
+# Kendi Firebase projenizi oluşturup indirdiğiniz google-services.json dosyasını android/app/ klasörüne ekleyin.
+# Ardından firebase_options.dart dosyasını oluşturmak için flutterfire-cli kullanın:
+# flutterfire configure
+
+# 4. Dependencies yükleyin
 flutter pub get
 
-# 4. Kod üretimini çalıştırın (Hive adaptörleri, envied vb.)
+# 5. Kod üretimini çalıştırın (Hive adaptörleri, envied vb.)
 flutter pub run build_runner build --delete-conflicting-outputs
 
-# 5. Uygulamayı çalıştırın
+# 6. Uygulamayı çalıştırın
 flutter run
 ```
 

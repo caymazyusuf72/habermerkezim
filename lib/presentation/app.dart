@@ -80,12 +80,10 @@ class HaberMerkeziApp extends ConsumerWidget {
           // Ana sayfa - initialization ve authentication durumuna göre
           home: appInitialization.when(
             data: (_) {
-              // Authentication kontrolü yap
-              return _AuthCheckWrapper(
-                child: _OnboardingCheckWrapper(
-                  child: _UpdateCheckWrapper(
-                    child: const HomePage(),
-                  ),
+              // Authentication kontrolü yap - DEVRE DIŞI BIRAKILDI (Açık kaynak için)
+              return _OnboardingCheckWrapper(
+                child: _UpdateCheckWrapper(
+                  child: const HomePage(),
                 ),
               );
             },
