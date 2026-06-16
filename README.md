@@ -21,8 +21,8 @@ Modern Flutter ile geliştirilmiş, Clean Architecture + Riverpod tabanlı kapsa
   <a href="https://github.com/caymazyusuf72/habermerkezim/stargazers">
     <img src="https://img.shields.io/github/stars/caymazyusuf72/habermerkezim?style=flat-square" alt="Stars" />
   </a>
-  <a href="https://opensource.org/licenses/MIT">
-    <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT" />
+  <a href="https://www.gnu.org/licenses/gpl-3.0">
+    <img src="https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat-square" alt="License: GPL v3" />
   </a>
 </p>
 
@@ -357,7 +357,7 @@ perf: Performans iyileştirmesi
 
 ## Lisans
 
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
+Bu proje **GNU General Public License v3.0 (GPL-3.0)** altında lisanslanmıştır. Herkes özgürce kullanabilir, satabilir ve değiştirebilir ancak değiştirdiğiniz veya üzerine inşa ettiğiniz kodları da aynı açık kaynak lisansıyla (GPL) yayınlamak zorundasınız. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
 ---
 
