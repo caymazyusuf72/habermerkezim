@@ -59,14 +59,14 @@ jobs:
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-apk-${{ steps.version.outputs.VERSION }}
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
 
       - name: Upload AAB artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-aab-${{ steps.version.outputs.VERSION }}
           path: build/app/outputs/bundle/release/app-release.aab
