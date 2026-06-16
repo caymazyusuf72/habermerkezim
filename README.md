@@ -7,6 +7,16 @@ Modern Flutter ile geliştirilmiş, Clean Architecture + Riverpod tabanlı kapsa
 
 ---
 
+## Ekran Görüntüleri
+
+<div align="center">
+  <img src="docs/images/screenshot_1.png" width="250" alt="Ana Ekran" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/images/screenshot_2.png" width="250" alt="Haber Detay Ekranı" />
+</div>
+
+---
+
 ## Özellikler
 
 ### Temel Özellikler
