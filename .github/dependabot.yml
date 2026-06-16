@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # GitHub Actions eklentilerini otomatik günceller
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # Flutter ve Dart paketlerini (pubspec.yaml) otomatik günceller
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "weekly"
