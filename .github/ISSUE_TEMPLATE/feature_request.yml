@@ -1,0 +1,22 @@
+name: Yeni Özellik İsteği (Feature Request)
+description: Uygulamaya eklenmesini istediğiniz bir özelliği önerin
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Haber Merkezim uygulamasını daha iyi yapmamıza yardımcı olduğunuz için teşekkürler! Lütfen fikrinizi detaylıca açıklayın.
+  - type: textarea
+    id: description
+    attributes:
+      label: Özellik Açıklaması
+      description: Ne eklenmesini istiyorsunuz? Probleminiz nedir?
+      placeholder: Şöyle bir problemim var ve şöyle bir özellik eklenirse çözülür...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatif Çözümler
+      description: Düşündüğünüz başka çözümler var mı?

@@ -1,0 +1,36 @@
+name: Hata Bildirimi (Bug Report)
+description: Uygulamada karşılaştığınız bir hatayı bize bildirin
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Haber Merkezim uygulamasını kullandığınız için teşekkürler! Hatayı çözmemiz için lütfen aşağıdaki bilgileri doldurun.
+  - type: textarea
+    id: description
+    attributes:
+      label: Hata Açıklaması
+      description: Karşılaştığınız hatayı detaylıca açıklayın.
+      placeholder: Beklenmeyen bir hata ile karşılaştım...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Nasıl Tekrar Edilir?
+      description: Hatayı tekrar oluşturmak için adımları yazın.
+      value: |
+        1. Uygulamayı açın
+        2. Şuraya tıklayın '....'
+        3. Şu hatayı görün '....'
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Cihaz Bilgisi
+      description: Hangi telefon/sürümde bu hatayı aldınız?
+      placeholder: Örn: Xiaomi Redmi 12S, Android 14
+    validations:
+      required: true
