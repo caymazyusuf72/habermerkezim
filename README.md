@@ -1,4 +1,4 @@
-# 📰 Haber Merkezi - RSS Tabanlı Haber Uygulaması
+# Haber Merkezi - RSS Tabanlı Haber Uygulaması
 
 Modern Flutter ile geliştirilmiş, Clean Architecture + Riverpod tabanlı kapsamlı haber uygulaması.
 
@@ -7,90 +7,76 @@ Modern Flutter ile geliştirilmiş, Clean Architecture + Riverpod tabanlı kapsa
 
 ---
 
-## 🎯 Özellikler
+## Özellikler
 
 ### Temel Özellikler
-- ✅ **RSS Tabanlı İçerik**: Güvenilir haber kaynaklarından otomatik içerik çekimi
-- 📱 **Modern UI/UX**: Material Design 3 ile modern, kullanıcı dostu arayüz
-- 🌙 **Dark/Light Mode**: Göz yorgunluğunu azaltan karanlık tema + sistem teması algılama
-- 📴 **Offline Mode**: İnternet bağlantısı olmadan da haberleri görüntüleme
-- 🔄 **Pull-to-Refresh**: Hızlı içerik yenileme
-- 📄 **Infinite Scroll**: Sayfa sayfa haber yükleme ile performans optimizasyonu
-- 🏷️ **Kategori Filtreleme**: Genel, Türkiye, Ekonomi, Teknoloji, Spor kategorileri
-- 🎨 **Gelişmiş Filtreleme**: Tarih aralığı, kaynak, kategori ve okunma durumu filtreleri
-- 🔍 **Gelişmiş Arama**: İçerik içinde arama ve filtreleme
-- 📤 **Paylaşım**: Haberleri sosyal medyada paylaşma
-- 🔗 **Kaynak Görüntüleme**: Orijinal haberlere doğrudan erişim
+- **RSS Tabanlı İçerik**: Güvenilir haber kaynaklarından otomatik içerik çekimi
+- **Modern UI/UX**: Material Design 3 ile modern, kullanıcı dostu arayüz
+- **Dark/Light Mode**: Göz yorgunluğunu azaltan karanlık tema + sistem teması algılama
+- **Offline Mode**: İnternet bağlantısı olmadan da haberleri görüntüleme
+- **Pull-to-Refresh**: Hızlı içerik yenileme
+- **Infinite Scroll**: Sayfa sayfa haber yükleme ile performans optimizasyonu
+- **Kategori Filtreleme**: Genel, Türkiye, Ekonomi, Teknoloji, Spor kategorileri
+- **Gelişmiş Filtreleme**: Tarih aralığı, kaynak, kategori ve okunma durumu filtreleri
+- **Gelişmiş Arama**: İçerik içinde arama ve filtreleme
+- **Paylaşım**: Haberleri sosyal medyada paylaşma
+- **Kaynak Görüntüleme**: Orijinal haberlere doğrudan erişim
 
 ### Gelişmiş Özellikler
-- 🔖 **Yer İşaretleri**: Haberleri kaydetme ve koleksiyon oluşturma
-- 📊 **Okuma İstatistikleri**: Okuma alışkanlıkları takibi ve hedef belirleme
-- 🔔 **Akıllı Bildirimler**: Günlük haber özetleri ve okuma hedefi hatırlatıcıları
-- 🗣️ **Metin Okuma (TTS)**: Haberleri sesli dinleme
-- 🎙️ **Podcast Desteği**: Haber podcast'leri
-- 🏆 **Gamification**: Okuma rozetleri ve başarı sistemi
-- 🤖 **ML Öneri Sistemi**: Kişiselleştirilmiş haber önerileri
-- 🔥 **Trend Haberler**: Popüler ve trend içerikler
-- 🌐 **Çoklu Dil**: Türkçe ve İngilizce dil desteği (l10n)
-- 🔐 **Firebase Auth**: Google Sign-In ile kullanıcı hesabı *(Not: Açık kaynak sürümünde doğrudan erişim için login ekranı atlanmıştır)*
-- ☁️ **Cloud Sync**: Firestore ile bulut senkronizasyonu
+- **Yer İşaretleri**: Haberleri kaydetme ve koleksiyon oluşturma
+- **Okuma İstatistikleri**: Okuma alışkanlıkları takibi ve hedef belirleme
+- **Akıllı Bildirimler**: Günlük haber özetleri ve okuma hedefi hatırlatıcıları
+- **Metin Okuma (TTS)**: Haberleri sesli dinleme
+- **Podcast Desteği**: Haber podcast'leri
+- **Gamification**: Okuma rozetleri ve başarı sistemi
+- **ML Öneri Sistemi**: Kişiselleştirilmiş haber önerileri
+- **Trend Haberler**: Popüler ve trend içerikler
+- **Çoklu Dil**: Türkçe ve İngilizce dil desteği (l10n)
+- **Firebase Auth**: Google Sign-In ile kullanıcı hesabı *(Not: Açık kaynak sürümünde doğrudan erişim için login ekranı atlanmıştır)*
+- **Cloud Sync**: Firestore ile bulut senkronizasyonu
 
 ### Performans ve DevOps
-- ⚡ **Performans Monitoring**: Sayfa yükleme ve API response süreleri takibi
-- 🖼️ **Görsel Optimizasyonu**: Otomatik boyutlandırma, CDN desteği, cache yönetimi
-- 🌐 **Network Optimizasyonu**: Request debouncing, retry logic, circuit breaker
-- 💾 **Multi-level Cache**: Memory → Disk katmanlı cache, LRU eviction, TTL invalidation
-- 🚀 **App Startup Optimizer**: Sıralı servis başlatma, lazy initialization
-- 🧹 **Memory Management**: Image cache temizleme, dispose takibi
-- 🔄 **CI/CD**: GitHub Actions ile otomatik test, analiz ve build
+- **Performans Monitoring**: Sayfa yükleme ve API response süreleri takibi
+- **Görsel Optimizasyonu**: Otomatik boyutlandırma, CDN desteği, cache yönetimi
+- **Network Optimizasyonu**: Request debouncing, retry logic, circuit breaker
+- **Multi-level Cache**: Memory -> Disk katmanlı cache, LRU eviction, TTL invalidation
+- **App Startup Optimizer**: Sıralı servis başlatma, lazy initialization
+- **Memory Management**: Image cache temizleme, dispose takibi
+- **CI/CD**: GitHub Actions ile otomatik test, analiz ve build
 
 ---
 
-## 🏗️ Mimari
+## Mimari
 
 ### Clean Architecture
 
 ```
-📁 lib/
-├── 📱 main.dart                    # Uygulama giriş noktası
-├── 🔥 firebase_options.dart        # Firebase konfigürasyonu
-├── 🎯 core/                        # Temel bileşenler
+lib/
+├── main.dart                    # Uygulama giriş noktası
+├── firebase_options.dart        # Firebase konfigürasyonu
+├── core/                        # Temel bileşenler
 │   ├── config/                     # Uygulama konfigürasyonu (env)
 │   ├── constants/                  # Sabitler (API endpoints, renkler vb.)
 │   ├── error/                      # Hata yönetimi (Failure sınıfları)
 │   ├── extensions/                 # Extension metotları
 │   ├── providers/                  # Global Riverpod provider'lar
 │   ├── services/                   # Servisler (44+ servis)
-│   │   ├── analytics_service.dart
-│   │   ├── app_startup_service.dart
-│   │   ├── cache_manager_service.dart
-│   │   ├── image_optimization_service.dart
-│   │   ├── logger_service.dart
-│   │   ├── network_optimizer_service.dart
-│   │   ├── performance_monitor_service.dart
-│   │   └── ... (40+ daha)
 │   ├── theme/                      # Tema yönetimi
 │   └── utils/                      # Yardımcı fonksiyonlar
-│       ├── memory_utils.dart
-│       ├── retry_helper.dart
-│       └── ...
-├── 💾 data/                        # Veri katmanı
+├── data/                        # Veri katmanı
 │   ├── datasources/                # Uzak/yerel veri kaynakları
 │   ├── models/                     # Veri modelleri (Hive adaptörleri)
 │   └── repositories/               # Repository implementasyonları
-├── 🧠 domain/                      # İş mantığı katmanı
+├── domain/                      # İş mantığı katmanı
 │   ├── entities/                   # Entity sınıfları
 │   ├── repositories/               # Repository arayüzleri
 │   └── usecases/                   # Use case'ler
-│       ├── bookmark/               # Yer işareti use case'leri
-│       ├── category/               # Kategori use case'leri
-│       └── settings/               # Ayarlar use case'leri
-├── 🎨 presentation/               # Sunum katmanı
+├── presentation/               # Sunum katmanı
 │   ├── pages/                      # Sayfa widget'ları
 │   ├── providers/                  # UI state provider'ları
 │   ├── theme/                      # Tema verileri
 │   └── widgets/                    # Tekrar kullanılabilir widget'lar
-└── 🌐 l10n/                       # Lokalizasyon dosyaları
+└── l10n/                       # Lokalizasyon dosyaları
 ```
 
 ### Katmanlar Arası İletişim
@@ -107,7 +93,7 @@ Modern Flutter ile geliştirilmiş, Clean Architecture + Riverpod tabanlı kapsa
 
 ---
 
-## 🛠️ Teknoloji Stack
+## Teknoloji Stack
 
 | Kategori | Teknoloji | Versiyon |
 |----------|-----------|----------|
@@ -130,7 +116,7 @@ Modern Flutter ile geliştirilmiş, Clean Architecture + Riverpod tabanlı kapsa
 
 ---
 
-## 🚀 Kurulum ve Çalıştırma
+## Kurulum ve Çalıştırma
 
 ### Ön Gereksinimler
 - Flutter SDK 3.8.1 veya üstü
@@ -177,7 +163,7 @@ flutter run
 
 ---
 
-## 🔨 Build Komutları
+## Build Komutları
 
 ### Geliştirme
 ```bash
@@ -229,7 +215,7 @@ flutter build ios --release
 
 ---
 
-## 🧪 Test Stratejisi
+## Test Stratejisi
 
 ### Test Türleri
 | Tür | Konum | Açıklama |
@@ -254,7 +240,7 @@ genhtml coverage/lcov.info -o coverage/html
 
 ---
 
-## 🔄 CI/CD Pipeline
+## CI/CD Pipeline
 
 ### GitHub Actions
 
@@ -278,11 +264,11 @@ git push origin v1.0.0
 
 ---
 
-## 📊 Performans Optimizasyonları
+## Performans Optimizasyonları
 
 | Optimizasyon | Açıklama |
 |-------------|----------|
-| **Multi-level Cache** | Memory → Disk katmanlı cache, LRU eviction |
+| **Multi-level Cache** | Memory -> Disk katmanlı cache, LRU eviction |
 | **Image Optimization** | Ekran boyutuna göre otomatik boyutlandırma, thumbnail URL |
 | **Network Optimizer** | Request debouncing, deduplication, exponential backoff |
 | **Circuit Breaker** | Hatalı servislere otomatik istek kesme |
@@ -293,19 +279,13 @@ git push origin v1.0.0
 
 ---
 
-## 📁 Proje Yapısı (Kök Dizin)
+## Proje Yapısı (Kök Dizin)
 
 ```
 habermerkezim1/
 ├── .github/workflows/        # CI/CD pipeline'ları
-│   ├── ci.yml
-│   └── release.yml
 ├── android/                  # Android platform konfigürasyonu
-│   └── app/
-│       ├── proguard-rules.pro
-│       └── ...
 ├── assets/                   # Statik dosyalar
-│   └── icons/
 ├── animation/                # Lottie animasyonları
 ├── docs/                     # Proje dokümantasyonu
 ├── lib/                      # Ana kaynak kod
@@ -320,7 +300,7 @@ habermerkezim1/
 
 ---
 
-## 🤝 Katkıda Bulunma (Contributing)
+## Katkıda Bulunma (Contributing)
 
 Bu proje açık kaynaktır ve her türlü katkıya (hata düzeltmeleri, yeni özellikler, dokümantasyon güncellemeleri) açıktır! Lütfen katkıda bulunmadan önce [CONTRIBUTING.md](CONTRIBUTING.md) dosyasını ve davranış kurallarını inceleyin.
 
@@ -344,33 +324,33 @@ perf: Performans iyileştirmesi
 
 ---
 
-## 📄 Lisans
+## Lisans
 
 Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
 ---
 
-## ✨ Sürüm Geçmişi
+## Sürüm Geçmişi
 
 ### v1.1.0 (Güncel)
-- ✅ Clean Architecture yeniden yapılandırma
-- ✅ 44+ servis ile kapsamlı özellik seti
-- ✅ Firebase entegrasyonu (Auth, Firestore, Analytics, Crashlytics)
-- ✅ Performans optimizasyonları (cache, network, memory)
-- ✅ CI/CD pipeline (GitHub Actions)
-- ✅ Strict lint kuralları
-- ✅ Çoklu dil desteği (l10n)
+- Clean Architecture yeniden yapılandırma
+- 44+ servis ile kapsamlı özellik seti
+- Firebase entegrasyonu (Auth, Firestore, Analytics, Crashlytics)
+- Performans optimizasyonları (cache, network, memory)
+- CI/CD pipeline (GitHub Actions)
+- Strict lint kuralları
+- Çoklu dil desteği (l10n)
 
 ### v1.0.0
-- ✅ Temel haber okuma özellikleri
-- ✅ RSS feed entegrasyonu
-- ✅ Dark/Light tema
-- ✅ Offline okuma desteği
-- ✅ Kategori filtreleme
+- Temel haber okuma özellikleri
+- RSS feed entegrasyonu
+- Dark/Light tema
+- Offline okuma desteği
+- Kategori filtreleme
 
 ---
 
-## 🔮 Gelecek Planları
+## Gelecek Planları
 
 - [ ] Push notification geliştirmeleri
 - [ ] Tablet ve masaüstü optimizasyonu
@@ -380,4 +360,4 @@ Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICE
 
 ---
 
-⭐ **Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!**
+**Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!**
