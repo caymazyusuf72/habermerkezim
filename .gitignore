@@ -44,13 +44,11 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Sensitive files
-google-services.json
+# Keystore files
 *.jks
 *.keystore
 key.properties
 .env
-lib/firebase_options.dart
 
 # Build artifacts and temporary files
 *.apk
