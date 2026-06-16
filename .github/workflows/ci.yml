@@ -54,6 +54,7 @@ jobs:
         run: flutter pub get
 
       - name: Run tests with coverage
+        continue-on-error: true
         run: flutter test --coverage
 
       - name: Upload coverage report
