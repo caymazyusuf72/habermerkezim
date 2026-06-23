@@ -102,7 +102,7 @@ dependencies:
   
   # App Update
   in_app_update: ^4.2.5
-  package_info_plus: ^9.0.0
+  package_info_plus: ^9.0.1
   
   # Cache Management
   flutter_cache_manager: ^3.4.1
