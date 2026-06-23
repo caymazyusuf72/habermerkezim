@@ -127,7 +127,7 @@ dependencies:
   path: ^1.9.0
   
   # Security
-  flutter_dotenv: ^5.1.0
+  flutter_dotenv: ^6.0.1
   flutter_secure_storage: ^10.3.1
   
   # Compile-time Environment Variables
