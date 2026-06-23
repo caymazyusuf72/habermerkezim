@@ -89,7 +89,8 @@ void main() {
       expect(fadeTransition.opacity.value, 0.0);
 
       // Delay + animasyon süresi sonrası opacity 1 olmalı
-      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pumpAndSettle();
       fadeTransition = tester.widget<FadeTransition>(
         find.descendant(
           of: find.byType(FadeInWidget),
