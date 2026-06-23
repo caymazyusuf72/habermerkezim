@@ -53,10 +53,10 @@ android {
 
     signingConfigs {
         create("release") {
-            val keyAliasValue = keystoreProperties.getProperty("keyAlias")
-            val keyPasswordValue = keystoreProperties.getProperty("keyPassword")
-            val storeFileValue = keystoreProperties.getProperty("storeFile")
-            val storePasswordValue = keystoreProperties.getProperty("storePassword")
+            var keyAliasValue = System.getenv("ANDROID_KEY_ALIAS") ?: keystoreProperties.getProperty("keyAlias")
+            var keyPasswordValue = System.getenv("ANDROID_KEY_PASSWORD") ?: keystoreProperties.getProperty("keyPassword")
+            var storeFileValue = System.getenv("ANDROID_KEYSTORE_PATH") ?: keystoreProperties.getProperty("storeFile")
+            var storePasswordValue = System.getenv("ANDROID_STORE_PASSWORD") ?: keystoreProperties.getProperty("storePassword")
 
             if (!keyAliasValue.isNullOrBlank() &&
                 !keyPasswordValue.isNullOrBlank() &&
@@ -73,7 +73,12 @@ android {
 
     buildTypes {
         release {
-            signingConfig = if (keystorePropertiesFile.exists()) {
+            val hasEnvVars = !System.getenv("ANDROID_KEY_ALIAS").isNullOrBlank() && 
+                             !System.getenv("ANDROID_KEY_PASSWORD").isNullOrBlank() && 
+                             !System.getenv("ANDROID_KEYSTORE_PATH").isNullOrBlank() && 
+                             !System.getenv("ANDROID_STORE_PASSWORD").isNullOrBlank()
+
+            signingConfig = if (keystorePropertiesFile.exists() || hasEnvVars) {
                 signingConfigs.getByName("release")
             } else {
                 signingConfigs.getByName("debug")
