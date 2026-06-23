@@ -12,7 +12,7 @@ void main() {
 
       // Assert
       expect(find.byType(CustomErrorWidget), findsOneWidget);
-      expect(find.byIcon(Icons.wifi_off), findsOneWidget);
+      expect(find.byIcon(Icons.wifi_off), findsNWidgets(2));
       expect(find.text('İnternet Bağlantısı Yok'), findsOneWidget);
     });
 

@@ -136,7 +136,16 @@ void main() {
 
       // Act & Assert
       final history = logger.getHistory();
-      expect(() => (history as List).add('test'), throwsUnsupportedError);
+      expect(
+        () => (history as List).add(
+          LogEntry(
+            level: LogLevel.info,
+            message: 'test',
+            timestamp: DateTime.now(),
+          ),
+        ),
+        throwsUnsupportedError,
+      );
     });
   });
 

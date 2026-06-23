@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 /// FadeIn animasyonu ile widget gösterme
@@ -26,6 +27,7 @@ class _FadeInWidgetState extends State<FadeInWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -40,7 +42,7 @@ class _FadeInWidgetState extends State<FadeInWidget>
     if (widget.delay == Duration.zero) {
       _controller.forward();
     } else {
-      Future.delayed(widget.delay, () {
+      _timer = Timer(widget.delay, () {
         if (mounted) _controller.forward();
       });
     }
@@ -48,6 +50,7 @@ class _FadeInWidgetState extends State<FadeInWidget>
 
   @override
   void dispose() {
+    _timer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -84,6 +87,7 @@ class _FadeInScaleWidgetState extends State<FadeInScaleWidget>
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
   late Animation<double> _scaleAnimation;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -103,7 +107,7 @@ class _FadeInScaleWidgetState extends State<FadeInScaleWidget>
     if (widget.delay == Duration.zero) {
       _controller.forward();
     } else {
-      Future.delayed(widget.delay, () {
+      _timer = Timer(widget.delay, () {
         if (mounted) _controller.forward();
       });
     }
@@ -111,6 +115,7 @@ class _FadeInScaleWidgetState extends State<FadeInScaleWidget>
 
   @override
   void dispose() {
+    _timer?.cancel();
     _controller.dispose();
     super.dispose();
   }

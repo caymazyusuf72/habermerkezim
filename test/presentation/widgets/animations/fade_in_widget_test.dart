@@ -30,7 +30,10 @@ void main() {
 
       // Assert - FadeTransition kullanıyor
       final fadeTransition = tester.widget<FadeTransition>(
-        find.byType(FadeTransition),
+        find.descendant(
+          of: find.byType(FadeInWidget),
+          matching: find.byType(FadeTransition),
+        ),
       );
       expect(fadeTransition.opacity.value, 0.0);
     });
@@ -53,7 +56,10 @@ void main() {
 
       // Assert
       final fadeTransition = tester.widget<FadeTransition>(
-        find.byType(FadeTransition),
+        find.descendant(
+          of: find.byType(FadeInWidget),
+          matching: find.byType(FadeTransition),
+        ),
       );
       expect(fadeTransition.opacity.value, 1.0);
     });
@@ -75,14 +81,20 @@ void main() {
       // Delay süresi geçmeden opacity 0 olmalı
       await tester.pump(const Duration(milliseconds: 200));
       var fadeTransition = tester.widget<FadeTransition>(
-        find.byType(FadeTransition),
+        find.descendant(
+          of: find.byType(FadeInWidget),
+          matching: find.byType(FadeTransition),
+        ),
       );
       expect(fadeTransition.opacity.value, 0.0);
 
       // Delay + animasyon süresi sonrası opacity 1 olmalı
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 600));
       fadeTransition = tester.widget<FadeTransition>(
-        find.byType(FadeTransition),
+        find.descendant(
+          of: find.byType(FadeInWidget),
+          matching: find.byType(FadeTransition),
+        ),
       );
       expect(fadeTransition.opacity.value, 1.0);
     });
@@ -119,7 +131,10 @@ void main() {
 
       // Başlangıçta opacity 0.5 olmalı
       final fadeTransition = tester.widget<FadeTransition>(
-        find.byType(FadeTransition),
+        find.descendant(
+          of: find.byType(FadeInWidget),
+          matching: find.byType(FadeTransition),
+        ),
       );
       expect(fadeTransition.opacity.value, 0.5);
     });
@@ -165,6 +180,7 @@ void main() {
         ),
       );
 
+      await tester.pump(const Duration(milliseconds: 200));
       await tester.pumpAndSettle();
 
       // Assert
