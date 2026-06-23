@@ -109,13 +109,86 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 14
 
+  build-ios:
+    name: 🍎 Build iOS (IPA)
+    runs-on: macos-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build iOS (unsigned)
+        run: |
+          flutter build ios --release --no-codesign
+          mkdir -p Payload
+          mv build/ios/iphoneos/Runner.app Payload/
+          zip -r app-release.ipa Payload
+          rm -rf Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-ipa
+          path: app-release.ipa
+          retention-days: 14
+
+  publish-release:
+    name: 🚀 Publish Auto Release
+    runs-on: ubuntu-latest
+    needs: [build-android, build-ios]
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 10
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: release-apk
+          path: artifacts/
+
+      - name: Download IPA
+        uses: actions/download-artifact@v4
+        with:
+          name: release-ipa
+          path: artifacts/
+
+      - name: Generate Turkish Release Notes
+        id: release_notes
+        run: |
+          echo "NOTES<<EOF" >> $GITHUB_OUTPUT
+          echo "## 🚀 Otomatik Güncelleme (#${{ github.run_number }})" >> $GITHUB_OUTPUT
+          echo "Bu sürüm main dalına yapılan son değişiklikleri içermektedir." >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### 📝 Son Değişiklikler" >> $GITHUB_OUTPUT
+          git log -n 5 --pretty=format:"- %s" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: auto-build-${{ github.run_number }}
           name: "Güncel Geliştirici Sürümü (#${{ github.run_number }})"
-          body: "Otomatik olarak derlenmiş en güncel sürümdür. Bu sürüm, main dalına yapılan son değişiklikleri içerir."
-          files: build/app/outputs/flutter-apk/app-release.apk
+          body: ${{ steps.release_notes.outputs.NOTES }}
+          files: |
+            artifacts/app-release.apk
+            artifacts/app-release.ipa
           prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

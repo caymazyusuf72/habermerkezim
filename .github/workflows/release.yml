@@ -50,26 +50,11 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
 
-      - name: Build App Bundle (AAB)
-        run: flutter build appbundle --release --no-tree-shake-icons
-        env:
-          ANDROID_KEYSTORE_PATH: ${{ secrets.ANDROID_KEYSTORE_PATH }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
-
       - name: Upload APK artifact
         uses: actions/upload-artifact@v7
         with:
           name: release-apk-${{ steps.version.outputs.VERSION }}
           path: build/app/outputs/flutter-apk/app-release.apk
-          retention-days: 30
-
-      - name: Upload AAB artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-aab-${{ steps.version.outputs.VERSION }}
-          path: build/app/outputs/bundle/release/app-release.aab
           retention-days: 30
 
       - name: Generate release notes
@@ -80,7 +65,6 @@ jobs:
           echo "" >> $GITHUB_OUTPUT
           echo "### 📦 Artifacts" >> $GITHUB_OUTPUT
           echo "- **APK**: Doğrudan kurulum için" >> $GITHUB_OUTPUT
-          echo "- **AAB**: Google Play Store yüklemesi için" >> $GITHUB_OUTPUT
           echo "" >> $GITHUB_OUTPUT
           echo "### 📝 Değişiklikler" >> $GITHUB_OUTPUT
           git log $(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD --pretty=format:"- %s" --no-merges >> $GITHUB_OUTPUT || echo "- İlk release" >> $GITHUB_OUTPUT
@@ -96,6 +80,5 @@ jobs:
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
           files: |
             build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
