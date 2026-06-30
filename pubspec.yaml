@@ -116,7 +116,7 @@ dependencies:
   firebase_crashlytics: ^5.2.3
   
   # Google Sign In
-  google_sign_in: ^6.2.1
+  google_sign_in: ^7.2.0
   
   # Image Picker & Cropper (Avatar Upload)
   image_picker: ^1.2.2
