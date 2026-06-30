@@ -103,7 +103,7 @@ jobs:
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
