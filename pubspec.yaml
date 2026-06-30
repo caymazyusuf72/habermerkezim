@@ -123,7 +123,7 @@ dependencies:
   image_cropper: ^12.2.1
   
   # File System
-  path_provider: ^2.1.2
+  path_provider: ^2.1.6
   path: ^1.9.0
   
   # Security
