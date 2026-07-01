@@ -84,7 +84,7 @@ dependencies:
   lottie: ^3.3.3
   
   # Animations
-  animations: ^2.0.11
+  animations: ^2.2.0
   flutter_animate: ^4.5.0
   
   # Video Player
