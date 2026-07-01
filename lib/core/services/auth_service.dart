@@ -32,8 +32,9 @@ class AuthService {
 
       // Google kimlik bilgilerini al
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-      final GoogleSignInClientAuthorization? clientAuthz =
-          await googleUser.authorizationClient.authorizationForScopes([]);
+      final GoogleSignInClientAuthorization? clientAuthz = await googleUser
+          .authorizationClient
+          .authorizationForScopes([]);
 
       debugPrint('🔑 Google authentication token alındı');
 
