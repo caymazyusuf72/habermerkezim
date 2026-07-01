@@ -6,7 +6,8 @@ import 'package:flutter/foundation.dart';
 /// Firebase Authentication ve Google Sign In servisi
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  bool _isGoogleSignInInitialized = false;
 
   // Mevcut kullanıcı
   User? get currentUser => _auth.currentUser;
@@ -19,25 +20,26 @@ class AuthService {
     try {
       debugPrint('🔐 Google Sign In başlatılıyor...');
 
-      // Google Sign In akışını başlat
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-      if (googleUser == null) {
-        debugPrint('❌ Google Sign In iptal edildi');
-        return null;
+      if (!_isGoogleSignInInitialized) {
+        await _googleSignIn.initialize();
+        _isGoogleSignInInitialized = true;
       }
+
+      // Google Sign In akışını başlat
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
 
       debugPrint('✅ Google hesabı seçildi: ${googleUser.email}');
 
       // Google kimlik bilgilerini al
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      final GoogleSignInClientAuthorization? clientAuthz =
+          await googleUser.authorizationClient.authorizationForScopes([]);
 
       debugPrint('🔑 Google authentication token alındı');
 
       // Firebase credential oluştur
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
+        accessToken: clientAuthz?.accessToken,
         idToken: googleAuth.idToken,
       );
 
